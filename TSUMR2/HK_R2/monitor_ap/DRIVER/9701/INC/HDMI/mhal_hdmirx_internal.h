@@ -1,0 +1,9 @@
+#ifndef MHAL_HDMIRX_INTERNAL_H
+#define MHAL_HDMIRX_INTERNAL_H
+
+#ifdef MHAL_HDMIRX_C
+
+
+#endif /*MHAL_HDMIRX_C*/
+
+#endif /*MHAL_HDMIRX_INTERNAL_H*/

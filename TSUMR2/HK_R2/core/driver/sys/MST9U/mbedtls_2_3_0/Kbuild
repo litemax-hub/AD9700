@@ -1,0 +1,26 @@
+CFLAGS += -I$(srctree)/inc/MST9U/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/MST9U/board -I$(srctree)/src
+CFLAGS += -I$(srctree)/src/MST9U/mbedtls-2.3.0/include
+AFLAGS += -I$(srctree)/src/MST9U/mbedtls-2.3.0/include
+
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/aes.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/asn1parse.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/asn1write.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/bignum.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/ctr_drbg.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/entropy.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/entropy_poll.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/md.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/md_wrap.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/md5.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/oid.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/padlock.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/ripemd160.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/rsa.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/sha1.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/sha256.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/sha512.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./library/timing.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./programs/pkey/rsa_verify.o
+lib-$(CONFIG_MSTAR_MST9U) 		+= ./programs/aes/aescrypt2.o
+

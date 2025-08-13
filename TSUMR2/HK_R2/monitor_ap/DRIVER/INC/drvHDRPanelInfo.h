@@ -1,0 +1,17 @@
+
+#ifndef _MS_HDR_PANEL_INFO_H_
+#define _MS_HDR_PANEL_INFO_H_
+
+#define PANEL_MIN_LUMINANCE  0.2
+#define PANEL_MAX_LUMINANCE 476
+#define PANEL_GAMUT_Wx 0.2842
+#define PANEL_GAMUT_Wy 0.2933
+#define PANEL_GAMUT_Rx 0.64
+#define PANEL_GAMUT_Ry 0.3293
+#define PANEL_GAMUT_Gx 0.2953
+#define PANEL_GAMUT_Gy 0.6215
+#define PANEL_GAMUT_Bx 0.1539
+#define PANEL_GAMUT_By 0.0548
+#define PCHDR_TIER 600
+#endif
+
