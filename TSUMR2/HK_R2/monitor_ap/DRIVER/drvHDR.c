@@ -1746,7 +1746,7 @@ void SetupHDRMode(BYTE u8WinIdx, HDR_Level lvl, SMPTE2086Metadata metadata)
             LoadDeGammaTable(u8WinIdx);
             //Gamma
             _tmDesc = ToToneMappingDesc(metadata);
-             LoadGammaTable(u8WinIdx,&metadata, &_tmDesc,_panelMaxLum);
+             LoadGammaTable(u8WinIdx,&metadata, &_tmDesc,_panelMaxLum);//
             HDR_PrintData(">>> Load Gamma Table(w/o TMO = 0) = %d\n", _tmDesc.IsValid);
             //tone mapping
             #if 0
@@ -2083,6 +2083,16 @@ void msSetHDRPostGamma(BYTE *pGammadata)
     {
         memcpy(_PostGamma.mPostGamma, pGammadata, sizeof(_PostGamma.mPostGamma));
         _PostGamma.IsValid = true;
+	    /*int i =0; 
+	    int j;
+	    for(i=0;i<3;i++){
+	        printf("[%d] = ",i );
+	        for(j=54;j<64;j++){
+	        printf("%x, ",_PostGamma.mPostGamma[i][j]);
+	        }
+	        printf("\n");
+	    }*/
+
     }
 }
 
@@ -2108,6 +2118,7 @@ void LoadHDRPostGammaTable(BYTE u8WinIdx)
             },
         };
         msAPI_GammaLoadTbl_256E_14B(u8WinIdx, StoredPostGamma[0]);
+        //msAPI_GammaEnable(u8WinIdx, 1);  
     }
 }
 

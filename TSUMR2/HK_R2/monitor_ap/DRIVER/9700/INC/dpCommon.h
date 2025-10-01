@@ -72,7 +72,8 @@
 #define DPRX_DP14_HDR						ENABLE_HDR
 #define DPRX_DP14_YUV420    		    	ENABLE_DP_YUV420
 #define DPRX_SUPPORT_VSCSDP					(1 & (DPRX_DP14_HDR | DPRX_DP14_YUV420))
-
+#define DPRX_M_RANGE_NEW_MODE               1
+#define DPRX_M_RANGE_NEW_MODE_VALUE         6 //Mrange = M*0.6%
 #define DP_REG_OFFSETAUX(a)					((a) == 0? 000 : (a) == 1? 0x300 : (a) == 2? 0xE00 : (a) == 3? 0x1100 : 0)
 #define DP_REG_OFFSET000(a)					((a) * 0x000)
 #define DP_REG_OFFSET002(a)					((a) * 0x002)
@@ -94,8 +95,8 @@
 #define DPRx_MCCS_SUPPORT					1
 #define DP_XDATA_PROGRAMMABLE_DPCD_MCCS		0
 
-#define DPRX_OFFLINE_TO_ONLINE_KEEP_LOCK    1
-#define ENABLE_DP_DCOFF_HPD_HIGH            0
+#define DPRX_OFFLINE_TO_ONLINE_KEEP_LOCK    0
+#define ENABLE_DP_DCOFF_HPD_HIGH            1
 
 //*****************************************************************************
 //      Fast Training

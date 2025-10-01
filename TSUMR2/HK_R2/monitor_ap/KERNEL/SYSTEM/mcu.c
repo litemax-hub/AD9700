@@ -142,7 +142,7 @@ static void Init_BandgapRefTrim(void)
 
     u8EfuseData = msEread_GetDataFromEfuse(0x13C);
     u8EfuseACT = msEread_GetDataFromEfuse(0x138);
-	
+
     if( u8EfuseACT & _BIT2 )
     {
         u8EfuseData = (u8EfuseData & 0xF8);
@@ -168,6 +168,12 @@ void Init_IOPorts( void )
 #else
     #warning "--------------------Flash WP of MT9701 TBD---------------------------"
 #endif
+
+#if (MainBoardType == BD_MT9700_LITEMAX)
+    Init_PCB_POWER_SW();
+    DVI_HDMI_EN();
+#endif
+
     hw_ClrBlacklit();
     hw_ClrPanel();
     hw_ClrGreenLed();
@@ -313,7 +319,6 @@ void Init_ExternalInterrupt( void )
 
 #else
     msWriteByteMask(0x000D6B,0x00,BIT5);
-    msWriteByteMask(0x101968,0x00,BIT6);
     msWriteByte(0x171B70,0x01);
     msWriteByteMask(0x170377,0x00,BIT6);
     msWriteByteMask(0x17052b,0x00,BIT7);

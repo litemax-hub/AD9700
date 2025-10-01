@@ -108,6 +108,8 @@
 #define BD_MT9700_A7V2_P2_S 0x010C   // T9 with 1A1H2DP
 #define BD_MST218B_B02A_S   0x010D   // G with 1A1H
 
+#define BD_MT9700_LITEMAX   0x0180   // T9 with 1A1D1H1DP
+
 //MT9701
 #define BD_MT9701_A1V1_P2_S 0x0200   // QFP216 with 1H1DP1C
 #define BD_MT9701_A2V1_P2_S 0x0201   // QFP216 with 1H2DP
@@ -198,13 +200,13 @@
 #define ENABLE_AUDIO_AUTO_MUTE          1 // auto mute setting
 #define ENABLE_AUDIO_AUTO_FADING        1 // auto fading setting
 #define ENABLE_HAYDN_FADING_BY_HDMI_STATUS        1
-#define ENABLE_HDMI_SCDC                1 // for HDMI support over 3.4G, must config to 1.
+#define ENABLE_HDMI_SCDC                0 // for HDMI support over 3.4G, must config to 1.
 #if (CHIP_ID == CHIP_MT9701)
 #define ENABLE_HPD_REPLACE_MODE         1 // for HDMI under 3.4G only; if over 3.4G need to config to 0.
 #elif (CHIP_ID == CHIP_MT9700)
 #define ENABLE_HPD_REPLACE_MODE         0 // for HDMI under 3.4G only; if over 3.4G need to config to 0.
 #endif
-#define ENABLE_HDMI_BCHErrorIRQ         0// Use BCHerror IRQ to cover source garbege issue
+#define ENABLE_HDMI_BCHErrorIRQ         (0 && (CHIP_ID == CHIP_MT9700))// Use BCHerror IRQ to cover source garbege issue
 #else
 #define G2_G3_HDMI_AUDIO_FADING         0
 #define ENABLE_CEC                      0
@@ -330,6 +332,9 @@
 #elif (MainBoardType == BD_MT9701_A5V1_P2_S)
 #define USEFLASH    1
 #include "BD_MT9701_A5V1_P2_S.h"
+#elif (MainBoardType == BD_MT9700_LITEMAX)
+#define USEFLASH    1
+#include "BD_MT9700_LITEMAX.h"
 #else
 #error Unknow board type
 #endif

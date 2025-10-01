@@ -1815,6 +1815,59 @@ void mhal_DPRx_SetPHYPRBS7PNSwapEnable(DPRx_PHY_ID dprx_phy_id, BYTE ubLanePNSwa
 void ______RX_PHY_AUTO_EQ________(void);
 //**************************************************************************
 //  [Function Name]:
+//                  mhal_DPRx_IsAutoEQDone()
+//  [Description]
+//					mhal_DPRx_IsAutoEQDone
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mhal_DPRx_IsAutoEQDone(DPRx_ID dprx_id, DPRx_PHY_ID dprx_phy_id)
+{    
+	WORD usRegOffsetTransCTRLByID = DP_REG_OFFSET_TRANS_CTRL(dprx_id);
+	WORD usRegOffsetPHY2ByID = DP_REG_OFFSET_PHY0(dprx_phy_id);
+    
+	BYTE ubLaneCount = 0;
+	BYTE i = 0x0;
+	
+	if((dprx_id == DPRx_ID_MAX) || (dprx_phy_id == DPRx_PHY_ID_MAX))
+	{
+        return FALSE;
+	}
+
+	switch(msRead2Byte(REG_DPRX_TRANS_CTRL_17_L + usRegOffsetTransCTRLByID))
+	{
+		case 0x7777:
+			ubLaneCount = 0x4;
+			break;
+
+		case 0x77:
+			ubLaneCount = 0x2;
+			break;
+
+		case 0x7:
+			ubLaneCount = 0x1;
+			break;
+
+		default:
+			return FALSE; // No lock, the Auto EQ Done is invalid
+			break;
+	}
+
+	for(i = 0x0; i < ubLaneCount; i++)
+	{
+		if((msReadByte(REG_DPRX_PHY2_44_H + usRegOffsetPHY2ByID + i*8) & BIT5) == 0)
+        {
+            return FALSE;
+        }
+	}
+
+	return TRUE;
+}
+
+//**************************************************************************
+//  [Function Name]:
 //                  mhal_DPRx_AutoEQModeSetting()
 //  [Description]
 //					mhal_DPRx_AutoEQModeSetting

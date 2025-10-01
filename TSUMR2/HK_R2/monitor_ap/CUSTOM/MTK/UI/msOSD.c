@@ -410,6 +410,7 @@ void Osd_DrawPropStr(BYTE u8XPos, BYTE u8YPos, BYTE *pu8Str)
 #undef DISP_PTR
 
 }
+#define Num2ASCII(Num) (Num+3)
 void DrawNum( BYTE xPos, BYTE yPos, char len, int value)
 {
     char _minus = 0;
@@ -437,13 +438,19 @@ void DrawNum( BYTE xPos, BYTE yPos, char len, int value)
 
     if( value == 0 )
     {
-        Osd_DrawCharDirect( xPos + ( len-- )-ucshift, yPos, ( BYTE )( value + NumberFontStart ) );
+    	if(MenuPageIndex == FactoryMenu)
+			Osd_DrawCharDirect( xPos + ( len-- )-ucshift, yPos, (BYTE)Num2ASCII(0));
+        else
+            Osd_DrawCharDirect( xPos + ( len-- )-ucshift, yPos, ( BYTE )( value + NumberFontStart ) );
     }
     else
     {
         while( value && len )            // translate integer to string
         {
-            Osd_DrawCharDirect( xPos + ( len-- )-ucshift, yPos, ( BYTE )(( value % 10 ) + NumberFontStart ) );
+        	if(MenuPageIndex == FactoryMenu)
+				Osd_DrawCharDirect( xPos + ( len-- )-ucshift, yPos, (BYTE)Num2ASCII(value % 10));
+            else
+                Osd_DrawCharDirect( xPos + ( len-- )-ucshift, yPos, ( BYTE )(( value % 10 ) + NumberFontStart ) );
             value /= 10;
         }
     }

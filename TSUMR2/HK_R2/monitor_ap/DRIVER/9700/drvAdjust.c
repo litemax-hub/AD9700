@@ -3,7 +3,9 @@
 #include "Global.h"
 #include "msACE.h"
 #include "AutoGamma.h"
+#include "drvGamma.h"
 extern ST_COMBO_COLOR_FORMAT GetInputCombColorFormat(void);
+static BOOL _IsEnNonStdCSC = FALSE;
 
 // 0 ~ 100 (default 50)
 void mStar_AdjustUserPrefBlacklevel( BYTE Redblacklevel, BYTE Greenblacklevel, BYTE Blueblacklevel )
@@ -13,7 +15,7 @@ void mStar_AdjustUserPrefBlacklevel( BYTE Redblacklevel, BYTE Greenblacklevel, B
     Blueblacklevel = ((( WORD )Blueblacklevel * ( MaxBlackLevelValue - MinBlackLevelValue))+50) / 100 + MinBlackLevelValue;
 	//printData("###mStar_AdjustUserPrefBlacklevel(output) = %x\n", Redblacklevel);
     msSetRGBOffset(MAIN_WINDOW, Redblacklevel, Greenblacklevel, Blueblacklevel);
-    msAdjustPostRGBOffset(MAIN_WINDOW);
+    msAdjustPreRGBOffset(MAIN_WINDOW);
 }
 
 /******************************************************************************************************************************************
@@ -302,7 +304,90 @@ void msDrvGammaLoadTbl_256E_14B(BYTE u8WinIdx, BYTE **GammaTblIdx)
 		WriteTriggerADLPostGamma(POSTGAMMA_ADL_ADDR, TRUE);
     #endif
 }
+
+void msDrvGammaLoadTbl_256E_14B_76Bytes(BYTE u8WinIdx, BYTE **GammaTblIdx)
+{
+	UNUSED(u8WinIdx);
+    BYTE u8TgtChannel;
+
+    for(u8TgtChannel=0; u8TgtChannel<3; u8TgtChannel++ )
+    {
+        // Write data to gamma channel
 #if ENABLE_LUT_AUTODOWNLOAD
+
+		 BYTE* ptr = (BYTE*)((void*)GammaTblIdx[u8TgtChannel]);
+	        WritePostComprssGamma2Dramby76Bytes(u8TgtChannel, ptr);
+#else
+		WORD* ptr = NULL;
+		extern void ScalerAPI_GammaLoadTable(BYTE u8Color, WORD *p_table);
+        ptr = (WORD*)((void*)GammaTblIdx[u8TgtChannel]);
+		ScalerAPI_GammaLoadTable(u8TgtChannel, ptr);
+#endif
+    }
+    #if ENABLE_LUT_AUTODOWNLOAD
+        extern void WriteTriggerADLPostGamma(DWORD u16StartAddr, BOOL Enable);
+		WriteTriggerADLPostGamma(POSTGAMMA_ADL_ADDR, TRUE);
+    #endif
+}
+
+
+#if ENABLE_LUT_AUTODOWNLOAD
+void WritePostComprssGamma2Dramby76Bytes( BYTE u8Color, BYTE *pu8GammaTblIdx)
+{
+	WORD i = 0;
+	WORD GammaTbl[4], DiffValue0, DiffValue1;
+	DWORD dwDecompressGamma[256];
+	memset(GammaTbl, 0, 4*sizeof(WORD));
+	memset(dwDecompressGamma, 0, 256*sizeof(DWORD));
+	WORD SumValue = 0;
+	for (i = 0; i < 76; i++)
+	{
+		DiffValue1 = pu8GammaTblIdx[i] & 0x0F;
+		DiffValue0 = (pu8GammaTblIdx[i] & 0xF0) >> 4;
+
+		if (i < 16)
+		{
+			if (i == 0)
+			{
+				dwDecompressGamma[i] = 0;
+				SumValue = SumValue + pu8GammaTblIdx[i] ;
+			}	
+			else
+			{
+				dwDecompressGamma[i] = SumValue<<4;
+				SumValue = SumValue + pu8GammaTblIdx[i];
+				GammaTbl[3] = SumValue;
+			}
+
+		}
+		else
+		{			
+			GammaTbl[0] = GammaTbl[3] + DiffValue0;
+			GammaTbl[1] = GammaTbl[0] + DiffValue0;
+			GammaTbl[2] = GammaTbl[1] + DiffValue1;
+			GammaTbl[3] = GammaTbl[2] + DiffValue1;
+			
+			dwDecompressGamma[(i - 16) * 4 + 16] = (GammaTbl[0])<<4;
+			dwDecompressGamma[(i - 16) * 4 + 17] = (GammaTbl[1])<<4;
+			dwDecompressGamma[(i - 16) * 4 + 18] = (GammaTbl[2])<<4;
+			dwDecompressGamma[(i - 16) * 4 + 19] = (GammaTbl[3])<<4;
+		}
+	
+	}
+
+
+	DWORD u32Address=0;
+    u32Address = POSTGAMMA_ADL_ADDR+(u8Color*POSTGAMMA_TABLE_ENTRIES*sizeof(WORD));
+
+	WORD u16Idx = 0;
+
+	for(u16Idx = 0; u16Idx < 256; u16Idx++)
+	{
+		IMI_Write2Bytes(u32Address, (WORD)(dwDecompressGamma[u16Idx]));
+		u32Address+=sizeof(WORD);
+	}
+}
+
 void WritePostComprssGamma2Dram ( BYTE u8Color, BYTE *pu8GammaTblIdx)
 {
     WORD i = 0;
@@ -593,7 +678,7 @@ void mdrv_IP2Pattern_SetPureColorPattern(IP2PATTERNColor *stColor)
     msWrite2ByteMask(SC53_38, 0x00, 0xFFF);
     msWrite2ByteMask(SC53_3A, SC0_READ_IMAGE_HEIGHT(), 0xFFF);
 
-    msWriteByteMask(SC53_24, (stColor->R)<<2, 0xFC);
+    msWriteByteMask(SC53_24, (stColor->R)<<2, 0xFC); //8bits to 10bits
     msWriteByteMask(SC53_25, (stColor->R)>>6, 0x03);
 
     msWriteByteMask(SC53_26, (stColor->G)<<2, 0xFC);
@@ -1204,7 +1289,7 @@ void msDrv_VideoHueSaturation(void)
 #else
         if (GetInputCombColorFormat().ucColorRange == COMBO_COLOR_RANGE_LIMIT)//RGB Limit
 #endif
-        {
+            {
                 msWriteByteMask(SC07_41, FALSE, BIT4|BIT0);
                 msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
                 msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
@@ -1219,8 +1304,8 @@ void msDrv_VideoHueSaturation(void)
         }
         else    //for YUV input, disable CSC2_Y2R
         {
-			msWriteByteMask(SC07_40, FALSE, BIT4|BIT0);
-			msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
+			msWriteByteMask(SC07_40, FALSE, BIT4|BIT0); //disable CSC2_Y2R
+			msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7); //sub 16
         }
 
 }
@@ -1261,4 +1346,15 @@ Bool msDrv_SetColorModeDemo(void)
     //2023/02/23, remove to msACECSCControl()
     //msWriteByteMask( SC0F_AE, BIT7, BIT7);
     return TRUE;
+}
+
+
+void mdrv_Adjust_EnableNonStdCSC_Set(BOOL u8Enable)
+{
+     _IsEnNonStdCSC = u8Enable;
+}
+
+BOOL mdrv_Adjust_EnableNonStdCSC_Get(void)
+{
+     return _IsEnNonStdCSC;
 }

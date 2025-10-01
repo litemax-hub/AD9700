@@ -269,6 +269,79 @@ typedef enum
 }EN_COMBO_HDMIRX_INT;
 
 
+typedef enum 
+{
+	COMBO_DP_VERSION_11 = 0,
+	COMBO_DP_VERSION_12,
+	COMBO_DP_VERSION_14,
+	COMBO_DP_VERSION_20,
+	COMBO_DP_VERSION_UNKNOW,
+}EN_COMBO_DP_VERSION;
+
+
+typedef enum
+{
+
+//===========Naming Rules==========
+/*	
+COMBO_RX_INFO_( Data transfer by variable or structure )_( Feature name )_ ( available for read or write )
+
+Available for read or write:
+Available for read only: RO
+Available for write only: WO
+Available for both read & write: RW
+
+Data transfer by variable or structure:
+Transfer by variable: VAR
+Transfer by structure: ST
+*/
+
+
+    //=========DP used only==============
+   
+   
+    //=========HDMI used only==============
+    COMBO_RX_INFO_VAR_V_POLARITY_RO = 0x50, //HDMI used only start
+   
+    
+    //=========IP Common used only==============
+    COMBO_RX_INFO_VAR_HTT_RO = 0xA0,   //DP RX: MSA HTT
+    COMBO_RX_INFO_VAR_PIXEL_CLOCK_10KHZ,
+    
+    //=========Union Structure Common Used only==============
+    
+	COMBO_RX_VAR_WAKEUPSTATUS_WO = 0x121,
+	//=========Union Structure DP Used only==============
+	
+	
+
+	//=========Union Structure HDMI Used only==============
+}EN_COMBO_RX_INFO_SELECT;
+
+
+typedef struct
+{
+    DWORD ulValue;
+
+    union{
+
+		//COMBO_RX_ST_VIDEO_DE_TOTAL_RO
+        struct{
+        	DWORD HDE;
+            DWORD VDE;
+            DWORD HTT;
+            DWORD VTT;
+        } ST_COMBO_VIDEO_DE_TOTAL;
+
+
+		//COMBO_RX_ST_DP_VERSION_INFO_RO
+		struct{
+			EN_COMBO_DP_VERSION port_dp_version_info;
+		}ST_COMBO_DP_VERSION_INFO;
+    };
+} ST_COMBO_RX_INFO_UNION;
+
+
 //-------------------------------------------------------------------------------------------------
 //  Function Prototype
 //-------------------------------------------------------------------------------------------------
@@ -333,6 +406,11 @@ Bool msAPI_combo_HDCP2CheckEncodeKeyValid(BYTE *pKeyTable);
 Bool msAPI_combo_Hdcp2InsertKeyWithCutomizeKey(Bool bExternalKey, BYTE *pKeyTable, Bool bIsRxKey, Bool bUseCustomizeKey, BYTE* pCustomizeKey);
 Bool msAPI_combo_IPInsertHDCP22Key(Bool bExternalKey, BYTE *pKeyTable, Bool bIsRxKey, BOOL bUseNewKey);
 Bool msAPI_combo_FetchSecureStormResult(Bool bIsRxKey, BYTE* pu8DataBuf, WORD u16BufSize, WORD* pu16RetSize);
+
+BOOL mapi_combo_RxInfo_Get(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION* rxInfoUnion, EN_COMBO_RX_INFO_SELECT rxInfoSelect);
+BOOL mapi_combo_RxInfo_Set(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION* rxInfoUnion, EN_COMBO_RX_INFO_SELECT rxInfoSelect);
+
+
 BOOL msAPI_combo_IPGetHDRPacket(BYTE ucInputPort , BYTE *pHeader, BYTE *pPacketData);
 ST_COMBO_COLOR_FORMAT msAPI_combo_IPGetColorFormat(BYTE ucInputPort);
 EN_TMDS_AUDIO_FORMAT msAPI_combo_HDMIRx_IsAudioFmtPCM(BYTE ucPortIndex);

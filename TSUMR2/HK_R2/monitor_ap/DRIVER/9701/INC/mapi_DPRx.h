@@ -147,5 +147,8 @@ void mapi_DPRx_MSCHIP_EnableDPDetect(BYTE ucPMMode, BOOL bEnable);
 void mapi_DPRx_MSCHIP_DP_PMHandler(void);
 BYTE mapi_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(BYTE ucInputPort);
 
+BOOL mapi_DPRx_PortInfo_Get(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect);
+BOOL mapi_DPRx_PortInfo_Set(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect);
+
 #endif //_MAPI_DPRX_H_
 

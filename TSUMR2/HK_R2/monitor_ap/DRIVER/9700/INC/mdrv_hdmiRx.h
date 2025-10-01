@@ -181,12 +181,15 @@ void mdrv_hdmi_SetupInputPort(BYTE ucPortSelect);
 //void mdrv_hdmiRx_TimerHandler(void);
 ST_HDMI_RX_COLOR_FORMAT mdrv_hdmiRx_GetColorimetry(BYTE ucPortSelect);
 EN_TMDS_AUDIO_FORMAT mdrv_hdmiRx_IsAudioFmtPCM(BYTE ucPortIndex);
+DWORD mdrv_tmds_GetPixelClockHz(BYTE enInputPort, EN_HDMI_PIX_CLK_TYPE enType);
+BOOL mdrv_hdmiRx_RxInfo_Get(BYTE enInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT enInfo);
 WORD mdrv_hdmiRx_GetVideoContentInfo(EN_HDMI_VIDEO_CONTENT_INFO enVideoContentInfo, BYTE ucPortSelect);
 BOOL mdrv_hdmiRx_GetPacketContent(MS_HDMI_PACKET_STATE_t ucPacketType, BYTE ucPacketLength, BYTE *pPacketData, BYTE ucPortSelect);
 void mdrv_hdmiRx_HPDControl(BYTE enInputPortSelect, Bool bPullHighFlag);
 void mdrv_hdmiRx_ClockRtermControl(EN_HDMI_INPUT_PORT enInputPortSelect, Bool bPullHighFlag);
 void mdrv_hdmiRx_DataRtermControl(EN_HDMI_INPUT_PORT enInputPortSelect, Bool bPullHighFlag);
 void mdrv_hdmiRx_DDCControl(BYTE enInputPortType, Bool bEnable);
+void mdrv_hdmiRx_SetSCDCValue(BYTE enInputPort, BYTE u8Offset, BYTE u8Size, BYTE *u8SetValue);
 void mdrv_HDMIRx_LoadEDID(BYTE ucPortSelect, BYTE *EdidData);
 #if ENABLE_HPD_REPLACE_MODE
 void mdrv_hdmiRx_SCDC_Clr(BYTE enInputPortType);

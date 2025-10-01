@@ -1101,7 +1101,7 @@ void HDCPHandler_LoadHDCP14RxBksv(BYTE *pu8BKSV, BYTE *pu8Hdcp1RxKey, BOOL bExte
     msWrite2ByteMask(REG_PM_57_L,BIT11,BIT10|BIT11);//[10]reg_hdcp_sram_cen[11]reg_sram_handshake
 
     //msWrite2ByteMask(REG_HDMIRX_HDCP_P0_17_L,BIT10,BIT10);//[10]HDCP enable for DDC
-    //msWrite2ByteMask(REG_PM_57_L,BIT14|BIT15,BIT14|BIT15);    //MT9701 removed , it's read only reg 
+    //msWrite2ByteMask(REG_PM_57_L,BIT14|BIT15,BIT14|BIT15);    //MT9701 removed , it's read only reg
 
     msWrite2ByteMask(REG_HDMIRX_CKGEN_DRIVER_1_BASE+0x28, BIT14, BIT12|BIT13|BIT14);
     //h14 h14 14  12  reg_ckg_xtal_hdmi_12_drv_ov
@@ -1141,7 +1141,18 @@ void HDCPHandler_LoadHDCP14RxBksv(BYTE *pu8BKSV, BYTE *pu8Hdcp1RxKey, BOOL bExte
     msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(15), BMASK(15:14)); // 74 write enable
     msWrite2ByteMask(REG_HDMIRX_HDCP_P0_17_L, 0, BMASK(9:0)); // CPU r/w address (for hdcp_key_sram/74reg)
     msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(5), BIT(5)); // HDCP address load pulse generate
-    for(ustemp = 0; ustemp < 256; ustemp++)
+    for(ustemp = 0; ustemp < 0x50; ustemp++)
+    {
+        msWrite2ByteMask(REG_HDMIRX_HDCP_P0_18_L, 0, BMASK(7:0)); //init clear all offset to 0
+        msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(4), BIT(4)); // HDCP data write port pulse generate
+
+        // wait write ready
+        while(msRead2Byte(REG_HDMIRX_HDCP_P0_19_L) & BIT(7)); // HDCP CPU write busy status (for HDCP sram/74reg)
+    }
+
+    msWrite2ByteMask(REG_HDMIRX_HDCP_P0_17_L, 0x51, BMASK(9:0)); // CPU r/w address (for hdcp_key_sram/74reg)
+    msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(5), BIT(5)); // HDCP address load pulse generate
+    for(ustemp = 0x51; ustemp < 256; ustemp++)
     {
         msWrite2ByteMask(REG_HDMIRX_HDCP_P0_18_L, 0, BMASK(7:0)); //init clear all offset to 0
         msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(4), BIT(4)); // HDCP data write port pulse generate
@@ -1199,7 +1210,7 @@ void HDCPHandler_LoadHDCP14RxBksv(BYTE *pu8BKSV, BYTE *pu8Hdcp1RxKey, BOOL bExte
 #endif
 
     //======================= DP port load BKSV=======================//
-    
+
     for(ustemp = 0; ustemp < AUX_None; ustemp++)
     {
         if((ustemp == DPRx_C1_AUX) || (ustemp == DPRx_C2_AUX) || (ustemp == DPRx_C3_AUX))
@@ -1214,7 +1225,7 @@ void HDCPHandler_LoadHDCP14RxBksv(BYTE *pu8BKSV, BYTE *pu8Hdcp1RxKey, BOOL bExte
         msWriteByte(REG_DPRX_AUX_DPCD_2A_H + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[1]); // BKSV
         msWriteByte(REG_DPRX_AUX_DPCD_2B_L + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[2]); // BKSV
         msWriteByte(REG_DPRX_AUX_DPCD_2B_H + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[3]); // BKSV
-        msWriteByte(REG_DPRX_AUX_DPCD_2C_L + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[4]); // BKSV    
+        msWriteByte(REG_DPRX_AUX_DPCD_2C_L + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[4]); // BKSV
     }
 
     msWriteByte(REG_DPRX_DPCD1_22_L, tCOMBO_HDCP14_BKSV[0]); // BKSV // Move to R2

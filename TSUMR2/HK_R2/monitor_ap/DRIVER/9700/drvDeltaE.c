@@ -6,6 +6,8 @@
 #include "NVRam.h"
 #include "msflash.h"
 #include "Adjust.h"
+#include "AutoGamma.h"
+#include "drvGamma.h"
 //#include "msPQ.h"
 #if Enable3DLUTColorMode
 #include "drv3DLUT_C.h"
@@ -39,7 +41,9 @@ short HSt = 0;
 short HEd = 0;
 static WORD _u16ColorTempRed = 0x400, _u16ColorTempGreen = 0x400, _u16ColorTempBlue = 0x400;
 extern BYTE CurrentOutputPattern[6];
-
+#define _maxWinNum 2
+WORD _hSizeOfIP2TestPtn[_maxWinNum] = {3840};
+WORD _vSizeOfIP2TestPtn[_maxWinNum] = {2160};
 DWORD _addrOfAutoColorBlock = ADDR_DELTAE_BLOCK;//0x1000;
 static MemoryType _memoryType = enMemoryType_EEPROM;
 static Bool _bDoWP = TRUE;
@@ -48,7 +52,7 @@ static void (*s_FlashWriteTbl)(Bool, DWORD, BYTE*, DWORD) = 0;
 
 //Actual entry of post gamma fomat is 1024, this is compressed format.
 StoredFormatOfPostGamma _postGamma;
-
+StoredFormatOfDICOMGamma _DICOMGamma;
 /****DeltaE calibratoion Tool Usage table Note****/
 /* DeltaE Tool Version  x.xxxx 	*/
 /*
@@ -2159,7 +2163,7 @@ void _EEPROMColorModeMatrixCheckSum_Get(BYTE idx, BYTE AckType, WORD *checksum);
 #if ENABLE_NEW_LOADCOLORMODE_FUNCTION && ENABLE_COlORMODE_ADJUST_PWM 
 void _EEPROMBrightnessPWMInfoCheckSum_Get(BYTE idx, BYTE AckType, WORD *checksum);
 #endif
-void _EEPROMPostGammaCheckSum_Get(BYTE mode, BYTE idx, BYTE AckType, WORD *checksum);
+void _EEPROMPostGammaCheckSum_Get(BYTE mode, BYTE idx, BYTE AckType, WORD *checksum); //DICOM
 #if ENABLE_COLORTEMP_FUNCTION
 void _EEPROMColorTempCheckSum_Get(BYTE idx, BYTE AckType, WORD *checksum);
 #endif
@@ -2168,6 +2172,7 @@ void mdrv_DeltaE_Memory_Init(DWORD addr, MemoryType enMemoryType)
 {
     _addrOfAutoColorBlock = addr;
     _memoryType = enMemoryType;
+    //printf("_addrOfAutoColorBlock= %x \n",_addrOfAutoColorBlock);
 }
 
 void Memory_ReadByte( DWORD u32Addr, BYTE *value )
@@ -2218,6 +2223,7 @@ BOOL mdrv_DeltaE_FlashByteWriter_Set(void (*fpFlashWriteByte)(Bool bDoWP, DWORD 
         LUT_printMsg("FlashWriteByte config fail.\r\n");
         return FALSE;
     }
+
     s_FlashWriteByte = fpFlashWriteByte;
     return TRUE;
 }
@@ -2231,7 +2237,11 @@ else if(s_FlashWriteByte){
     s_FlashWriteByte(_bDoWP, u32Addr, value);
 }
 else
+{
+#if !USEFLASH
     NVRam_WriteByte(u32Addr, value);
+#endif
+}
 #if (ENABLE_ColorMode_Preload_Function)
 bMemoryWritten = true;
 #endif
@@ -2244,6 +2254,7 @@ BOOL mdrv_DeltaE_FlashTblWriter_Set(void (*fpFlashWriteTbl)(Bool bDoWP, DWORD u3
         LUT_printMsg("MemoryWriteTbl config fail.\r\n");
         return FALSE;
     }
+
     s_FlashWriteTbl = fpFlashWriteTbl;
     return TRUE;
 }
@@ -2273,7 +2284,7 @@ bMemoryWritten = true;
 BOOL IDXGetColorModeBrightnessPWMInfo(WORD u16IDX, BrightnessPWMInfo *mBrightnessPWMInfo)
 {
 	int idx = 0;
-	WORD addr = 0;
+	DWORD addr = 0;
 	WORD curIDX = 0;
 	BYTE PWM_idx = 0;
 	
@@ -2385,7 +2396,7 @@ BOOL IDXGetColorModeBrightnessPWMInfo(WORD u16IDX, BrightnessPWMInfo *mBrightnes
 BOOL IDXGetColorTempInfo(WORD u16IDX, ColorTempInfo *mColorTempInfo)
 {
 	BYTE idx = 0;
-	WORD addr = 0;
+	DWORD addr = 0;
 	WORD curIDX = 0;
 	
 	LUT_printMsg("=====IDXGetColorTempModeRGBgain=====\n");
@@ -2421,7 +2432,7 @@ LoadStatus IDXLoadGammaCurveMode(BYTE u8DispWin, WORD IDX, BYTE GammaIndex)
 	LoadStatus loadStatus = LoadStatus_SUCCESS;
 	WORD _IDX = 0;
 	BYTE ucColorMode = 0, funcIdx = 0;
-	WORD addr = GetAddrOfPostGamma();
+	DWORD addr = GetAddrOfPostGamma();
 	LUT_printData("GetAddrOfPostGamma : %X\n", addr);
 	Memory_ReadWord(addr+offset(StoredFormatOfPostGamma, IDX), (WORD*)(&_IDX));
 	LUT_printData("_IDX : %X\n", _IDX);
@@ -2446,7 +2457,7 @@ LoadStatus IDXLoadGammaCurveMode(BYTE u8DispWin, WORD IDX, BYTE GammaIndex)
 LoadStatus IDXLoadDeltaEColorMode(BYTE u8DispWin, WORD IDX)
 {
 	int idx = 0;
-	WORD addr = 0;
+	DWORD addr = 0;
 	WORD _IDX = 0;
 	#if ENABLE_ColorMode_FUNCTION || ENABLE_DICOM_FUNCTION || ENABLE_COLORTRACK_FUNCTION
 	BYTE ucColorMode = 0, funcIdx = 0;
@@ -2474,13 +2485,13 @@ LoadStatus IDXLoadDeltaEColorMode(BYTE u8DispWin, WORD IDX)
 	{
 		addr = GetAddrOfDICOM(idx);
 		LUT_printData("GetAddrOfDICOM : %X\n", addr);
-		Memory_ReadWord(addr+offset(StoredFormatOfPostGamma, IDX), (WORD*)(&_IDX));
+		Memory_ReadWord(addr+offset(StoredFormatOfDICOMGamma, IDX), (WORD*)(&_IDX));
 		LUT_printData("_IDX : %X\n", _IDX);
 		
 		if(IDX == _IDX)
 		{
-			Memory_ReadByte(addr+offset(StoredFormatOfPostGamma, ColorMode), (BYTE*)(&ucColorMode));
-			Memory_ReadByte(addr+offset(StoredFormatOfPostGamma, funcIdx), (BYTE*)(&funcIdx));
+			Memory_ReadByte(addr+offset(StoredFormatOfDICOMGamma, ColorMode), (BYTE*)(&ucColorMode));
+			Memory_ReadByte(addr+offset(StoredFormatOfDICOMGamma, funcIdx), (BYTE*)(&funcIdx));
 			return msNewLoadColorMode(u8DispWin, ucColorMode, funcIdx);
 		}
 	}
@@ -2564,32 +2575,49 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
 					        //BackUp xvYcc Color Matrix Status
 							ColorEngineStatus[4] = (BYTE)GETBIT(msReadByte(SC25_02), 1);
 					    #endif
-	        		}
-					msSetColorEngine(u8WinIdx, FALSE); //Color Engine Off
-	        	}
-	        	else
-	        	{
-					msRecoverColorEngine(ColorEngineStatus);	//Color Engine restore
-	        	}
+                        //BackUp Panelgamma status
+                        ColorEngineStatus[5] = (BYTE)GETBIT(msReadByte(SC24_DB), 4);
+                    }
+                    msSetColorEngine(u8WinIdx, FALSE); //Color Engine Off
+                    if(ColorEngineStatus[5])
+                    {
+                        #if (CHIP_ID == CHIP_MT9700)
+                        msSetPanelGammaOnOff(0);
+                        #endif
+                    }
+                }
+                else
+                {
+                    msRecoverColorEngine(ColorEngineStatus); //Color Engine restore
+                }
                 *checkSum = MS_ColorEngine_OnOff * 2 + DDCBuffer[3];
             }
             break;
 
             case MS_Set_PostGamma :
             {
-                WORD addr = 0, idx = 0;
+                DWORD addr = 0, idx = 0;
                 BYTE cnt = 0, mode = 0, ch = 0;
                 mode = DDCBuffer[3]; // gamma mode
                 ch = DDCBuffer[4] & 0x03 ; // gamma channel
                 cnt = DDCBuffer[5] ; // data size
                 addr = (WORD)(DDCBuffer[6] << 8 );
                 addr += DDCBuffer[7]; // start addr-hi, lo
-
-                for(idx = 0; idx < cnt; idx++)
+                if(mode == AutoColorFunction_DICOMMode)
                 {
-                    msSetPostGammaData(ch, addr + idx, DDCBuffer[8 + idx]);
+                    for(idx = 0; idx < cnt; idx++)
+                    {
+                        msSetDICOMGammaData(ch, addr + idx, DDCBuffer[8 + idx]);
+                    }
+                    *checkSum = DDCcmd_CRCU16CheckSum_Get((BYTE*)(&DDCBuffer[8]), cnt);
                 }
-                *checkSum = DDCcmd_CRCU16CheckSum_Get((BYTE*)(&DDCBuffer[8]), cnt);
+                else{
+                    for(idx = 0; idx < cnt; idx++)
+                    {
+                        msSetPostGammaData(ch, addr + idx, DDCBuffer[8 + idx]);
+                    }
+                    *checkSum = DDCcmd_CRCU16CheckSum_Get((BYTE*)(&DDCBuffer[8]), cnt);
+                }
             }
             break;
 /*
@@ -2960,7 +2988,7 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
                      case  AutoColorFunction_HDR :
                         #if ENABLE_ACHDR_FUNCTION
                         {
-                            void msVerifyHDRMode(BYTE u8WinIdx, BYTE enHDR);
+                            //void msVerifyHDRMode(BYTE u8WinIdx, BYTE enHDR);
                             msVerifyHDRMode(u8WinIdx, funcIdx);
                         }
                         #endif
@@ -3005,7 +3033,7 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
             #if Enable3DLUTColorMode
                 case MS_Set_3DLUT:
                 {
-                    WORD addr = 0, idx = 0;
+                    DWORD addr = 0, idx = 0;
                     BYTE cnt = 0, ch = 0;
 
                     ch = DDCBuffer[3] & 0x03 ;
@@ -3339,7 +3367,7 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
             break;
             case MS_WR_FS2_Brightness:
             {
-                WORD addr = GetAddrOfHDRBrightness();
+                DWORD addr = GetAddrOfHDRBrightness();
                 Memory_WriteByte(addr, DDCBuffer[3]);
                 *checkSum = DDCBuffer[3];
             }
@@ -3364,7 +3392,7 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
             break;
             case MS_WR_LD_CalibrateData:
             {
-                WORD addr = 0, idx = 0;
+                DWORD addr = 0, idx = 0;
                 BYTE cnt = 0;
                 cnt = DDCBuffer[3] ; // data size
                 addr = (WORD)(DDCBuffer[4] << 8 ); // data index
@@ -3488,7 +3516,7 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
 	            }
 				else if(sub_cmd == 2) //Read EEPROM data
 	            {
-	            	WORD addr = (DDCBuffer[4]<<8)+DDCBuffer[5];
+	            	DWORD addr = (DDCBuffer[4]<<8)+DDCBuffer[5];
 					BYTE size = DDCBuffer[6];
 					Memory_ReadTbl(addr, (BYTE*)(&DDCBuffer[1]), size);
 					DDCBuffer[0] = size;
@@ -3743,6 +3771,19 @@ BOOL IsStructEmpty(void * pData, int size)
 //-------------------------------------------------------------------------------
 // Gamma code segment
 //-------------------------------------------------------------------------------
+void ResetDICOMGammaData(void)
+{
+	int idx = 0;
+    BYTE **pDefaultGamma = (BYTE**)DefaultPostGamma[0]; //default same with post gamma
+	for(idx = 0; idx < GammaTableSize; idx++)
+	{
+		_DICOMGamma.Data[0][idx] = pDefaultGamma[0][idx];
+		_DICOMGamma.Data[1][idx] = pDefaultGamma[1][idx];
+		_DICOMGamma.Data[2][idx] = pDefaultGamma[2][idx];
+	}
+	_DICOMGamma.CheckSum = GetCRCCheckSum((BYTE*)(&_DICOMGamma.Data), sizeof(_DICOMGamma.Data));
+	LUT_printData("[Reset] CheckSum of DICOM Gamma : %x\n", _DICOMGamma.CheckSum);
+}
 void ResetPostGammaData(void)
 {
 	int idx = 0;
@@ -3764,12 +3805,19 @@ void msSetPostGammaData(int ch, int idx, BYTE _data)
 		//LUT_printData("[msSetPostGammaData] Data : %x\n", _postGamma.Data[ch][idx]);
 	}
 }
+void msSetDICOMGammaData(int ch, int idx, BYTE _data)
+{
+	if ((ch >= 0 && ch < 3) && (idx >=0 && idx < DICOMTableSize)){
+		_DICOMGamma.Data[ch][idx] = _data;
+		//LUT_printData("[msSetPostGammaData] Data : %x\n", _postGamma.Data[ch][idx]);
+	}
+}
 #if ENABLE_IDX_LOADCOLORMODE_FUNCTION
-void msSavePostGammaData(WORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag, WORD IDX)
+void msSavePostGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag, WORD IDX)
 #elif ENABLE_NEW_LOADCOLORMODE_FUNCTION
-void msSavePostGammaData(WORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag)
+void msSavePostGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag)
 #else
-void msSavePostGammaData(WORD addr, BYTE GammaValue)	
+void msSavePostGammaData(DWORD addr, BYTE GammaValue)	
 #endif
 {
 #if ENABLE_NEW_LOADCOLORMODE_FUNCTION
@@ -3789,7 +3837,67 @@ void msSavePostGammaData(WORD addr, BYTE GammaValue)
 	Memory_WriteTbl(addr, (BYTE*)(&_postGamma), sizeof(_postGamma));
 }
 
-LoadStatus msLoadPostGammaData(WORD addr)
+
+#if ENABLE_IDX_LOADCOLORMODE_FUNCTION
+void msSaveDICOMGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag, WORD IDX)
+#elif ENABLE_NEW_LOADCOLORMODE_FUNCTION
+void msSaveDICOMGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag)
+#else
+void msSaveDICOMGammaData(DWORD addr, BYTE GammaValue)	
+#endif
+{
+#if ENABLE_NEW_LOADCOLORMODE_FUNCTION
+	_DICOMGamma.ColorMode = ColorMode;
+	_DICOMGamma.funcIdx = funcIdx;
+#endif
+    _DICOMGamma.GammaValue = GammaValue;
+#if ENABLE_NEW_LOADCOLORMODE_FUNCTION
+	_DICOMGamma.CT_idx = CT_idx;
+	_DICOMGamma.PWM_idx = PWM_idx;
+	_DICOMGamma.UC_flag = UC_flag;
+#endif
+#if ENABLE_IDX_LOADCOLORMODE_FUNCTION
+	_DICOMGamma.IDX = IDX;
+#endif
+	_DICOMGamma.CheckSum = GetCRCCheckSum((BYTE*)(&_DICOMGamma.Data), sizeof(_DICOMGamma.Data));
+	Memory_WriteTbl(addr, (BYTE*)(&_DICOMGamma), sizeof(_DICOMGamma));
+}
+LoadStatus msLoadDICOMGammaData(DWORD addr)
+{
+	//WORD size = sizeof(_DICOMGamma);
+	//BYTE* pData  = (BYTE*)(&_DICOMGamma);
+	LUT_printData("sizeof(_DICOMGamma) = %d\n", sizeof(_DICOMGamma));
+	//Memory_ReadTbl(addr, pData, size);
+	Memory_ReadTbl(addr, (BYTE*)(&_DICOMGamma), sizeof(_DICOMGamma));
+#if ENABLE_NEW_LOADCOLORMODE_FUNCTION	
+	LUT_printData("_DICOMGamma.ColorMode = %x\n", _DICOMGamma.ColorMode);
+	LUT_printData("_DICOMGamma.funcIdx = %x\n", _DICOMGamma.funcIdx);
+#endif    
+	LUT_printData("_DICOMGamma.GammaValue = %x\n", _DICOMGamma.GammaValue);
+#if ENABLE_NEW_LOADCOLORMODE_FUNCTION
+	LUT_printData("_DICOMGamma.CT_idx = %x\n", _DICOMGamma.CT_idx);
+	LUT_printData("_DICOMGamma.PWM_idx = %x\n", _DICOMGamma.PWM_idx);
+	LUT_printData("_DICOMGamma.UC_flag = %x\n", _DICOMGamma.UC_flag);
+#endif
+#if ENABLE_IDX_LOADCOLORMODE_FUNCTION
+	LUT_printData("_DICOMGamma.IDX = %x\n", _DICOMGamma.IDX);
+#endif
+	short checkSum = GetCRCCheckSum((BYTE*)(&_DICOMGamma.Data), sizeof(_DICOMGamma.Data));
+    LUT_printData("msLoadDICOMGammaData addr = %x\n", addr);
+	LUT_printData("Stored CheckSum of DICOM Gamma : %x\n", _DICOMGamma.CheckSum);
+	LUT_printData("Calculated CheckSum of DICOM Gamma : %x\n", checkSum );
+
+	if ((_DICOMGamma.CheckSum != checkSum) || IsStructEmpty(_DICOMGamma.Data, sizeof(_DICOMGamma.Data)))
+	{
+		//ResetDICOMGammaData();//ResetPostGammaData();
+		LUT_printMsg("ResetDICOMGammaData");
+        //ResetPostGammaData();
+		LUT_printMsg("ResetPostGammaData");
+		return LoadStatus_RESET_GAMMA;
+ 	}
+	return LoadStatus_SUCCESS;
+}
+LoadStatus msLoadPostGammaData(DWORD addr)
 {
 	//WORD size = sizeof(_postGamma);
 	//BYTE* pData  = (BYTE*)(&_postGamma);
@@ -3810,6 +3918,8 @@ LoadStatus msLoadPostGammaData(WORD addr)
 	LUT_printData("_postGamma.IDX = %x\n", _postGamma.IDX);
 #endif
 	short checkSum = GetCRCCheckSum((BYTE*)(&_postGamma.Data), sizeof(_postGamma.Data));
+    LUT_printData("msLoadPostGammaData sizeof(_postGamma.Data) = %x\n", sizeof(_postGamma.Data));
+    LUT_printData("msLoadPostGammaData sizeof(_postGamma.Data) = %d\n", sizeof(_postGamma.Data));
     LUT_printData("msLoadPostGammaData addr = %x\n", addr);
 	LUT_printData("Stored CheckSum of Post Gamma : %x\n", _postGamma.CheckSum);
 	LUT_printData("Calculated CheckSum of Post Gamma : %x\n", checkSum );
@@ -3906,8 +4016,24 @@ LoadStatus msReloadGammaData(BYTE u8DispWin, DWORD addr)
 
 	return loadStatus;
 }
+LoadStatus msReloadDICOMGammaData(BYTE u8DispWin, DWORD addr)
+{
+    //Load PostGamma Table
+	LoadStatus loadStatus = msLoadDICOMGammaData(addr);//msLoadPostGammaData(addr);
+	BYTE *StoredDICOMGamma[][3] =
+	{
+		{
+       		_DICOMGamma.Data[0],
+        	_DICOMGamma.Data[1],
+        	_DICOMGamma.Data[2],
+    	},
+	};
 
-/*void msReloadPanelGammaData(BYTE u8DispWin, WORD addr)
+    msAPI_GammaLoadTbl_256E_14B_DICOM(u8DispWin,  StoredDICOMGamma[0]);//msAPI_GammaLoadTbl_256E_14B(u8DispWin,  StoredPostGamma[0]);
+
+	return loadStatus;
+}
+/*void msReloadPanelGammaData(BYTE u8DispWin, DWORD addr)
 {
     //Load PanelGamma Table
     msLoadPostGammaData(addr);
@@ -4023,6 +4149,7 @@ void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G,
     u32B /= 0xFF;
 
 	msWriteByteMask(SC7A_02, bEnable?BIT2:0, BIT2); // set y2r bypass enable
+    msWriteByteMask(SC7A_02, bEnable?BIT6:0, BIT6); // set r2y bypass enable
 	msWriteByteMask(SC53_15, (bEnable ? 0x00: BIT7), BIT7); // bypass tgen pattern
 	msWrite2Byte(SC53_02, u32R);
 	msWrite2Byte(SC53_08, u32G);
@@ -4031,6 +4158,56 @@ void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G,
 
 #endif
 
+void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD R, WORD G, WORD B)
+{
+    UNUSED(u8WinIdx);
+    DWORD PIPWin_hsize = PANEL_WIDTH * sqrt(percentOfCentralArea);
+    DWORD PIPWin_vsize = PANEL_HEIGHT * sqrt(percentOfCentralArea);
+
+    DWORD PIPWin_hst = (PANEL_WIDTH -  PIPWin_hsize) / 2;
+    DWORD PIPWin_hend = PIPWin_hst + PIPWin_hsize;
+    DWORD PIPWin_vst = (PANEL_HEIGHT - PIPWin_vsize) / 2;
+    DWORD PIPWin_vend = PIPWin_vst + PIPWin_vsize;
+
+    DWORD u32R, u32G, u32B;
+
+    u32R = R;
+    u32G = G;
+    u32B = B;
+
+
+
+    msWriteByteMask(SC53_15, 0, BIT7); // bypass tgen pattern
+    msWriteByteMask(SC53_15, BIT1, BIT1); //Display pip pattern
+
+	msWrite2Byte(SC53_24, u32R);//msWrite2Byte(SC53_02, u32R);
+	msWrite2Byte(SC53_26, u32G);//msWrite2Byte(SC53_08, u32G);
+	msWrite2Byte(SC53_28, u32B);//msWrite2Byte(SC53_0E, u32B);
+
+    msWrite2Byte(SC53_34, (WORD)PIPWin_hst);
+    msWrite2Byte(SC53_36, (WORD)PIPWin_hend);
+    msWrite2Byte(SC53_38, (WORD)PIPWin_vst);
+    msWrite2Byte(SC53_3A, (WORD)PIPWin_vend);
+    msWrite2Byte(SC53_18, PANEL_WIDTH);
+    msWrite2Byte(SC53_1C, PANEL_HEIGHT);
+}
+void msSetIP2TestPattern_Off(void)
+{
+    msWriteByteMask(SC53_15, BIT7, BIT7); // bypass tgen pattern
+    msWriteByteMask(SC53_15, 0, BIT1); //Display pip pattern
+    msWrite2Byte(SC53_34, 0x0000);//(WORD)PIPWin_hst
+    msWrite2Byte(SC53_36, 0x0000);//(WORD)PIPWin_hend
+    msWrite2Byte(SC53_38, 0x0000);//(WORD)PIPWin_vst
+    msWrite2Byte(SC53_3A, 0x0000);//(WORD)PIPWin_vend
+    msWrite2Byte(SC53_18, 0x0000);//PANEL_WIDTH
+    msWrite2Byte(SC53_1C, 0x0000);//PANEL_HEIGHT
+}
+void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize)
+{
+UNUSED(u8WinIdx);
+    _hSizeOfIP2TestPtn[0] = hSize;
+    _vSizeOfIP2TestPtn[0] = vSize;    
+}
 //-------------------------------------------------------------------------------
 // Toggle color engine
 //-------------------------------------------------------------------------------
@@ -4120,6 +4297,9 @@ void msRecoverColorEngine(BYTE *ColorEngineStatus)
         //xvYcc Color Matrix
 	    msAPI_ColorMatrixEnable(MAIN_WINDOW, ColorEngineStatus[4], 0);
     #endif
+    #if (CHIP_ID == CHIP_MT9700)
+    msSetPanelGammaOnOff(ColorEngineStatus[5]);
+    #endif
 }
 //-------------------------------------------------------------------------------
 // Table Address on EPPROM
@@ -4170,7 +4350,7 @@ void SetAddrOfStoredTable(int addr)
 // Access Color Matrix
 //-------------------------------------------------------------------------------
 #if ENABLE_ColorMode_FUNCTION
-WORD GetAddrOfColorModePostGamma(BYTE idx)
+DWORD GetAddrOfColorModePostGamma(BYTE idx)
 {
 	return _addrOfAutoColorBlock + sizeof(StoredFormatOfPostGamma)*idx;
 }
@@ -4235,7 +4415,7 @@ LoadStatus msLoadAdjustPWM(BYTE idx)
 //-------------------------------------------------------------------------------
 #if Enable3DLUTColorMode
 StoredFormatOf3DLUT _3DLUT;
-WORD GetAddrOfColorMode3DLUT(BYTE idx)
+DWORD GetAddrOfColorMode3DLUT(BYTE idx)
 {
     return _addrOfAutoColorBlock + sizeof(StoredFormatOfPostGamma)*NUM_OF_COLORMODE_GAMMA + sizeof(StoredFormatOf3DLUT)*idx;
 }
@@ -4291,7 +4471,7 @@ void msSave3DLUTData(BYTE ucColorMode, BYTE idx)
     if (idx >= NUM_OF_COLORMODE)
         return;
 
-	WORD addr = GetAddrOfColorMode3DLUT(idx);
+	DWORD addr = GetAddrOfColorMode3DLUT(idx);
     _3DLUT.ColorMode = ucColorMode;
 	#if ENABLE_NEW_LOADCOLORMODE_FUNCTION
 	_3DLUT.funcIdx = funcIdx;
@@ -4310,7 +4490,7 @@ LoadStatus msLoad3DLUTData(BYTE ucColorMode)
     LUT_printData("msLoad3DLUTData ucColorMode : %X\n", ucColorMode);
 	
     BYTE idx = 0;
-    WORD addr = 0;
+    DWORD addr = 0;
     BYTE colorMode = 0;
 #if ENABLE_NEW_LOADCOLORMODE_FUNCTION
 	LUT_printData("msLoad3DLUTData funcIdx : %X\n", ucfuncIdx);
@@ -4364,12 +4544,12 @@ void msLoadDeltaEColorMode(BYTE u8DispWin, BYTE ucColorMode)
     ms3DLutGrayGuard(0, TRUE);
 
     BYTE GammaMap[DELTAE_NUM_OF_COLORMODE] = {66, 22, 24, 24, 26, 24, 22};
-    WORD addr = 0;
+    DWORD addr = 0;
     BYTE GammaValue = 0;
     for (idx = 0; idx < NUM_OF_COLORMODE_GAMMA; idx++)
     {
         addr = GetAddrOfColorModePostGamma(idx);
-        Memory_ReadByte(WORD addr,BYTE * value)(addr, &GammaValue);
+        Memory_ReadByte(DWORD addr,BYTE * value)(addr, &GammaValue);
         if (GammaMap[ucColorMode] == GammaValue)
         {
             msReloadGammaData(addr);
@@ -4397,7 +4577,7 @@ void msLoadDeltaEColorMode(BYTE u8DispWin, BYTE ucColorMode)
 #endif
 #else
 StoredFormatOfColorMatirx _colorMatrix;
-WORD GetAddrOfColorModeMatrix(BYTE idx)
+DWORD GetAddrOfColorModeMatrix(BYTE idx)
 {
     return _addrOfAutoColorBlock + sizeof(StoredFormatOfPostGamma)*NUM_OF_COLORMODE_GAMMA + sizeof(StoredFormatOfColorMatirx)*idx;
 }
@@ -4444,7 +4624,7 @@ void msSaveColorMatrixData(BYTE ucColorMode, BYTE idx)
 {
     if (idx >= NUM_OF_COLORMODE)
         return;
-	WORD addr = GetAddrOfColorModeMatrix(idx);
+	DWORD addr = GetAddrOfColorModeMatrix(idx);
     _colorMatrix.ColorMode = ucColorMode;
 #if ENABLE_NEW_LOADCOLORMODE_FUNCTION
 	_colorMatrix.funcIdx = ucfuncIdx;
@@ -4462,7 +4642,7 @@ LoadStatus msLoadColorMatrixData(BYTE ucColorMode)
     LUT_printMsg("msLoadColorMatrixData......");
     LUT_printData("msLoadColorMatrixData ucColorMode : %X\n", ucColorMode);
     BYTE idx = 0;
-    WORD addr = 0;
+    DWORD addr = 0;
     BYTE colorMode = 0;
 	short checkSum = 0;
 	#if ENABLE_NEW_LOADCOLORMODE_FUNCTION
@@ -4518,7 +4698,7 @@ void msLoadDeltaEColorMode(BYTE u8DispWin, BYTE ucColorMode)
 	msWritexvYccColorMatrix(MAIN_WINDOW, psMatrix);
 
     BYTE GammaMap[DELTAE_NUM_OF_COLORMODE] = {66, 22, 24, 24, 26, 24, 22};
-    WORD addr = 0;
+    DWORD addr = 0;
     BYTE GammaValue = 0;
     for (idx = 0; idx < NUM_OF_COLORMODE_GAMMA; idx++)
     {
@@ -4689,7 +4869,7 @@ void msColorModeConfiguration(BYTE ucColorMode, BOOL *canLoadColor, BOOL *canLoa
 }
 
 #if ENABLE_NEW_LOADCOLORMODE_FUNCTION
-BOOL msGetAddrOfNewColorMode(BYTE ucColorMode, BYTE funcIdx, WORD *addr)
+BOOL msGetAddrOfNewColorMode(BYTE ucColorMode, BYTE funcIdx, DWORD *addr)
 {
 	#if ENABLE_ColorMode_FUNCTION || ENABLE_DICOM_FUNCTION || ENABLE_COLORTRACK_FUNCTION
 	int idx = 0;
@@ -4862,12 +5042,21 @@ LUT_printMsg("=====msNewLoadColorMode=====");
 
 	if(canLoadGamma)
 	{
-		WORD addr = 0;
+		DWORD addr = 0;
 
 		if(msGetAddrOfNewColorMode(ucColorMode, funcIdx, &addr))
 		{
+            
+			if(ucColorMode == AutoColorFunction_DICOMMode)
+            {
+			Memory_ReadByte(addr+offset(StoredFormatOfDICOMGamma, GammaValue), (BYTE*)(&GammaValue));
+			LUT_printData("GammaValue DICOM: %X\n", GammaValue);   
+            loadStatus |= msReloadDICOMGammaData(u8DispWin, addr);          
+            }
+            else
+            {
 			Memory_ReadByte(addr+offset(StoredFormatOfPostGamma, GammaValue), (BYTE*)(&GammaValue));
-			LUT_printData("GammaValue : %X\n", GammaValue);
+			LUT_printData("GammaValue post: %X\n", GammaValue);
 		#if ENABLE_COLORTEMP_FUNCTION	
 			BYTE CT_idx = 0;
 			Memory_ReadByte(addr+offset(StoredFormatOfPostGamma, CT_idx), (BYTE*)(&CT_idx));
@@ -4889,20 +5078,40 @@ LUT_printMsg("=====msNewLoadColorMode=====");
 			goto end;
 		
 			loadStatus |= msReloadGammaData(u8DispWin, addr);
+            }
 		}
 		else
 		{
-			ResetPostGammaData();
-	    	BYTE *StoredPostGamma[][3] =
-	    	{
-	    		{
-	           		_postGamma.Data[0],
-	            	_postGamma.Data[1],
-	            	_postGamma.Data[2],
-	        	},
-	    	};
+        
+			if(ucColorMode == AutoColorFunction_DICOMMode)
+            {
+                ResetDICOMGammaData();
+                BYTE *StoredDICOMGamma[][3] =
+                {
+                    {
+                        _DICOMGamma.Data[0],
+                        _DICOMGamma.Data[1],
+                        _DICOMGamma.Data[2],
+                    },
+                };
+				msAPI_GammaLoadTbl_256E_14B_DICOM(u8DispWin,  StoredDICOMGamma[0]);
+                //printf("msNewLoadColorMode: ucColorMode =%d\n",ucColorMode);
+            }
+			else{
+                ResetPostGammaData();
+                BYTE *StoredPostGamma[][3] =
+                {
+                    {
+                        _postGamma.Data[0],
+                        _postGamma.Data[1],
+                        _postGamma.Data[2],
+                    },
+                };
+       			msAPI_GammaLoadTbl_256E_14B(u8DispWin,  StoredPostGamma[0]);
+            }
 
-       		msAPI_GammaLoadTbl_256E_14B(u8DispWin,  StoredPostGamma[0]);
+																	 
+
 
 		}
         if(canLoadColor){
@@ -4988,15 +5197,15 @@ end:
 // DICOM
 //-------------------------------------------------------------------------------
 #if ENABLE_DICOM_FUNCTION
-WORD GetAddrOfDICOM(BYTE idx)
+DWORD GetAddrOfDICOM(BYTE idx)
 {
-    return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeof(StoredFormatOfPostGamma)*idx;
+    return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeof(StoredFormatOfDICOMGamma)*idx;
 }
 
 void msSetDICOMMode(BYTE u8DispWin, BYTE DICOMModeIdx)
 {
-    msSetColorEngine(FALSE);
-    msReloadGammaData(GetAddrOfDICOM(DICOMModeIdx));
+    msSetColorEngine(u8DispWin,FALSE);
+    msReloadGammaData(u8DispWin,GetAddrOfDICOM(DICOMModeIdx));
     msAPI_GammaEnable(u8DispWin, true);
 }
 #endif
@@ -5005,7 +5214,7 @@ void msSetDICOMMode(BYTE u8DispWin, BYTE DICOMModeIdx)
 // Gamma curve
 //-------------------------------------------------------------------------------
 #if ENABLE_GAMMA_FUNCTION
-WORD GetAddrOfPostGamma(void)
+DWORD GetAddrOfPostGamma(void)
 {
 	return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock;
 }
@@ -5036,7 +5245,7 @@ LoadStatus msSetGammaCurve(BYTE u8DispWin, BYTE GammaIndex)
 // Adjust Luminance PWM
 //-------------------------------------------------------------------------------
 #if ENABLE_COlORMODE_ADJUST_PWM 
-WORD GetAddrOfAdjustPWM(void)
+DWORD GetAddrOfAdjustPWM(void)
 {
 	return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock + sizeOfColorTempBlock + sizeOfColorTrackBlock + sizeOfHDRBlock;
 }
@@ -5062,7 +5271,7 @@ void msSetColorModeAdjustPWM(int idx, BYTE u8PWMValue )
 
 void msSaveColorModeAdjustPWM()
 {
-    WORD addr = GetAddrOfAdjustPWM(); 
+    DWORD addr = GetAddrOfAdjustPWM(); 
 	LUT_printData("msSaveColorModeAdjustPWM addr : %x\n", addr);
 	Memory_WriteTbl(addr, (BYTE*)(&_AdjustPWM), sizeof(_AdjustPWM));		
 }
@@ -5085,7 +5294,7 @@ void _EEPROMBrightnessPWMInfoCheckSum_Get(BYTE idx, BYTE AckType, WORD* checksum
 
 BOOL msGetColorModeBrightnessPWMInfo ( BYTE idx , BrightnessPWMInfo* mBrightnessPWMInfo)     
 {
-    WORD addr = GetAddrOfAdjustPWM ( );
+    DWORD addr = GetAddrOfAdjustPWM ( );
     LUT_printData ( "addr of _ColorModeAdjustPWM : %X\n", addr );
     Memory_ReadTbl( addr, ( BYTE * ) ( &_AdjustPWM), sizeof ( _AdjustPWM) ); 
     LUT_printData ( "Stored ADJ_PWM of ColorMode : %x\n", _AdjustPWM.mBrightnessPWMInfo[idx].ADJ_PWM);
@@ -5107,7 +5316,7 @@ BOOL msGetColorModeBrightnessPWMInfo ( BYTE idx , BrightnessPWMInfo* mBrightness
 #else
 BYTE msGetColorModeAdjustPWM ( BYTE idx )     
 {
-    WORD addr = GetAddrOfAdjustPWM ( );
+    DWORD addr = GetAddrOfAdjustPWM ( );
     LUT_printData ( "addr of _ColorModeAdjust : %X\n", addr );
     Memory_ReadTbl( addr, ( BYTE * ) ( &_AdjustPWM ), sizeof ( _AdjustPWM ) ); 
     LUT_printData ( "Stored ADJ_PWM of Color Temp : %x\n", _AdjustPWM.mBrightnessPWMInfo[idx].ADJ_PWM );
@@ -5124,7 +5333,7 @@ BYTE msGetColorModeAdjustPWM ( BYTE idx )
 // Save Verified Values to EEPROM
 //-------------------------------------------------------------------------------
 #if ENABLE_SAVE_COlORMODE_VERIFIED_VALUES 
-WORD GetAddrOfVerifiedValues(void)
+DWORD GetAddrOfVerifiedValues(void)
 {
 	return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock + sizeOfColorTempBlock + sizeOfColorTrackBlock + sizeOfUHDABlock + sizeOfHDRBlock + sizeAdjustPWMblock;
 }
@@ -5155,14 +5364,14 @@ void msSetColorModeVerfiedColorTrack(int idx, WORD u16ColorTrackValue )
 
 void msSaveColorModeVerifiedValues(void)
 {
-    WORD addr = GetAddrOfVerifiedValues(); 
+    DWORD addr = GetAddrOfVerifiedValues(); 
 	Memory_WriteTbl(addr, (BYTE*)(&_VerifiedValues), sizeof(_VerifiedValues));		
 }
 
 //index = 0: sRGB, 1: adobeRGB, 2: BT709, 3: BT2020, 4: DCI_P3, 5: EBU, 6:SMPTEC
 WORD msGetColorModeVerfiedValues ( BYTE type, BYTE idx )     
 {
-    WORD addr = GetAddrOfVerifiedValues( );
+    DSWORD addr = GetAddrOfVerifiedValues( );
 
     LUT_printData ( "addr of _ColorModeVerifiedValues : %X\n", addr );
     Memory_ReadTbl( addr, ( BYTE * ) ( &_VerifiedValues ), sizeof ( _VerifiedValues ) ); 
@@ -5479,16 +5688,16 @@ void msByPassGainOffset(BYTE u8DispWin)
 
 #if ENABLE_COLORTEMP_FUNCTION
 #if ENABLE_COLORTEMP_GAMMA
-WORD GetAddrOfColorTempPostGamma(void)
+DWORD GetAddrOfColorTempPostGamma(void)
 {
 	return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock;
 }
-WORD GetAddrOfColorTempRGBGain(BYTE idx)
+DWORD GetAddrOfColorTempRGBGain(BYTE idx)
 {
     return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock + sizeof(StoredFormatOfPostGamma) + sizeof(StoredFormatOfColorTemp)*idx;
 }
 #else
-WORD GetAddrOfColorTempRGBGain(BYTE idx)
+DWORD GetAddrOfColorTempRGBGain(BYTE idx)
 {
     return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock + sizeof(StoredFormatOfColorTemp)*idx;
 }
@@ -5525,7 +5734,7 @@ void msSetColorTempData(int idx, WORD u16Red, WORD u16Green, WORD u16Blue, BYTE 
 }
 BOOL msGetColorTempData ( BYTE idx , ColorTempInfo *mColorTempInfo)     
 {
-    WORD addr = GetAddrOfColorTempRGBGain(idx);
+    DWORD addr = GetAddrOfColorTempRGBGain(idx);
     LUT_printData ( "addr of ColorTempRGBGain : %X\n", addr );
     Memory_ReadTbl( addr, ( BYTE * ) ( &_colorTemp), sizeof ( _colorTemp) ); 
     LUT_printData ( "Stored Rgain : %x\n", _colorTemp.mColorTempInfo.rgbCont[0]);
@@ -5560,7 +5769,7 @@ void msSaveColorTempData(int idx)
 {
     if (idx >= NUM_OF_COLOR_TEMP)
         return;
-    WORD addr = GetAddrOfColorTempRGBGain(idx);
+    DWORD addr = GetAddrOfColorTempRGBGain(idx);
 	_colorTemp.CheckSum = GetCRCCheckSum((BYTE*)(&_colorTemp.mColorTempInfo), sizeof(_colorTemp.mColorTempInfo));
 	Memory_WriteTbl(addr, (BYTE*)(&_colorTemp), sizeof(_colorTemp));
 }
@@ -5620,7 +5829,7 @@ LoadStatus msLoadColorTempMode(BYTE u8DispWin, BYTE idx)
 {
 	msSetColorEngine(u8DispWin, FALSE);
     //msPQ_BypassPQ(u8DispWin, true);
-	WORD addr = GetAddrOfColorTempRGBGain(idx);
+	DWORD addr = GetAddrOfColorTempRGBGain(idx);
     LUT_printData("addr of _colorTemp : %X\n", addr);
 	Memory_ReadTbl(addr, (BYTE*)(&_colorTemp), sizeof(_colorTemp));
 	short checkSum = GetCRCCheckSum((BYTE*)(&_colorTemp.mColorTempInfo), sizeof(_colorTemp.mColorTempInfo));
@@ -5659,7 +5868,7 @@ LoadStatus msLoadColorTempMode(BYTE u8DispWin, BYTE idx)
 // Color track mode
 //-------------------------------------------------------------------------------
 #if ENABLE_COLORTRACK_FUNCTION
-WORD GetAddrOfColorTrackPostGamma(BYTE idx)
+DWORD GetAddrOfColorTrackPostGamma(BYTE idx)
 {
 	return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock + sizeOfColorTempBlock + sizeof(StoredFormatOfPostGamma)*idx;
 }
@@ -5667,7 +5876,7 @@ WORD GetAddrOfColorTrackPostGamma(BYTE idx)
 void msSetColorTrackMode(BYTE u8DispWin, BYTE GammaIndex)
 {
     //msPQ_BypassPQ(USER_PREF_WIN_SEL, true);
-    msReloadGammaData(GetAddrOfColorTrackPostGamma(GammaIndex));
+    msReloadGammaData(u8DispWin,GetAddrOfColorTrackPostGamma(GammaIndex));
     msAPI_GammaEnable(u8DispWin, true);
 }
 #endif
@@ -5675,12 +5884,12 @@ void msSetColorTrackMode(BYTE u8DispWin, BYTE GammaIndex)
 // UHDA Color mode
 //-------------------------------------------------------------------------------
 #if (0 && LD_ENABLE)
-WORD GetAddrOfUHDAYGamma(void)
+DWORD GetAddrOfUHDAYGamma(void)
 {
 	return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock + sizeOfColorTempBlock + sizeOfColorTrackBlock;
 }
 
-void msLoadUHDAYGammaData(WORD addr)
+void msLoadUHDAYGammaData(DWORD addr)
 {
 	WORD size = sizeof(_UHDAYGamma);
 	BYTE* pData  = (BYTE*)(&_UHDAYGamma);
@@ -5701,7 +5910,7 @@ void msLoadUHDAYGammaData(WORD addr)
  	}
 }
 
-void msSaveUHDAYGammaData(WORD addr)
+void msSaveUHDAYGammaData(DWORD addr)
 {
     int idx=0;
     for (idx=0; idx<UHDASWGammaTableSize; idx++)
@@ -5714,9 +5923,9 @@ void msSaveUHDAYGammaData(WORD addr)
 
 void LoadUHDAColorMode(BYTE u8DispWin)
 {
-    WORD addr = GetAddrOfUHDAYGamma();
+    DWORD addr = GetAddrOfUHDAYGamma();
     int idx=0;
-    printf("addr of UHDAPostGamma : 0x%X", addr);
+    LUT_printData("addr of UHDAPostGamma : 0x%X", addr);
     msLoadUHDAYGammaData(addr);
     //pYGamma = (BYTE*)(_UHDAYGamma.Data);
     for (idx=0; idx<UHDASWGammaTableSize; idx++)
@@ -5732,7 +5941,7 @@ void LoadUHDAColorMode(BYTE u8DispWin)
     int idx=0;
     for (idx=0; idx<UHDASWGammaTableSize; idx++)
     {
-        printf("_UHDAYGamma[%d] : 0x%X\n", idx, _UHDAYGamma.Data[idx]);
+        LUT_printData("_UHDAYGamma[%d] : 0x%X\n", idx, _UHDAYGamma.Data[idx]);
     }
     */
 
@@ -5741,19 +5950,19 @@ void LoadUHDAColorMode(BYTE u8DispWin)
 
 #if ENABLE_ACHDR_FUNCTION
 StoredHDRPanelInfo g_HDRPanelInfo;
-WORD GetAddrOfHDRPostGamma(void)
+DWORD GetAddrOfHDRPostGamma(void)
 {
 	return _addrOfAutoColorBlock + sizeOfColorModeBlock + sizeOfDICOMBlock + sizeOfGammaBlock + sizeOfColorTempBlock + sizeOfColorTrackBlock;
 }
 
-WORD GetAddrOfHDRPanelInfo(void)
+DWORD GetAddrOfHDRPanelInfo(void)
 {
     return GetAddrOfHDRPostGamma() + sizeof(StoredFormatOfPostGamma);
 }
 
 void msSaveHDRPanelInfo(void)
 {
-    WORD addr = GetAddrOfHDRPanelInfo();
+    DWORD addr = GetAddrOfHDRPanelInfo();
 	g_HDRPanelInfo.CheckSum = GetCRCCheckSum((BYTE*)(&g_HDRPanelInfo.mHDRPanelInfo), sizeof(g_HDRPanelInfo.mHDRPanelInfo));
 	Memory_WriteTbl(addr, (BYTE*)(&g_HDRPanelInfo), sizeof(g_HDRPanelInfo));
 	LUT_printData("[msSaveHDRPanelInfo] addr of GetAddrOfHDRPanelInfo : %X\n", addr);
@@ -5767,12 +5976,12 @@ void msSetACHDRPanelInfo(HDRPanelInfo *pHDRInfo)
 
 BOOL msLoadACHDRPanelInfo(StoredHDRPanelInfo *pHDRPanelInfo)
 {
-    WORD addr = GetAddrOfHDRPanelInfo();
+    DWORD addr = GetAddrOfHDRPanelInfo();
     LUT_printData("addr of ACHDRPanelInfo : %X\n", addr);
 	Memory_ReadTbl(addr, (BYTE*)(&g_HDRPanelInfo), sizeof(g_HDRPanelInfo));
-	short checkSum = GetCRCCheckSum((BYTE*)(&g_HDRPanelInfo.mHDRPanelInfo), sizeof(g_HDRPanelInfo.mHDRPanelInfo));
+	DWORD checkSum = GetCRCCheckSum((BYTE*)(&g_HDRPanelInfo.mHDRPanelInfo), sizeof(g_HDRPanelInfo.mHDRPanelInfo));
     LUT_printData("Stored CheckSum of AutoCalibrationHDR : %x\n", g_HDRPanelInfo.CheckSum);
-	LUT_printData("Calculated CheckSum of AutoCalibrationHDR : %x\n", checkSum );
+	LUT_printData("Calculated CheckSum of AutoCalibrationHDR here: %x\n", checkSum );
 
     if ((DWORD)checkSum == g_HDRPanelInfo.CheckSum && !IsStructEmpty(&g_HDRPanelInfo.mHDRPanelInfo, sizeof(g_HDRPanelInfo.mHDRPanelInfo)))
     {
@@ -5786,20 +5995,31 @@ void msLoadACHDRGamma(StoredFormatOfPostGamma *pStoredPostGamma)
 {
     msLoadPostGammaData(GetAddrOfHDRPostGamma());
     memcpy(pStoredPostGamma, &_postGamma, sizeof(_postGamma));
+    /*int i =0; 
+    int j;
+    for(i=0;i<3;i++){
+        printf("[%d] = ",i );
+        for(j=54;j<64;j++){
+        printf("%x, ",pStoredPostGamma->Data[i][j]);
+        }
+        printf("\n");
+    }
+    printf("%x, ",pStoredPostGamma->CheckSum);*/
+    
 }
 
 //-------------------------------------------------------------------------------
 // Access HDR Color Temp
 //-------------------------------------------------------------------------------
 StoredFormatOfHDRColorTemp g_HDRColorTemp;
-WORD GetAddrOfHDRColorTempRGBGain(void)
+DWORD GetAddrOfHDRColorTempRGBGain(void)
 {
     return GetAddrOfHDRPostGamma() + sizeof(StoredFormatOfPostGamma) + sizeof(StoredHDRPanelInfo);
 }
 
 void msSaveHDRColorTempRGBGain(void)
 {
-    WORD addr = GetAddrOfHDRColorTempRGBGain();
+    DWORD addr = GetAddrOfHDRColorTempRGBGain();
 	g_HDRColorTemp.CheckSum = GetCRCCheckSum((BYTE*)(&g_HDRColorTemp.mHDRColorTemp), sizeof(g_HDRColorTemp.mHDRColorTemp));
 	Memory_WriteTbl(addr, (BYTE*)(&g_HDRColorTemp), sizeof(g_HDRColorTemp));
 }
@@ -5811,7 +6031,7 @@ void msSetHDRColorTempRGBGain(HDRColorTemp *pHDRColorTemp)
 
 void msLoadHDRColorTempMode(void)
 {
-    WORD addr = GetAddrOfHDRColorTempRGBGain();
+    DWORD addr = GetAddrOfHDRColorTempRGBGain();
     LUT_printData("addr of ACHDRColorTemp : %X\n", addr);
 
 	Memory_ReadTbl(addr, (BYTE*)(&g_HDRColorTemp), sizeof(g_HDRColorTemp));
@@ -5862,7 +6082,7 @@ void msVerifyHDRMode(BYTE u8WinIdx, BYTE enHDR)
 // Access HDR 10 Step Luminance Map
 //-------------------------------------------------------------------------------
 StoredHDRLumMap g_HDRLumMap;
-WORD GetAddrOfHDRLumMap(void)
+DWORD GetAddrOfHDRLumMap(void)
 {
     return GetAddrOfHDRPostGamma() + sizeof(StoredFormatOfPostGamma) + sizeof(StoredHDRPanelInfo) + sizeof(StoredFormatOfHDRColorTemp);
 }
@@ -5874,14 +6094,14 @@ void msSetHDRLumMap(StoredHDRLumMap *pHDRLumMap)
 
 void msSaveHDRLumMap(void)
 {
-    WORD addr = GetAddrOfHDRLumMap();
+    DWORD addr = GetAddrOfHDRLumMap();
 	//g_HDRLumMap.CheckSum = GetCRCCheckSum((BYTE*)(&g_HDRLumMap.mHDRLumMap), sizeof(g_HDRLumMap.mHDRLumMap));
 	Memory_WriteTbl(addr, (BYTE*)(&g_HDRLumMap), sizeof(g_HDRLumMap));
 }
 
 BOOL msLoadACHDRLumMap(StoredHDRLumMap *pHDRLumMap)
 {
-    WORD addr = GetAddrOfHDRLumMap();
+    DWORD addr = GetAddrOfHDRLumMap();
     LUT_printData("addr of ACHDRLumMap : %X\n", addr);
 	Memory_ReadTbl(addr, (BYTE*)(&g_HDRLumMap), sizeof(g_HDRLumMap));
 	short checkSum = GetCRCCheckSum((BYTE*)(&g_HDRLumMap.mHDRLumMap), sizeof(g_HDRLumMap.mHDRLumMap));
@@ -5899,13 +6119,13 @@ BOOL msLoadACHDRLumMap(StoredHDRLumMap *pHDRLumMap)
 //-------------------------------------------------------------------------------
 // Access Adjust HDR Brightness
 //-------------------------------------------------------------------------------
-WORD GetAddrOfHDRBrightness(void)
+DWORD GetAddrOfHDRBrightness(void)
 {
     return GetAddrOfHDRPostGamma() + sizeof(StoredFormatOfPostGamma) + sizeof(StoredHDRPanelInfo) + sizeof(StoredFormatOfHDRColorTemp) + sizeof(StoredHDRLumMap);
 }
 
 StoredHDRCalibrateY g_HDRCalibrateY;
-WORD GetAddrOfHDRCalibrateY(void)
+DWORD GetAddrOfHDRCalibrateY(void)
 {
     //LUT_printData("GetAddrOfCalibrateHDRY : 0x%x", (GetAddrOfHDRBrightness() + sizeof(BYTE)));
     return (GetAddrOfHDRBrightness() + sizeof(BYTE));
@@ -5913,7 +6133,7 @@ WORD GetAddrOfHDRCalibrateY(void)
 
 void msSaveHDRCalibrateY(void)
 {
-    WORD addr = GetAddrOfHDRCalibrateY();
+    DWORD addr= GetAddrOfHDRCalibrateY();
     g_HDRCalibrateY.CheckSum = GetCRCCheckSum((BYTE*)(&g_HDRCalibrateY.mHDRCalibrateY), sizeof(g_HDRCalibrateY.mHDRCalibrateY));
     Memory_WriteTbl(addr, (BYTE*)(&g_HDRCalibrateY), sizeof(g_HDRCalibrateY));
 }
@@ -5925,7 +6145,7 @@ void msSetACHDRCalibrateY(HDRCalibrateY *pHDRCalibrateY)
 
 BOOL msLoadACHDRCalibrateY(StoredHDRCalibrateY *pHDRCalibrateY)
 {
-    WORD addr = GetAddrOfHDRCalibrateY();
+    DWORD addr = GetAddrOfHDRCalibrateY();
     LUT_printData("addr of ACHDRCalibrateY : %X\n", addr);
     Memory_ReadTbl(addr, (BYTE*)(&g_HDRCalibrateY), sizeof(g_HDRCalibrateY));
 
@@ -5947,14 +6167,14 @@ BOOL msLoadACHDRCalibrateY(StoredHDRCalibrateY *pHDRCalibrateY)
 //-------------------------------------------------------------------------------
 #if LD_ENABLE
 StoredLDCalibrateData g_LDCalibrateData;
-WORD GetAddrOfLDCalibrateData(void)
+DWORD GetAddrOfLDCalibrateData(void)
 {
     return GetAddrOfHDRCalibrateY() + sizeof(StoredHDRCalibrateY);
 }
 
 void msSaveLDCalibrateData(void)
 {
-    WORD addr = GetAddrOfLDCalibrateData();
+    DWORD addr = GetAddrOfLDCalibrateData();
     g_LDCalibrateData.CheckSum = GetCRCCheckSum((BYTE*)(&g_LDCalibrateData.mLDCalibrateData), sizeof(g_LDCalibrateData.mLDCalibrateData));
     Memory_WriteTbl(addr, (BYTE*)(&g_LDCalibrateData), sizeof(g_LDCalibrateData));
 }
@@ -5971,7 +6191,7 @@ void msSetLDCalibrateData(int idx, BYTE data)
 
 BOOL msLoadLDCalibrateData(StoredLDCalibrateData *pStoredLDCalibrateData)
 {
-    WORD addr = GetAddrOfLDCalibrateData();
+    DWORD addr = GetAddrOfLDCalibrateData();
     LUT_printData("addr of LDCalibrateData : %X\n", addr);
     Memory_ReadTbl(addr, (BYTE*)(&g_LDCalibrateData), sizeof(g_LDCalibrateData));
 
@@ -6020,7 +6240,7 @@ void  msSavePostGammaTable(BYTE mode, BYTE idx, BYTE funcIdx,BYTE GammaValue, BY
 		{
 			if (idx >= NUM_OF_DICOM_GAMMA)
 				return;
-			LUT_printData("GetAddrOfDICOM : %x\n", GetAddrOfDICOM(idx));
+			LUT_printData("GetAddrOfDICOM savetable: %x\n", GetAddrOfDICOM(idx));
 			msSaveDICOMGammaData(GetAddrOfDICOM(idx), mode, funcIdx, GammaValue, CT_idx, PWM_idx, UC_flag, IDX);
 		}
 		break;
@@ -6256,11 +6476,11 @@ void msResetWholeColorCalibrationData()
     for (idx = 0; idx < NUM_OF_DICOM_GAMMA; idx++)
     {
     #if ENABLE_IDX_LOADCOLORMODE_FUNCTION
-	 	msSavePostGammaData(GetAddrOfDICOM(idx), 0, 0, 22, 0, 0, 0, 0);
+	 	msSaveDICOMGammaData(GetAddrOfDICOM(idx), 0, 0, 22, 0, 0, 0, 0);//msSavePostGammaData(GetAddrOfDICOM(idx), 0, 0, 22, 0, 0, 0, 0);
     #elif ENABLE_NEW_LOADCOLORMODE_FUNCTION
-        msSavePostGammaData(GetAddrOfDICOM(idx), 0, 0, 22, 0, 0, 0);
+        msSaveDICOMGammaData(GetAddrOfDICOM(idx), 0, 0, 22, 0, 0, 0);//msSavePostGammaData(GetAddrOfDICOM(idx), 0, 0, 22, 0, 0, 0);
 	#else
-		msSavePostGammaData(GetAddrOfDICOM(idx), 22);
+		msSaveDICOMGammaData(GetAddrOfDICOM(idx), 22);//msSavePostGammaData(GetAddrOfDICOM(idx), 22);
 	#endif
     }
     //msSavePostGammaData(GetAddrOfDICOM(), 22);
@@ -6397,7 +6617,6 @@ void msExitTestPattern_WithoutSignal(void)
     msWrite2Byte(SC53_18, 0); 
     msWrite2Byte(SC53_1C, 0); 
 }
-#endif
 
 DWORD GetAddrOfAutoColorFunctionPostGamma(BYTE mode, BYTE idx)
 {
@@ -6455,13 +6674,51 @@ void _EEPROMPostGammaCheckSum_Get(BYTE mode, BYTE idx, BYTE AckType, WORD* check
 {
     if(AckType == 1)
     {
+        if(mode == AutoColorFunction_DICOMMode)
+            Memory_ReadWord((GetAddrOfAutoColorFunctionPostGamma(mode, idx)+offset(StoredFormatOfDICOMGamma, Data)+sizeof(_DICOMGamma.Data)), (WORD*)(checksum));
+        else
             Memory_ReadWord((GetAddrOfAutoColorFunctionPostGamma(mode, idx)+offset(StoredFormatOfPostGamma, Data)+sizeof(_postGamma.Data)), (WORD*)(checksum));
     }
     else if(AckType == 2)
     {
         {
+            if(mode == AutoColorFunction_DICOMMode)
+            {
+            Memory_ReadTbl(GetAddrOfAutoColorFunctionPostGamma(mode, idx), (BYTE*)(&_DICOMGamma), sizeof(_DICOMGamma));
+            *checksum = GetCRCCheckSum((BYTE*)(&_DICOMGamma.Data), sizeof(_DICOMGamma.Data));
+            }
+            else
+            {
             Memory_ReadTbl(GetAddrOfAutoColorFunctionPostGamma(mode, idx), (BYTE*)(&_postGamma), sizeof(_postGamma));
             *checksum = GetCRCCheckSum((BYTE*)(&_postGamma.Data), sizeof(_postGamma.Data));
+            }
         }
     } 
 }
+#else//ENABLE_DeltaE off
+
+void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD R, WORD G, WORD B)
+{
+    UNUSED(u8WinIdx);
+    UNUSED(percentOfCentralArea);
+    UNUSED(R);
+    UNUSED(G);
+    UNUSED(B);
+}
+void msSetIP2TestPattern_Off(void)
+{}
+void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize)
+{
+    UNUSED(u8WinIdx);
+    UNUSED(hSize);
+    UNUSED(vSize);
+}
+void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue)
+{
+    UNUSED(u16Red);
+    UNUSED(u16Green);
+    UNUSED(u16Blue);
+}
+
+#endif
+

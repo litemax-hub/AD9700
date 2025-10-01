@@ -22,9 +22,7 @@
 #include "Ms_PM.h"
 #endif
 #include "mapi_eDPTx.h"
-#if (CHIP_ID == CHIP_MT9701)
 #include "system_eDPTx.h"
-#endif
 
 ////////////////////////////////////////////////////
 //#include "drvPower.h"
@@ -44,7 +42,9 @@
 #endif
 #define TurnOffOSD      1
 void Power_TurnOffLed( void );
-#if (!Enable_PanelHandler)
+#if Enable_PanelHandler
+    #define PANEL_HANDLER_TIMEOUT   10000 // 10 sec
+#else
 void Power_TurnOffPanel( void );
 #endif
 void Power_PowerOffSystem( void );
@@ -84,6 +84,7 @@ void Power_PowerHandler( void )
         else
         {
             Clr_FakeSleepFlag();
+ 			printMsg("POWER, EXIT FAKE SLEEP\n");
 
             if(msAPI_FakeSleepTimeOutEn_Get())
             {
@@ -111,8 +112,12 @@ void Power_PowerHandler( void )
     }
 }
 
+extern void _mdrv_DPRx_LongHPD(DPRx_ID dprx_id);
 void Power_PowerOnSystem( void )
 {
+#if (ENABLE_DP_INPUT == 0x1)
+    DPRx_ID dprx_id = DPRx_ID_MAX;
+#endif
     BootTimeStamp_Set(POWER_ON_TS, 2, TRUE); // power on timestamp 2
     Set_ShowInputInfoFlag();
     gBoolVisualKey = 0;
@@ -135,6 +140,12 @@ void Power_PowerOnSystem( void )
     //Clr_ForcePowerDownFlag();
     SrcFlags |= SyncLoss;
     SwitchPortCntr = 0;
+#if (ENABLE_DP_INPUT == 0x1)
+    for(dprx_id = DPRx_ID_0; dprx_id < DPRx_ID_MAX; dprx_id++)
+	{
+		_mdrv_DPRx_LongHPD(dprx_id);
+	}
+#endif
     mStar_SetupInputPort();
     BootTimeStamp_Set(POWER_ON_TS, 5, TRUE); // power on timestamp 5
 }
@@ -388,12 +399,10 @@ void Power_PanelCtrlStateMachineChange(BOOL ISRTrigger)
                 {
                     msDrvCheckVBY1LockN();
                 }
-#if (CHIP_ID == CHIP_MT9701)
                 if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_ENABLE )
                 {
                     System_eDPTx_PowerOnCheck();
                 }
-#endif
                 // rst maximum, minimum, counter
                 g_s32PanelMinCounter = g_sPanelPowerTimingInfo.state2_3_Min;
                 g_s32PanelMaxCounter = g_sPanelPowerTimingInfo.state2_3_Max;
@@ -526,7 +535,8 @@ BOOL Power_PanelCtrlOnOff(BOOL bOn, BOOL bForce)
         for(state=0; state<ePANEL_STATE_MAX; state++)
             Power_PanelCtrlStateStopFlag_Clr(state);
 
-        while(1)
+        SetTimOutConter(PANEL_HANDLER_TIMEOUT);
+        while(bTimeOutCounterFlag)
         {
             // force panel on done
             if( g_bCurrentPanelCtrlOn && (g_ePanelState>=ePANEL_STATE_MAX-1))
@@ -542,6 +552,11 @@ BOOL Power_PanelCtrlOnOff(BOOL bOn, BOOL bForce)
             }
 
             Power_PanelCtrlHandler();
+        }
+
+        if(!bTimeOutCounterFlag)
+        {
+            POWER_printMsg("[Warning] Panel handler timeout!!!");
         }
     }
     return bResult;
@@ -602,13 +617,10 @@ void Power_TurnOnPanel( void )
         {
             msDrvCheckVBY1LockN();
         }
-
-#if (CHIP_ID == CHIP_MT9701)
         if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_ENABLE )
         {
             System_eDPTx_PowerOnCheck();
         }
-#endif
 
 #if Enable_ReducePanelPowerOnTime
         if(g_ePanelStatus == ePANEL_STATUS_TurnOnData)
@@ -743,14 +755,10 @@ void Power_ForcePowerOnPanel( void )
         {
             msDrvCheckVBY1LockN();
         }
-
-#if (CHIP_ID == CHIP_MT9701)
         if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_ENABLE )
         {
             System_eDPTx_PowerOnCheck();
         }
-#endif
-
         ForceDelay1ms( PanelOnTiming2 );
 
         g_ePanelStatus = ePANEL_STATUS_TurnOnBL;

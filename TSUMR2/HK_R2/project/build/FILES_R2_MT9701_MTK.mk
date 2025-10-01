@@ -86,6 +86,7 @@ MONITOR_FILES_DRIVER  += \
         $(MONITOR_PATH_DRIVER)/USB_Device/ms_dma.c                         \
         $(MONITOR_PATH_DRIVER)/USB_Device/ms_drc.c                         \
         $(MONITOR_PATH_DRIVER)/USB_Device/ms_function.c                    \
+        $(MONITOR_PATH_DRIVER)/USB_Device/ms_hid.c                         \
         $(MONITOR_PATH_DRIVER)/USB_Device/ms_msd_global.c                  \
         $(MONITOR_PATH_DRIVER)/USB_Device/ms_otg.c                         \
         $(MONITOR_PATH_DRIVER)/USB_Device/ms_usb.c                         \

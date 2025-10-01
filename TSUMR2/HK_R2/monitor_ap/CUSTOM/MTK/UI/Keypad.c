@@ -58,7 +58,7 @@ BYTE Key_GetKeypadStatus( void )
 
 #if 1
     if(temp < 0x20) // 0
-        keypad &= ~KEY_PLUS;
+        keypad &= ~KEY_MINUS;
     else if(temp < 0xf0) // 0x48
         keypad &= ~KEY_MENU;
 #else
@@ -84,7 +84,7 @@ BYTE Key_GetKeypadStatus( void )
 
 #if 1
     if(temp < 0x20) // 0
-        keypad &= ~KEY_MINUS;
+        keypad &= ~KEY_PLUS;
     else if(temp < 0x70) // 0x48
         keypad &= ~KEY_EXIT;
 
@@ -114,7 +114,7 @@ void CheckFactoryKeyStatus( void )
     keypadStatus = ( Key_GetKeypadStatus() ^ KeypadMask ) &KeypadMask;
     Clr_FactoryModeFlag();
 
-    if( keypadStatus == KEY_MENU )
+    if( keypadStatus == KEY_FACTORY )
     {
         Set_FactoryModeFlag();
         Set_PowerOnFlag();
@@ -167,7 +167,7 @@ void Key_ScanKeypad( void )
     {
         if(FakeSleepFlag)
         {
- 			//printMsg("KEY, EXIT FAKE SLEEP\n");
+ 			printMsg("KEY, EXIT FAKE SLEEP\n");
             Clr_FakeSleepFlag();
             FakeSleepCounter = 0;
             Set_ShowInputInfoFlag();

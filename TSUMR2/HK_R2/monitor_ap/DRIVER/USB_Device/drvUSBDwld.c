@@ -14,6 +14,7 @@
 #include "drvMcu.h"
 #include "drvIMI.h"
 #include "Global.h"
+#include "ms_hid.h"
 
 extern void printMsg( char *str );
 extern void printData( char *str, WORD value );
@@ -242,6 +243,13 @@ void MDrv_USB_Init_Device(void)
 //	isUsbInit = 1; // for MDrv_USB_Read and MDrv_USB_Write error handling
 }
 
+#if ENABLE_USB_DEVICE_HID_MODE
+void MDrv_USB_CmdLoop(void *pUsbStruct, U8 *pVendorCMD)
+{
+    if (otgIsUSBConfiged((USB_VAR *)pUsbStruct))
+        HIDFNloop((USB_VAR *)pUsbStruct, pVendorCMD);
+}
+#else
 void MDrv_USB_CmdLoop(void *pUsbStruct, U8 *pVendorCMD)
 {
     if (otgIsUSBConfiged((USB_VAR *)pUsbStruct))
@@ -249,6 +257,7 @@ void MDrv_USB_CmdLoop(void *pUsbStruct, U8 *pVendorCMD)
         MSDFNCMDloop((USB_VAR *)pUsbStruct, pVendorCMD);
     }
 }
+#endif
 
 #if ENABLE_USB_DEVICE
 
@@ -261,7 +270,13 @@ U8 NonEraseSector=0;
 
 U32 USBRxCnt, USBStoreCnt, USBTransferSize;
 U16 FileCheckSum, DataCheckSum;
+
+#if ENABLE_USB_DEVICE_HID_MODE
+U8 USBRxBuf[HID_TRX_LENGTH], USBTxBuf[HID_TRX_LENGTH];
+#else
 U8 USBRxBuf[2048], USBTxBuf[20];
+#endif
+
 USB_VAR	usbDrvVar;
 vendorCmdStruct	scsiVendorCmdVar;
 
@@ -275,6 +290,9 @@ void USB_Device_Init(void)
 	/* Init. SCSI vendor command struct */
 	Init_vendorCmd_Var(&scsiVendorCmdVar);
 	Init_gUSB_Var(&usbDrvVar, &scsiVendorCmdVar);
+#if ENABLE_USB_DEVICE_HID_MODE
+	HID_Init();
+#endif
 	/* Init. Mass storage class buffer */
 	otgInitMassBuffer(&usbDrvVar);
     MDrv_USB_Init_Device();
@@ -282,19 +300,250 @@ void USB_Device_Init(void)
 	usbDrvVar.DeviceConnect = 1;
     USBRxCnt = 0;
 
+#if ENABLE_USB_DEVICE_HID_MODE
+    HID_Tx_CtrlReq(USBTxBuf, HID_TRX_LENGTH);
+#else
     scsiVendorCmdVar.ucptrDataBuf = (U8 *)(USBRxBuf);
     scsiVendorCmdVar.ptrPPB2Buf = (U8 *)(USBTxBuf);
 
-	memset(scsiVendorCmdVar.ptrPPB2Buf,0x0,0x4);
+    memset(scsiVendorCmdVar.ptrPPB2Buf,0x0,0x4);
+#endif
 }
 
 void USB_Handler(void)
 {
     USB_CMDHandler();
 
+#if !ENABLE_USB_DEVICE_HID_MODE
     if(USBTransferSize)
         USB_DataHandler();
+#endif
 }
+
+#if ENABLE_USB_DEVICE_HID_MODE
+
+#if ENABLE_USB_DEVICE_UPDATE_CODE
+#define FLASH_SECTOR_SIZE 0x1000
+BYTE SPIBuffer[FLASH_SECTOR_SIZE] = {0};
+WORD SPIBuffer_counter = 0;
+#endif
+
+BYTE CheckHIDCommandValid(BYTE* Data)
+{
+    if((Data[0]==0x55)&&(Data[1]==0xAA)&&(Data[2]==0xAB)&&(Data[3]==0xCD) &&          \
+       (Data[HID_TRX_LENGTH-4]==0xAB)&&(Data[HID_TRX_LENGTH-3]==0xCD)&&(Data[HID_TRX_LENGTH-2]==0xAA)&&(Data[HID_TRX_LENGTH-1] == 0x55))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+void USB_CMDHandler(void)
+{
+	USB_DRC_Interrupt(&usbDrvVar);
+    MDrv_USB_CmdLoop((void*)(&usbDrvVar), USBRxBuf);
+
+    if( CheckHIDCommandValid(USBRxBuf))
+    {
+        switch(USBRxBuf[4])
+        {
+            case XROM_USB_FILE_SIZE:
+                USBTransferSize = (U32)(USBRxBuf[8]<<24|USBRxBuf[9]<<16|USBRxBuf[10]<<8|USBRxBuf[11]);
+                USB_printData("USBTransferSize_H: 0x%x", USBTransferSize >> 16);
+                USB_printData("USBTransferSize_L: 0x%x", USBTransferSize & 0xFFFF);
+
+#if ENABLE_USB_DEVICE_UPDATE_CODE
+                if(g_dwSpiDuelImageOffset < ENABLE_USB_HOST_DUAL_IMAGE_OFFSET)
+                    u32SPIOffset = ENABLE_USB_HOST_DUAL_IMAGE_OFFSET;
+                else
+                {
+                    u32SPIOffset = 0;
+                    u32DownloadOffset = ENABLE_USB_HOST_DUAL_IMAGE_SBOOT;
+                }
+
+                mcuSetSpiMode(SPI_MODE_FR); // set FR mode to avoid continue switching mode, speed up program time
+#else
+                if(USBTransferSize > DOWNLOAD_BUFFER_LEN)
+                {
+                    USB_printMsg("[Warning!!] USBTransferSize > Buffer Size");
+                }
+#endif
+                #if ENABLE_RTE
+                    msAPI_OverDriveEnable(0); // USB & OD share the same space. Before USB F/W download, OD should be off first.
+                #endif
+
+                DataCheckSum = 0;
+                FileCheckSum = 0;
+                USBStoreCnt = 0;
+
+#if ENABLE_USB_DEVICE_UPDATE_CODE
+                SPIBuffer_counter = 0;
+                NonEraseSector = 0;
+                SPIWCnt = 0;
+#endif
+            break;
+
+            case XROM_USB_FILE_CHECKSUM:
+                FileCheckSum = (U16)(USBRxBuf[8]<<8|USBRxBuf[9]);
+                USB_printData("FileCheckSum:0x%x", FileCheckSum);
+            break;
+
+            case XROM_USB_HID_DATA:
+                USB_DataHandler(USBRxBuf);
+            break;
+
+            case XROM_USB_REBOOT_SYS:
+                USB_printMsg("Reboot System\r\n\r\n");
+                msWrite4Byte( REG_002C08, 1);           //Reboot System
+                while(1);
+            break;
+
+            default:
+             break;
+        }
+
+        //clear Rx buffer
+        memset(HID_Get_EP0RxBuff(), 0, HID_TRX_LENGTH);
+        memset(USBRxBuf, 0, HID_TRX_LENGTH);
+    }
+}
+
+void USB_SendUpdateScuessCmd(BYTE u8Scuess)
+{
+    BYTE usb_magic[4] = {0xD0,0xD0,0xD0,0xD0};
+
+    if(u8Scuess)
+        MST_UpdateStatus = MST_UPDATE_STATUS_SUCCESS;
+    else
+        MST_UpdateStatus = MST_UPDATE_STATUS_FAIL;
+
+    if(!u8Scuess)
+        usb_magic[0] = 0xCC;
+
+    USBTxBuf[0] = 0x55;
+    USBTxBuf[1] = 0xAA;
+    USBTxBuf[2] = 0xAB;
+    USBTxBuf[3] = 0xCD;
+    USBTxBuf[4] = 0x02;
+    USBTxBuf[5] = 0xA0;
+    USBTxBuf[6] = 0x00;
+    USBTxBuf[7] = 0x04;
+    USBTxBuf[8] = usb_magic[0];
+    USBTxBuf[9] = usb_magic[1];
+    USBTxBuf[10] = usb_magic[2];
+    USBTxBuf[11] = usb_magic[3];
+    USBTxBuf[HID_TRX_LENGTH-4] = 0xAB;
+    USBTxBuf[HID_TRX_LENGTH-3] = 0xCD;
+    USBTxBuf[HID_TRX_LENGTH-2] = 0xAA;
+    USBTxBuf[HID_TRX_LENGTH-1] = 0x55;
+}
+
+void USB_DataHandler(BYTE* USB_Data)
+{
+	DWORD i = 0;
+    BYTE CheckSum_Flag;
+    WORD TransferSize;
+
+#if ENABLE_USB_DEVICE_UPDATE_CODE
+    WORD USB_remain_Data = 0;
+#endif
+
+    TransferSize = (WORD)(USB_Data[6]<<8|USB_Data[7]);
+//    USB_printData("TransferSize:%x", TransferSize);
+
+#if ENABLE_USB_DEVICE_UPDATE_CODE
+    USBStoreCnt += TransferSize;
+
+    if( (SPIBuffer_counter+TransferSize) < FLASH_SECTOR_SIZE )
+    {
+        memcpy(SPIBuffer + SPIBuffer_counter, USB_Data+8, TransferSize);
+        SPIBuffer_counter += TransferSize;
+    }
+    else
+    {
+        USB_remain_Data = FLASH_SECTOR_SIZE - SPIBuffer_counter;
+        memcpy(SPIBuffer+SPIBuffer_counter, USB_Data + 8, USB_remain_Data);
+
+       if(SPIWCnt >= u32DownloadOffset) //skip 1st image's sboot
+            WINISP_FlashWriteTbl(TRUE, u32SPIOffset+SPIWCnt, SPIBuffer, FLASH_SECTOR_SIZE, 0);
+
+        //calculate checksum
+        for(i=u32SPIOffset + SPIWCnt; i < u32SPIOffset + SPIWCnt + FLASH_SECTOR_SIZE; i++)
+            DataCheckSum += FlashReadAnyByte(i);
+
+        SPIWCnt += FLASH_SECTOR_SIZE;
+        SPIBuffer_counter = 0;
+        memcpy(SPIBuffer, USB_Data + 8 + USB_remain_Data, TransferSize - USB_remain_Data);
+        SPIBuffer_counter += (TransferSize - USB_remain_Data);
+    }
+
+    if(USBStoreCnt >= USBTransferSize ) //last sector
+    {
+        if(SPIWCnt >= u32DownloadOffset) //skip 1st image's sboot
+            WINISP_FlashWriteTbl(TRUE, u32SPIOffset+SPIWCnt, SPIBuffer, SPIBuffer_counter, 0);
+
+        //calculate checksum
+        for(i=u32SPIOffset + SPIWCnt; i < u32SPIOffset + SPIWCnt + SPIBuffer_counter; i++)
+            DataCheckSum += FlashReadAnyByte(i);
+
+        SPIWCnt += SPIBuffer_counter;
+    }
+
+    //processing
+    if((USBStoreCnt % ((HID_TRX_LENGTH-12)*10)) == 0)
+    {
+        USB_printMsg(".");
+    }
+
+    // write end
+    if(USBStoreCnt >= USBTransferSize)
+    {
+        if( DataCheckSum == FileCheckSum)
+        {
+            USB_printMsg("Checksum Compare pass");
+            CheckSum_Flag = 1;
+        }
+        else
+        {
+            USB_printData("Checksum Compare fail! DataCheckSum = 0x%x", DataCheckSum);
+            USB_printMsg("Download code FAILED");
+            CheckSum_Flag = 0;
+        }
+
+        USB_SendUpdateScuessCmd(CheckSum_Flag);
+    }
+#else
+    otg_memcpy((U8*)(USBData+USBStoreCnt), USB_Data+8, TransferSize);
+    USBStoreCnt += TransferSize;
+
+    if(USBStoreCnt >= USBTransferSize)
+    {
+        for(i=0; i< USBTransferSize;i++)
+            DataCheckSum += USBData[i];
+
+       if((DataCheckSum & 0xFFFF) == FileCheckSum)
+        {
+            USB_printMsg("CheckSum match\r\n");
+            CheckSum_Flag = 1;
+        }
+        else
+        {
+            USB_printData("CheckSum Compare Fail! DataCheckSum = 0x%x",DataCheckSum);
+            CheckSum_Flag = 0;
+        }
+
+        USB_SendUpdateScuessCmd(CheckSum_Flag);
+
+        APPSystem_USBDeviceCB((U8*)USBData, USBTransferSize, CheckSum_Flag);
+        USBTransferSize = 0;
+
+        #if ENABLE_RTE
+            msAPI_OverDriveEnable( UserprefOverDriveSwitch );
+        #endif
+    }
+#endif
+}
+
+#else //Non HID device
 
 void USB_CMDHandler(void)
 {
@@ -480,6 +729,7 @@ void USB_SendUpdateScuessCmd(BYTE u8Scuess)
         u16Retry--;
     }while (u16Retry && (scsiVendorCmdVar.ptrPPB2Buf[0] != 0));
 }
+#endif
 
 void USB_Device_Disable(void)
 {

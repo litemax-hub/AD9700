@@ -46,6 +46,8 @@ extern void WritePostComprssGamma2Dram ( BYTE u8Color, BYTE *pu8GammaTblIdx);
 extern void msDrvGammaWriteTbl_256E_14B_ByDMA(BYTE u8WinIdx, BYTE u8Color, BYTE **pu8GammaTblIdx );
 #endif
 extern void msDrvGammaLoadTbl_256E_14B(BYTE u8WinIdx, BYTE **GammaTblIdx);
+extern void msDrvGammaLoadTbl_256E_14B_76Bytes(BYTE u8WinIdx, BYTE **GammaTblIdx);
+extern void WritePostComprssGamma2Dramby76Bytes( BYTE u8Color, BYTE *pu8GammaTblIdx);
 extern void msDrvDeGammaEnable(BYTE u8WinIdx, Bool bEnable);
 extern void msDrvFixGammaEnable(BYTE u8WinIdx, Bool bEnable);
 extern void msDrvGammaEnable(BYTE u8WinIdx, Bool bEnable);
@@ -56,7 +58,9 @@ extern void msDrvWinReportEnable(Bool bEnable);
 extern void msDrvDisplayWindowEnable(Bool bEnable);
 extern void msDrvWinReportSetRange(WORD u16HStart, WORD u16HEnd, WORD u16VStart, WORD u16VEnd);
 extern void msDrvWinReportGetWeightingPixelCountBySetRange(WORD *Rweight, WORD *Gweight, WORD *Bweight);
-
+extern void mdrv_IP2Pattern_Enable(bool bEnable);
+extern void mdrv_IP2Pattern_Reset(void);
+extern void mdrv_IP2Pattern_SetPureColorPattern(IP2PATTERNColor *stColor);
 
 #endif
 
@@ -67,4 +71,9 @@ extern void msDrv_SuperResolutionOnOff(BOOL bOn);
 #endif
 
 extern void msDrv_VideoHueSaturation(void);
+
 extern Bool msDrv_SetColorModeDemo(void);
+
+
+void mdrv_Adjust_EnableNonStdCSC_Set(BOOL u8Enable);
+BOOL mdrv_Adjust_EnableNonStdCSC_Get(void);

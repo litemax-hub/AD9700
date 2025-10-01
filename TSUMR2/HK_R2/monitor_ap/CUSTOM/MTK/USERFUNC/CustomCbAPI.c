@@ -131,6 +131,11 @@ Bool CustomCb_CustomizeFblCondition(void)
 /// @return TRUE: Enter Fake Sleep Mode, FALSE: Don't Enter Fake Sleep Mode
 Bool CustomCb_FakeSleepCondition(void)
 {
+#if DISABLE_DPMS
+    return TRUE;
+#elif DISABLE_DP_FAKESLEEP
+    return FALSE;
+#else
     Bool bResult = FALSE;
     Bool bFakeSleepTimeOutSleepEn = TRUE;
 
@@ -223,6 +228,7 @@ BYTE CustomCb_WinColorCondition(void)
     }
 
     return u8Result;
+#endif
 }
 
 /// @brief This function is used to attach callback functions to the specified appmStar callback index.

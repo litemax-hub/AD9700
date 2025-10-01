@@ -1,17 +1,45 @@
 #ifndef __PANEL_CMO220W_H__
 #define __PANEL_CMO220W_H__
 #define PanelNumber             1800
-#define PanelName               "CMO"
-//#define ModelName               "MSTAR UXGA"
-#define PanelDither   6
+#define PanelName               "Panel CMO19"
+//////////////Select Panel Type/////////////
+#define PANEL_TTL               0
+#define PANEL_LVDS_1CH          0
+#define PANEL_LVDS_2CH          1
+#define PANEL_LVDS_4CH          0
+#define PANEL_VBY1_1CH_8Bit     0
+#define PANEL_VBY1_1CH_10Bit    0
+#define PANEL_VBY1_2CH_8Bit     0
+#define PANEL_VBY1_2CH_10Bit    0
+#define PANEL_VBY1_4CH_8Bit     0
+#define PANEL_VBY1_4CH_10Bit    0
+#define PANEL_VBY1_8CH_8Bit     0
+#define PANEL_VBY1_8CH_10Bit    0
+#define PANEL_VBY1()       ((PANEL_VBY1_1CH_8Bit)  ||  \
+                            (PANEL_VBY1_1CH_10Bit) ||  \
+                            (PANEL_VBY1_2CH_8Bit)  ||  \
+                            (PANEL_VBY1_2CH_10Bit) ||  \
+                            (PANEL_VBY1_4CH_8Bit)  ||  \
+                            (PANEL_VBY1_4CH_10Bit) ||  \
+                            (PANEL_VBY1_8CH_8Bit)  ||  \
+                            (PANEL_VBY1_8CH_10Bit) )
+#define PANEL_EDP               0
+
+#define LVDS_CH_A_SWAP      LVDS_CH_A
+#define LVDS_CH_B_SWAP      LVDS_CH_C
+#define LVDS_CH_C_SWAP      LVDS_CH_B
+#define LVDS_CH_D_SWAP      LVDS_CH_D
+
+#define PanelDither   8
 #define PanelTTL    0
 #define PanelTCON   0
 #define PanelLVDS   0xff
 #define PanelRSDS   0
+#define PanelminiLVDS      0
 #define ShortLineCheck    0
 #define LVDS_TIMode   0xff
 #define PanelDualPort   0xff
-#define PanelSwapPort   0xff
+#define PanelSwapPort   0
 #define PanelSwapOddML    0
 #define PanelSwapEvenML   0
 #define PanelSwapOddRB    0
@@ -22,6 +50,7 @@
 #define PanelInvDClk    0
 #define PanelInvHSync   0
 #define PanelInvVSync   0
+#define PANEL_SWAP_PN      0
 // driving current setting 0==>4mA, 1==>6mA, 2==>8mA ,3==>12mA
 #define PanelDCLKCurrent  1 // Dclk current
 #define PanelDECurrent    1 // DE signal current
@@ -43,14 +72,19 @@
 #define PanelHeight     1024
 #define PanelHTotal     1688
 #define PanelVTotal     1066
-#define PanelMaxHTotal      1800
-#define PanelMinHTotal      1504
-#define PanelMaxVTotal      2000
-#define PanelMinVTotal      900
+#define PanelMaxHTotal      2047
+#define PanelMinHTotal      1560
+#define PanelMaxVTotal      1150
+#define PanelMinVTotal      1032
 #define PanelDCLK              108
-#define PanelMaxDCLK        140  //2004/01/13 num1
+#define PanelMaxDCLK        135  //2004/01/13 num1
 #define PanelMinDCLK               90
 #define HV_OUTPUT_TYPE          HSRM_B
+
+// FRC coding test panel
+#define PanelVfreq          (600)
+#define PanelMaxVfreq   (750+20) // 75Hz
+#define PanelMinVfreq   (500-20) // 50Hz
 //=================================================================
 // TCON  setting for RSDS
 // TCON  setting for RSDS

@@ -1513,6 +1513,43 @@ BYTE mapi_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(BYTE ucInputPort)
 
 	return mdrv_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(dprx_id);
 }
+
+
+//**************************************************************************
+//  [Function Name]:
+//                  mapi_DPRx_PortInfo_Get()
+//  [Description]
+//                  mapi_DPRx_PortInfo_Get
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mapi_DPRx_PortInfo_Get(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{
+    DPRx_ID dprx_id = _mapi_DPRx_MSCHIP_PortNumber2DPRxID(ucInputPort);
+    
+    return mdrv_DPRx_PortInfo_Get(dprx_id, pRxInfoUnion, RxInfoSelect);
+}
+
+//**************************************************************************
+//  [Function Name]:
+//                  mapi_DPRx_PortInfo_Set()
+//  [Description]
+//                  mapi_DPRx_PortInfo_Set
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mapi_DPRx_PortInfo_Set(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{
+    DPRx_ID dprx_id = _mapi_DPRx_MSCHIP_PortNumber2DPRxID(ucInputPort);
+    
+    return mdrv_DPRx_PortInfo_Set(dprx_id, pRxInfoUnion, RxInfoSelect);
+}
+
+
 #endif //ENABLE_DP_INPUT
 
 //**************************************************************************

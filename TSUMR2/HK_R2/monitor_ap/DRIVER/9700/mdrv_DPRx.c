@@ -210,22 +210,22 @@ const BYTE EDID_DPRX_PORT0[DP_EDID_SIZE_512] =
 const BYTE EDID_DPRX_PORT1[DP_EDID_SIZE_512] =
 {
 #if 1 // 1080P
-    0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x3E, 0x93, 0x08, 0xC0, 0x00, 0x00, 0x00, 0x00,
-    0x20, 0x15, 0x01, 0x04, 0xA5, 0x33, 0x1D, 0x78, 0x22, 0x1E, 0x55, 0xA0, 0x59, 0x56, 0x9F, 0x27,
-    0x0D, 0x50, 0x54, 0xBD, 0x4B, 0x00, 0xD1, 0xC0, 0x81, 0x80, 0x95, 0x0F, 0x95, 0x00, 0xB3, 0x00,
-    0x81, 0xC0, 0x01, 0x01, 0x01, 0x01, 0x02, 0x3A, 0x80, 0x18, 0x71, 0x38, 0x2D, 0x40, 0x58, 0x2C,
-    0x45, 0x00, 0xFD, 0x1E, 0x11, 0x00, 0x00, 0x1E, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x0A, 0x20, 0x20,
-    0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0xFC, 0x00, 0x56,
-    0x53, 0x32, 0x33, 0x30, 0x50, 0x47, 0x4C, 0x57, 0x0A, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0xFD,
-    0x00, 0x38, 0x4C, 0x1E, 0x53, 0x11, 0x00, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x01, 0x6E,
-    0x02, 0x03, 0x0C, 0xC1, 0x23, 0x09, 0x17, 0x07, 0x83, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x32, 0x8D, 0x00, 0x00, 0xDC, 0xD3, 0x5E, 0x05,
+    0x22, 0x20, 0x01, 0x03, 0x80, 0x00, 0x00, 0x78, 0xAA, 0xEE, 0x95, 0xA3, 0x54, 0x4C, 0x99, 0x26,
+    0x0F, 0x50, 0x54, 0x21, 0x08, 0x00, 0x81, 0x80, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x30, 0x2A, 0x00, 0x98, 0x51, 0x00, 0x2A, 0x40, 0x30, 0xA0,
+    0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x00, 0x00, 0x00, 0xFC, 0x00, 0x4C, 0x4D, 0x44,
+    0x30, 0x37, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0x10, 0x00, 0x0A,
+    0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x00, 0x00, 0x00, 0x10,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x62,
+    0x02, 0x03, 0x14, 0x71, 0x41, 0x00, 0x23, 0x09, 0x17, 0x07, 0x83, 0x01, 0x00, 0x00, 0x65, 0x03,
+    0x0C, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x60
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE3,
 #endif
 
 #if 0 // 1080P 144
@@ -581,6 +581,7 @@ DPRx_AUX_ID _mdrv_DPRx_MSCHIP_DPRxID2AuxID(DPRx_ID dprx_id);
 DPRx_DECODER_ID _mdrv_DPRx_MSCHIP_DPRxID2DecodeID(DPRx_ID dprx_id);
 DPRx_PHY_ID _mdrv_DPRx_MSCHIP_DPRxID2PhyID(DPRx_ID dprx_id);
 DPRx_ID _mdrv_DPRx_MSCHIP_DPRxID2TypeCPortID(DPRx_ID dprx_id);
+DPRx_ID _mdrv_DPRx_GetOnlineRxID(void);
 extern void MuteVideoAndAudio(void);
 void _mdrv_DPRx_Timer_variable_Reset(void);
 
@@ -998,7 +999,7 @@ void _mdrv_DPRx_LongHPD(DPRx_ID dprx_id)
     BYTE ucInputPort = _mdrv_DPRx_MSCHIP_DPRxID2PortNumber(dprx_id);
     WORD XDATA i = 0;
 
-    if(dprx_id == DPRx_ID_MAX)
+    if(dprx_id == DPRx_ID_MAX || ucInputPort == Input_Nothing)
     {
         return;
     }
@@ -1386,11 +1387,20 @@ BOOL _mdrv_DPRx_StateHandler(DPRx_ID dprx_id)
                         }
                         else
                         {
-                            glDPRxInfo[dprx_id].DPCheckModeCnt = 0;
-                            glDPRxInfo[dprx_id].ucState = DPRx_STATE_MEASURE;
-                            glDPRxInfo[dprx_id].bChkEncryptionState = FALSE;
+                            if(mhal_DPRx_IsAutoEQDone(dprx_id, dprx_phy_id) == FALSE)
+                            {
+                                mhal_DPRx_HWFastTrainingEnable(dprx_id, FALSE);
+                                mhal_DPRx_HWFastTrainingEnable(dprx_id, TRUE);
+                                DP_DRV_DPRINTF("Rx%d 8b10b error some lane not start auto eq ==> Reset Fast Training !!!!\r\n", dprx_id);
+                            }
+                            else
+                            {
+                                glDPRxInfo[dprx_id].DPCheckModeCnt = 0;
+                                glDPRxInfo[dprx_id].ucState = DPRx_STATE_MEASURE;
+                                glDPRxInfo[dprx_id].bChkEncryptionState = FALSE;
 
-                            DP_DRV_DPRINTF("\r\n** DP fast training lock check -> measure! port %d\r\n", dprx_id);
+                                DP_DRV_DPRINTF("\r\n** DP fast training lock check -> measure! port %d\r\n", dprx_id);
+                            }
                         }
                     }
                 }
@@ -1819,7 +1829,11 @@ void _mdrv_DPRx_CableDisconnectReset(DPRx_ID dprx_id)
     }
 
     glDPRxInfo[dprx_id].ucState = DPRx_STATE_STARTUP;
-    glDPRxDecoderInfo[dprx_decoder_id].bAudioEnable = FALSE;
+
+    if(_mdrv_DPRx_GetOnlineRxID() == dprx_id)
+    {
+        glDPRxDecoderInfo[dprx_decoder_id].bAudioEnable = FALSE;
+    }
 
     return;
 }
@@ -2270,6 +2284,46 @@ DPRx_ID _mdrv_DPRx_MSCHIP_DPRxID2TypeCPortID(DPRx_ID dprx_id)
     return DPRx_ID_MAX;
 }
 
+//**************************************************************************
+//  [Function Name]:
+//                  _mdrv_DPRx_GetOnlineRxID()
+//  [Description]
+//					_mdrv_DPRx_GetOnlineRxID
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+DPRx_ID _mdrv_DPRx_GetOnlineRxID(void)
+{
+    #if (FPGA_Verification == 1)
+    return DPRx_ID_0; // MT9700 FPGA board define
+    #endif
+
+    if((Input_Displayport_C1 != Input_Nothing) && ((SrcInputType == Input_Displayport_C1)))
+    {
+        return DPRx_ID_0;
+    }
+    else if((Input_Displayport_C2 != Input_Nothing) && (SrcInputType == Input_Displayport_C2))
+    {
+        return DPRx_ID_1;
+    }
+    else if((Input_Displayport_C3 != Input_Nothing) && ((SrcInputType == Input_Displayport_C3)))
+    {
+        return DPRx_ID_2;
+    }
+    else if((Input_UsbTypeC3 != Input_Nothing) && ((SrcInputType == Input_UsbTypeC3)))
+    {
+        return DPRx_ID_3;
+    }
+    else
+    {
+        return DPRx_ID_MAX;
+    }
+
+    return DPRx_ID_MAX;
+}
+
 void ________INIT________(void);
 //**************************************************************************
 //  [Function Name]:
@@ -2367,7 +2421,7 @@ void mdrv_DPRx_Initial(void)
     // Power down PHY1 if DPC port is not used
     if(DPRx_C4_AUX == AUX_None)
     {
-        mhal_DPRx_PHYPowerModeSetting(mhal_ePM_POWEROFF, DPRx_ID_3, DPRx_PHY_ID_1);
+        mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWEROFF, DPRx_ID_3, DPRx_PHY_ID_1);
     }
 
     mdrv_DPRx_SetAuxPMClock(TRUE); // Set PM Aux clock to Xtal check aux idle need after aux initial
@@ -2569,6 +2623,29 @@ void mdrv_DPRx_SetupInputPort_DisplayPort(BYTE ucInputPort)
     mhal_DPRx_SetInterlaneSkewLoseInterrupt(dprx_id, FALSE);
     mhal_DPRx_SetInterlaneSkewDoneInterrupt(dprx_id, FALSE);
 
+    if(glLastRxID != 0xFF)
+    {
+        if(glLastRxID == DPRx_ID_3)
+        {
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_1);
+        }
+        else
+        {
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_0);
+        }
+    }
+
+    if(dprx_id == DPRx_ID_3)
+    {
+        mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWERON, dprx_id, DPRx_PHY_ID_1);
+    }
+    else
+    {
+        mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWERON, dprx_id, DPRx_PHY_ID_0);
+    }
+
+    mhal_DPRx_HWFastTrainingEnable(dprx_id, TRUE);
+
     #if((SET_DPC_PORT_AS_DP_PORT == 0x1) && (SET_DP_C4_LANE02_PN_SWAP == 0x1))
     if(dprx_id == DPRx_ID_3)
     {
@@ -2632,6 +2709,8 @@ void mdrv_DPRx_SetupInputPort_DisplayPort(BYTE ucInputPort)
 	if((mhal_DPRx_GetDPCDValueByRIU(dprx_aux_id, DPCD_00202) & 0x0F) != 0x7) // offline -> online
 	{
 		mhal_DPRx_SetOffLine(dprx_id, dprx_aux_id, FALSE);
+	    mhal_DPRx_MCUWriteNonPMDPCD(dprx_id, dprx_aux_id, DPCD_00100, 0x6);
+	    mhal_DPRx_MCUWriteNonPMDPCD(dprx_id, dprx_aux_id, DPCD_00101, 0x1);
 	}
 	else
 	{
@@ -2674,7 +2753,7 @@ void mdrv_DPRx_SetupInputPort_DisplayPort(BYTE ucInputPort)
         }
         else
         {
-            mhal_DPRx_HPDControl(dprx_aux_id, FALSE);
+            mdrv_DPRx_HPDControl(ucInputPort, FALSE);
         }
     }
 
@@ -2705,6 +2784,8 @@ void mdrv_DPRx_Switch_Port_Check(void)
 
     if(glLastRxID != 0xFF)
 	{
+	    mhal_DPRx_HWFastTrainingEnable(glLastRxID, FALSE);
+
 		if((mhal_DPRx_GetDPCDValueByRIU(_mdrv_DPRx_MSCHIP_DPRxID2AuxID(glLastRxID), DPCD_00202) & 0x0F) != 0x7) // online -> offline
 		{
 			mhal_DPRx_SetOffLine(glLastRxID, _mdrv_DPRx_MSCHIP_DPRxID2AuxID(glLastRxID), TRUE);
@@ -2717,6 +2798,15 @@ void mdrv_DPRx_Switch_Port_Check(void)
 			mhal_DPRx_SetOffLine(glLastRxID, _mdrv_DPRx_MSCHIP_DPRxID2AuxID(glLastRxID), TRUE);
 			_mdrv_DPRx_FakeTrainingLockStatus_Set(_mdrv_DPRx_MSCHIP_DPRxID2AuxID(glLastRxID), ubLinkRate, ubLaneCount);
 		}
+
+		if(glLastRxID == DPRx_ID_3)
+        {
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_1);
+        }
+        else
+        {
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_0);
+        }
 
 		glDPRxInfo[glLastRxID].bHdcpStartAuth = FALSE;
 		glDPRxInfo[glLastRxID].OnlinePort = DPRx_ID_MAX;
@@ -4551,6 +4641,15 @@ BOOL mdrv_DPRx_HPDControl(BYTE ucInputPort, BOOL bSetHPD)
         return FALSE;
     }
 
+    if(bSetHPD == 0x0)
+    {
+        mhal_DPRx_AuxPause_Set(dprx_aux_id, TRUE);
+    }
+    else
+    {
+        mhal_DPRx_AuxPause_Set(dprx_aux_id, FALSE);
+    }
+
     mhal_DPRx_HPDControl(dprx_aux_id, bSetHPD);
     mhal_DPRx_PHYCDRDetectEnable(dprx_phy_id, bSetHPD);
 
@@ -5301,15 +5400,6 @@ void mdrv_DPRx_RX2_IRQ_Handler(void)
             msWriteByteMask(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, BIT7, BIT7);
             mhal_DPRx_DELAY_NOP(10);
             msWriteByteMask(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, 0, BIT7);
-        }
-
-        if(msReadByte(REG_DPRX_DECODER_E0_0C_H + usRegOffsetDecoderByID) & BIT2) // vheight_unstable | (~msa_ignore_en & votal_unstable) | (~decompression_en & hwidth_unstable)
-        {
-            msWriteByte(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, BIT2);
-            mhal_DPRx_DELAY_NOP(10);
-            msWriteByte(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, 0);
-
-            _mdrv_DPRx_MSCHIP_ScreenMute();
         }
     }
 
@@ -6779,6 +6869,87 @@ DPRx_MCCS_WAKEUP mdrv_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(BYTE ucInputPort
 
     return mhal_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(dprx_aux_id);
 }
+
+
+//**************************************************************************
+//  [Function Name]:
+//                  mdrv_DPRx_PortInfo_Get()
+//  [Description]
+//					mdrv_DPRx_PortInfo_Get
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mdrv_DPRx_PortInfo_Get(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{
+	BOOL bReturnValue = TRUE;
+	DPRx_ID dprx_id = _mdrv_DPRx_MSCHIP_PortNumber2DPRxID(ucInputPort);
+    //DPRx_AUX_ID dprx_aux_id = _mdrv_DPRx_MSCHIP_DPRxID2AuxID(dprx_id);
+	DPRx_DECODER_ID dprx_decoder_id = _mdrv_DPRx_MSCHIP_DPRxID2DecodeID(dprx_id);
+
+	if(dprx_id == DPRx_ID_MAX)
+    {
+        return FALSE;
+    }
+
+	switch(RxInfoSelect)
+	{
+		case COMBO_RX_INFO_VAR_HTT_RO:
+			if(dprx_decoder_id != DPRx_DECODER_ID_MAX)
+			{
+		    	pRxInfoUnion->ulValue = glDPRxDecoderInfo[dprx_decoder_id].uwDPHtotal;
+			}
+			break;
+		case COMBO_RX_INFO_VAR_PIXEL_CLOCK_10KHZ:
+			if(dprx_decoder_id != DPRx_DECODER_ID_MAX)
+			{
+				pRxInfoUnion->ulValue = mhal_DPRx_GetTimingPixelClock10K(dprx_id, dprx_decoder_id);
+			}
+			break;
+
+		default:
+			bReturnValue = FALSE;
+			break;
+	}
+
+	return bReturnValue;
+}
+
+//**************************************************************************
+//  [Function Name]:
+//                  mdrv_DPRx_PortInfo_Set()
+//  [Description]
+//					mdrv_DPRx_PortInfo_Set
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mdrv_DPRx_PortInfo_Set(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{
+	BOOL bReturnValue = TRUE;
+	DPRx_ID dprx_id = _mdrv_DPRx_MSCHIP_PortNumber2DPRxID(ucInputPort);
+
+	if(dprx_id == DPRx_ID_MAX)
+    {
+        return FALSE;
+    }
+
+	switch(RxInfoSelect)
+	{
+		 case COMBO_RX_VAR_WAKEUPSTATUS_WO:
+            printf("value = 0x%x\r\n", pRxInfoUnion->ulValue);
+            break;
+
+		default:
+			bReturnValue = FALSE; //No support this enum
+			break;
+	}
+
+	return bReturnValue;
+}
+
 #endif // ENABLE_DP_INPUT
 
 //**************************************************************************

@@ -1187,8 +1187,6 @@ void msAPI_combo_HDMIRx_DDCControl(BYTE ucInputPort, Bool bEnable)
 //**************************************************************************
 void msAPI_combo_HDMIRx_SCDC_Field_Set(BYTE ucInputPort, BYTE u8Offset, BYTE u8Size, BYTE *u8SetValue)
 {
-#if (CHIP_ID == CHIP_MT9701)
-
     BYTE ComboPortIndex = msDrvMapInputToCombo(ucInputPort);
 
     if(ComboPortIndex >= HDMI_INPUT_PORT_END)
@@ -1200,14 +1198,6 @@ void msAPI_combo_HDMIRx_SCDC_Field_Set(BYTE ucInputPort, BYTE u8Offset, BYTE u8S
     {
         mdrv_hdmiRx_SetSCDCValue(ComboPortIndex, u8Offset, u8Size, u8SetValue);
     }
-#elif(CHIP_ID == CHIP_MT9700)
-
-    UNUSED(ucInputPort);
-    UNUSED(u8Offset);
-    UNUSED(u8Size);
-    UNUSED(u8SetValue);
-
-#endif
 }
 
 //**************************************************************************
@@ -1972,6 +1962,68 @@ Bool msAPI_combo_FetchSecureStormResult(Bool bIsRxKey, BYTE* pu8DataBuf, WORD u1
 
     return bRet;
 }
+
+
+/**
+ *  @brief      ReSet HPD low duration time
+ *  @param      eInputPortMux -- combo port enum value
+ *  @param      rxInfoUnion -- specific structure for information exchange
+ *  @param      rxInfoSelect -- specific enum for information exchange
+ *  @return     BOOL -- The operation work or not
+*/
+BOOL mapi_combo_RxInfo_Get(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION* rxInfoUnion, EN_COMBO_RX_INFO_SELECT rxInfoSelect)
+{
+	BOOL bReturnValue = FALSE;
+
+	do
+	{
+		if(INPUT_IS_DISPLAYPORT(ucInputPort)||INPUT_IS_USBTYPEC(ucInputPort))
+		{
+			bReturnValue = mapi_DPRx_PortInfo_Get((BYTE)ucInputPort, rxInfoUnion, rxInfoSelect);
+		   	break;
+		}
+
+		if(INPUT_IS_HDMI(ucInputPort)||INPUT_IS_DVI(ucInputPort))
+		{
+		   bReturnValue = mdrv_hdmiRx_RxInfo_Get(ucInputPort, rxInfoUnion, rxInfoSelect);
+           break;
+		}
+	} while(FALSE);
+
+
+
+	return bReturnValue;
+}
+
+/**
+ *  @brief      ReSet HPD low duration time
+ *  @param      eInputPortMux -- combo port enum value
+ *  @param      rxInfoUnion -- specific structure for information exchange
+ *  @param      rxInfoSelect -- specific enum for information exchange
+ *  @return     BOOL -- The operation work or not
+*/
+BOOL mapi_combo_RxInfo_Set(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION* rxInfoUnion, EN_COMBO_RX_INFO_SELECT rxInfoSelect)
+{
+	BOOL bReturnValue = FALSE;
+
+	
+	do
+	{
+		if(INPUT_IS_DISPLAYPORT(ucInputPort)||INPUT_IS_USBTYPEC(ucInputPort))
+		{
+			bReturnValue = mapi_DPRx_PortInfo_Set((BYTE)ucInputPort, rxInfoUnion, rxInfoSelect);
+		   	break;
+		}
+
+		if(INPUT_IS_HDMI(ucInputPort)||INPUT_IS_DVI(ucInputPort))
+		{
+		   
+		}
+	} while(FALSE);
+
+	return bReturnValue;
+}
+
 
 
 void ________HDMI_ONLY________(void);

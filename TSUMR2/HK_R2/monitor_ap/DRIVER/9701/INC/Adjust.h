@@ -63,6 +63,8 @@ _ADJSUTDEC_ void msAPI_WinReportEnable(Bool bEnable);
 _ADJSUTDEC_ void msAPI_DisplayWindowEnable(Bool bEnable);
 _ADJSUTDEC_ void msAPI_WinReportSetRange(WORD u16HStart, WORD u16HEnd, WORD u16VStart, WORD u16VEnd);
 _ADJSUTDEC_ void msAPI_WinReportGetWeightingPixelCountBySetRange(WORD *Rweight, WORD *Gweight, WORD *Bweight);
+_ADJSUTDEC_ void mapi_Adjust_EnableNonStdCSC_Set(BOOL u8Enable);
+_ADJSUTDEC_ BOOL mapi_Adjust_EnableNonStdCSC_Get(void);
 
 _ADJSUTDEC_ BYTE mAPI_appAdjust_IDXColorMode_Load(BYTE u8DispWin, WORD IDX);
 _ADJSUTDEC_ void msAPI_appAdjust_FlashWriteByte(Bool bDoWP, DWORD u32Addr, BYTE u8Value);

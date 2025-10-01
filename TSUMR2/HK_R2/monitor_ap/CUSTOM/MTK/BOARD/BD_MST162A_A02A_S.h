@@ -402,17 +402,23 @@
     #if(!HPD_INVERSE)
         #define hw_Set_HdcpHpd()        (MEM_MSWRITE_BIT(REG_PAD_TOP_18_L, FALSE, BIT6), MEM_MSWRITE_BIT(REG_PAD_TOP_19_L, TRUE, BIT6))
         #define hw_Clr_HdcpHpd()        (MEM_MSWRITE_BIT(REG_PAD_TOP_18_L, FALSE, BIT6), MEM_MSWRITE_BIT(REG_PAD_TOP_19_L, FALSE, BIT6))
+        #define hwHDCP_Hpd_Pin()        (MEM_MSREAD_BYTE(REG_PAD_TOP_19_H) & BIT6)
         #define hw_Set_HdcpHpd2()        // no use in this Board.
         #define hw_Clr_HdcpHpd2()
+        #define hwHDCP_Hpd2_Pin()
         #define hw_Set_HdcpHpd3()        // no use in this Board.
         #define hw_Clr_HdcpHpd3()
+        #define hwHDCP_Hpd3_Pin()
     #else
         #define hw_Set_HdcpHpd()        (MEM_MSWRITE_BIT(REG_PAD_TOP_18_L, FALSE, BIT6), MEM_MSWRITE_BIT(REG_PAD_TOP_19_L, FALSE, BIT6))
         #define hw_Clr_HdcpHpd()        (MEM_MSWRITE_BIT(REG_PAD_TOP_18_L, FALSE, BIT6), MEM_MSWRITE_BIT(REG_PAD_TOP_19_L, TRUE, BIT6))
+        #define hwHDCP_Hpd_Pin()        (!(MEM_MSREAD_BYTE(REG_PAD_TOP_19_H) & BIT6))
         #define hw_Set_HdcpHpd2()        // no use in this Board.
         #define hw_Clr_HdcpHpd2()
+        #define hwHDCP_Hpd2_Pin()
         #define hw_Set_HdcpHpd3()        // no use in this Board.
         #define hw_Clr_HdcpHpd3()
+        #define hwHDCP_Hpd3_Pin()
     #endif
     #define Init_hwHDCP_Hpd_Pin()   (MEM_MSWRITE_BYTE_MASK(REG_PAD_TOP_31_L,0,BIT2|BIT1|BIT0), MEM_MSWRITE_BYTE_MASK(REG_PAD_TOP_4B_L, BIT6|BIT7, BIT6|BIT7))
     #define Init_hwHDCP_Hpd_Pin2()

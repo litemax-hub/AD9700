@@ -10,6 +10,8 @@ extern BYTE *DisplaySettingsText( void );
 extern BYTE *OtherSettingsText( void );
 extern BYTE *InformationText( void );
 extern BYTE *ExtColorSettingsText( void );
+extern BYTE *ExitText( void );
+extern BYTE *ReturnText( void );
 extern BYTE *PowerManagerText( void );
 extern BYTE *NoSignalText( void );
 

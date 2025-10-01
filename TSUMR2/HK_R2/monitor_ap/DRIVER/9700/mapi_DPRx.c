@@ -1397,6 +1397,38 @@ DPRx_MCCS_WAKEUP mapi_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(BYTE ucInputPort
 {
 	return mdrv_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(ucInputPort);
 }
+
+
+//**************************************************************************
+//  [Function Name]:
+//                  mapi_DPRx_PortInfo_Get()
+//  [Description]
+//                  mapi_DPRx_PortInfo_Get
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mapi_DPRx_PortInfo_Get(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{
+    return mdrv_DPRx_PortInfo_Get(ucInputPort, pRxInfoUnion, RxInfoSelect);
+}
+
+//**************************************************************************
+//  [Function Name]:
+//                  mapi_DPRx_PortInfo_Set()
+//  [Description]
+//                  mapi_DPRx_PortInfo_Set
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mapi_DPRx_PortInfo_Set(BYTE ucInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{   
+    return mdrv_DPRx_PortInfo_Set(ucInputPort, pRxInfoUnion, RxInfoSelect);
+}
+
 #endif // ENABLE_DP_INPUT
 
 //**************************************************************************

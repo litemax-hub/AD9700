@@ -2007,7 +2007,7 @@ void drvmStar_TimingGenInit(void)
     msWriteByte(SC00_23, ( g_sPnlInfo.sPnlTiming.u16Vtt - g_sPnlInfo.sPnlTiming.u16VSyncBP ) >> 8); //vsync end
     msWriteByte(SC00_24, ( g_sPnlInfo.sPnlTiming.u16Htt/PANEL_H_DIV - 1 ) & 0xFF); // output htotal
     msWriteByte(SC00_25, ( g_sPnlInfo.sPnlTiming.u16Htt/PANEL_H_DIV - 1 ) >> 8); // output htotal
-    msWriteByte(SC00_26, ( g_sPnlInfo.sPnlTiming.u16HSyncWidth/PANEL_H_DIV ) - 2); //-1}, //
+    msWriteByte(SC00_26, ( g_sPnlInfo.sPnlTiming.u16HSyncWidth/PANEL_H_DIV ) - 1); // output Hsync end
 
     // Scaling Image window size
     msWriteByte(SC00_18, ( g_sPnlInfo.sPnlTiming.u16HStart/PANEL_H_DIV ) & 0xFF);

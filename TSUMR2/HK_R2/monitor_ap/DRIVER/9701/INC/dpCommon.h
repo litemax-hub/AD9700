@@ -66,6 +66,8 @@
 #define GET_DPRx_FUNCTION_ENABLE_PORT(a)	(Bool)((ucDPFunctionEnableIndex & (BIT0 << (a)))? TRUE : FALSE)
 #define GET_DPRx_FUNCTION_ENABLE_INDEX()	(ucDPFunctionEnableIndex)
 
+#define DPRX_M_RANGE_NEW_MODE               1
+#define DPRX_M_RANGE_NEW_MODE_VALUE         6 //Mrange = M*0.6%
 #define DPRX_M_DETECT_RANGE_PIXEL_CLK		600 // Unit: MHz
 #define DPRX_AUIDO_UNMUTE_NORMAL			1 // 1: Unmute normal, 0: Can unmute fast (8 pin sound for CTS 5.4.4.2)
 #define DPRx_ASTRO_INTERLACE_PATCH			1

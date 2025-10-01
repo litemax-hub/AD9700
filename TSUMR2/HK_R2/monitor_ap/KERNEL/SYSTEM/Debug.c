@@ -3628,7 +3628,7 @@ BOOL ExecTestCommand( void )
 #endif
 
 #if ENABLE_USB_HOST
-        case 0xFD:
+        case 0xFC:
         {
             if(ucPara1 == 0)
             {

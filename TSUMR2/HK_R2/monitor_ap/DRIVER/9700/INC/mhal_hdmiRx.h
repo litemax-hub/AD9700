@@ -206,6 +206,8 @@
 #define HDMI_CLOCK_RATE_FRL_OFFSET          0x3U
 
 #define HDMI_XTAL_CLOCK_MHZ                 12U
+#define HDMI_XTAL_CLOCK_10kHZ               1200U
+#define HDMI_XTAL_CLOCK_HZ                  12000000U
 #define HDMI_XTAL_DIVIDER                   128U
 
 #define _BYTE_0  0x00
@@ -599,6 +601,40 @@ typedef enum
 
 typedef enum
 {
+    HDMI_SIGNAL_PIX_MHZ   = 0,
+    HDMI_SIGNAL_PIX_10KHZ,
+    HDMI_SIGNAL_PIX_HZ   ,
+}EN_HDMI_PIX_CLK_TYPE;
+
+typedef enum
+{
+    MSCombo_TMDS_COLOR_DEPTH_6_BIT  = 0,
+    MSCombo_TMDS_COLOR_DEPTH_8_BIT  = 1,
+    MSCombo_TMDS_COLOR_DEPTH_10_BIT = 2,
+    MSCombo_TMDS_COLOR_DEPTH_12_BIT = 3,
+    MSCombo_TMDS_COLOR_DEPTH_16_BIT = 4,
+    MSCombo_TMDS_COLOR_DEPTH_UNKNOWN = 5,
+    MSCombo_TMDS_COLOR_DEPTH_14_BIT = 6,
+} MSCombo_TMDS_COLOR_DEPTH_FORMAT;
+
+typedef enum
+{
+    MSCombo_TMDS_N0_PIX_REP = 0,
+    MSCombo_TMDS_2x_PIX_REP = 1,
+    MSCombo_TMDS_3x_PIX_REP = 2,
+    MSCombo_TMDS_4x_PIX_REP = 3,
+    MSCombo_TMDS_5x_PIX_REP = 4,
+    MSCombo_TMDS_6x_PIX_REP = 5,
+    MSCombo_TMDS_7x_PIX_REP = 6,
+    MSCombo_TMDS_8x_PIX_REP = 7,
+    MSCombo_TMDS_9x_PIX_REP = 8,
+    MSCombo_TMDS_10x_PIX_REP = 9,
+    MSCombo_TMDS_RESERVED_PIX_REP = 10,
+} MSCombo_TMDS_PIXEL_REPETITION;
+
+
+typedef enum
+{
     HDMI_AUDIO_CONTENT_CTS = 0,
     HDMI_AUDIO_CONTENT_N,
 }EN_HDMI_AUDIO_CONTENT_INFO;
@@ -896,6 +932,7 @@ Bool Hal_HDMI_CheckIRQMaskEnable(HDMI_IRQ_Mask enIRQType);
 void Hal_HDMI_IRQClearStatus(HDMI_IRQ_Mask enIRQType);
 Bool Hal_HDMI_IRQCheckStatus(HDMI_IRQ_Mask enIRQType);
 #endif
+DWORD Hal_tmds_GetClockRatePort(MS_U8 enInputPortType, MS_U8 u8SourceVersion, EN_HDMI_PIX_CLK_TYPE enType);
 void Hal_HDMI_PMEnableDVIDetect(BYTE enInputPortSelect, Bool bEnable, HDMI_PM_MODE_TYPE enPMModeType);
 void Hal_HDMI_PM_SwitchHDMIPort(BYTE hdmirx_id);
 Bool Hal_HDMI_GetDEStableStatus(BYTE enInputPortSelect);
@@ -904,6 +941,7 @@ Bool Hal_HDMI_GetVRREnableFlag(BYTE enInputPortSelect);
 Bool Hal_HDMI_Get_InfoFrame(BYTE enInputPortSelect, MS_HDMI_PACKET_STATE_t u8state, void *pData, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo);
 BYTE Hal_HDMI_GetFreeSyncInfo(BYTE enInputPortSelect, DWORD u32PacketStatus, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo __attribute__ ((unused)));
 BYTE Hal_HDMI_avi_infoframe_info(BYTE enInputPortSelect, BYTE u8byte, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo);
+MSCombo_TMDS_PIXEL_REPETITION KHal_HDMIRx_GetPixelRepetitionInfo(MS_U8 enInputPortType __attribute__ ((unused)));
 BYTE Hal_HDMI_GetGCPColorDepth(BYTE enInputPortSelect, DWORD *u32PacketStatus);
 BYTE Hal_HDMI_GetColorFormat(BYTE enInputPortSelect);
 BYTE Hal_HDMI_GetColorRange(BYTE enInputPortSelect);

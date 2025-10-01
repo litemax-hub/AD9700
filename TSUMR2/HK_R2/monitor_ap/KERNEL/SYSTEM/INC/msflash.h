@@ -65,7 +65,7 @@
 #endif
 #define FDATA_START_ADDR              0xA000 // 0x3A000
 
-#define FDATA_ACTOOLGAMMA_ADDR 0x9000
+#define FDATA_ACTOOLGAMMA_ADDR 0x9000+0x100000//0xDE907
 
 #define IDENT_NOT_FOUND 0xFFFF
 
@@ -641,6 +641,7 @@ _MSFLASHDEC_ void Flash_WriteModeSet( BYTE index, BYTE *buf );
 _MSFLASHDEC_ Bool Flash_ReadModeSet( BYTE index, BYTE *buf );
 
 _MSFLASHDEC_ void FlashDisableWP( WORD wAddr );
+_MSFLASHDEC_ void WINISP_FlashDisableWP( DWORD wAddr );
 _MSFLASHDEC_ void FlashEnableWP( void );
 _MSFLASHDEC_ void FlashFSPEnable( Bool bEnable );
 _MSFLASHDEC_ void FlashCheckSpiMode( void );

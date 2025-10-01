@@ -65,7 +65,8 @@ MenuItemActionType code NaviExecFuncGotoPrevKeyEvent[BTN_EndBTN]=
     MIA_NextItem,               // BTN_Minus
     MIA_ExecFunc_And_GotoPrev,  // BTN_Menu
     MIA_GotoPrev,               // BTN_Exit
-    MIA_Power                   // BTN_Power
+    MIA_Power,                   // BTN_Power
+    MIA_SourceSel, //2006-02-22
 };
 
 #if (AudioFunc && (ENABLE_HDMI || ENABLE_DP_INPUT))
@@ -284,12 +285,8 @@ MenuItemActionType code FactoryExitKeyEvent[BTN_EndBTN] = // 2011.9.15 Rick modi
 //===========================================================
 MenuItemActionType code RootKeyEvent[BTN_EndBTN] =
 {
-    MIA_GotoNext,   // BTN_Plus
-#if HotExpansion
-    MIA_Expansion,  // BTN_Minus
-#else
-    MIA_GotoNext,   // BTN_Minus
-#endif
+    MIA_SourceSel,   // BTN_Plus
+    MIA_Brite,  //MIA_VOL,   // BTN_Minus
     MIA_GotoNext,   // BTN_Menu
     MIA_GotoNext,   // BTN_Exit
     MIA_Power,      // BTN_Power
@@ -410,6 +407,27 @@ MenuItemActionType code FacExecNvramKeyEvent[BTN_EndBTN] = // 2011.9.13 22:30 CC
     MIA_Nothing					// BTN_BSEL
 };
 
+MenuItemActionType code ReturnEvent[BTN_EndBTN] =
+{
+    MIA_PrevItem,   // BTN_Plus
+    MIA_NextItem,   // BTN_Minus
+    MIA_GotoPrev,    // BTN_Menu
+    MIA_GotoPrev,   // BTN_Exit
+    MIA_Power,      // BTN_Power
+    MIA_GotoPrev,
+};
+//===========================================================
+MenuItemActionType code OORKeyEvent[BTN_EndBTN] =
+{
+    MIA_SourceSel,   // BTN_Plus
+    MIA_Nothing, // BTN_Minus
+    MIA_Nothing, // BTN_Menu
+    MIA_Nothing, // BTN_Exit
+    MIA_Power, // BTN_Power
+    MIA_SourceSel,
+
+};
+
 //============================================================
 MenuItemType code PowerOffMenuItems[] =
 {
@@ -443,7 +461,7 @@ MenuItemType code StandbyMenuItems[] =
         RootMenu, // NextMenuPage;
         DWI_CenterText,// DrawMenuItemType;
         NoSignalText, // DisplayText;
-        NothingKeyEvent,// KeyEvent
+        OORKeyEvent,// KeyEvent
         {
             NULL, // AdjustFunction
             NULL  // ExecFunction
@@ -492,7 +510,7 @@ MenuItemType code UnsupportedModeMenuItems[] =
         RootMenu, // NextMenuPage;
         DWI_CenterText,// DrawMenuItemType;
         OutofRangeText, // DisplayText;
-        NothingKeyEvent,//PowerOffKeyEvent, //KeyEvent
+        OORKeyEvent,//PowerOffKeyEvent, //KeyEvent
         {
             NULL, // AdjustFunction
             NULL  // ExecFunction

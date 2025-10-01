@@ -157,13 +157,19 @@ typedef struct
    BYTE IsValid;
    BYTE ICC[6];
 } ICCDesc;
-
+#if (CHIP_ID==CHIP_MT9700)
+typedef struct
+{
+    BYTE IsValid;
+    BYTE mPostGamma[3][64];
+} __attribute__((packed))PostGammaDesc;
+#else
 typedef struct
 {
     BYTE IsValid;
     BYTE mPostGamma[3][320];
 } __attribute__((packed))PostGammaDesc;
-
+#endif
 typedef struct
 {
    BYTE IsValid;

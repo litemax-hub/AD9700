@@ -452,8 +452,12 @@ void mStar_CheckFailSafeMode( WORD Checkhfreq, WORD Checkvreq )
 {
     if (( Checkhfreq > MaxInputHFreq || Checkhfreq < MinInputHFreq
      ||((!IS_HDMI_FREESYNC()) && Checkvreq > MaxInputVFreq) || ((!IS_HDMI_FREESYNC()) && Checkvreq < MinInputVFreq) )
+#if 0 // LiteMax
         ||(StandardModeWidth >= g_sPnlInfo.sPnlTiming.u16Width && StandardModeHeight > g_sPnlInfo.sPnlTiming.u16Height)
         ||(StandardModeWidth > g_sPnlInfo.sPnlTiming.u16Width && StandardModeHeight >= g_sPnlInfo.sPnlTiming.u16Height))
+#else
+        )
+#endif
     {
         SrcFlags |= bUnsupportMode;
     }

@@ -11,7 +11,7 @@
 #else
 #define drvAdjust_PRINT(format, ...)
 #endif
-
+static BOOL _IsEnNonStdCSC = FALSE;
 // 0 ~ 100 (default 50)
 void mStar_AdjustUserPrefBlacklevel( BYTE Redblacklevel, BYTE Greenblacklevel, BYTE Blueblacklevel )
 {
@@ -20,7 +20,7 @@ void mStar_AdjustUserPrefBlacklevel( BYTE Redblacklevel, BYTE Greenblacklevel, B
     Blueblacklevel = ((( WORD )Blueblacklevel * ( MaxBlackLevelValue - MinBlackLevelValue))+50) / 100 + MinBlackLevelValue;
     //printData("###mStar_AdjustUserPrefBlacklevel(output) = %x\n", Redblacklevel);
     msSetRGBOffset(MAIN_WINDOW, Redblacklevel, Greenblacklevel, Blueblacklevel);
-    msAdjustPostRGBOffset(MAIN_WINDOW);
+    msAdjustPreRGBOffset(MAIN_WINDOW);
 }
 
 /******************************************************************************************************************************************
@@ -1641,4 +1641,13 @@ Bool msDrv_SetColorModeDemo(void)
     //2023/02/23, remove to msACECSCControl()
     //msWriteByteMask( SC0F_AE, BIT7, BIT7);
     return TRUE;
+}
+void mdrv_Adjust_EnableNonStdCSC_Set(BOOL u8Enable)
+{
+     _IsEnNonStdCSC = u8Enable;
+}
+
+BOOL mdrv_Adjust_EnableNonStdCSC_Get(void)
+{
+     return _IsEnNonStdCSC;
 }

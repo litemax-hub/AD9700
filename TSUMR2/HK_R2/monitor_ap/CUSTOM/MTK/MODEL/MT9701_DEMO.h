@@ -236,8 +236,9 @@
 ////////////////////////////////////////////////////////////
 // USB DEVICE
 ////////////////////////////////////////////////////////////
-#define ENABLE_USB_DEVICE                   (0 && !ENABLE_USB_HOST)
-#define ENABLE_USB_DEVICE_UPDATE_CODE       (0 && ENABLE_USB_DEVICE)
+#define ENABLE_USB_DEVICE                   0
+#define ENABLE_USB_DEVICE_HID_MODE          (0 && ENABLE_USB_DEVICE)
+#define ENABLE_USB_DEVICE_UPDATE_CODE       (1 && ENABLE_USB_DEVICE)
 
 ////////////////////////////////////////////////////////////
 // POWERMANAGEMENT

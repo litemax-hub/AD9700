@@ -438,6 +438,7 @@
         #define hwHDCP_Hpd2_Pin()       (MEM_MSREAD_BYTE(REG_PAD_TOP_43_L) & BIT2)
         #define hw_Set_HdcpHpd3()        // no use in this Board.
         #define hw_Clr_HdcpHpd3()
+        #define hwHDCP_Hpd3_Pin()
     #else
         #define hw_Set_HdcpHpd()         // no use in this Board.
         #define hw_Clr_HdcpHpd()        

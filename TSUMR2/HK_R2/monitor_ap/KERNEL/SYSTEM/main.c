@@ -208,6 +208,7 @@ int main( void )
 #else
     ReadMonitorSetting();
 #endif
+//UserPrefInputPriorityType = Input_Priority_Auto;
     CustomCb_CbFunnction_Init();
 
     BootTimeStamp_Set(AP_INIT_TS, 6, TRUE); // ap init timestamp 6
@@ -225,7 +226,7 @@ int main( void )
     msPM_Init();
 #endif
 
-    //CheckFactoryKeyStatus();
+    CheckFactoryKeyStatus();
     Init_GlobalVariables();
     Menu_InitVariable();
     Init_Device();

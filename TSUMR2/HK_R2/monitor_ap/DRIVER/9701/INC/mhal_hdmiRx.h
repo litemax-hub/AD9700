@@ -377,6 +377,8 @@ typedef void (*TimingChg_CALL_BACK_FUNC)(void);
 #define HDMI_CLOCK_RATE_FRL_OFFSET          0x3U
 
 #define HDMI_XTAL_CLOCK_MHZ                 12U
+#define HDMI_XTAL_CLOCK_10kHZ               1200U
+#define HDMI_XTAL_CLOCK_HZ                  12000000U
 #define HDMI_XTAL_DIVIDER                   128U
 
 #define _BYTE_0  0x00
@@ -817,6 +819,13 @@ typedef enum
 
 typedef enum
 {
+    HDMI_SIGNAL_PIX_MHZ   = 0,
+    HDMI_SIGNAL_PIX_10KHZ,
+    HDMI_SIGNAL_PIX_HZ   ,
+}EN_HDMI_PIX_CLK_TYPE;
+
+typedef enum
+{
     HDMI_AUDIO_CONTENT_CTS = 0,
     HDMI_AUDIO_CONTENT_N,
 }EN_HDMI_AUDIO_CONTENT_INFO;
@@ -1152,7 +1161,7 @@ MS_BOOL _Hal_tmds_GetErrorCountStatus(MS_U8 enInputPortType, MS_BOOL bHDMI20Flag
 MS_BOOL _Hal_tmds_ActiveCableCheckDLEV(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo);
 MS_BOOL _Hal_tmds_DIGLockCheck(MS_U8 enInputPortType);
 void _Hal_HDMIRx_DTOP_DEC_MISC_IRQ_OnOff(MS_U8 enInputPortType, MS_BOOL bEnableIRQ, HDMI_DTOP_DEC_MISC_IRQ_MASK_TYPE type);
-MS_U16 Hal_tmds_GetClockRatePort(MS_U8 enInputPortType, MS_U8 u8SourceVersion);
+MS_U32 Hal_tmds_GetClockRatePort(MS_U8 enInputPortType, MS_U8 u8SourceVersion, EN_HDMI_PIX_CLK_TYPE enType);
 MSCombo_TMDS_PIXEL_REPETITION KHal_HDMIRx_GetPixelRepetitionInfo(MS_U8 enInputPortType);
 MS_BOOL Hal_HDMI_get_packet_value(MS_U8 enInputPortSelect, MS_HDMI_PACKET_STATE_t u8state, MS_U8 u8byte_idx, MS_U8 *pu8Value);
 void Hal_HDMI_StablePolling(MS_U8 enInputPortSelect, MS_U32 *ulPacketStatus, ST_HDMI_RX_POLLING_INFO *stHDMIPollingInfo);

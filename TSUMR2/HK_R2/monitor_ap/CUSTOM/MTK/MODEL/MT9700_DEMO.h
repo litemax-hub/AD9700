@@ -222,6 +222,23 @@
 #define _NEW_SOG_WAKEUP_DET_            (_NEW_SOG_DET_)
 #define ENABLE_TYPEC_SAR_DET            1       // default: 0, 1: enable only related SAR pins are reserved
 #define DRAM_TYPE                       DRAM_NOUSE
+#elif (MainBoardType == BD_MT9700_LITEMAX)
+#define INPUT_TYPE                      (INPUT_1A|INPUT_3C)
+#define ENABLE_VGA_INPUT                (INPUT_TYPE&INPUT_1A)
+#define ENABLE_HDMI                     1       //((Input_HDMI_C1 != Input_Nothing)||(Input_HDMI_C2 != Input_Nothing)||(Input_HDMI_C3 != Input_Nothing))
+#define ENABLE_HDMI_1_4                 0
+#define ENABLE_HDMI_EDID_INTERNAL_DATA  0
+#define ENABLE_VGA_EDID_INTERNAL_DATA   0
+#define ENABLE_DVI                      0       //((Input_DVI_C1 != Input_Nothing)||(Input_DVI_C2 != Input_Nothing)||(Input_DVI_C3 != Input_Nothing))
+#define ENABLE_DP_INPUT                 1       //((Input_Displayport_C2 != Input_Nothing)||(Input_Displayport_C3 != Input_Nothing))
+#define ENABLE_DP_OUTPUT                0
+#define ENABLE_DP_AUDIO                 1
+#define AudioFunc                       1
+#define _NEW_SOG_DET_                   1
+#define _NEW_SOG_WAKEUP_DET_            (_NEW_SOG_DET_)
+#define ENABLE_TYPEC_SAR_DET            0       // default: 0, 1: enable only related SAR pins are reserved
+#define DRAM_TYPE                       DRAM_NOUSE
+#define ENABLE_DVI_HDMI_SWITCH          1
 #else
 #message "please define new board type"
 #endif
@@ -234,14 +251,14 @@
 #ifdef TSUMR2_FPGA
 #define PanelType                   PanelCMIM236HGJ_L21_FPGA  // FPGA
 #else
-#define PanelType                   PanelCMIM236HGJ_L21//PanelM250HTN01//PanelAUOM185XW01//PanelCMIM236HGJ_L21//PanelCMIM236HGJ_L21
+#define PanelType                   PanelCMO190//PanelM250HTN01//PanelAUOM185XW01//PanelCMIM236HGJ_L21//PanelCMIM236HGJ_L21
 #endif
 
 ////////////////////////////////////////////////////////////
 // BRIGHTNESS CONTROL
 ////////////////////////////////////////////////////////////
 #define BrightFreqByVfreq               0   // set brightness freq. by input Vfreq.
-#define BRIGHTNESS_INVERSE              0
+#define BRIGHTNESS_INVERSE              1
 #define BRIGHTNESS_FREQ                 22000 // unit: Hz
 #define BRIGHTNESS_VSYNC_ALIGN          1
 #define BRIGHTNESS_HSYNC_ALIGN          0
@@ -285,9 +302,11 @@
 #define ENABLE_SAVE_COlORMODE_VERIFIED_VALUES     0
 #define ENABLE_COLORTEMP_WORD_FORMAT    0
 #define ENABLE_OUTPUT_PATTERN_WITHOUTSIGNAL		  0
-#define ENABLE_DLC                      1
-#define ENABLE_DPS                      (1 && ENABLE_DLC)
+#define ENABLE_DLC                      0
+#define ENABLE_DPS                      (0 && ENABLE_DLC)
+#define ENABLE_DCR                      0
 #define ENABLE_SUPER_RESOLUTION         1
+#define ENABLE_COLORMODE_DEMO           0
 #define ENABLE_SHARPNESS                0
 #define ENABLE_LOCALDIMMING             0
 #define ENABLE_HDR                      0
@@ -341,14 +360,14 @@
 #define ENABLE_WINISP                       (1 & ENABLE_AUTOLOAD & ENABLE_RTE)
 #define ENABLE_ENG_USB_MODE                 0
 #define XMODEM_DWNLD_ENABLE                 0
-#define ENABLE_SECU_R2                      1 //HDCP function work have to enable
-#define ENABLE_HDCP22                       (1 & ENABLE_SECU_R2)
+#define ENABLE_SECU_R2                      0 //HDCP function work have to enable
+#define ENABLE_HDCP22                       (0 & ENABLE_SECU_R2)
 #define ENABLE_PQ_R2                        0
 
 ////////////////////////////////////////////////////////////
 // USB HOST & FILESYSTEM
 ////////////////////////////////////////////////////////////
-#define ENABLE_USB_HOST                      1
+#define ENABLE_USB_HOST                      0
 #define ENABLE_USB_HOST_DUAL_IMAGE_SIGN     0
 #define ENABLE_USB_HOST_DUAL_IMAGE_OFFSET   0x100000 // 1M bytes limited, per image, 64k aligned
 #if ENABLE_USB_HOST_DUAL_IMAGE_SIGN
@@ -362,7 +381,8 @@
 ////////////////////////////////////////////////////////////
 // USB DEVICE
 ////////////////////////////////////////////////////////////
-#define ENABLE_USB_DEVICE                   (1 && !ENABLE_USB_HOST)
+#define ENABLE_USB_DEVICE                   0
+#define ENABLE_USB_DEVICE_HID_MODE          (0 && ENABLE_USB_DEVICE)
 #define ENABLE_USB_DEVICE_UPDATE_CODE       (1 && ENABLE_USB_DEVICE)
 
 ////////////////////////////////////////////////////////////
@@ -371,6 +391,7 @@
 #define MS_PM                           1
 #define PM_MCUSLEEP                     0
 #define LED_PWM                         0
+#define ENABLE_DCOFF_CHARGE             0
 
 ////////////////////////////////////////////////////////////
 // WATCHDOG
@@ -478,6 +499,9 @@
             ((((msRegs(REG_DPRX_AUX_56_L+0x600) & BIT4) == FALSE) &&\
             ((msRegs(REG_DPRX_AUX_74_L+0x600) & (BIT5|BIT4)) == 0) &&\
             ((msRegs(REG_DPRX_AUX_74_H+0x600) & (BIT3|BIT2|BIT1|BIT0)) == 0))==FALSE)))
+
+#define DISABLE_DP_FAKESLEEP    0
+#define DISABLE_DPMS            1
 
 #endif
 

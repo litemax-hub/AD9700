@@ -95,7 +95,7 @@ static void mdrv_HDR_Gamma_Preset(void)
 
 BOOL msSetHDREnable(BYTE u8WinIdx, BYTE enHDR)
 {
-#if ENABLE_ACHDR_FUNCTION
+#if (ENABLE_ACHDR_FUNCTION && ENABLE_DeltaE)
     XDATA StoredHDRPanelInfo sHDRPanelInfo;
 #endif
 #if ENABLE_HDR_DYNAMIC_FUNCTION
@@ -112,10 +112,10 @@ BOOL msSetHDREnable(BYTE u8WinIdx, BYTE enHDR)
     HDRComm_printData("Set HDR Status : %d \n",  enHDR);
     msSetHDRDebugMsg(0);
 
-    if (IsInitPanelInfo == FALSE && (enHDR == HDR_LOW))
+    if (IsInitPanelInfo == FALSE && ((enHDR == HDR_LOW)||(enHDR == HDR_DEMO)))//if (IsInitPanelInfo == FALSE && (enHDR == HDR_LOW))//
     {
         IsInitPanelInfo = TRUE;
-#if ENABLE_ACHDR_FUNCTION
+#if (ENABLE_ACHDR_FUNCTION && ENABLE_DeltaE)
         if (msLoadACHDRPanelInfo(&sHDRPanelInfo))
         {
             msSetHDRPanelInfo(PANEL_MAX_LUMINANCE,//(double)sHDRPanelInfo.mHDRPanelInfo.maxLum / 10000.0,
@@ -131,7 +131,6 @@ BOOL msSetHDREnable(BYTE u8WinIdx, BYTE enHDR)
             StoredFormatOfPostGamma StoredPostGamma;
             msLoadACHDRGamma(&StoredPostGamma);
             msSetHDRPostGamma((BYTE *)(&StoredPostGamma.Data[0][0]));
-
             StoredFormatOfHDRColorTemp StoredHDRColorTemp;
             msLoadACHDRColorTemp(&StoredHDRColorTemp);
             msSetHDRPanelColorTemp((BYTE *)(&StoredHDRColorTemp.mHDRColorTemp));
@@ -153,7 +152,7 @@ BOOL msSetHDREnable(BYTE u8WinIdx, BYTE enHDR)
             mdrv_HDR_Gamma_Preset();
         }
         //msSetHDRADLInfo(AUTOLOAD_HDR_ADR, AUTOLOAD_HDR_LEN, MS_TOOL_ADR, MS_TOOL_LEN);
-
+        
         #if ENABLE_HDR_DYNAMIC_FUNCTION
         {
             #if ENABLE_ACHDR_FUNCTION
@@ -172,7 +171,7 @@ BOOL msSetHDREnable(BYTE u8WinIdx, BYTE enHDR)
         }
         #endif
     }
-
+    msAPI_GammaEnable(u8WinIdx, 1);
     HDRComm_printMsg(">>>>>>>>>>>>>>>HDR metadata<<<<<<<<<<<<<<");
     md = msGetST2086MetadataByWin(u8WinIdx);
     //HDRComm_printData("EOTF Type : %d\n", md.EOTF);
@@ -291,7 +290,6 @@ void msDrvHDRAutoDetect(BYTE u8WinIdx)
     if (PowerOnFlag && !SyncLossState() && !InputTimingChangeFlag && InputTimingStableFlag && !FreeRunModeFlag && !bRunToolFlag)   
     {
         _currHdrMd = msGetST2086MetadataByWin(u8WinIdx);
-
         if (((_currHdrMd.EOTF & 0x02) == 0x02) && (_currHdrMd.Length == 0x1A))
         {
             if (IsDiffMetadata(_lastHdrMd, _currHdrMd) || HDR_OFF == msGetHDRStatus(u8WinIdx))

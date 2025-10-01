@@ -273,7 +273,7 @@ extern xdata BYTE OsdFontColor;
 #define LOBYTE(value)             ((BYTE)(value))
 
 #define CommandFontStart     1
-#define FfontStart    0x06   //100907 aoivd overlap with arrow
+#define FfontStart    0x7F   //100907 aoivd overlap with arrow
 #define DrawtTEXTIconStart  0xD2
 #define DrawtTEXTIconSize   0x0C
 
@@ -1342,6 +1342,7 @@ typedef enum
     MainMenuItems_OtherSettings,
     MainMenuItems_PowerManager,
     MainMenuItems_Information,
+    MainMenuItems_Exit,
 
     MainMenuItems_Max,
 }MainMenuItems_t;
@@ -1356,10 +1357,14 @@ typedef enum
 #if ENABLE_DPS
     BriteContMenuItems_DPS,
 #endif
+#if ENABLE_DCR
     BriteContMenuItems_DCR,
+#endif
 #if (ENABLE_VGA_INPUT)
     BriteContMenuItems_AutoColor,
 #endif
+    BriteContMenuItems_Return,
+
     BriteContMenuItems_Max,
 }BriteContMenuItems_t;
 
@@ -1374,8 +1379,12 @@ typedef enum
 #if ENABLE_SUPER_RESOLUTION
     ColorSettingsMenuItems_SuperResolution,
 #endif
+#if ENABLE_COLORMODE_DEMO
     ColorSettingsMenuItems_ColorMode,
+#endif
     ColorSettingsMenuItems_ColorFormat,
+    ColorSettingsMenuItems_Return,
+
     ColorSettingsMenuItems_Max,
 }ColorSettingsMenuItems_t;
 
@@ -1385,6 +1394,7 @@ typedef enum
     ExtColorSettingsMenuItems_IndependentHue,
     ExtColorSettingsMenuItems_IndependentSaturation,
     ExtColorSettingsMenuItems_IndependentBrightness,
+    ExtColorSettingsMenuItems_Return,
 
     ExtColorSettingsMenuItems_Max,
 }ExtColorSettingsMenuItems_t;
@@ -1397,6 +1407,7 @@ typedef enum
     IndependentHueMenuItems_C,
     IndependentHueMenuItems_M,
     IndependentHueMenuItems_Y,
+    IndependentHueMenuItems_Return,
 
     IndependentHueMenuItems_Max,
 }IndependentHueMenuItems_t;
@@ -1409,6 +1420,7 @@ typedef enum
     IndependentSaturationMenuItems_C,
     IndependentSaturationMenuItems_M,
     IndependentSaturationMenuItems_Y,
+    IndependentSaturationMenuItems_Return,
 
     IndependentSaturationMenuItems_Max,
 }IndependentSaturationMenuItems_t;
@@ -1421,6 +1433,7 @@ typedef enum
     IndependentBrightnessMenuItems_C,
     IndependentBrightnessMenuItems_M,
     IndependentBrightnessMenuItems_Y,
+    IndependentBrightnessMenuItems_Return,
 
     IndependentBrightnessMenuItems_Max,
 }IndependentBrightnessMenuItems_t;
@@ -1450,6 +1463,8 @@ typedef enum
 #if ENABLE_DP_INPUT
     InputSourceMenuItems_DPVersion,
 #endif
+    InputSourceMenuItems_Return,
+    
     InputSourceMenuItems_Max,
 }InputSourceMenuItems_t;
 
@@ -1528,6 +1543,7 @@ typedef enum
 #if (ENABLE_VGA_INPUT)
     DisplaySettingsMenuItems_AutoAdjust,
 #endif
+    DisplaySettingsMenuItems_Return,
 
     DisplaySettingsMenuItems_Max,
 }DisplaySettingsMenuItems_t;
@@ -1584,10 +1600,11 @@ typedef enum
 #if ENABLE_FREESYNC
     OtherSettingsMenuItems_FreeSync,
 #endif
-    OtherSettingsMenuItems_DisplayLogo,
     OtherSettingsMenuItems_Reset,
+    OtherSettingsMenuItems_Return,
 
     OtherSettingsMenuItems_Max,
+OtherSettingsMenuItems_DisplayLogo,
 }OtherSettingsMenuItems_t;
 #if AudioFunc
 typedef enum
@@ -1601,8 +1618,11 @@ typedef enum
 
 typedef enum
 {
+#if ENABLE_DCOFF_CHARGE
     PowerManagerMenuItems_DCOffDischarge,
+#endif
     PowerManagerMenuItems_PowerSaving,
+    PowerManagerMenuItems_Return
 }PowerManagerMenuItems_t;
 
 typedef enum

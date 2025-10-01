@@ -442,8 +442,8 @@
         #define hwHDCP_Hpd3_Pin()
     #else
         #define hw_Set_HdcpHpd()         // no use in this Board.
-        #define hw_Clr_HdcpHpd()        
-        #define hwHDCP_Hpd_Pin_()
+        #define hw_Clr_HdcpHpd()
+        #define hwHDCP_Hpd_Pin()
         #define hw_Set_HdcpHpd2()       (MEM_MSWRITE_BIT(REG_PAD_TOP_42_L, FALSE, BIT2), MEM_MSWRITE_BIT(REG_PAD_TOP_42_H, FALSE, BIT2))
         #define hw_Clr_HdcpHpd2()       (MEM_MSWRITE_BIT(REG_PAD_TOP_42_L, FALSE, BIT2), MEM_MSWRITE_BIT(REG_PAD_TOP_42_H, TRUE, BIT2))
         #define hwHDCP_Hpd2_Pin()       (!(MEM_MSREAD_BYTE(REG_PAD_TOP_43_L) & BIT2)))

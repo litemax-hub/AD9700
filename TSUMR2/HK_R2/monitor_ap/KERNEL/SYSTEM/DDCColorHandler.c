@@ -84,10 +84,14 @@ BYTE _serialNumber[32];
 PatternType _PtnType = 0;
 XDATA static BYTE _Y2RCMStatus[8] = {0};
 XDATA static BYTE _R2YCMStatus[8] = {0};
-
-#if CHIP_ID == CHIP_MT9701
-static double _percentOfCentralArea = 0.1;
+#if ENABLE_DeltaE
+XDATA static BYTE _HDRCMStatus[8] = {0};
 #endif
+
+
+
+static double _percentOfCentralArea = 0.1;
+
 //--------------------------------------------------
 BOOL ExecuteISP(WORD fileCheckSum)
 {
@@ -404,7 +408,7 @@ BYTE ColorCalibrationHandler(BYTE u8WinIdx)
         return AutoColorCalibrationHandler(u8WinIdx, &g_CheckSumResult);
     }
 #else
-	return CommonHandler();
+	return CommonHandler(u8WinIdx);
 #endif
 
     return 0;
@@ -482,6 +486,7 @@ BYTE CommonHandler(BYTE u8WinIdx)
                     //R2Y
                     msWriteByte(SC22_56, _R2YCMStatus[0]);
                     msWriteByte(SC22_57, _R2YCMStatus[1]);
+                    msWriteByte(SC07_40, _R2YCMStatus[2]);
                     //Y2R
                     msWriteByte(SC10_5E, _Y2RCMStatus[0]);
                     msWriteByte(SC0F_4C, _Y2RCMStatus[1]);
@@ -491,8 +496,10 @@ BYTE CommonHandler(BYTE u8WinIdx)
                     //R2Y
                     _R2YCMStatus[0] = msReadByte(SC22_56);
                     _R2YCMStatus[1] = msReadByte(SC22_57);
+                    _R2YCMStatus[2] = msReadByte(SC07_40);
                     msWriteByte(SC22_56, 0);
                     msWriteByte(SC22_57, 0);
+                    msWriteBit( SC07_40, 0, _BIT0 );
                     //Y2R
                     _Y2RCMStatus[0] = msReadByte(SC10_5E);
                     _Y2RCMStatus[1] = msReadByte(SC0F_4C);
@@ -509,10 +516,13 @@ BYTE CommonHandler(BYTE u8WinIdx)
                     msWriteByte(SC79_0E, 0x00);
             }
             break;
-            #if CHIP_ID == CHIP_MT9701
             case MS_EN_XPercentPIP_PATTERN :
             {
                 _checkSum = DDCBuffer[3];
+                g_CheckSumResult = DDCBuffer[3];
+	            msWriteByteMask(SC7A_02, DDCBuffer[3]?BIT2:0, BIT2); // set HDRy2r bypass enable
+                msWriteByteMask(SC7A_02, DDCBuffer[3]?BIT6:0, BIT6); // set HDRr2y bypass enable
+
                 if(DDCBuffer[3] == 0)
                 {
                     msSetIP2TestPattern_Off();
@@ -523,7 +533,9 @@ BYTE CommonHandler(BYTE u8WinIdx)
                                                                 SC0_READ_AUTO_HEIGHT());
                     _percentOfCentralArea = ((double)DDCBuffer[4])/100;
                 }
+            #if CHIP_ID == CHIP_MT9701
                 _PtnType = PTN_IP2;
+            #endif
             }
             break;
             case MS_SET_XPercentPIP_PATTERN :
@@ -537,7 +549,6 @@ BYTE CommonHandler(BYTE u8WinIdx)
                     CurrentOutputPattern[i]=DDCBuffer[i+3];
             }
             break;
-            #endif
             case MS_ColorEngine_OnOff :
             {
                 if ( DDCBuffer[3] == 0x00 )
@@ -892,7 +903,7 @@ BYTE CommonHandler(BYTE u8WinIdx)
 #endif
             }
             break;
-#else
+#else //ENABLE_DeltaE on
 
 			case MS_EN_INTERNAL_PATTERN:
 			{
@@ -941,7 +952,19 @@ BYTE CommonHandler(BYTE u8WinIdx)
                             0,
                             0,
                             0);
-				msSetHDRColorEngineTestPattern(u8WinIdx, DDCBuffer[3], DDCBuffer[4], DDCBuffer[5], DDCBuffer[6], 0);
+                if (DDCBuffer[3] == 0)
+                {
+				    msSetHDRColorEngineTestPattern(u8WinIdx, DDCBuffer[3], DDCBuffer[4], DDCBuffer[5], DDCBuffer[6], 0);
+                    //rever HDR PQ:R2Y,Y2R
+                    msWriteByte(SC7A_02, _HDRCMStatus[0]);
+                }
+                else
+                {
+                    //Backup HDR PQ:R2Y,Y2R
+                    _HDRCMStatus[0] = msReadByte(SC7A_02);
+				    msSetHDRColorEngineTestPattern(u8WinIdx, DDCBuffer[3], DDCBuffer[4], DDCBuffer[5], DDCBuffer[6], 0);
+                }    
+
                 if(DDCBuffer[3] == 0x01)
                     _PtnType = PTN_IP2;
 	        }

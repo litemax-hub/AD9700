@@ -327,13 +327,10 @@ void mStar_Init( BOOL bACon )
     mStar_InitADC();
     mStar_SetupFreeRunMode();
 
-
-#if (CHIP_ID == CHIP_MT9701)
     if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_ENABLE )
     {
         System_eDPTx_Training();
     }
-#endif
 
 #ifndef TSUMR2_FPGA
     #if ENABLE_HDCP
@@ -403,7 +400,7 @@ void mStar_Init( BOOL bACon )
 #endif
 
     InitACEVar(); // Initialize the variable at ACE.c
-    #if (USEFLASH && COLORDATA_USEFLASH)
+    #if (USEFLASH && COLORDATA_USEFLASH && ENABLE_DeltaE)
     msAPI_appAdjust_FlashInit();
     #endif
     #if ENABLE_ColorMode_Preload_Function
@@ -901,7 +898,12 @@ void mStar_SetupInputPort( void )
     Set_ShowInputInfoFlag();
 
     mStar_IPPowerControl();
-
+#if (MainBoardType == BD_MT9700_LITEMAX)
+    if(SrcInputType == Input_Digital)
+        SELECT_DVI();
+    else
+        SELECT_HDMI();
+#endif
 #if (CHIP_ID == CHIP_MT9700)
     msAPI_combo_IPPowerControl(SrcInputType);
 #endif
@@ -972,16 +974,12 @@ void mStar_SetupInputPort( void )
     }
 #endif
 
-    if(CURRENT_INPUT_IS_DISPLAYPORT())
-    {
-    }
-    else
-    {
-        #if (ENABLE_DP_INPUT == 0x1)
-        mapi_DPRx_Switch_Port_Check(); // offline keep lock need check before hdmi
-        #endif
-    }
-	
+
+    #if (ENABLE_DP_INPUT == 0x1)
+    mapi_DPRx_Switch_Port_Check(); // offline keep lock need check before hdmi
+    #endif
+
+
 #if ENABLE_HDMI
     if(CURRENT_INPUT_IS_DVI())//( SrcInputType == Input_Digital )
     {
@@ -995,10 +993,10 @@ void mStar_SetupInputPort( void )
         }
 #else
         msAPI_combo_IPControlHPD(SrcInputType,FALSE);
+        mdrv_hdmi_SetupInputPort(SrcInputType);
         ForceDelay1ms(100);
         msAPI_combo_HDMIRx_ClockRtermControl(SrcInputType,FALSE);
         msAPI_combo_HDMIRx_DataRtermControl(SrcInputType,FALSE);
-        mdrv_hdmi_SetupInputPort(SrcInputType);
         mdrv_hdmiRx_Software_Reset(SrcInputType, HDMI_SW_RESET_HDCP);
         //drvmStar_SetupInputPort_DVI();
         ForceDelay1ms(500);
@@ -1028,10 +1026,10 @@ void mStar_SetupInputPort( void )
 #endif
 #else
         msAPI_combo_IPControlHPD(SrcInputType,FALSE);
+        mdrv_hdmi_SetupInputPort(SrcInputType);
         ForceDelay1ms(100);
         msAPI_combo_HDMIRx_ClockRtermControl(SrcInputType,FALSE);
         msAPI_combo_HDMIRx_DataRtermControl(SrcInputType,FALSE);
-        mdrv_hdmi_SetupInputPort(SrcInputType);
         mdrv_hdmiRx_Software_Reset(SrcInputType, HDMI_SW_RESET_HDCP);
 #if(COMBO_HDCP2_FUNCTION_SUPPORT)
         mdrv_combo_SetHDCP2CallBackFunction(0, mdrv_tmds_HDCP2TxEventProc);
@@ -1293,7 +1291,7 @@ void OverScanCheck(WORD CapWinHStart ,WORD CapWinVStart,WORD width, WORD height)
         OverScanSetting.OverScanH=g_sPnlInfo.sPnlTiming.u16Width;
     }
 
-    #if (FRAME_BFF_SEL == FRAME_BFFLESS) 
+    #if (FRAME_BFF_SEL == FRAME_BFFLESS)
     //if output image V size is smaller than panelHight with FBL mode , set output image size to panel size.
     if (CURRENT_IS_FBL())
     {
@@ -1747,11 +1745,11 @@ void mStar_SetUserPref( void )
         ReadColorTempSetting();
 
         msAccSetup( 0, g_sPnlInfo.sPnlTiming.u16Width, 0, g_sPnlInfo.sPnlTiming.u16Height );
-#if ENABLE_DLC            
+#if ENABLE_DLC
         msDlcInit( g_sPnlInfo.sPnlTiming.u16Width, g_sPnlInfo.sPnlTiming.u16Height );
         msSetDlcStrength( g_LowStrength, g_HighStrength );
         LoadDLCTable( t_MWEDLC_Linear_Table );
-#endif        
+#endif
         msAccOnOff( _DISABLE );     //111021 Rick check - B39434
 #if ENABLE_DLC
         msDlcOnOff( _ENABLE );
@@ -1947,10 +1945,21 @@ void SettingInputColorimetry(void)
             {
                     #if ENABLE_DEBUG
                         MST_printData("1: Colorimetry %d use HDTV Matrix\n",cf.ucColorimetry);
-          #endif
+                    #endif
                     if(cf.ucColorRange == COMBO_COLOR_RANGE_LIMIT ||(cf.ucColorType == COMBO_COLOR_FORMAT_RGB) )
                     {
-                        msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT, 0);
+                        #if ENABLE_HDR
+                        if(mapi_Adjust_EnableNonStdCSC_Get() && (msGetHDRStatus(MAIN_WINDOW) == HDR_OFF))
+                        #else
+                        if(mapi_Adjust_EnableNonStdCSC_Get())
+                        #endif
+                        {
+                            msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD, 0);
+                        }
+                        else
+                        {
+                            msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT, 0);
+                        }
                     }
                     else
                     {
@@ -1962,11 +1971,22 @@ void SettingInputColorimetry(void)
             case COMBO_YUV_COLORIMETRY_ITU601:
            {
                     #if ENABLE_DEBUG
-                        MST_printData("1: Colorimetry %d use SDTV  Matrix\n",cf.ucColorimetry);
+                        MST_printData("0: Colorimetry %d use SDTV  Matrix\n",cf.ucColorimetry);
                     #endif
                     if(cf.ucColorRange == COMBO_COLOR_RANGE_LIMIT)
                     {
-                        msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT, 0);
+                        #if ENABLE_HDR
+                        if(mapi_Adjust_EnableNonStdCSC_Get() && (msGetHDRStatus(MAIN_WINDOW) == HDR_OFF))
+                        #else
+                        if(mapi_Adjust_EnableNonStdCSC_Get())
+                        #endif
+                        {
+                            msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD, 0);
+                        }
+                        else
+                        {
+                            msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT, 0);
+                        }
                     }
                     else
                     {
@@ -1983,14 +2003,40 @@ void SettingInputColorimetry(void)
                     if(cf.ucColorimetry == COMBO_COLORIMETRY_xvYCC601)
                     {
                         if(cf.ucColorRange == COMBO_COLOR_RANGE_LIMIT)
-                            msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT);
+                        {
+                            #if ENABLE_HDR
+                            if(mapi_Adjust_EnableNonStdCSC_Get() && (msGetHDRStatus(MAIN_WINDOW) == HDR_OFF))
+                            #else
+                            if(mapi_Adjust_EnableNonStdCSC_Get())
+                            #endif
+                            {
+                                msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD, 0);
+                            }
+                            else
+                            {
+                                msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT);
+                            }
+                        }
                         else
                             msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_SDTV);
                      }
                      else if(cf.ucColorimetry == COMBO_COLORIMETRY_xvYCC709)
                      {
                         if(cf.ucColorRange == COMBO_COLOR_RANGE_LIMIT)
-                            msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT);
+                        {
+                            #if ENABLE_HDR
+                            if(mapi_Adjust_EnableNonStdCSC_Get() && (msGetHDRStatus(MAIN_WINDOW) == HDR_OFF))
+                            #else
+                            if(mapi_Adjust_EnableNonStdCSC_Get())
+                            #endif
+                            {
+                                msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD);//msACESelectYUVtoRGBMatrix(ucWinIndex, ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD, 0);
+                            }
+                            else
+                            {
+                                msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT);
+                            }
+                        }
                         else
                             msACESetHDTVMode(ACE_YUV_TO_RGB_MATRIX_HDTV);
                       }
@@ -2146,7 +2192,7 @@ void SetInputColorFormat( void )
         }
     }
 #endif
-    
+
 #if ENABLE_HDR
     msSetHDREnable(MAIN_WINDOW, HDR_OFF);
 #endif
@@ -2163,15 +2209,15 @@ void SetInputColorFormat( void )
         if(IsColorspaceRGBInput())
             eWinColor = WIN_COLOR_RGB;  //should be customized by user preference
         else
-            eWinColor = WIN_COLOR_YUV;  
+            eWinColor = WIN_COLOR_YUV;
     }
 
-    msACESetWinColor(TRUE, eWinColor);  
+    msACESetWinColor(TRUE, eWinColor);
     msACESetWinColorRange(TRUE,  UserPrefInputColorFormat);
     if (TRUE == mdrv_ACE_MweEnable_Get())
     {
         msACESetWinColor(FALSE, WIN_COLOR_YUV);
-        msACESetWinColorRange(FALSE,  UserPrefInputColorFormat);      
+        msACESetWinColorRange(FALSE,  UserPrefInputColorFormat);
     }
 #else
 #if ENABLE_FULL_RGB_COLOR_PATH

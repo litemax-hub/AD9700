@@ -480,6 +480,13 @@ BYTE* pu8Tab1;
     #endif
 }
 
+void msAPI_GammaLoadTbl_256E_14B_DICOM(BYTE u8WinIndex, BYTE **pu8TableIndex)
+{
+//#if ENABLE_LUT_AUTODOWNLOAD
+//    msDrvClearDMAGammaDataBlock();
+//#endif
+    msDrvGammaLoadTbl_256E_14B_76Bytes(u8WinIndex, pu8TableIndex);
+}
 void msAPI_GammaLoadTbl_256E_14B(BYTE u8WinIndex, BYTE **pu8TableIndex)
 {
 //#if ENABLE_LUT_AUTODOWNLOAD
@@ -600,7 +607,23 @@ void msAPI_WinReportGetWeightingPixelCountBySetRange(WORD *Rweight, WORD *Gweigh
     msDrvWinReportGetWeightingPixelCountBySetRange(Rweight, Gweight, Bweight);
 }
 
-#if (USEFLASH && COLORDATA_USEFLASH)
+void msAPI_IP2Pattern_SetPureColorPattern(BYTE R,BYTE G,BYTE B)
+{
+    IP2PATTERNColor color ={R, G, B};//{0xEF, 0XAB, 0xCD};
+    mdrv_IP2Pattern_SetPureColorPattern(&color);
+}
+
+void mapi_Adjust_EnableNonStdCSC_Set(BOOL u8Enable)
+{
+    mdrv_Adjust_EnableNonStdCSC_Set(u8Enable);
+}
+
+BOOL mapi_Adjust_EnableNonStdCSC_Get(void)
+{
+    return mdrv_Adjust_EnableNonStdCSC_Get();
+}
+
+#if (USEFLASH && COLORDATA_USEFLASH && ENABLE_DeltaE)
 #warning "!! Please implement customized functions below for FlashWriter(Byte/Table) !!"
 #warning "!! The function should contain FLASH erase sector inside !!"
 
@@ -680,5 +703,5 @@ void msAPI_VideoHueSaturation(void)
 }
 Bool SetColorModeDemo(void)
 {
-    msDrv_SetColorModeDemo();
+    return msDrv_SetColorModeDemo();
 }

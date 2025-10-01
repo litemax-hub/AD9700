@@ -2971,11 +2971,11 @@ MS_BOOL _Hal_tmds_GetClockStableFlag(MS_U8 enInputPortType)
 //  [Return]:
 //
 //**************************************************************************
-MS_U16 Hal_tmds_GetClockRatePort(MS_U8 enInputPortType, MS_U8 u8SourceVersion)
+MS_U32 Hal_tmds_GetClockRatePort(MS_U8 enInputPortType, MS_U8 u8SourceVersion, EN_HDMI_PIX_CLK_TYPE enType)
 {
     MS_U8 u8_Count = 0;
-    MS_U16 u16ClockCount = 0;
-    MS_U32 u16ClockRateCal[10] = {0};
+    MS_U32 u32ClockCount = 0;
+    MS_U32 u32ClockRateCal[10] = {0};
     MS_U32 u32PHY2P1BankOffset = 0;  //_Hal_tmds_GetPHY2P1BankOffset(enInputPortType);
 
     enInputPortType = enInputPortType;
@@ -2983,13 +2983,20 @@ MS_U16 Hal_tmds_GetClockRatePort(MS_U8 enInputPortType, MS_U8 u8SourceVersion)
 
     for(u8_Count = 0; u8_Count<10; u8_Count++)
     {
-        u16ClockRateCal[u8_Count] = msRead2Byte(REG_PHY2P1_4_P0_74_L +u32PHY2P1BankOffset); // phy2p1_4_74[15:0]: reg_cr_done_cnt_hold
+        u32ClockRateCal[u8_Count] = msRead2Byte(REG_PHY2P1_4_P0_74_L +u32PHY2P1BankOffset); // phy2p1_4_74[15:0]: reg_cr_done_cnt_hold
     }
 
-    u16ClockCount = GetSortMiddleNumber(&u16ClockRateCal[0],10);
-    u16ClockCount = u16ClockCount * HDMI_XTAL_CLOCK_MHZ / HDMI_XTAL_DIVIDER;
+    u32ClockCount = GetSortMiddleNumber(&u32ClockRateCal[0],10);
+    u32ClockCount = u32ClockCount * HDMI_XTAL_CLOCK_MHZ / HDMI_XTAL_DIVIDER;
 
-    return u16ClockCount;
+    if(enType == HDMI_SIGNAL_PIX_MHZ)
+        u32ClockCount = u32ClockCount * HDMI_XTAL_CLOCK_MHZ / HDMI_XTAL_DIVIDER;
+    else if(enType == HDMI_SIGNAL_PIX_10KHZ)
+        u32ClockCount = u32ClockCount * HDMI_XTAL_CLOCK_10kHZ / HDMI_XTAL_DIVIDER;
+    else // HDMI_SIGNAL_PIX_HZ not support
+        u32ClockCount = 0;
+
+    return u32ClockCount;
 }
 
 
@@ -3007,7 +3014,7 @@ MS_U8 _Hal_tmds_GetRatioDetect(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_INFO *p
 {
     MS_U8 u8RatioDetect = HDMI_FRL_MODE_NONE;
     MS_U32 u32PHY2P1BankOffset = 0; //_Hal_tmds_GetPHY2P1BankOffset(enInputPortType);
-    MS_U32 ulClockCount = Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion);
+    MS_U32 ulClockCount = Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ);
 
     enInputPortType = enInputPortType;
 
@@ -5060,7 +5067,7 @@ MS_BOOL _Hal_tmds_GetClockChangeFlag(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_I
 
     enInputPortType = enInputPortType;
 
-    u16ClockCount = Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion);
+    u16ClockCount = Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ);
 
     if(msRead2Byte(REG_PHY2P1_4_P0_5F_L +u32PHY2P1BankOffset) & BIT(2)) // phy2p1_4_5F[2]: reg_clk_big_chg_sts
     {
@@ -6965,7 +6972,7 @@ void _Hal_tmds_FastTrainingProc(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_INFO *
 
             case HDMI_FAST_TRAINING_CHECK_AUTO_EQ:
                 {
-                    MS_U8 u8ClockRange = _Hal_tmds_GetH14AutoEQEnable(enInputPortType, Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion));
+                    MS_U8 u8ClockRange = _Hal_tmds_GetH14AutoEQEnable(enInputPortType, Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ));
 
                     if(u8ClockRange == HDMI_14_TMDS_CLOCK_OVER_135M)
                     {

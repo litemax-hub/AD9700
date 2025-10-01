@@ -1879,14 +1879,14 @@ EN_TMDS_AUDIO_FORMAT mdrv_hdmiRx_IsAudioFmtPCM(BYTE ucPortIndex)
 //  [Return]:
 //
 //**************************************************************************
-WORD mdrv_tmds_GetPixelClockHz(BYTE enInputPort)
+DWORD mdrv_tmds_GetPixelClockHz(BYTE enInputPort, EN_HDMI_PIX_CLK_TYPE enType)
 {
-    WORD wTMDSClkValCnt;
-    MSCombo_TMDS_COLOR_DEPTH_FORMAT enColorDepth = MSCombo_TMDS_COLOR_DEPTH_8_BIT;
+    DWORD wTMDSClkValCnt;
+    MS_U8 enColorDepth = HDMI_COLOR_DEPTH_8BIT;
     MSCombo_TMDS_PIXEL_REPETITION enPixelRepetition = MSCombo_TMDS_N0_PIX_REP;
     EN_COLOR_FORMAT_TYPE enColorType = COMBO_COLOR_FORMAT_RGB;
 
-    wTMDSClkValCnt = Hal_tmds_GetClockRatePort(enInputPort, stHDMIRxInfo.stPollingInfo.ucSourceVersion);
+    wTMDSClkValCnt = Hal_tmds_GetClockRatePort(enInputPort, stHDMIRxInfo.stPollingInfo.ucSourceVersion, enType);
 
     if(stHDMIRxInfo.stPollingInfo.bHDMIModeFlag)//mhal_tmds_GetInputType((MSCombo_TMDS_PORT_INDEX)enInputPort)
     {
@@ -1909,19 +1909,19 @@ WORD mdrv_tmds_GetPixelClockHz(BYTE enInputPort)
         // check color depth
         switch (enColorDepth)
         {
-            case MSCombo_TMDS_COLOR_DEPTH_8_BIT:
+            case HDMI_COLOR_DEPTH_8BIT:
                 wTMDSClkValCnt = wTMDSClkValCnt;
                 break;
 
-            case MSCombo_TMDS_COLOR_DEPTH_10_BIT:
+            case HDMI_COLOR_DEPTH_10BIT:
                 wTMDSClkValCnt = wTMDSClkValCnt * 8 / 10;
                 break;
 
-            case MSCombo_TMDS_COLOR_DEPTH_12_BIT:
+            case HDMI_COLOR_DEPTH_12BIT:
                 wTMDSClkValCnt = wTMDSClkValCnt * 8 / 12;
                 break;
 
-            case MSCombo_TMDS_COLOR_DEPTH_16_BIT:
+            case HDMI_COLOR_DEPTH_16BIT:
                 wTMDSClkValCnt = wTMDSClkValCnt * 8 / 16;
                 break;
 
@@ -1935,6 +1935,39 @@ WORD mdrv_tmds_GetPixelClockHz(BYTE enInputPort)
     }
     return wTMDSClkValCnt;
 }
+
+//**************************************************************************
+//  [Function Name]:
+//                  mdrv_hdmiRx_RxInfo_Get()
+//  [Description]
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mdrv_hdmiRx_RxInfo_Get(BYTE enInputPort, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT enInfo)
+{
+    BOOL bValid = FALSE;
+
+    if(pRxInfoUnion == NULL)
+        return bValid;
+
+    switch(enInfo) {
+    case COMBO_RX_INFO_VAR_PIXEL_CLOCK_10KHZ:
+        {
+            pRxInfoUnion->ulValue = mdrv_tmds_GetPixelClockHz(enInputPort, HDMI_SIGNAL_PIX_10KHZ);
+            bValid = TRUE;
+        }
+        break;
+    default:
+        pRxInfoUnion->ulValue = 0;
+        break;
+    }
+
+    return bValid;
+}
+
 
 //**************************************************************************
 //  [Function Name]:
@@ -1975,7 +2008,7 @@ WORD mdrv_hdmiRx_GetVideoContentInfo(EN_HDMI_VIDEO_CONTENT_INFO enVideoContentIn
             break;
 
         case HDMI_VIDEO_CLK_COUNT:
-            usVideoContent =  mdrv_tmds_GetPixelClockHz(ucInputPort);
+            usVideoContent =  mdrv_tmds_GetPixelClockHz(ucInputPort, HDMI_SIGNAL_PIX_MHZ);
             break;
 
         case HDMI_VIDEO_DE_STABLE:

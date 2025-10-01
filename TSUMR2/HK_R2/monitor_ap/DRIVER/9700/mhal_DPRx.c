@@ -194,7 +194,6 @@ void mhal_DPRx_Initial_Decoder(DPRx_DECODER_ID dprx_decoder_id)
 
 	mhal_DPRx_SetAUPLLBigChangeInterrupt(dprx_decoder_id, TRUE);
 	mhal_DPRx_SetVPLLBigChangeInterrupt(dprx_decoder_id, TRUE);
-    mhal_DPRx_SetVHeightUnstableInterrupt(dprx_decoder_id, TRUE);
 	mhal_DPRx_SetSDCInterrupt(dprx_decoder_id, FALSE);
 	mhal_DPRx_SetVideoBufferOverflowInterrupt(dprx_decoder_id, FALSE);
 	mhal_DPRx_SetMSAChgInterrupt(dprx_decoder_id, TRUE);
@@ -1718,21 +1717,29 @@ WORD mhal_DPRx_GetTimingPixelClock(DPRx_ID dprx_id, DPRx_DECODER_ID dprx_decoder
     	Temp = ((unsigned long long)ulBaseMValue * ulLSClock) / ulBaseNValue;
 		ulPixelClock = Temp & 0xFFFFFFFF;
     }
+    
+#if (DPRX_M_RANGE_NEW_MODE == 1)
 
+    usTargetRange = ulBaseMValue * DPRX_M_RANGE_NEW_MODE_VALUE / 1000;
+
+    if(usTargetRange > 0x40)
+    {
+        usTargetRange = usTargetRange + 0x100;
+    }
+#else
 	if(ulPixelClock > DPRX_M_DETECT_RANGE_PIXEL_CLK) // When pixel clk > 600MHz (ex: 4K@144), M value range should larger than befoe
     {
        	usTargetRange = 0x130;
-		usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
-		msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));   // Aviod low byte = 00, cause MN change
-		msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange); 					  // MVID_Range[15:0]
     }
 	else
 	{
         usTargetRange = 0x20;
-	   	usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
-	  	msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
-	   	msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange);						// MVID_Range[15:0]
 	}
+#endif
+
+    usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
+    msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
+    msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange);                     // MVID_Range[15:0]
 
     return ulPixelClock;
 }
@@ -1784,21 +1791,27 @@ WORD mhal_DPRx_GetTimingPixelClock10K(DPRx_ID dprx_id, DPRx_DECODER_ID dprx_deco
 		ulPixelClock = Temp & 0xFFFFFFFF;
     }
 
-
-	if(ulPixelClock > (DPRX_M_DETECT_RANGE_PIXEL_CLK * 100)) // When pixel clk > 600MHz (ex: 4K@144), M value range should larger than befoe
-    {
-        usTargetRange = 0x130;
-		usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
-		msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));   // Aviod low byte = 00, cause MN change
-		msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange); 					  // MVID_Range[15:0]
-    }
-	else
-	{
-        usTargetRange = 0x20;
-		usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
-		msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
-		msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange); 					 // MVID_Range[15:0]
-	}
+#if (DPRX_M_RANGE_NEW_MODE == 1)
+        usTargetRange = ulBaseMValue / 100 * DPRX_M_RANGE_NEW_MODE_VALUE / 1000;
+    
+        if(usTargetRange > 0x40)
+        {
+            usTargetRange = usTargetRange + 0x100;
+        }
+#else
+        if(ulPixelClock > (DPRX_M_DETECT_RANGE_PIXEL_CLK*100)) // When pixel clk > 600MHz (ex: 4K@144), M value range should larger than befoe
+        {
+            usTargetRange = 0x130;
+        }
+        else
+        {
+            usTargetRange = 0x20;
+        }
+#endif
+    
+        usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
+        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
+        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange);                     // MVID_Range[15:0]
 
     return ulPixelClock;
 }
@@ -4802,7 +4815,6 @@ void mhal_DPRx_DecoderIsrDetectEnable(DPRx_DECODER_ID dprx_decoder_id, Bool bEna
 
     mhal_DPRx_SetAUPLLBigChangeInterrupt(dprx_decoder_id, bEnable);
     mhal_DPRx_SetVPLLBigChangeInterrupt(dprx_decoder_id, bEnable);
-    mhal_DPRx_SetVHeightUnstableInterrupt(dprx_decoder_id, bEnable);
     mhal_DPRx_SetMSAChgInterrupt(dprx_decoder_id, bEnable);
     mhal_DPRx_EnableVspHwRegen( dprx_decoder_id, bEnable);
     mhal_DPRx_EnableAutoInterlace(dprx_decoder_id, bEnable);
@@ -5463,6 +5475,32 @@ BOOL mhal_DPRx_PMAux_Reset(DPRx_AUX_ID dprx_aux_id)
 
 //**************************************************************************
 //  [Function Name]:
+//                  mhal_DPRx_AuxPause_Set()
+//  [Description]
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+void mhal_DPRx_AuxPause_Set(DPRx_AUX_ID dprx_aux_id, Bool bEnable)
+{
+    WORD usRegOffsetAUXByID = DP_REG_OFFSET300(dprx_aux_id);
+
+    if(bEnable == TRUE)
+    {
+        msWriteByteMask(REG_DPRX_AUX_54_H+usRegOffsetAUXByID, BIT5, BIT5); //PD R-TERM make aux not reply
+    }
+    else
+    {
+        msWriteByteMask(REG_DPRX_AUX_54_H+usRegOffsetAUXByID, 0, BIT5);
+    }
+
+    return;
+}
+
+//**************************************************************************
+//  [Function Name]:
 //                  mhal_DPRx_CableDisconectResetDPCD()
 //  [Description]
 //                  mhal_DPRx_CableDisconectResetDPCD
@@ -5811,10 +5849,19 @@ BYTE mhal_DPRx_GetDPCDValueByRIU(DPRx_AUX_ID dprx_aux_id, DWORD ulDPCDAddress)
 	switch(ulDPCDAddress)
 	{
 		case DPCD_00000:
+		    return msReadByte(REG_DPRX_AUX_00_L + usRegOffsetAuxByID); // PM
+            break;
+
 		case DPCD_00001:
+			return msReadByte(REG_DPRX_AUX_00_H + usRegOffsetAuxByID);
+			break;
+
 		case DPCD_00002:
-			offset = (ulDPCDAddress & 0xFFFFF) - DPCD_00000;
-			return msReadByte(REG_DPRX_AUX_00_L + usRegOffsetAuxByID + offset);
+		    ubValue = ((msReadByte(REG_DPRX_AUX_01_L + usRegOffsetAuxByID) & BIT7) +
+            ((msReadByte(REG_DPRX_AUX_01_H + usRegOffsetAuxByID) & BIT1) << 5) +
+			((msReadByte(REG_DPRX_AUX_01_L + usRegOffsetAuxByID) & BIT6) >> 1) +
+			(msReadByte(REG_DPRX_AUX_01_L + usRegOffsetAuxByID) & (BIT4|BIT3|BIT2|BIT1|BIT0)));
+			return ubValue;
 			break;
 
 		case DPCD_00004:
@@ -5937,10 +5984,18 @@ void mhal_DPRx_SetDPCDValueByRIU(DPRx_ID dprx_id, DPRx_AUX_ID dprx_aux_id, DWORD
 	switch(ulDPCDAddress)
 	{
 		case DPCD_00000:
+            msWriteByte(REG_DPRX_AUX_00_L + usRegOffsetAuxByID, ubValue);
+            break;
+
 		case DPCD_00001:
+			msWriteByte(REG_DPRX_AUX_00_H + usRegOffsetAuxByID, ubValue);
+			break;
+
 		case DPCD_00002:
-			offset = (ulDPCDAddress & 0xFFFFF) - DPCD_00000;
-			msWriteByte(REG_DPRX_AUX_00_L + usRegOffsetAuxByID + offset, ubValue);
+            msWriteByteMask(REG_DPRX_AUX_01_L + usRegOffsetAuxByID, (ubValue & BIT7), BIT7); // DPCD 00002[7]
+			msWriteByteMask(REG_DPRX_AUX_01_H + usRegOffsetAuxByID, (ubValue & BIT6) >> 5, BIT1); // DPCD 00002[6]
+			msWriteByteMask(REG_DPRX_AUX_01_L + usRegOffsetAuxByID, (ubValue & BIT5) << 1, BIT6); // DPCD 00002[5]
+			msWriteByteMask(REG_DPRX_AUX_01_L + usRegOffsetAuxByID, (ubValue & (BIT4|BIT3|BIT2|BIT1|BIT0)), BIT4|BIT3|BIT2|BIT1|BIT0); // DPCD 00002[4:0]
 			break;
 
         case DPCD_00003:
@@ -10242,7 +10297,7 @@ void mhal_DPRx_SetPowerDownControl(DPRx_ID dprx_id, DPRx_AUX_ID dprx_aux_id, DP_
         // Power down PHY1 if DPC port is not used
         if(DPRx_C4_AUX == AUX_None)
         {
-            mhal_DPRx_PHYPowerModeSetting(mhal_ePM_POWEROFF, DPRx_ID_3, DPRx_PHY_ID_1);
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWEROFF, DPRx_ID_3, DPRx_PHY_ID_1);
         }
 
 		return;

@@ -43,9 +43,7 @@
 #endif
 
 #include "mapi_eDPTx.h"
-#if (CHIP_ID == CHIP_MT9701)
 #include "system_eDPTx.h"
-#endif
 
 #if ENABLE_SUPER_RESOLUTION
 extern BYTE xdata SRmodeContent;
@@ -241,7 +239,7 @@ void msPM_SetFlag_Standby(void)
     {
         sPMInfo.sPMConfig.bEDID_enable = 0;
     }
-    sPMInfo.sPMConfig.ePMSARmode = ePMSAR_SAR01;
+    sPMInfo.sPMConfig.ePMSARmode = PM_POWERSAVING_SARmode;
 #if ENABLE_USB_TYPEC
     sPMInfo.sPMConfig.eTYPECmode = ePMTYPEC_AUTO;
 #else
@@ -707,7 +705,7 @@ void msPM_EnableSARDetect(BOOL bEnable)
                 msWriteByteMask(_REG_GPIOSAR_OEZ, BIT2, BIT2);
                 msWriteByteMask(REG_SAR_CH_EN, BIT2, BIT2);
                 sPMSARKey.u8SAR_KeyMask = BIT2;
-                sPMSARKey.u8SAR_CmpLvl = EN_SAR_14V;
+                sPMSARKey.u8SAR_CmpLvl = EN_SAR_05V;
             break;
 
             case ePMSAR_SAR3:
@@ -775,7 +773,6 @@ BOOL msPM_CompareSARChannel(void)
         else if(sPMSARKey.u8SAR_CmpLvl == EN_SAR_05V)
             u8CmpThreshold = SARTHR_05V;
     }
-
     if((_bit0_(sPMSARKey.u8SAR_KeyMask)) && (KEYPAD_SAR00 <= u8CmpThreshold))
         bSAR_Result = TRUE;
     else if((_bit1_(sPMSARKey.u8SAR_KeyMask)) && (KEYPAD_SAR01 <= u8CmpThreshold))
@@ -784,6 +781,15 @@ BOOL msPM_CompareSARChannel(void)
         bSAR_Result = TRUE;
     else if((_bit3_(sPMSARKey.u8SAR_KeyMask)) && (KEYPAD_SAR03 <= u8CmpThreshold))
         bSAR_Result = TRUE;
+    if(bSAR_Result)
+    {
+printf("\r\n sPMSARKey.u8SAR_KeyMask=%x",sPMSARKey.u8SAR_KeyMask);
+printf("\r\n u8CmpThreshold=%x",u8CmpThreshold);
+printf("\r\n KEYPAD_SAR00=%x",KEYPAD_SAR00);
+printf("\r\n KEYPAD_SAR01=%x",KEYPAD_SAR01);
+printf("\r\n KEYPAD_SAR02=%x",KEYPAD_SAR02);
+printf("\r\n KEYPAD_SAR03=%x",KEYPAD_SAR03);
+    }
     return bSAR_Result;
 }
 
@@ -1091,11 +1097,7 @@ void msPM_PowerDownMacro(void)
 #if PANEL_EDP
     if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_ENABLE )
     {
-#if (CHIP_ID == CHIP_MT9701)
         System_eDPTx_PowerDown();
-#else
-        mapi_eDPTx_PowerDown(TRUE);
-#endif
     }
 #endif
 
@@ -2918,6 +2920,11 @@ void msPM_WaitingEvent(void)
 
         #if ENABLE_WATCH_DOG
         ClearWDT();
+        #endif
+        
+        #if Enable_PanelHandler
+        g_bPanelHandlerEn = 1;
+        Power_PanelCtrlHandler();
         #endif
 
         Main_SlowTimerHandler();

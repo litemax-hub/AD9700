@@ -23,7 +23,7 @@
 #include "ms_reg_TSUMR2.h"
 #include "msEread.h"
 
-#if PANEL_EDP
+#if 1//PANEL_EDP
 
 //-------------------------------------------------------------------------------------------------
 //  Local Defines

@@ -22,7 +22,7 @@
 #include "Global.h"
 //#include "ComboApp.h"
 //#include "Common.h"
-
+#include "drvHDR.h"
 #define ACE_LIB_VERSION           0x0002
 #define _ACE_TSUMG_
 #define Y_MINUS16   0
@@ -199,7 +199,26 @@ code short tSDTVYuv2rgb_10Bit[3][3] =
     {  -0x0341, 0x0476, -0x0190 }, // -0.813, 1.164, -0.391
     {   0x0000, 0x0476,  0x0812 }  // 0,      1.164, 2.018
 };
+code short tSDTVYuv2rgb_limit_NonSTD[3][3] = //limitYCC601(16-254)tofullRGB
+{
+    {    0x0667, 0x044C,   0x0000 },
+    {   -0x0343, 0x044C,  -0x0192 },
+    {    0x0000, 0x044C,   0x0818 }
+};
 
+code short tHDTVYuv2rgb_limit_NonSTD[3][3] = //limitYCC709(16-254)tofullRGB
+{
+    {    0x0731, 0x044C,  0x0000 },
+    {   -0x0223, 0x044C, -0x00DB },
+    {    0x0000, 0x044C,  0x0879 }
+};
+
+code short tITURBT2020_limit_NonSTD[3][3] =//limitYCC2020NCL(16-254)tofullRGB
+{
+    {   0x06BC, 0x044C,  0x0000 },
+    {  -0x029C, 0x044C, -0x00C0 },
+    {   0x0000, 0x044C,  0x0898 },
+};
 // matrix used to convert YUV color space to RGB color space, used for video input for HDTV
 code short tHDTVYuv2rgb_limit[3][3] = //limitYCC709tofullRGB
 {
@@ -304,6 +323,7 @@ typedef struct
     short sGOffset;
     short sBOffset;
     short sRGBContrast[3];
+	short sRGBOffset[3];
     BYTE  bIsUsePostContrast;
     BYTE  bIsForceUseBothContrast;
     BYTE  bIsBlackLevelUsePostOffset;
@@ -420,9 +440,26 @@ void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange)
 	xdata BYTE u8Bank=_scReadByte(SC00_00);
 	xdata WORD sROffset, sGOffset, sBOffset;
 
+    //gain
+    float gain = 1.1678;//0x4AC
+    //WORD u16gain =0x400;
+    if(mdrv_Adjust_EnableNonStdCSC_Get())//AS input RGB16-254
+    {
+        gain =1.0746;//0x44C =255/(254-16)
+        //HDR output color range only support 16-235 in case of limit Range 
+        if (msGetHDRStatus(MAIN_WINDOW) != HDR_OFF) 
+        { 
+            gain =1.1678;//0x4AC
+        }
+    }
+    else
+    {   
+        gain =1.1678;//0x4AC
+    }
+    //BYTE bY_sub16;
 	if(bLimitRange)
 	{
-	    g_ucSubContrast = ((1024 *10* 1.164)+5)/10;
+	    g_ucSubContrast = ((1024 *10* gain)+5)/10;
 	    sROffset = 0x3C0;//1024 - 64;
 	    sGOffset = 0x3C0;//1024 - 64;
 	    sBOffset = 0x3C0;//1024 - 64;
@@ -488,6 +525,12 @@ void msACESelectYUVtoRGBMatrix(BYTE ucMatrix)
             s_AceInfo[i].psYVUtoRGBMatrix = (short*)tITURBT2020;
         else  if( ucMatrix == ACE_YUV_TO_RGB_MATRIX_BT2020_LIMIT )
             s_AceInfo[i].psYVUtoRGBMatrix = (short*)tITURBT2020_limit;
+        else if( ucMatrix == ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD)
+            s_AceInfo[i].psYVUtoRGBMatrix = (short*)tSDTVYuv2rgb_limit_NonSTD;
+        else if( ucMatrix == ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD)
+            s_AceInfo[i].psYVUtoRGBMatrix = (short*)tHDTVYuv2rgb_limit_NonSTD;
+        else  if( ucMatrix == ACE_YUV_TO_RGB_MATRIX_BT2020_LIMIT_NONSTD )
+            s_AceInfo[i].psYVUtoRGBMatrix = (short*)tITURBT2020_limit_NonSTD;
         else // ACE_YUV_TO_RGB_MATRIX_SDTV
             s_AceInfo[i].psYVUtoRGBMatrix = (short*)tSDTVYuv2rgb;
 #endif
@@ -1620,15 +1663,15 @@ void msAdjustPostRGBOffset(BYTE ucWinIndex)
 {
     if(ucWinIndex == MAIN_WINDOW)
     {
-        msWrite2Byte(SC25_42, s_AceInfo[ucWinIndex].sROffset);
-        msWrite2Byte(SC25_44, s_AceInfo[ucWinIndex].sGOffset);
-        msWrite2Byte(SC25_46, s_AceInfo[ucWinIndex].sBOffset);
+        msWrite2Byte(SC25_42, s_AceInfo[ucWinIndex].sRGBOffset[0]);
+        msWrite2Byte(SC25_44, s_AceInfo[ucWinIndex].sRGBOffset[1]);
+        msWrite2Byte(SC25_46, s_AceInfo[ucWinIndex].sRGBOffset[2]);
     }
     else
     {
-        msWrite2Byte(SC25_4E, s_AceInfo[ucWinIndex].sROffset);
-        msWrite2Byte(SC25_50, s_AceInfo[ucWinIndex].sGOffset);
-        msWrite2Byte(SC25_52, s_AceInfo[ucWinIndex].sBOffset);
+        msWrite2Byte(SC25_4E, s_AceInfo[ucWinIndex].sRGBOffset[0]);
+        msWrite2Byte(SC25_50, s_AceInfo[ucWinIndex].sRGBOffset[1]);
+        msWrite2Byte(SC25_52, s_AceInfo[ucWinIndex].sRGBOffset[2]);
     }
 
     msEnablePostOffset(ucWinIndex, _ENABLE);
@@ -1686,9 +1729,16 @@ void msSetRGBContrast(BYTE ucWinIndex, WORD ucContrast, WORD ucRCon, WORD ucGCon
 	//printData("[msSetRGBContrast]G:%x\n", s_AceInfo[ucWinIndex].sRGBContrast[1]);
     //printData("[msSetRGBContrast]B:%x\n", s_AceInfo[ucWinIndex].sRGBContrast[2]);
 }
-
+void msSetPostOffset(BYTE ucWinIndex, WORD u16Roffset, WORD u16Goffset, WORD u16Boffset)
+{
+    //post offset
+    s_AceInfo[ucWinIndex].sRGBOffset[0] =  u16Roffset;
+    s_AceInfo[ucWinIndex].sRGBOffset[1] =  u16Goffset;
+    s_AceInfo[ucWinIndex].sRGBOffset[2] =  u16Boffset;
+}
 void msSetRGBOffset(BYTE ucWinIndex, BYTE ucROffset, BYTE ucGOffset, BYTE ucBOffset)
 {
+    //pre offset
     s_AceInfo[ucWinIndex].sROffset = (WORD)ucROffset << 3;
     s_AceInfo[ucWinIndex].sGOffset = (WORD)ucGOffset <<3;
     s_AceInfo[ucWinIndex].sBOffset = (WORD)ucBOffset << 3;
@@ -1816,7 +1866,22 @@ void msACECSCControl(void)
     //WORD* matrix;
     xdata ST_COMBO_COLOR_FORMAT cf;
     cf = IsOSDCSCControl(OSD_CONTROL_CSC);
-        short gain = (short)(((1024 * 10 * 1.1678)+5)/10);
+    short gain = (short)(((1024 * 10 * 1.1678)+5)/10);
+    float fgain = 1.1678;//0x4AC
+    if(mdrv_Adjust_EnableNonStdCSC_Get())//AS input RGB16-254
+    {
+        fgain =1.0746;//0x44C =255/(254-16)
+        //HDR output color range only support 16-235 in case of limit Range 
+        if (msGetHDRStatus(MAIN_WINDOW) != HDR_OFF) 
+        { 
+            fgain =1.1678;//0x4AC
+        }
+    }
+    else
+    {   
+        fgain =1.1678;//0x4AC
+    }
+    gain = (short)(((1024 * 10 * fgain)+5)/10);
     msACESetRGBMode( (g_WinColor[0]== WIN_COLOR_YUV) ? FALSE : TRUE);
 
     if (cf.ucColorType== COMBO_COLOR_FORMAT_RGB || cf.ucColorType == COMBO_COLOR_FORMAT_DEFAULT)
@@ -1832,7 +1897,7 @@ void msACECSCControl(void)
             {
                 //RGB Limit to Y
                 //printf("Case1 : RGB-> YUV , range = Limit\r\n");
-                msWriteByteMask(SC07_41, FALSE, BIT4|BIT0);  // csc range coef. disable
+                msWriteByteMask(SC07_41, FALSE, BIT4|BIT0);  // csc range coef. disable////
                 msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
                 msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
             }
@@ -1840,7 +1905,7 @@ void msACECSCControl(void)
             {
                 //RGB Full to Y
                 //printf("Case2 : RGB-> YUV , range = FULL\r\n");
-    	        msWriteByteMask(SC07_41, BIT4|BIT0, BIT4|BIT0);  // csc range coef. enable
+    	        msWriteByteMask(SC07_41, BIT4|BIT0, BIT4|BIT0);  // csc range coef. enable////
                 //msWriteByteMask(SC0F_AE, BIT6, BIT6);
                 msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
                 msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
@@ -1887,11 +1952,24 @@ void msACECSCControl(void)
                 //YUV Limit
                 //printf("Case5 : YUV-> RGB , range = Limit\r\n");
             	msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
-                
-                if (cf.ucYuvColorimetry == COMBO_YUV_COLORIMETRY_ITU601)
-                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT);    
+                #if ENABLE_HDR
+                if(mapi_Adjust_EnableNonStdCSC_Get() && (msGetHDRStatus(MAIN_WINDOW) == HDR_OFF))
+                #else
+                if(mapi_Adjust_EnableNonStdCSC_Get())
+                #endif
+                {
+                    if (cf.ucYuvColorimetry == COMBO_YUV_COLORIMETRY_ITU601)
+                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD);    
                 else
-                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT);    
+                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD);
+                }
+                else
+                {                
+	                if (cf.ucYuvColorimetry == COMBO_YUV_COLORIMETRY_ITU601)
+	                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT);    
+	                else
+	                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT); 
+				}   
         }
         else 
         {

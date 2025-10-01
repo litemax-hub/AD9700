@@ -371,6 +371,8 @@ BOOL mdrv_DPRx_MSCHIP_CableDetect(DPRx_ID dprx_id);
 void mdrv_DPRx_MSCHIP_EnableDPDetect(BYTE ucPMMode, BOOL bEnable);
 void mdrv_DPRx_MSCHIP_DP_PMHandler(void);
 DPRx_MCCS_WAKEUP mdrv_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(DPRx_ID dprx_id);
+BOOL mdrv_DPRx_PortInfo_Get(DPRx_ID dprx_id, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect);
+BOOL mdrv_DPRx_PortInfo_Set(DPRx_ID dprx_id, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect);
 
 #endif //_MDRV_DPRX_H_
 

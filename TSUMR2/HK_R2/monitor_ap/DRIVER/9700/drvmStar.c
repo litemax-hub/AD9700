@@ -12,6 +12,7 @@
 #include "mapi_DPRx.h"
 #endif
 #include "mapi_eDPTx.h"
+#include "system_eDPTx.h"
 
 #include "drvOSD.h"
 #include "ComboApp.h"
@@ -1589,7 +1590,7 @@ void drvmStar_TimingGenInit(void)
     msWriteByte(SC00_23, ( g_sPnlInfo.sPnlTiming.u16Vtt - g_sPnlInfo.sPnlTiming.u16VSyncBP ) >> 8); //vsync end
     msWriteByte(SC00_24, ( g_sPnlInfo.sPnlTiming.u16Htt/PANEL_H_DIV - 1 ) & 0xFF); // output htotal
     msWriteByte(SC00_25, ( g_sPnlInfo.sPnlTiming.u16Htt/PANEL_H_DIV - 1 ) >> 8); // output htotal
-    msWriteByte(SC00_26, ( g_sPnlInfo.sPnlTiming.u16HSyncWidth/PANEL_H_DIV ) - 2); //-1}, //
+    msWriteByte(SC00_26, ( g_sPnlInfo.sPnlTiming.u16HSyncWidth/PANEL_H_DIV ) - 1); // output Hsync end
 
     // Scaling Image window size
     msWriteByte(SC00_18, ( g_sPnlInfo.sPnlTiming.u16HStart/PANEL_H_DIV ) & 0xFF);
@@ -1656,21 +1657,10 @@ void drvmStar_Init( Bool bACon )
     if(appmStar_CbGetInitFlag() && appmStar_CB_FuncList[eCB_appmStar_CustomizeIPOptionInit]!=NULL)
         ((fpappmStarCustomizeIPOptionInitCb)appmStar_CB_FuncList[eCB_appmStar_CustomizeIPOptionInit])();
 
-#if PANEL_EDP
     if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_ENABLE )
     {
-        mapi_eDPTx_Init(0);
-        mapi_eDPTx_SetMSA(0);
-        if( g_sPnlInfo.bPnlEdpDETECTHPD )
-        {
-            //mapi_eDPTx_Handler();
-        }
-        else
-        {
-            mapi_eDPTx_Training(0, g_sPnlInfo.u8PnlEdpLinkRate, g_sPnlInfo.u8PnlEdpLaneCnt);
-        }
+        System_eDPTx_Init_main();
     }
-#endif
 
     msWriteByteMask(SC00_02, BIT7, BIT7);
     for( i = 0; i < sizeof( tblInit ) / sizeof( RegUnitType ); i++ )
@@ -3341,7 +3331,7 @@ BYTE msDrvMapInputToCombo(BYTE u8Input)
     else if( (u8Input == Input_DVI2) || (u8Input == Input_HDMI2) || (u8Input == Input_Displayport2))
         Result =  1;
     else if( (u8Input == Input_DVI3) || (u8Input == Input_HDMI3) || (u8Input == Input_Displayport3) || (u8Input == Input_UsbTypeC3))
-        Result =  2;
+        Result =  0;
     else if( (u8Input == Input_DVI4) || (u8Input == Input_HDMI4) || (u8Input == Input_Displayport4) || (u8Input == Input_UsbTypeC4))
         Result =  3;
     else

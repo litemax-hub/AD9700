@@ -195,6 +195,7 @@ Bool appmStar_SetPanelTiming( void )
 
         dclk = ( factor + 500 ) / 1000;
         #if DEBUG_PRINT_ENABLE
+        printData( "  hPeriod=%d", hPeriod );
         printData( "  sclk=%d", sclk );
         printData( "  dclk=%d", dclk );
         printData( "  PanelMaxDCLK=%d", g_sPnlInfo.sPnlTiming.u16DClkMax );
@@ -273,10 +274,10 @@ Bool appmStar_SetPanelTiming( void )
                 return FALSE;
             }
 
-            if(dclk < g_sPnlInfo.sPnlTiming.u16DClkMin)
+            if(dclk <wDclkMin)
             {
-                dclk = (float)g_sPnlInfo.sPnlTiming.u16DClkMin * 1000;
-                dstHTotal = (((DWORD)dclk*hPeriod*(wHeight-1)) + ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1)/2)) / ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1));
+                dclk = (float)wDclkMin * 1000;
+                dstHTotal = (((U64)dclk*hPeriod*(wHeight-1)) + ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1)/2)) / ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1));
                 if((dstHTotal < (g_sPnlInfo.sPnlTiming.u16HttMin+u16HttOutTol)) || (dstHTotal > (g_sPnlInfo.sPnlTiming.u16HttMax-u16HttOutTol)))
                 {
                     SrcFlags|= bUnsupportMode;
@@ -300,10 +301,10 @@ Bool appmStar_SetPanelTiming( void )
         {
             WORD wHeight;
             
-            wHeight = ((DWORD)dstHTotal*g_sPnlInfo.sPnlTiming.u16Height*((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)/1000))/((float)hPeriod*wDclkMax) + 1;
+            wHeight = ((DWORD)dstHTotal*g_sPnlInfo.sPnlTiming.u16Height*((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)/1000))/((float)hPeriod*wDclkMin) + 1;
 
             dclk = (float)wDclkMin * 1000;
-            dstHTotal = (((DWORD)dclk*hPeriod*(wHeight-1)) + ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1)/2)) / ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1));
+            dstHTotal = (((U64)dclk*hPeriod*(wHeight-1)) + ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1)/2)) / ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1));
             if((dstHTotal < (g_sPnlInfo.sPnlTiming.u16HttMin+u16HttOutTol)) || (dstHTotal > (g_sPnlInfo.sPnlTiming.u16HttMax-u16HttOutTol)))
             {
                 SrcFlags|= bUnsupportMode;

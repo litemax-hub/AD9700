@@ -157,6 +157,7 @@ typedef enum
     ResetMenu,
 
     HotKeyECOMenu, // 54
+    HotKeyBrightnessMenu, // 55
 #if AudioFunc
     HotKeyVolMenu, // 55
 #if (ENABLE_HDMI || ENABLE_DP_INPUT) && ENABLE_DAC
@@ -363,11 +364,11 @@ typedef enum
     CTEMP_Cool1,   //  8500K
     //  CTEMP_Warm2,  // 6500K
     CTEMP_Normal,  // 7800K
-    CTEMP_Warm1,  // 5700K//   CTEMP_Cool2,   //  9300K
     CTEMP_SRGB,   //  SRGB
     CTEMP_USER, //  USER
+    CTEMP_Warm1,  // 5700K//   CTEMP_Cool2,   //  9300K
 
-    CTEMP_Nums
+    CTEMP_Nums,
 } ColorTempType;
 
 

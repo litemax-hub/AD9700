@@ -4949,37 +4949,40 @@ BYTE code strGama3M7[][2]=
 
 
 //--Eson Start----------------------------------
-BYTE code strNetAddrM0[1][2]=
-{ { 0x20, 0x0B},
-};
+
 BYTE code strBriteContM0[1][2]=
-{ { 0x2B, 0x0C},
+{ { 0x20 , 0x0C }
 };
 BYTE code strAutoAdjustM0[1][2]=
-{ { 0x37, 0x07},
+{ { 0x2C , 0x07 }
 };
 BYTE code strInputSourceM0[1][2]=
-{ { 0x3E, 0x07},
+{ { 0x33 , 0x07 }
 };
 BYTE code strColorSettingsM0[1][2]=
-{ { 0x45, 0x08},
+{ { 0x3A , 0x08 }
 };
 BYTE code strDisplaySettingsM0[1][2]=
-{ { 0x4D, 0x09},
+{ { 0x42 , 0x09 }
 };
 BYTE code strOtherSettingsM0[1][2]=
-{ { 0x56, 0x08},
+{ { 0x4B , 0x08 }
 };
 BYTE code strInformationM0[1][2]=
-{ { 0x5E, 0x07},
+{ { 0x53 , 0x07 }
 };
 BYTE code strExtColorSettingsM0[1][2]=
-{ { 0x65, 0x0C},
+{ { 0x5A , 0x0C }
 };
 BYTE code strPowerManagerM0[1][2]=
-{ { 0x71, 0x09},
+{ { 0x66 , 0x09 }
 };
-
+BYTE code strExitM0[1][2]=
+{ { 0x6F , 0x03 }
+};
+BYTE code strReturnM0[1][2]=
+{ { 0x72 , 0x04 }
+};
 
 BYTE code strNoSignalM2[1][2]=
 { { 0x20, 0x05},
@@ -5402,6 +5405,5 @@ BYTE code strPowerManagerOnM109[1][2]=
 BYTE code strPowerManagerOffM109[1][2]=
 { { 0x94, 0x02},
 };
-
 
 

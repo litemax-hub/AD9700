@@ -173,7 +173,7 @@
 #endif
 
 #ifndef Enable_PanelHandler
-#define Enable_PanelHandler                         1
+#define Enable_PanelHandler                         0
 #endif
 
 #ifndef Enable_ValidTimingStablePanelTurnOn
@@ -181,7 +181,7 @@
 #endif
 
 #ifndef Enable_ReducePanelPowerOnTime
-#define Enable_ReducePanelPowerOnTime               (1&&!Enable_PanelHandler)
+#define Enable_ReducePanelPowerOnTime               (0&&!Enable_PanelHandler)
 #endif
 
 #ifndef PANEL_SSC_MODULATION_DEF_EDP

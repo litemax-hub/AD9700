@@ -500,6 +500,7 @@ BOOL mhal_DPRx_IsAuxAtOffLine(DPRx_AUX_ID dprx_aux_id);
 BOOL mhal_DPRx_CheckAuxPhyIdle(DPRx_AUX_ID dprx_aux_id);
 BOOL mhal_DPRx_CheckAuxIdle(DPRx_AUX_ID dprx_aux_id);
 BOOL mhal_DPRx_PMAux_Reset(DPRx_AUX_ID dprx_aux_id);
+void mhal_DPRx_AuxPause_Set(DPRx_AUX_ID dprx_aux_id, Bool bEnable);
 
 void ________DPCD________(void);
 void mhal_DPRx_MCUWritePMDPCD(DPRx_AUX_ID dprx_aux_id, DWORD ulDPCDAddress, BYTE ucDATA);

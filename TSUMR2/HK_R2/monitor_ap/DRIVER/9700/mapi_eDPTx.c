@@ -9,7 +9,7 @@
 #include "mdrv_eDPTx.h"
 #include "drvmStar.h"
 
-#if PANEL_EDP
+#if 1//PANEL_EDP
 
 //******************************************************************************
 //

@@ -104,5 +104,6 @@ void mhal_DPRx_SetPHYLaneSwapEnable(DPRx_ID dprx_id, DPRx_PHY_ID dprx_phy_id, BO
 void mhal_DPRx_SetPHYPRBS7PNSwapEnable(DPRx_PHY_ID dprx_phy_id, BYTE ubLanePNSwapSelect );
 void mhal_DPRx_PHYCDRDetectEnable(DPRx_PHY_ID dprx_phy_id, BOOL bEnable);
 void mhal_DPRx_Check_AGC_Reset(DPRx_PHY_ID dprx_phy_id);
+BOOL mhal_DPRx_IsAutoEQDone(DPRx_ID dprx_id, DPRx_PHY_ID dprx_phy_id);
 #endif // MHAL_DPRXPHY_H
 

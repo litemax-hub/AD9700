@@ -1,6 +1,8 @@
 #ifndef _MAILBOX_H
 #define _MAILBOX_H
 
+#include "MsOS.h"
+
 #ifdef _MAILBOX_C
 #define _MAILBOXDEC_C
 #else

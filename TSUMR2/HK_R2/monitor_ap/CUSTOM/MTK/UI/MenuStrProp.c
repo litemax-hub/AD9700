@@ -14,7 +14,7 @@ const BYTE *NullText( void )
 
 const BYTE *NetAddrText( void )
 {
-    return strNetAddrM0[UserPrefLanguage];
+    return 0;
 }
 const BYTE *BriteContText( void )
 {
@@ -48,6 +48,15 @@ const BYTE *ExtColorSettingsText( void )
 {
     return strExtColorSettingsM0[UserPrefLanguage];
 }
+const BYTE *ExitText( void )
+{
+    return strExitM0[UserPrefLanguage];
+}
+const BYTE *ReturnText( void )
+{
+    return strReturnM0[UserPrefLanguage];
+}
+
 
 const BYTE *NoSignalText( void )
 {

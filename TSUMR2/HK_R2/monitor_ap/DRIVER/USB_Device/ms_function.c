@@ -7,6 +7,7 @@
 #include "ms_otg.h"
 #include "ms_usb.h"
 #include "board.h"
+#include "ms_hid.h"
 
 extern void printMsg( char *str );
 extern void printData( char *str, unsigned int value );
@@ -20,6 +21,110 @@ extern void printData( char *str, unsigned int value );
 #define MSFUNCTION_printMsg(str)
 #endif
 
+#if ENABLE_USB_DEVICE_HID_MODE
+/*
+ * HID Report Descriptor
+ */
+CODE const U8 otg_Msdfn_HID_Report_Dscr1[]= {
+	/* HID Report Descriptor */
+	0x06, 0x00, 0xFF,			/* Usage Page (Vendor Defined page)*/
+	0x09, 0x01,					/* Usage (Vendor Usage 1)		*/
+	0xA1, 0x01,					/* Collection (Application) 	*/
+	0x15, 0x00,					/* Logical Minimum (0) 			*/
+	0x26, 0xFF, 0x00,			/* Logical Maximum (255) 		*/
+	0x75, 0x08,					/* Report size (8)		 		*/
+	0x96, 0x00, HID_TRX_LENGTH/256,			/* Report Count(0x02:512 or 0x10:4096)	 		*/
+	0x09, 0x01,					/* Usage (Vendor usage 1)		*/
+	0x81, 0x02,					/* Input (Data,var,abs) 		*/
+	0x09, 0x01, 				/* Usage (Vendor usage 1)		*/
+	0x91, 0x02, 				/* Input (Data,var,abs) 		*/
+	0xC0						/* End Colection			 	*/
+};
+
+CODE const U8 otg_Msdfn_HID_Report_Dscr2[]= {
+	/* HID Report Descriptor */
+	0x06, 0x00, 0xFF,			/* Usage Page (Vendor Defined page)*/
+	0x09, 0x01,					/* Usage (Vendor Usage 1)		*/
+	0xA1, 0x01,					/* Collection (Application) 	*/
+	0x15, 0x00,					/* Logical Minimum (0) 			*/
+	0x26, 0xFF, 0x00,			/* Logical Maximum (255) 		*/
+	0x75, 0x08,					/* Report size (8)		 		*/
+	0x96, 0x00, 0x02,			/* Report count(512)		 	*/
+	0x09, 0x01,					/* Usage (Vendor usage 1)		*/
+	0x91, 0x02,					/* Output (Data,var,abs) 		*/
+	0xC0						/* End Colection			 	*/
+};
+
+
+/*
+ * HID mode for USB device mode
+ */
+CODE const U8 otg_Msdfn_Dscr[]=
+{
+	/* Device Descriptor */
+	0x12,						/* bLength 		*/
+	0x01,						/* DEVICE		*/
+	0x00,0x02,					/* USB 2.0		*/
+	0x00,						/* CLASS		*/
+	0x00,						/* Subclass		*/
+	0x00,						/* Protocol		*/
+	0x40,						/* bMaxPktSize0	*/
+	LO_BYTE(HID_VID), HI_BYTE(HID_VID),		/* idVendor		*/
+	LO_BYTE(HID_PID), HI_BYTE(HID_PID),		/* idProduct	*/
+	0x00,0x01,					/* bcdDevice	*/
+	0x01,						/* iManufacturer	*/
+	0x02,						/* iProduct			*/
+	0x03,  						/* iSerial Number	*/
+	0x01,						/* One configuration*/
+	/* Configuration Descriptor */
+	0x09,						/* bLength			*/
+	0x02,						/* CONFIGURATION	*/
+	9+9+9+7,						/* length_L			*/
+	0x00,						/* length_H			*/
+	0x01,						/* bNumInterfaces	*/
+	0x01,						/* bConfigurationValue*/
+	0x00,						/* iConfiguration	*/
+	0xC0,						/* bmAttributes		*/
+	0x00,						/* power 500ma		*/
+	/* Interface Descriptor */
+	0x09,						/* bLength			*/
+	0x04,						/* INTERFACE		*/
+	0x00,						/* bInterfaceNumber */
+	0x00,						/* bAlternateSetting*/
+	0x01,						/* bNumEndpoints	*/
+	0x03,						/* bInterfaceClass HID=3*/
+	0x00,						/* bInterfaceSubClass*/
+	0x00,						/* bInterfaceProtocol NONE=0*/
+	0x00,						/* iInterface		*/
+	/* HID Descriptor */
+	0x09,						/* bLength			*/
+	0x21,						/* HID				*/
+	0x11,0x01,					/* bcdHID			*/
+	0x00,						/* bCountryCode 	*/
+	0x01,						/* bNumDescriptor	*/
+	0x22,						/* bDescriptorType	*/
+	(ARRAY_SIZE(otg_Msdfn_HID_Report_Dscr1) & 0xFF), (ARRAY_SIZE(otg_Msdfn_HID_Report_Dscr1) >> 8), 	/* sizeof ReportDesc*/
+	/* Endpoint Descriptor	: Bulk-In */
+	0x07,						/* bLength			*/
+	0x05,						/* ENDPOINT 		*/
+	0x81,						/* bEndpointAddress */
+	0x03,						/* bmAttributes 	*/
+	0x00, 0x02, 				/* wMaxPacketSize	*/
+	0x01,						/* bInterval 8ms 2^(7-1)	*/
+/* string descritor*/
+/*langID*/
+   0x04, 0x03, 0x09, 0x04,
+/*iManufacturer*/
+   0x12, 0x03, 'M', 0x00, 'e', 0x00, 'd', 0x00, 'i', 0x00, 'a', 0x00, 't', 0x00,'e', 0x00, 'k', 0x00,
+/*DevID*/
+   0x16, 0x03, 'H', 0x00, 'I', 0x00, 'D', 0x00, 0x20, 0x00, 'D', 0x00, 'e', 0x00,'v', 0x00, 'i', 0x00, 'c', 0x00, 'e', 0x00,
+/*iserID*/
+   0x12, 0x03, 'S', 0x00, 'N', 0x00, '0', 0x00, '0', 0x00, '0', 0x00, '0', 0x00, '0', 0x00, '1', 0x00
+};
+#else
+/*
+ * default Mass Storage device class
+ */
 CODE const U8 otg_Msdfn_Dscr[]=
 {
    /* Device Descriptor */
@@ -145,7 +250,7 @@ CODE const U8 otg_Msdfn_Dscr[]=
   'B', 0x00, 'l', 0x00, 'u', 0x00, 'e', 0x00,
   '3', 0x00
 };
-
+#endif
 
 void USB_Function_Initial(USB_VAR *gUSBStruct)
 {
@@ -195,10 +300,62 @@ S32 USB_Parse_Received_Setup(USB_VAR *gUSBStruct)
 	if  ((gUSBStruct->otgEP0Setup.bmRequestType & USB_TYPE_MASK) != USB_TYPE_STANDARD)
 	{
 		MSFUNCTION_printMsg("USB no standard");
+#if	ENABLE_USB_DEVICE_HID_MODE
+		if ((gUSBStruct->otgEP0Setup.bmRequestType & USB_TYPE_MASK) == USB_TYPE_VENDOR)
+		{
+			switch (gUSBStruct->otgEP0Setup.bRequest)
+			{
+				case VENDOR_GET_DATA:
+					if (gUSBStruct->otgEP0Setup.wLength) {
+						gUSBStruct->otgUSB_EP[0].transfer_buffer = (U32)HID_Vendor_Get_TxData((U16 *)&length, gUSBStruct);;
+						gUSBStruct->otgUSB_EP[0].transfer_buffer_length = length;
+						retstatus =	USB_PID_IN;
+					} else
+						retstatus = USB_PID_ACK;
+					break;
+				case VENDOR_SET_DATA:
+					if (gUSBStruct->otgEP0Setup.wLength) {
+						length = MIN(HID_Get_EPxRxLen(), HID_TRX_LENGTH);
+						gUSBStruct->otgUSB_EP[0].transfer_buffer_length=MIN(gUSBStruct->otgEP0Setup.wLength, length);
+						gUSBStruct->otgUSB_EP[0].transfer_buffer=(U32)HID_GetBuff_ptr();
+						retstatus =	USB_PID_OUT;
+					} else
+						retstatus = USB_PID_ACK;
+					break;
+			}
+		} else
+#endif
 		if ((gUSBStruct->otgEP0Setup.bmRequestType & USB_TYPE_MASK) == USB_TYPE_CLASS)
 		{
 			switch (gUSBStruct->otgEP0Setup.bRequest)
 			{
+#if	ENABLE_USB_DEVICE_HID_MODE
+				case HID_SET_IDLE:
+					/* printf("HID Set Idle request\n"); */
+					HID_EPxTRX_GO();
+					retstatus = USB_PID_ACK;
+					break;
+				case HID_SET_REPORT:
+					/* printf("HID Set Report request wValue=%x\n", gUSBStruct->otgEP0Setup.wValue); */
+#ifdef FW_UDATE_FUNC
+					length = 0;
+					gUSBStruct->otgUSB_EP[0].transfer_buffer= FWDL_EP0Tx_Data_Phase((U16 *)&length, &gUSBStruct->otgEP0Setup);
+					gUSBStruct->otgUSB_EP[0].transfer_buffer_length=length;
+#else
+                    gUSBStruct->otgUSB_EP[0].transfer_buffer_length=HID_TRX_LENGTH;
+                    gUSBStruct->otgUSB_EP[0].transfer_buffer=(U32)HID_GetBuff_ptr();
+#endif
+					retstatus = USB_PID_OUT;
+					break;
+				case HID_GET_REPORT:
+					if (gUSBStruct->otgEP0Setup.wLength) {
+						gUSBStruct->otgUSB_EP[0].transfer_buffer = (U32)HID_Vendor_Get_TxData((U16 *)&length, gUSBStruct);;
+						gUSBStruct->otgUSB_EP[0].transfer_buffer_length = length;
+						retstatus = USB_PID_IN;
+					} else
+						retstatus = USB_PID_ACK;
+					break;
+#endif
 				case    MSDFN_BOT_RESET:
 					retstatus = USB_PID_ACK;
 					break;
@@ -380,6 +537,39 @@ S32 USB_Parse_Received_Setup(USB_VAR *gUSBStruct)
                 }
                 break;
 		case    USB_REQ_GET_DESCRIPTOR:
+#if ENABLE_USB_DEVICE_HID_MODE
+				if ((gUSBStruct->otgEP0Setup.bmRequestType & USB_RECIP_MASK) == USB_RECIP_INTERFACE) {
+					MSFUNCTION_printMsg( "USB_GET_HID_REPORT_DESCRIPTOR only" );
+	                desctype = GETMSB(gUSBStruct->otgEP0Setup.wValue);
+					if (desctype != USB_DT_HID_REPORT) {
+						printf("Not supported\n");
+						return(retstatus);	/* STALL if not valid request */
+					}
+
+					MSFUNCTION_printMsg( "USB HID Report descriptor");
+					if (desctype == USB_DT_HID_REPORT) {
+						if (gUSBStruct->otgEP0Setup.wIndex == 0) {
+							scanP = (U8 *)(otg_Msdfn_HID_Report_Dscr1);
+							bytesrem = (U32)sizeof(otg_Msdfn_HID_Report_Dscr1);
+							length = (U32)sizeof(otg_Msdfn_HID_Report_Dscr1);
+						} else {
+							scanP = (U8 *)(otg_Msdfn_HID_Report_Dscr2);
+							bytesrem = (U32)sizeof(otg_Msdfn_HID_Report_Dscr2);
+							length = (U32)sizeof(otg_Msdfn_HID_Report_Dscr2);
+						}
+
+						gUSBStruct->otgUSB_EP[0].transfer_buffer_length=MIN(gUSBStruct->otgEP0Setup.wLength, length);
+						gUSBStruct->otgUSB_EP[0].transfer_buffer=(unsigned long)scanP;
+
+						retstatus = USB_PID_IN;
+						break;
+					}
+				}
+#endif
+
+				/*
+				 * Standard Get USB Device Descriptor
+				 */
 				MSFUNCTION_printMsg( "USB_REQ_GET_DESCRIPTOR" );
 				USB_Function_Initial(gUSBStruct); // 20110310
                 desctype = GETMSB(gUSBStruct->otgEP0Setup.wValue);
@@ -608,6 +798,11 @@ void USB_Parse_DRC_Int_Peripheral(drcintitem_t *dP,USB_VAR *gUSBStruct)
 					outreg = M_CSR0_P_SVDRXPKTRDY;
 					USB_REG_WRITE8(0x102, outreg);//USB_REG_WRITE8(M_REG_CSR0, outreg);
 					outreg = 0;
+#if ENABLE_USB_DEVICE_HID_MODE
+					if (IsHID_EP0_Rx_Request(gUSBStruct)) {
+						printf("Rx HID EP0 request\n");
+					}
+#endif
 					break;
 				}
 			}
@@ -658,6 +853,45 @@ void USB_Parse_DRC_Int_Peripheral(drcintitem_t *dP,USB_VAR *gUSBStruct)
 				else
 				#endif
 				{
+#if ENABLE_USB_DEVICE_HID_MODE
+					/*
+					 *	HID mode EP2 RX
+					 */
+					printf("%s %d FIFORemain=%X\n", __func__, __LINE__, gUSBStruct->otgUSB_EP[ep].FifoRemain);
+					printf("      dP->ICount=%X\n", dP->ICount);
+
+					USB_Set_ClrRXMode1();
+
+					if ( gUSBStruct->otgUSB_EP[ep].FifoRemain < HID_TRX_LENGTH )
+						HID_Set_EPxRxLen(gUSBStruct->otgUSB_EP[ep].FifoRemain);
+
+					gUSBStruct->otgUSB_EP[ep].BytesProcessed=0;
+					gUSBStruct->otgUSB_EP[ep].BytesRequested=dP->ICount;
+					gUSBStruct->otgUSB_EP[ep].transfer_buffer = (U32)HID_Get_EPxRxBuff();
+					gUSBStruct->otgUSB_EP[ep].transfer_buffer_length=0;
+					USB_DRC_Fifo_Read((U8 *)(gUSBStruct->otgUSB_EP[ep].transfer_buffer), ep, gUSBStruct);
+
+					gUSBStruct->otgUSB_EP[ep].FifoRemain = USB_Read_RxCount();
+				    printf("FifoRemain :%x\n", gUSBStruct->otgUSB_EP[ep].FifoRemain);
+					if	(!gUSBStruct->otgUSB_EP[ep].FifoRemain)
+					{
+						USB_REG_WRITE8(0x126, 0);//USB_REG_WRITE8(M_REG_RXCSR1, 0);
+						while(USB_REG_READ8(0x126))
+						{
+							USB_REG_WRITE8(0x126, 0);
+						}
+					}
+
+					printf("RxCSR = %X\n", USB_REG_READ8(0x126));
+
+					HIDRxBuff(gUSBStruct);
+
+					USB_REG_WRITE8(0x126, 0);	//USB_REG_WRITE8(M_REG_RXCSR1, 0);
+					while(USB_REG_READ8(0x126)) 	{
+						USB_REG_WRITE8(0x126, 0);
+					}
+					printf("clear RxCSR = %X\n", USB_REG_READ8(0x126));
+#else
 					if ((gUSBStruct->otgUSB_EP[ep].FifoRemain == 30) ||
 						(gUSBStruct->otgUSB_EP[ep].FifoRemain == 31) ||
 						(gUSBStruct->otgUSB_EP[ep].FifoRemain == 32))	/* USBCV MSC test will issue 30 bytes CBW */
@@ -703,12 +937,18 @@ void USB_Parse_DRC_Int_Peripheral(drcintitem_t *dP,USB_VAR *gUSBStruct)
 						}
 						gUSBStruct->otgMassCmdRevFlag=0;
 					}
+#endif
 				}
 					break;
 			}
 		}
 		else
 		{
+#if ENABLE_USB_DEVICE_HID_MODE
+			/*
+			 *	HID mode EP1 TX
+			 */
+#else
 			if (dP->IReg & M_TXCSR1_P_SENTSTALL)
 			{
 				gUSBStruct->otgIntStatus = USB_ST_STALL;
@@ -730,6 +970,7 @@ void USB_Parse_DRC_Int_Peripheral(drcintitem_t *dP,USB_VAR *gUSBStruct)
 			USB_DRC_Fifo_Write((U8 *)gUSBStruct->otgUSB_EP[ep].transfer_buffer,ep,gUSBStruct);
 			USB_REG_WRITE8(0x112, M_TXCSR1_TXPKTRDY);//USB_REG_WRITE8(M_REG_TXCSR1, M_TXCSR1_TXPKTRDY);
 			while (!OTG_Interrupt_Polling(0x21, gUSBStruct)) ;
+#endif
 		}
 	}
 	while   (0);

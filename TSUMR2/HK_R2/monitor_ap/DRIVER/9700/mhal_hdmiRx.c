@@ -802,6 +802,7 @@ void Hal_HDMI_SCDC_Clr(BYTE enInputPortSelect)
             break;
     }
 }
+#endif
 
 #if ENABLE_HDMI_BCHErrorIRQ
 //**************************************************************************
@@ -896,7 +897,6 @@ Bool Hal_HDMI_IRQCheckStatus(HDMI_IRQ_Mask enIRQType)
 
 #endif
 
-#endif
 //**************************************************************************
 //  [Function Name]:
 //                  Hal_HDMI_PMEnableDVIDetect()
@@ -986,7 +986,7 @@ Bool _Hal_tmds_GetClockStableFlag(BYTE enInputPortType)
 
 //**************************************************************************
 //  [Function Name]:
-//                  _Hal_tmds_GetClockRatePort()
+//                  Hal_tmds_GetClockRatePort()
 //  [Description]
 //
 //  [Arguments]:
@@ -994,11 +994,11 @@ Bool _Hal_tmds_GetClockStableFlag(BYTE enInputPortType)
 //  [Return]:
 //
 //**************************************************************************
-WORD _Hal_tmds_GetClockRatePort(BYTE enInputPortType, BYTE u8SourceVersion)
+DWORD Hal_tmds_GetClockRatePort(BYTE enInputPortType, BYTE u8SourceVersion, EN_HDMI_PIX_CLK_TYPE enType)
 {
     BYTE u8_Count = 0;
-    WORD u16ClockCount = 0;
-    DWORD u16ClockRateCal[10] = {0};
+    DWORD u32ClockCount = 0;
+    DWORD u32ClockRateCal[10] = {0};
     DWORD u32PHY2P1BankOffset = 0;  //_Hal_tmds_GetPHY2P1BankOffset(enInputPortType);
 
     enInputPortType = enInputPortType;
@@ -1006,13 +1006,18 @@ WORD _Hal_tmds_GetClockRatePort(BYTE enInputPortType, BYTE u8SourceVersion)
 
     for(u8_Count = 0; u8_Count<10; u8_Count++)
     {
-        u16ClockRateCal[u8_Count] = msRead2Byte(REG_PHY2P1_4_P0_74_L +u32PHY2P1BankOffset); // phy2p1_4_74[15:0]: reg_cr_done_cnt_hold
+        u32ClockRateCal[u8_Count] = msRead2Byte(REG_PHY2P1_4_P0_74_L +u32PHY2P1BankOffset); // phy2p1_4_74[15:0]: reg_cr_done_cnt_hold
     }
 
-    u16ClockCount = GetSortMiddleNumber(&u16ClockRateCal[0],10);
-    u16ClockCount = u16ClockCount * HDMI_XTAL_CLOCK_MHZ / HDMI_XTAL_DIVIDER;
+    u32ClockCount = GetSortMiddleNumber(&u32ClockRateCal[0],10);
+    if(enType == HDMI_SIGNAL_PIX_MHZ)
+        u32ClockCount = u32ClockCount * HDMI_XTAL_CLOCK_MHZ / HDMI_XTAL_DIVIDER;
+    else if(enType == HDMI_SIGNAL_PIX_10KHZ)
+        u32ClockCount = u32ClockCount * HDMI_XTAL_CLOCK_10kHZ / HDMI_XTAL_DIVIDER;
+    else // HDMI_SIGNAL_PIX_HZ not support
+        u32ClockCount = 0;
 
-    return u16ClockCount;
+    return u32ClockCount;
 }
 
 //**************************************************************************
@@ -1029,7 +1034,7 @@ BYTE _Hal_tmds_GetRatioDetect(BYTE enInputPortType, ST_HDMI_RX_POLLING_INFO *pst
 {
     BYTE u8RatioDetect = HDMI_FRL_MODE_NONE;
     DWORD u32PHY2P1BankOffset = 0; //_Hal_tmds_GetPHY2P1BankOffset(enInputPortType);
-    DWORD ulClockCount = _Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion);
+    DWORD ulClockCount = Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ);
 
     enInputPortType = enInputPortType;
 
@@ -3002,7 +3007,7 @@ Bool _Hal_tmds_GetClockChangeFlag(BYTE enInputPortType, ST_HDMI_RX_POLLING_INFO 
 
     enInputPortType = enInputPortType;
 
-    u16ClockCount = _Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion);
+    u16ClockCount = Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ);
 
     if(msRead2Byte(REG_PHY2P1_4_P0_5F_L +u32PHY2P1BankOffset) & BIT(2)) // phy2p1_4_5F[2]: reg_clk_big_chg_sts
     {
@@ -4495,7 +4500,7 @@ void _Hal_tmds_FastTrainingProc(BYTE enInputPortType, ST_HDMI_RX_POLLING_INFO *p
 
             case HDMI_FAST_TRAINING_CHECK_AUTO_EQ:
                 {
-                    BYTE u8ClockRange = _Hal_tmds_GetH14AutoEQEnable(enInputPortType, _Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion));
+                    BYTE u8ClockRange = _Hal_tmds_GetH14AutoEQEnable(enInputPortType, Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ));
 
                     if(u8ClockRange == HDMI_14_TMDS_CLOCK_OVER_135M)
                     {
@@ -6041,7 +6046,7 @@ BYTE _Hal_HDMI_GetAudioFrequency(ST_HDMI_RX_POLLING_INFO *pstHDMIRxPollingInfo,S
     else if(pstHDMIRxPollingInfo->bClockStableFlag )
     {
         // Get PHY rate clock count
-        ulTMDSClockCount = _Hal_tmds_GetClockRatePort(enInputPortSelect, pstHDMIRxPollingInfo->ucSourceVersion);
+        ulTMDSClockCount = Hal_tmds_GetClockRatePort(enInputPortSelect, pstHDMIRxPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ);
         ulTMDSClockCount = 12000/128*ulTMDSClockCount;
 
         if(pstHDMIRxPollingInfo->ulPacketStatusInfo_Low &HDMI_STATUS_ACR_PACKET_RECEIVE_FLAG)
@@ -6996,6 +7001,7 @@ void Hal_HDMI_HPDControl(BYTE enInputPortSelect, Bool bPullHighFlag)
 void Hal_HDMI_WriteInputPortEDID(BYTE enInputPortSelect, BYTE ucEDIDSize, BYTE *pEDID)
 {
     BYTE uctemp = 0;
+    WORD u16Base = 0;
     BYTE ucSizeCount = 0;
     BYTE u8HDMI_GPIO = Hal_HDMI_ComboPortMapping2DDCGPIOConfig(enInputPortSelect);
 
@@ -7023,9 +7029,10 @@ void Hal_HDMI_WriteInputPortEDID(BYTE enInputPortSelect, BYTE ucEDIDSize, BYTE *
                 break;
     }
 
+    u16Base = msRead2Byte(REG_PM_DDC_75_L);
      for(ucSizeCount = 0; ucSizeCount < ucEDIDSize; ucSizeCount++)
     {
-        msWrite2ByteMask(REG_PM_DDC_75_L, msRead2Byte(REG_PM_DDC_75_L)+ (ucSizeCount<<8), MASKBIT(13:8));
+        msWrite2ByteMask(REG_PM_DDC_75_L, u16Base + (ucSizeCount<<8), MASKBIT(13:8));
 
         for(uctemp = 0; uctemp < HDMI_EDID_BLOCK_SIZE; uctemp++)
         {
@@ -7229,6 +7236,67 @@ BYTE Hal_HDMI_GetGCPColorDepth(BYTE enInputPortSelect, DWORD *u32PacketStatus)
     }
     return u8ReValue;
 }
+
+//**************************************************************************
+//  [Function Name]:
+//                  KHal_HDMIRx_GetPixelRepetitionInfo()
+//  [Description]
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+MSCombo_TMDS_PIXEL_REPETITION KHal_HDMIRx_GetPixelRepetitionInfo(MS_U8 enInputPortType __attribute__ ((unused)))
+{
+    BYTE ucTmpValue = 0;
+    DWORD u32DTOPBankOffset = 0;
+    //MS_U32 u32PortBankOffset = _KHal_HDMIRx_GetPKTDECBankOffset(0);
+
+    // [3:0]: Pixel repetition
+    //ucTmpValue = (msReadByte(REG_173084 + wOffset_hdmi) & 0x0F); // hdmi_dual_42[3:0]: pixel repetition
+    //ucTmpValue = u4IO32ReadFld_1(REG_008C_P0_HDMIRX_PKT_DEC + u32PortBankOffset,REG_008C_P0_HDMIRX_PKT_DEC_REG_AVI_PB05) & BMASK(3:0);//AVI InfoFrame byte 5.[3:0]: Pixel repetition; pixel sent (PR+1) times.
+    ucTmpValue = (msRead2Byte(REG_HDMIRX_DTOP_PKT_P0_25_L +u32DTOPBankOffset) & 0x0F);
+
+    switch (ucTmpValue)
+    {
+        case 0:
+            return MSCombo_TMDS_N0_PIX_REP;
+        break;
+        case 1:
+            return MSCombo_TMDS_2x_PIX_REP;
+        break;
+        case 2:
+            return MSCombo_TMDS_3x_PIX_REP;
+        break;
+        case 3:
+            return MSCombo_TMDS_4x_PIX_REP;
+        break;
+        case 4:
+            return MSCombo_TMDS_5x_PIX_REP;
+        break;
+        case 5:
+            return MSCombo_TMDS_6x_PIX_REP;
+        break;
+        case 6:
+            return MSCombo_TMDS_7x_PIX_REP;
+        break;
+        case 7:
+            return MSCombo_TMDS_8x_PIX_REP;
+        break;
+        case 8:
+            return MSCombo_TMDS_9x_PIX_REP;
+        break;
+        case 9:
+            return MSCombo_TMDS_10x_PIX_REP;
+        break;
+        default:
+            return MSCombo_TMDS_RESERVED_PIX_REP;
+        break;
+    }
+
+}
+
 
 //**************************************************************************
 //  [Function Name]:

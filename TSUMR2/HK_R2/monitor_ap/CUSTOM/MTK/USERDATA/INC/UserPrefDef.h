@@ -461,6 +461,7 @@ typedef struct
 #if ENABLE_FREESYNC
     BYTE FreeSyncMode;    //Scar
 #endif
+    BYTE DisplayLogoEn;
     BYTE BankNo; //18
     BYTE Addr; //19
     BYTE Value; //1a
@@ -550,6 +551,8 @@ typedef struct
     BYTE MSTOnOff;
     BYTE DPVersion;
 #endif
+    BYTE DCOffDischarge;
+    BYTE PowerSaving;
     DWORD CheckSum; //1c
 } MonitorSettingType;
 

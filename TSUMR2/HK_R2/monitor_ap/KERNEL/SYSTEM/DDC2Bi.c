@@ -45,11 +45,11 @@
 #include "DDCMCCSMSCHandler.h"
 #endif
 
-#define CTEMP_6500K CTEMP_Warm1
+#define CTEMP_6500K CTEMP_Normal//CTEMP_Warm1
 #define CTEMP_9300K CTEMP_Cool1
-#define UserPrefRedColor6500K UserPrefRedColorWarm1
-#define UserPrefGreenColor6500K UserPrefGreenColorWarm1
-#define UserPrefBlueColor6500K UserPrefBlueColorWarm1
+#define UserPrefRedColor6500K UserPrefGreenColorNormal//UserPrefRedColorWarm1
+#define UserPrefGreenColor6500K UserPrefGreenColorNormal//UserPrefGreenColorWarm1
+#define UserPrefBlueColor6500K UserPrefBlueColorNormal//UserPrefBlueColorWarm1
 #define UserPrefRedColor9300K UserPrefRedColorCool1
 #define UserPrefGreenColor9300K UserPrefGreenColorCool1
 #define UserPrefBlueColor9300K UserPrefBlueColorCool1
@@ -59,6 +59,7 @@ extern void CheckModeSettingRange( void );
 extern Bool CheckFactorySettingOutOfRange( void );
 extern void Init_FactorySetting( void );
 extern Bool xdata bFlashWriteFactory;
+void DDC_ChangeSource( void );
 
 BYTE AlignControl( void );
 #define ASSETSTARTADDR          0x600
@@ -76,15 +77,15 @@ extern xdata BYTE MenuItemIndex;
 BYTE code CAP_VCP[] =
 {
     "("
-    "vcp(02 04 05 06 08 0E 10 12 14(01 05 06 08 0B) 16 18 1A 1E 20 30 3E "
+    "vcp(02 04 05 06 08 0E 10 12 14(01 05 08 0B) 16 18 1A 1E 20 30 3E "
     #if INPUT_TYPE!=INPUT_1A
-    "60(01 03) "
+    "60(01 03 0F 11) "
     #endif
     #if AudioFunc
     "62 "
     #endif
-    "6C 6E 70 C8 "
-    "B0 B6 DF)"
+    "6C 6E 70"
+    "D6(01 04)) "
     "prot(monitor)"
     "type(LCD)"
     "cmds(01 02 03 07 0C F3)"
@@ -99,12 +100,11 @@ BYTE code CAP_VCP[] =
 BYTE code DVI_CAP_VCP[] =
 {
     "("
-    "vcp(02 04 05 08 10 12 14(01 05 06 08 0B) 16 18 1A 60(01 03)"
+    "vcp(04 05 08 10 12 14(01 05 08 0B) 16 18 1A 60(01 03 0F 11)"
 #if AudioFunc
     "62 "
 #endif
-    "6C 6E 70 C8 "
-    "B0 B6 DF)"
+    "D6(01 04)) "
     "prot(monitor)"
     "type(LCD)"
     "cmds(01 02 03 07 0C F3)"
@@ -116,6 +116,28 @@ BYTE code DVI_CAP_VCP[] =
     ")"
 };
 #endif
+
+    #if ENABLE_DP_INPUT
+    BYTE code DP_CAP_VCP[] =
+{
+    "("
+    "vcp(04 05 08 10 12 14(01 05 08 0B) 16 18 1A 60(01 03 0F 11)"
+#if AudioFunc
+    "62 "
+#endif
+    "D6(01 04)) "
+    "prot(monitor)"
+    "type(LCD)"
+    "cmds(01 02 03 07 0C F3)"
+    "mccs_ver(2.1)"
+    "asset_eep(64)"
+    "mpu_ver("FWVersion")"
+    "model("Model")"
+    "mswhql(1)"
+    ")"
+};
+    #endif
+
 void DDC2Bi_InitRx( void )
 {
     rxStatus = DDC2B_CLEAR;
@@ -584,12 +606,13 @@ BYTE AlignControl( void )
         WordAddr = (( WORD )DDCBuffer[2] << 8 ) | (( WORD )DDCBuffer[3] );
         #if INPUT_TYPE!=INPUT_1A
         if( CURRENT_INPUT_IS_TMDS()
-#if ENABLE_DP_INPUT
+#if 0//ENABLE_DP_INPUT
         || CURRENT_INPUT_IS_DISPLAYPORT()
 #endif
             )
             WordValue = sizeof( DVI_CAP_VCP );
-        else
+        else if(CURRENT_INPUT_IS_DISPLAYPORT())
+            WordValue = sizeof( DP_CAP_VCP );
         #endif
             WordValue = sizeof( CAP_VCP );
         if( WordAddr >= WordValue )
@@ -608,11 +631,13 @@ BYTE AlignControl( void )
         {
             #if INPUT_TYPE!=INPUT_1A
             if( CURRENT_INPUT_IS_TMDS()
-        #if ENABLE_DP_INPUT
+        #if 0//ENABLE_DP_INPUT
         || CURRENT_INPUT_IS_DISPLAYPORT()
         #endif
         )
                 DDCBuffer[ValueL] = DVI_CAP_VCP[WordAddr + ValueL - 4];
+            else if(CURRENT_INPUT_IS_DISPLAYPORT())
+                DDCBuffer[ValueL] = DP_CAP_VCP[WordAddr + ValueL - 4];
             else
             #endif
                 DDCBuffer[ValueL] = CAP_VCP[WordAddr + ValueL - 4];
@@ -897,8 +922,12 @@ BYTE AlignControl( void )
             ValueL = 0x04;
             if(CURRENT_INPUT_IS_VGA())
                 RetValueL = 0x01;
+            else if(CURRENT_INPUT_IS_DVI())
+                RetValueL = 0x03;
+            else if(CURRENT_INPUT_IS_HDMI())
+                RetValueL = 0x11;
             else
-                RetValueH = 0x03;
+                RetValueH = 0x0F; // DP
             TPValue = 0x00;
         }
 #if AudioFunc
@@ -1110,7 +1139,7 @@ BYTE AlignControl( void )
             UserprefGreenBlackLevel = 50;
             UserprefBlueBlackLevel = 50;
             mStar_AdjustUserPrefBlacklevel( UserprefRedBlackLevel, UserprefGreenBlackLevel, UserprefBlueBlackLevel );
-            UserPrefColorTemp = CTEMP_Warm1; //CTEMP_9300K 20051115 wmz
+            UserPrefColorTemp = CTEMP_USER; //CTEMP_9300K 20051115 wmz
             if( WordValue != 0 )
                 SetColorTemp();
             ValueL = 1;
@@ -1302,20 +1331,32 @@ BYTE AlignControl( void )
         }
         else if( CPCode == Select_InputSource && PageValue == 0 )
         {
-            if( RetValueL == 0x01 || RetValueL == 0x02 )
+            if( RetValueL == 0x01)
             {
  				UserPrefInputType=Input_VGA;
-				ChangeSource();
-             }
-
-            if( RetValueL == 0x03 || RetValueL == 0x04 )
+				DDC_ChangeSource();
+            }
+            else if( RetValueL == 0x03)
             {
                 #if INPUT_TYPE!=INPUT_1A
 				UserPrefInputType=Input_Digital;
-				ChangeSource();
+				DDC_ChangeSource();
 				#endif
             }
-
+            else if( RetValueL == 0x11)
+            {
+                #if INPUT_TYPE!=INPUT_1A
+				UserPrefInputType=Input_Digital2;
+				DDC_ChangeSource();
+				#endif
+            }
+            else if( RetValueL == 0x0F)
+            {
+                #if INPUT_TYPE!=INPUT_1A
+				UserPrefInputType=Input_Digital3;
+				DDC_ChangeSource();
+				#endif
+            }
             TPValue = 0x00;
         }
 #if AudioFunc

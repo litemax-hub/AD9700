@@ -1,0 +1,141 @@
+# change following line for default project
+PROJ ?=  R2_MT9700_MTK
+
+ifeq ($(PROJ),R2_MT9701_MTK)
+    #########################################################################################################################
+    ##  BOARD_TYPE_SEL: BD_FPGA or BD_MT9701_A1V1_P2_S or BD_MT9701_A2V1_P2_S or BD_MT9701_A3V1_P2_S
+    ##					or BD_MT9701_A4V1_P2_S or BD_MT9701_A5V1_P2_S
+    #########################################################################################################################
+    BOARD_TYPE_SEL ?= BD_MT9701_A1V1_P2_S
+    CC_MTOPTS += -DMainBoardType=$(BOARD_TYPE_SEL)
+    CC_MTOPTS += -DMS_SW_CUS_SEL=SW_CONFIG_TRUNK_MST9U
+    MODEL_NAME_SEL ?= MT9701_DEMO
+    CC_MTOPTS += -DModelName=$(MODEL_NAME_SEL)
+    CHIP_FAMILY ?=MST9U
+    LOADER ?= ./project/loader/target_TSUM_R2.ld
+    ###########################################################
+    ##  BUILD_TARGET: ORIGINAL_ALL_SYSTEM  / BLOADER_SYSTEM
+    ###########################################################
+    BUILD_TARGET ?= ORIGINAL_ALL_SYSTEM
+    OS_TYPE = nos_aeon
+    BIN_FORMAT ?= COMPRESS
+    ZUI ?= 0
+    ZUI_BM ?= 0        
+    ENABLE_MSTV_UART_DEBUG ?= 1
+    CC_MTOPTS += -DZUI=$(ZUI) -DZUI_BM=$(ZUI_BM) -DENABLE_MSTV_UART_DEBUG=$(ENABLE_MSTV_UART_DEBUG)
+    BUILD_APLIB ?= n
+    BUILD_LIB ?= n
+    BUILD_AESLIB ?= n
+    TSUMR2_FPGA ?= n
+    RSA_SIGN ?= n
+    TTS ?= 0
+    DV ?= 0
+    AES_DECRYPTION ?= 0
+    CC_MTOPTS += -DTTS=$(TTS)
+    CC_MTOPTS += -DDV=$(DV)
+    CC_MTOPTS += -DAES_DECRYPTION=$(AES_DECRYPTION)
+endif
+
+ifeq ($(PROJ),R2_MT9700_MTK)
+    #########################################################################################################################
+    ##  BOARD_TYPE_SEL: BD_FPGA or BD_MTV19067 or BD_MTV19069 or BD_MTV19072 or BD_MTV19071 or BD_MST162A_A02A_S 
+    ##                  or BD_MST162F_A01A_S or BD_MST218B_B01A_S or BD_MST218B_B02A_S or BD_MT9700_A2V1_P2_S or BD_MT9700_A3V2_P2_S
+    ##                  or BD_MT9700_A4V2_P2_S or BD_MT9700_A5V2_P2_S or BD_MT9700_A6V2_P2_S or BD_MT9700_A7V2_P2_S or BD_MT9700_LITEMAX
+    #########################################################################################################################
+    BOARD_TYPE_SEL ?= BD_MT9700_A7V2_P2_S
+    CC_MTOPTS += -DMainBoardType=$(BOARD_TYPE_SEL)
+    CC_MTOPTS += -DMS_SW_CUS_SEL=SW_CONFIG_TRUNK_MST9U
+    MODEL_NAME_SEL ?= MT9700_DEMO
+    CC_MTOPTS += -DModelName=$(MODEL_NAME_SEL)
+    CHIP_FAMILY ?=MST9U
+    LOADER ?= ./project/loader/target_TSUM_R2.ld
+    ###########################################################
+    ##  BUILD_TARGET: ORIGINAL_ALL_SYSTEM  / BLOADER_SYSTEM
+    ###########################################################
+    BUILD_TARGET ?= ORIGINAL_ALL_SYSTEM
+    OS_TYPE = nos_aeon
+    BIN_FORMAT ?= COMPRESS
+    ZUI ?= 0
+    ZUI_BM ?= 0        
+    ENABLE_MSTV_UART_DEBUG ?= 1
+    CC_MTOPTS += -DZUI=$(ZUI) -DZUI_BM=$(ZUI_BM) -DENABLE_MSTV_UART_DEBUG=$(ENABLE_MSTV_UART_DEBUG)
+    BUILD_APLIB ?= n
+    BUILD_LIB ?= n
+    BUILD_AESLIB ?= n
+    TSUMR2_FPGA ?= n
+    RSA_SIGN ?= n
+    TTS ?= 0
+    AES_DECRYPTION ?= 0
+    CC_MTOPTS += -DTTS=$(TTS)
+    CC_MTOPTS += -DAES_DECRYPTION=$(AES_DECRYPTION)
+    DISABLE_LINT ?= 1
+endif
+
+ifeq ($(PROJ),R2_TSUM_TEST)
+    #########################################################################################################################
+    ##  BOARD_TYPE_SEL: BD_FPGA or BD_MTV19067 or BD_MTV19069 or BD_MTV19072 or BD_MTV19071
+    #########################################################################################################################
+    BOARD_TYPE_SEL ?= BD_FPGA
+    CC_MTOPTS += -DMainBoardType=$(BOARD_TYPE_SEL)
+    CC_MTOPTS += -DMS_SW_CUS_SEL=SW_CONFIG_TRUNK_MST9U
+    MODEL_NAME_SEL ?= MT9700_DEMO
+    CC_MTOPTS += -DModelName=$(MODEL_NAME_SEL)
+    CHIP_FAMILY ?=MST9U
+    LOADER ?= ./project/loader/target_TSUM_R2.ld
+    ###########################################################
+    ##  BUILD_TARGET: ORIGINAL_ALL_SYSTEM  / BLOADER_SYSTEM
+    ###########################################################
+    BUILD_TARGET ?= ORIGINAL_ALL_SYSTEM
+    OS_TYPE = nos_aeon
+    BIN_FORMAT ?= COMPRESS
+    ZUI ?= 0
+    ZUI_BM ?= 0    
+    ENABLE_MSTV_UART_DEBUG ?= 1
+    CC_MTOPTS += -DZUI=$(ZUI) -DZUI_BM=$(ZUI_BM) -DENABLE_MSTV_UART_DEBUG=$(ENABLE_MSTV_UART_DEBUG)
+    BUILD_APLIB ?= n
+    BUILD_LIB ?= n
+    BUILD_AESLIB ?= n
+    TSUMR2_FPGA ?= y
+    RSA_SIGN ?= n
+    TTS ?= 0
+    AES_DECRYPTION ?= 0
+    CC_MTOPTS += -DTTS=$(TTS)
+    CC_MTOPTS += -DAES_DECRYPTION=$(AES_DECRYPTION)
+endif
+
+ifeq ($(PROJ),R2_MST9U4_ZUI_1024_1024_1024MB)
+    ###################################################################################################################
+    ## BOARD_TYPE_SEL: BD_MST261A_B01A or BD_MST261A_B01A_S or BD_MST261B_B01A or BD_MST261B_B01A_S or BD_MST261C_B01A or BD_MST287A_B02A_S
+    ###################################################################################################################
+    BOARD_TYPE_SEL ?= BD_MST261B_B01A_S
+    CC_MTOPTS += -DMS_BOARD_TYPE_SEL=$(BOARD_TYPE_SEL)
+    CC_MTOPTS += -DMS_SW_CUS_SEL=SW_CONFIG_TRUNK_MST9U
+    CHIP_FAMILY ?=MST9U
+    LOADER ?= ./project/loader/target_MST9U_R2.ld
+    BUILD_TARGET ?= ORGINAL_ALL_SYSTEM
+    OS_TYPE = nos_aeon
+    MMAP ?= project/mmap/MMAP_MST9U4_1024_1024_1024_AEON.h
+    CC_MTOPTS += -DMEMORY_MAP=MMAP_1024_1024_1024MB
+    MEMORY_SIZE = MEMORY_3072MB
+    ##########################################
+    ##  MEM_TYPE: DDR3_1866 or DDR3_2133 or DDR4_2400 
+    ##########################################
+    MEM_TYPE = DDR3_2133
+    BIN_FORMAT ?= COMPRESS
+    ZUI ?= 0
+    ZUI_BM ?= 0
+    ENABLE_MSTV_UART_DEBUG ?= 1
+    CC_MTOPTS += -DZUI=$(ZUI) -DZUI_BM=$(ZUI_BM) -DENABLE_MSTV_UART_DEBUG=$(ENABLE_MSTV_UART_DEBUG)
+    QUICK_WAKEUP ?= 0
+    CC_MTOPTS += -DQUICK_WAKEUP=$(QUICK_WAKEUP)
+    BUILD_APLIB ?= n
+    BUILD_LIB ?= n
+    BUILD_AESLIB ?= n
+    MST9U_FPGA ?= n
+    RSA_SIGN ?= n
+    TTS ?= 0
+    AES_DECRYPTION ?= 0
+    CC_MTOPTS += -DTTS=$(TTS)
+    CC_MTOPTS += -DAES_DECRYPTION=$(AES_DECRYPTION)
+endif
+

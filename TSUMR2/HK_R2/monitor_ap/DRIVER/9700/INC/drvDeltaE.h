@@ -206,6 +206,25 @@ typedef struct{
 	short CheckSum;
 } __attribute__((packed))StoredFormatOfPostGamma;
 
+#define DICOMTableSize    76
+typedef struct{
+#if ENABLE_NEW_LOADCOLORMODE_FUNCTION
+	BYTE ColorMode;
+	BYTE funcIdx;
+#endif
+    BYTE GammaValue;
+#if ENABLE_NEW_LOADCOLORMODE_FUNCTION
+	BYTE CT_idx;
+	BYTE PWM_idx;
+	BYTE UC_flag;
+#if ENABLE_IDX_LOADCOLORMODE_FUNCTION
+	WORD IDX;
+#endif
+#endif
+	BYTE Data[3][DICOMTableSize];
+	short CheckSum;
+} __attribute__((packed))StoredFormatOfDICOMGamma;
+
 #ifndef DEF_DELTAE_TABLE
 #if ENABLE_NEW_LOADCOLORMODE_FUNCTION
 #define DEF_DELTAE_TABLE    AutoColorFunction_SRGB
@@ -415,12 +434,20 @@ extern void msLoadDeltaEColorMode(BYTE u8DispWin, BYTE ucColorMode);
 // Apply DICOM mode
 //-------------------------------------------------------------------------------
 extern void msSetDICOMMode(BYTE u8DispWin, BYTE DICOMModeIdx);
-extern WORD GetAddrOfDICOM(BYTE idx);
+extern DWORD GetAddrOfDICOM(BYTE idx);
+#if ENABLE_IDX_LOADCOLORMODE_FUNCTION
+extern void msSaveDICOMGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag, WORD IDX);
+#elif ENABLE_NEW_LOADCOLORMODE_FUNCTION
+extern void msSaveDICOMGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag);
+#else
+extern void msSaveDICOMGammaData(DWORD addr, BYTE GammaValue);
+#endif
+extern void msSetDICOMGammaData(int ch, int idx, BYTE _data);
 //-------------------------------------------------------------------------------
 // Fix gamma + Post gamma
 //-------------------------------------------------------------------------------
 extern LoadStatus msSetGammaCurve(BYTE u8DispWin, BYTE GammaIndex);
-extern WORD GetAddrOfPostGamma(void);
+extern DWORD GetAddrOfPostGamma(void);
 //-------------------------------------------------------------------------------
 // Output Test Pattern For Measurement. sRGB/AdobeRGB
 //-------------------------------------------------------------------------------
@@ -430,6 +457,9 @@ extern void msSetTestPattern(BOOL IsOn, BYTE R, BYTE G , BYTE B);
 //-------------------------------------------------------------------------------
 extern void msSetColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, WORD u16Red, WORD u16Green, WORD u16Blue);
 extern void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G, BYTE B, int stepAddr);
+extern void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD R, WORD G, WORD B);
+extern void msSetIP2TestPattern_Off(void);
+extern void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize);
 extern void msInitTestPattern_WithoutSignal(void);
 extern void msExitTestPattern_WithoutSignal(void);
 
@@ -469,16 +499,16 @@ extern void msSetPostGammaData(int ch, int idx, BYTE data);
 //-------------------------------------------------------------------------------
 // Save post gamma data to EEPROM.
 //-------------------------------------------------------------------------------
-extern WORD GetAddrOfColorModePostGamma(BYTE idx);
+extern DWORD GetAddrOfColorModePostGamma(BYTE idx);
 #if ENABLE_IDX_LOADCOLORMODE_FUNCTION
-extern void  msSavePostGammaData(WORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag, WORD IDX);
-extern void  msSavePostGammaTable(BYTE mode, BYTE idx, BYTE funcIdx,BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flagX, WORD IDX);
+extern void  msSavePostGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag, WORD IDX);
+extern void  msSavePostGammaTable(BYTE mode, BYTE idx, BYTE funcIdx,BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flagX, WORD IDX); //DICOM
 #elif ENABLE_NEW_LOADCOLORMODE_FUNCTION
-extern void  msSavePostGammaData(WORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag);
-extern void  msSavePostGammaTable(BYTE mode, BYTE idx, BYTE funcIdx,BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag);
+extern void  msSavePostGammaData(DWORD addr, BYTE ColorMode, BYTE funcIdx, BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag);
+extern void  msSavePostGammaTable(BYTE mode, BYTE idx, BYTE funcIdx,BYTE GammaValue, BYTE CT_idx, BYTE PWM_idx, BYTE UC_flag);//DICOM
 #else
-extern void  msSavePostGammaData(WORD addr, BYTE GammaValue);
-extern void  msSavePostGammaTable(BYTE mode, BYTE idx, BYTE GammaValue);
+extern void  msSavePostGammaData(DWORD addr, BYTE GammaValue);
+extern void  msSavePostGammaTable(BYTE mode, BYTE idx, BYTE GammaValue);//DICOM
 #endif
 //-------------------------------------------------------------------------------
 // Assign color temp data.
@@ -498,7 +528,7 @@ extern void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue)
 // Save color temp data to EEPROM.
 //-------------------------------------------------------------------------------
 extern void msSaveColorTempData(int idx);
-extern WORD GetAddrOfColorTempRGBGain(BYTE idx);
+extern DWORD GetAddrOfColorTempRGBGain(BYTE idx);
 #if ENABLE_COLORTEMP_GAMMA
 extern WORD GetAddrOfColorTempPostGamma(void);
 #endif
@@ -515,7 +545,7 @@ extern void msLoadColorTempMode2(BYTE idx, ColorType * pstColor);
 //-------------------------------------------------------------------------------
 #if ENABLE_COLORTRACK_FUNCTION
 extern void msSetColorTrackMode(BYTE u8DispWin, BYTE GammaIndex);
-extern WORD GetAddrOfColorTrackPostGamma(BYTE idx);
+extern DWORD GetAddrOfColorTrackPostGamma(BYTE idx);
 #endif
 //-------------------------------------------------------------------------------
 // Set UHDA color mode
@@ -562,7 +592,7 @@ extern void msLoadACHDRGamma(StoredFormatOfPostGamma *pStoredPostGamma);
 //-------------------------------------------------------------------------------
 // Set Auto Calibration HDR Color Temp
 //-------------------------------------------------------------------------------
-extern WORD GetAddrOfHDRColorTempRGBGain(void);
+extern DWORD GetAddrOfHDRColorTempRGBGain(void);
 extern void msSaveHDRColorTempRGBGain(void);
 extern void msSetHDRColorTempRGBGain(HDRColorTemp *pHDRColorTemp);
 extern void msLoadHDRColorTempMode(void);
@@ -572,28 +602,28 @@ extern void msLoadACHDRColorTempMode(BYTE u8DispWin);
 //-------------------------------------------------------------------------------
 // Auto Calibration Verify HDR Mode
 //-------------------------------------------------------------------------------
-#if 0
+#if 1
 extern void msVerifyHDRMode(BYTE u8WinIdx, BYTE enHDR);
 #endif
 //-------------------------------------------------------------------------------
 // Set Auto Calibration HDR 10 step luminance map
 //-------------------------------------------------------------------------------
-extern WORD GetAddrOfHDRLumMap(void);
+extern DWORD GetAddrOfHDRLumMap(void);
 extern void msSetHDRLumMap(StoredHDRLumMap *pHDRLumMap);
 extern void msSaveHDRLumMap(void);
 extern BOOL msLoadACHDRLumMap(StoredHDRLumMap *pHDRLumMap);
 //-------------------------------------------------------------------------------
 // Access Adjust HDR Brightness
 //-------------------------------------------------------------------------------
-extern WORD GetAddrOfHDRBrightness(void);
-extern WORD GetAddrOfHDRCalibrateY(void);
+extern DWORD GetAddrOfHDRBrightness(void);
+extern DWORD GetAddrOfHDRCalibrateY(void);
 extern void msSaveHDRCalibrateY(void);
 extern void msSetACHDRCalibrateY(HDRCalibrateY *pHDRCalibrateY);
 extern BOOL msLoadACHDRCalibrateY(StoredHDRCalibrateY *pHDRCalibrateY);
 //-------------------------------------------------------------------------------
 // Set LD Online Calibration Data
 //-------------------------------------------------------------------------------
-extern WORD GetAddrOfLDCalibrateData(void);
+extern DWORD GetAddrOfLDCalibrateData(void);
 extern void msSaveLDCalibrateData(void);
 extern void msSetLDCalibrateData(int idx, BYTE data);
 extern BOOL msLoadLDCalibrateData(StoredLDCalibrateData *pStoredLDCalibrateData);
@@ -630,10 +660,16 @@ extern BOOL IsAutoColorCommand(BYTE CommandCode);
 
 extern void msLoadHDRColorMode(short* p3x3);
 extern LoadStatus msReloadGammaData(BYTE u8DispWin, DWORD addr);
+extern LoadStatus msReloadDICOMGammaData(BYTE u8DispWin, DWORD addr);
 
-extern void msReloadPanelGammaData(WORD addr);
-extern WORD GetAddrOfHDRPostGamma(void);
-extern DWORD GetAddrOfAutoColorFunctionPostGamma(BYTE mode, BYTE idx);
+extern void msReloadPanelGammaData(DWORD addr);
+extern DWORD GetAddrOfHDRPostGamma(void);
+extern DWORD GetAddrOfAutoColorFunctionPostGamma(BYTE mode, BYTE idx); //DICOM
+#else//!ENABLE_DeltaE
+extern void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD R, WORD G, WORD B);
+extern void msSetIP2TestPattern_Off(void);
+extern void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize);
+extern void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue);
 #endif
 //-------------------------------------------------------------------------------
 // Flash Read Write

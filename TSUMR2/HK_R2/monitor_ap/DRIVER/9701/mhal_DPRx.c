@@ -1535,20 +1535,27 @@ WORD mhal_DPRx_GetTimingPixelClock(DPRx_ID dprx_id, DPRx_DECODER_ID dprx_decoder
 
     msWriteByteMask(REG_DPRX_DECODER_E0_0A_L + usRegOffsetDecoderByID, 0, BIT0); // Receiver 51
 
-    if(ulPixelClock > DPRX_M_DETECT_RANGE_PIXEL_CLK) // When pixel clk > 600MHz (ex: 4K@144), M value range should larger than before
-    {
-        usTargetRange = 0x130;
-        usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
-        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));   // Aviod low byte = 00, cause MN change
-        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange);                       // MVID_Range[15:0]
-    }
-    else
-    {
-        usTargetRange = 0x20;
+#if (DPRX_M_RANGE_NEW_MODE == 1)
+        usTargetRange = ulBaseMValue * DPRX_M_RANGE_NEW_MODE_VALUE / 1000;
+
+        if(usTargetRange > 0x40)
+        {
+            usTargetRange = usTargetRange + 0x100;
+        }
+#else
+        if(ulPixelClock > DPRX_M_DETECT_RANGE_PIXEL_CLK) // When pixel clk > 600MHz (ex: 4K@144), M value range should larger than befoe
+        {
+            usTargetRange = 0x130;
+        }
+        else
+        {
+            usTargetRange = 0x20;
+        }
+#endif
+
         usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
         msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
-        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange);                      // MVID_Range[15:0]
-    }
+        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange);                     // MVID_Range[15:0]
 
     return ulPixelClock;
 }
@@ -5285,19 +5292,19 @@ void mhal_DPRx_SetAuxDelayReply(DPRx_AUX_ID dprx_aux_id, WORD usDelayTime)
 {
     WORD usRegOffsetAuxPM0ByID = DP_REG_OFFSET_AUX_PM0(dprx_aux_id);
     WORD usPreDelay;
-    
+
 	if(dprx_aux_id == DPRx_AUX_ID_MAX)
 	{
 		return;
 	}
-    
+
     usPreDelay = (msRead2Byte(REG_DPRX_AUX_PM0_7B_L + usRegOffsetAuxPM0ByID)&0x1FFF);
-    
+
     if(usPreDelay != usDelayTime)
     {
         msWrite2Byte(REG_DPRX_AUX_PM0_7B_L + usRegOffsetAuxPM0ByID, usDelayTime);
     }
-    
+
     if(usPreDelay > usDelayTime)
     {
         msWriteByteMask(REG_DPRX_AUX_PM0_08_L + usRegOffsetAuxPM0ByID, BIT6, BIT6);
@@ -5489,8 +5496,8 @@ BOOL mhal_DPRx_CheckAuxIdle(DPRx_AUX_ID dprx_aux_id)
 	}
 
     if((mhal_DPRx_GetAuxValid(dprx_aux_id) == FALSE) &&
-      ((msReadByte(REG_DPRX_AUX_PM0_74_L + usRegOffsetAuxPM0ByID) & (BIT5|BIT4|BIT3)) == BIT3) && // AUX state - > AUX_RECEIVE
-      ((msReadByte(REG_DPRX_AUX_PM0_74_H + usRegOffsetAuxPM0ByID) & (BIT3|BIT2|BIT1|BIT0)) == 0)) // AUX rx phy state -> IDLE
+       (((msReadByte(REG_DPRX_AUX_PM0_74_L + usRegOffsetAuxPM0ByID) & (BIT5|BIT4|BIT3)) == BIT3) || // AUX state - > AUX_RECEIVE
+       ((msReadByte(REG_DPRX_AUX_PM0_74_L + usRegOffsetAuxPM0ByID) & (BIT5|BIT4|BIT3)) == 0))) // AUX state -> IDLE
     {
         return TRUE;
     }
@@ -5551,6 +5558,31 @@ BOOL mhal_DPRx_PMAux_Reset(DPRx_AUX_ID dprx_aux_id)
 	}
 
 	return TRUE;
+}
+
+//**************************************************************************
+//  [Function Name]:
+//                  mhal_DPRx_AuxPause_Set()
+//  [Description]
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+void mhal_DPRx_AuxPause_Set(DPRx_AUX_ID dprx_aux_id, Bool bEnable)
+{
+    WORD usRegOffsetAUXByID = DP_REG_OFFSET_AUX_PM3(dprx_aux_id);
+
+    if(bEnable == TRUE)
+    {
+        msWriteByteMask(REG_DPRX_AUX_PM3_2A_H + usRegOffsetAUXByID, BIT3|BIT1, BIT3|BIT1); // aux will not reply
+    }
+    else
+    {
+        msWriteByteMask(REG_DPRX_AUX_PM3_2A_H + usRegOffsetAUXByID, 0, BIT3|BIT1);
+    }
+	return;
 }
 
 void ________DPCD________(void);
@@ -15012,20 +15044,27 @@ WORD mhal_DPRx_GetTimingPixelClock10K(DPRx_ID dprx_id, DPRx_DECODER_ID dprx_deco
 
     msWriteByteMask(REG_DPRX_DECODER_E0_0A_L + usRegOffsetDecoderByID, 0, BIT0); // Receiver 51
 
-    if(ulPixelClock > (DPRX_M_DETECT_RANGE_PIXEL_CLK * 100)) // When pixel clk > 600MHz (ex: 4K@144), M value range should larger than before
+#if (DPRX_M_RANGE_NEW_MODE == 1)
+    usTargetRange = ulBaseMValue / 100 * DPRX_M_RANGE_NEW_MODE_VALUE / 1000;
+
+    if(usTargetRange > 0x40)
+    {
+        usTargetRange = usTargetRange + 0x100;
+    }
+#else
+    if(ulPixelClock > (DPRX_M_DETECT_RANGE_PIXEL_CLK * 100)) // When pixel clk > 600MHz (ex: 4K@144), M value range should larger than befoe
     {
         usTargetRange = 0x130;
-        usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
-        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));   // Aviod low byte = 00, cause MN change
-        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange); 					  // MVID_Range[15:0]
     }
     else
     {
         usTargetRange = 0x20;
-        usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
-        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
-        msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange); 					 // MVID_Range[15:0]
     }
+#endif
+
+    usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
+    msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
+    msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange); 					 // MVID_Range[15:0]
 
     return ulPixelClock;
 }
@@ -15076,7 +15115,7 @@ void mhal_DPRx_SetPowerDownControl(DPRx_ID dprx_id, DPRx_AUX_ID dprx_aux_id, DP_
         // Power down PHY1 if DPC port is not used
         if(DPRx_C3_AUX == AUX_None)
         {
-            mhal_DPRx_PHYPowerModeSetting(mhal_ePM_POWEROFF, DPRx_ID_2, DPRx_PHY_ID_1);
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWEROFF, DPRx_ID_2, DPRx_PHY_ID_1);
         }
 
         return;

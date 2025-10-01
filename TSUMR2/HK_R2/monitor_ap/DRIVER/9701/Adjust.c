@@ -718,7 +718,15 @@ void msAPI_WinReportGetWeightingPixelCountBySetRange(WORD *Rweight, WORD *Gweigh
 {
     msDrvWinReportGetWeightingPixelCountBySetRange(Rweight, Gweight, Bweight);
 }
+void mapi_Adjust_EnableNonStdCSC_Set(BOOL u8Enable)
+{
+    mdrv_Adjust_EnableNonStdCSC_Set(u8Enable);
+}
 
+BOOL mapi_Adjust_EnableNonStdCSC_Get(void)
+{
+    return mdrv_Adjust_EnableNonStdCSC_Get();
+}
 #if (USEFLASH && COLORDATA_USEFLASH)
 #warning "!! Please implement customized functions below for FlashWriter(Byte/Table) !!"
 #warning "!! The function should contain FLASH erase sector inside !!"

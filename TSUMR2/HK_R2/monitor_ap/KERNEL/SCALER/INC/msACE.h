@@ -51,6 +51,9 @@ enum
     eINPUT_CSC_ITU709,
     eINPUT_CSC_BT2020,
     eINPUT_CSC_RGB_LIMITED,
+    eINPUT_CSC_RGB_LIMITED_NONSTD,
+    eINPUT_CSC_ITU709_NONSTD,
+    eINPUT_CSC_ITU709_FULL_NONSTD,
     eINPUT_CSC_MAX,
 };
 
@@ -188,7 +191,9 @@ void msWritexvYccColorMatrix( BYTE ucWinIndex, short* psMatrix);
 #define ACE_YUV_TO_RGB_MATRIX_SDTV_YUV_LMITE   8// Use Std CSCM for SDTV with YUV
 #define ACE_YUV_TO_RGB_MATRIX_BT2020  9  // Use Std BT2020
 #define ACE_YUV_TO_RGB_MATRIX_BT2020_LIMIT  10  // Use Std BT2020
-
+#define ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD  11   // Use NonStd(16-254) CSCM for SDTV
+#define ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD  12   // Use NonStd(16-254) CSCM for HDTV
+#define ACE_YUV_TO_RGB_MATRIX_BT2020_LIMIT_NONSTD  13  // Use NonStd BT2020(16-254)
 //void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange);
 void msSetVideoColorMatrix_Contrast(BYTE bScalerWin, BYTE ucContrast);
 
@@ -208,6 +213,7 @@ void msSetRGBContrast(BYTE ucWinIndex, WORD ucContrast, WORD ucRCon, WORD ucGCon
 void msSetUserRGBGain(BYTE ucWinIndex, WORD u16RCon, WORD u16GCon, WORD u16BCon);
 void msSetContrast( BYTE ucWinIndex, WORD u16Contrast);
 void msSetRGBGain(BYTE ucWinIndex, WORD u16RCon, WORD u16GCon, WORD u16BCon);
+void msSetPostOffset(BYTE ucWinIndex, WORD u16Roffset, WORD u16Goffset, WORD u16Boffset);
 void msSetRGBOffset(BYTE ucWinIndex, BYTE ucRoff, BYTE ucG0ff, BYTE ucBoff);
 BOOL msForceUseBothContrast_Get( BYTE ucWinIndex);
 void msForceUseBothContrast( BYTE ucWinIndex, BOOL bForceUseBothContrast);

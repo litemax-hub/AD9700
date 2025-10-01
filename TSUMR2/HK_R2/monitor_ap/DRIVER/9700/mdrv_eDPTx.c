@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if PANEL_EDP
+#if 1//PANEL_EDP
 
 //-------------------------------------------------------------------------------------------------
 //  Local Defines

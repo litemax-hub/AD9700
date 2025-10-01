@@ -73,22 +73,26 @@ void Osd_DrawStr( BYTE xPos, BYTE yPos, BYTE *str )
 #define dispPtr     yPos
     dispPtr = 0;
     WRITE_CAFSRAM_ADDR();
-    old_msWrite2Byte(PORT_ATTR_ADDR, u16TempValue); // display font attribute
-    WRITE_ATTRIBUTE();
+    //old_msWrite2Byte(PORT_ATTR_ADDR, u16TempValue); // display font attribute
+    msWrite2Byte ( PORT_ATTR_ADDR, u16TempValue );
+	WRITE_ATTRIBUTE();
     while( *( str + dispPtr ) )        // display string font index
     {
-        old_msWriteByte(PORT_ATTR_DATA, OsdFontColor);
-        dispPtr++;
+        //old_msWriteByte(PORT_ATTR_DATA, OsdFontColor);
+        msWriteByte(PORT_ATTR_DATA, OsdFontColor);
+		dispPtr++;
     }
     if( u8DrawCode )
     {
         dispPtr = 0;
 	 WRITE_CAFSRAM_ADDR();
-        old_msWrite2Byte(PORT_CODE_ADDR, u16TempValue); // dispaly font code
-        WRITE_CODE();
+        //old_msWrite2Byte(PORT_CODE_ADDR, u16TempValue); // dispaly font code
+		msWrite2Byte ( PORT_CODE_ADDR, u16TempValue );
+		WRITE_CODE();
         while( (dispChar = *( str + dispPtr )) )            // display string font index
         {
-            old_msWriteByte(PORT_CODE_DATA, ASCII2FONT[dispChar]);
+            //old_msWriteByte(PORT_CODE_DATA, ASCII2FONT[dispChar]);
+            msWriteByte ( PORT_CODE_DATA, ASCII2FONT[dispChar] );
             dispPtr++;
         }
     }

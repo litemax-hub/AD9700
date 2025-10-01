@@ -348,10 +348,22 @@ if(TimeOutCounter)
 #endif
 
 #if Enable_PanelHandler
-    if(g_s32PanelCustomCounter)
-        g_s32PanelCustomCounter--;
+    if(g_s32PanelCustomCounter != 0)
+    {
+        if(g_s32PanelCustomCounter > 0)
+            g_s32PanelCustomCounter--;
+        else
+            g_s32PanelCustomCounter++;
+    }
     else
-        g_s32PanelCounter++;
+    {
+        if((g_s32PanelCounter <= g_s32PanelMinCounter) 
+            || (g_s32PanelCounter <= g_s32PanelMaxCounter))
+            g_s32PanelCounter++;
+
+        if(g_s32PanelCounter < 0) // signed long counter overflow
+            g_s32PanelCounter = 0;            
+    }
 
     if(!g_bPanelHandlerEn)  // main loop handler is not ready, trigger by minimum counter
         Power_PanelCtrlHandler();

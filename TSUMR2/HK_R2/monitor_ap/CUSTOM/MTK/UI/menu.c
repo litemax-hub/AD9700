@@ -114,7 +114,12 @@ void Menu_InitAction( void )
         MenuPageIndex = LogoMenu;
         //printMsg("displaymode_1");
     }
+#if DISABLE_DPMS
+    else if( SARwakeupFlag || FakeSleepFlag)
+
+#else
     else if( SARwakeupFlag )
+#endif
     {
         MenuPageIndex = HotInputSelectMenu;
 		OsdCounter=10;
@@ -159,6 +164,14 @@ void Menu_InitAction( void )
         {
             if(UserPrefPowerSavingEn == PowerSavingMenuItems_On)
             {
+#if DISABLE_DPMS
+            if(MenuPageIndex == HotInputSelectMenu)
+            {
+                Set_BackToStandbyFlag();
+                return;
+            }
+            else            
+#endif
                 MenuPageIndex = StandbyMenu;
             }
             else
@@ -189,11 +202,11 @@ void Menu_InitAction( void )
         MenuPageIndex = AutoMenu;
     }
 #endif
-    else if( ShowInputInfoFlag && !ProductModeFlag )
+    else if( ShowInputInfoFlag)// && !ProductModeFlag )
     {
         //printData(" ShowInputInfoFlag= %d", ShowInputInfoFlag);
         MenuPageIndex = InputInfoMenu;
-        OsdCounter = 2; //10;
+        OsdCounter = 5; //10;
         Clr_ShowInputInfoFlag();
         //          DrawOsdMenu();
         //          Delay1ms(300); //(500);
@@ -393,6 +406,7 @@ void Menu_OsdHandler( void )
 
     if( OsdTimeoutFlag )
     {
+printf("\r\n OsdTimeoutFlag");
         if( DisplayLogoFlag )
         {
             Clr_DisplayLogoFlag();
@@ -960,9 +974,11 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 {
                     // In factory mode or in DVI but stay in ImageSetup page, default in menuitemindex 0
                     //if ((!FactoryModeFlag) && !(SrcInputType == Input_Digital && UserPrefLastMenuIndex == 1))
+                #if 0
                     if( !FactoryModeFlag )
                         MenuItemIndex = UserPrefLastMenuIndex;
                     else
+                #endif
                         MenuItemIndex = 0;                    // while enter factory, then stay in Lum.
                     //printData("111 MenuItemIndex==%d",MenuItemIndex);
 
@@ -1087,7 +1103,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                        ) && processEvent == FALSE )
                     {
                         menuAction = MIA_GotoPrev;
-                        MenuItemIndex = 0;
+                        //MenuItemIndex = 0;
                         processEvent = TRUE;
                     }
                     #endif
@@ -1165,6 +1181,12 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 processEvent = TRUE;
                 Set_PushECOHotKeyFlag();
                 break;
+            case MIA_Brite:
+                menuAction = MIA_RedrawMenu;
+                MenuPageIndex = HotKeyBrightnessMenu;
+                MenuItemIndex = 0;
+                processEvent = TRUE;
+                break;
 #if ENABLE_DAC
             case MIA_VOL:
                 if( FreeRunModeFlag )
@@ -1177,7 +1199,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 MenuPageIndex = HotKeySourceVolMenu;
             else
         #endif
-        #if ENABLE_DP_INPUT
+        #if 0//ENABLE_DP_INPUT
             if(CURRENT_INPUT_IS_DISPLAYPORT())//(SrcInputType==Input_Displayport)
                 MenuPageIndex = HotKeySourceVolMenu;
             else
@@ -1354,6 +1376,7 @@ void DrawOsdMenu( void )
             printData( "LoadFfont--DrawOSDMenu", 0 );
             #endif
             LoadFfont();
+            MenuPageIndex = FactoryMenu;
         }
 
         if( CurrentMenu.Fonts )
@@ -1385,8 +1408,8 @@ void DrawOsdMenu( void )
 
         if( redrawFlags )
         {
-            #if 0//DEBUG_PRINT_ENABLE
-            printData( "redrawFlags", 0 );
+            #if DEBUG_PRINT_ENABLE
+            printData( "redrawFlags [%d]", MenuPageIndex );
             #endif
             Osd_Hide();
             //       LoadCommonFont(); // code test
@@ -2030,11 +2053,12 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
             return BriteContMenuItems_DPS;
         }
     #endif
+    #if ENABLE_DCR
         else if( menuPageIndex == DCRMenu )
         {
             return BriteContMenuItems_DCR;
         }
-
+    #endif
     }
     else if( MenuPageIndex == DCRMenu )
     {
@@ -2087,10 +2111,12 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
             return ColorSettingsMenuItems_SuperResolution;
         }
     #endif
+    #if ENABLE_COLORMODE_DEMO
         else if( menuPageIndex == ColorModeMenu )
         {
             return ColorSettingsMenuItems_ColorMode;
         }
+    #endif
         else if( menuPageIndex == ColorFormatMenu )
         {
             return ColorSettingsMenuItems_ColorFormat;
@@ -2357,6 +2383,7 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
     }
     else if(MenuPageIndex == PowerManagerMenu)
     {
+#if ENABLE_DCOFF_CHARGE
         if( menuPageIndex == DCOffDischargeMenu )
         {
             return PowerManagerMenuItems_DCOffDischarge;
@@ -2369,6 +2396,9 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
         {
             return PowerManagerMenuItems_DCOffDischarge;
         }
+#else
+        return PowerManagerMenuItems_PowerSaving;
+#endif
     }
     else if(MenuPageIndex == DCOffDischargeMenu)
     {
@@ -2438,8 +2468,8 @@ void DrawOsdBackGround()
             Osd_DrawCharDirect(1+i, OsdWindowHeight - 2, SmallLogo_4C+strSmallLogoWindow[i+13*2]*2);
         }
 
-        OsdFontColor = (CPC_White<<4|CPC_Black);
-        Osd_DrawPropStr( OsdWindowWidth-0x0D, OsdWindowHeight - 3, NetAddrText() );
+        //OsdFontColor = (CPC_White<<4|CPC_Black);
+        //Osd_DrawPropStr( OsdWindowWidth-0x0D, OsdWindowHeight - 3, NetAddrText() );
 
     }
 

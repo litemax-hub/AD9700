@@ -47,6 +47,7 @@ _ADJSUTDEC_ void msAPI_CustomBriEnable(BYTE u8WinIndex, Bool bEnable);
 _ADJSUTDEC_ void msAPI_DeGammaLoadTbl_256E_16B_N(BYTE u8WinIndex, BYTE **pu8Table);
 _ADJSUTDEC_ void msAPI_FixGammaLoadTbl_256E_12B(BYTE u8WinIndex, BYTE **pu8TableIndex);
 _ADJSUTDEC_ void msAPI_GammaLoadTbl_256E_14B(BYTE u8WinIndex, BYTE **pu8TableIndex);
+_ADJSUTDEC_ void msAPI_GammaLoadTbl_256E_14B_DICOM(BYTE u8WinIndex, BYTE **pu8TableIndex);
 _ADJSUTDEC_ void msAPI_GammaEnable(BYTE u8WinIndex, BYTE bEnable);
 _ADJSUTDEC_ void msAPI_DeGammaEnable(BYTE u8WinIndex, BYTE bEnable);
 _ADJSUTDEC_ void msAPI_FixGammaEnable(BYTE u8WinIndex, BYTE bEnable);
@@ -57,6 +58,9 @@ _ADJSUTDEC_ void msAPI_WinReportEnable(Bool bEnable);
 _ADJSUTDEC_ void msAPI_DisplayWindowEnable(Bool bEnable);
 _ADJSUTDEC_ void msAPI_WinReportSetRange(WORD u16HStart, WORD u16HEnd, WORD u16VStart, WORD u16VEnd);
 _ADJSUTDEC_ void msAPI_WinReportGetWeightingPixelCountBySetRange(WORD *Rweight, WORD *Gweight, WORD *Bweight);
+_ADJSUTDEC_ void msAPI_IP2Pattern_SetPureColorPattern(BYTE R,BYTE G,BYTE B);
+_ADJSUTDEC_ void mapi_Adjust_EnableNonStdCSC_Set(BOOL u8Enable);
+_ADJSUTDEC_ BOOL mapi_Adjust_EnableNonStdCSC_Get(void);
 
 _ADJSUTDEC_ WORD PWMBoundaryClamp(WORD PWMvalue);
 _ADJSUTDEC_ void msAPI_SetGlobalBrightnessPWM(WORD u16Brightness);
@@ -71,3 +75,4 @@ _ADJSUTDEC_ void msSuperResolutionOnOff(BOOL bOn);
 #endif
 _ADJSUTDEC_ void msAPI_VideoHueSaturation(void);
 _ADJSUTDEC_ Bool SetColorModeDemo(void);
+

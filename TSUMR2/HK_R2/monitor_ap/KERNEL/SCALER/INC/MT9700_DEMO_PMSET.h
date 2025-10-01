@@ -20,13 +20,13 @@
 #define PM_POWERSAVING_WAKEUP_SAR      	(1)
 #define PM_POWERSAVING_WAKEUP_SOG       (1)
 #define PM_POWERSAVING_WAKEUP_MCCS      (1)
-#define PM_POWERSAVING_SARmode        	ePMSAR_SAR3
+#define PM_POWERSAVING_SARmode        	ePMSAR_SAR2
 
 #define PM_POWEROFF_WAKEUP_GPIO        	(0)
 #define PM_POWEROFF_WAKEUP_SAR         	(0)
 #define PM_POWEROFF_WAKEUP_SOG         	(0)
 #define PM_POWEROFF_WAKEUP_MCCS        	(1)
-#define PM_POWEROFF_SARmode          	ePMSAR_SAR3
+#define PM_POWEROFF_SARmode          	ePMSAR_SAR2
 #if PM_SUPPORT_WAKEUP_DVI
 #define DVI5VP0_GPIO 1
 #define DVI5VP1_GPIO 0

@@ -10,19 +10,20 @@
 #define XROM_USB_SEL_ROMRAM         0x05
 #define XROM_USB_UPLOAD_VARLEN      0x06
 #define XROM_USB_INVALID_FILE       0x07
-#define XROM_USB_FILE_SIZE		    0x08
-#define XROM_USB_REBOOT_SYS		    0x09
-#define XROM_USB_FILE_CHECKSUM		0x0A
+#define XROM_USB_FILE_SIZE          0x08
+#define XROM_USB_REBOOT_SYS         0x09
+#define XROM_USB_FILE_CHECKSUM      0x0A
 #define XROM_USB_UPLOAD_LOG	        0x16
 #define XROM_USB_GET_DP_SYNC_CNT    0x20
 #define XROM_USB_GET_UPDATE_STATUS  0x21
 #define XROM_USB_SET_UPDATE_BITMAP  0x22
 #define XROM_USB_SET_DELAY_TIME     0x23
 #define XROM_USB_GET_PROGRAMMED_SIZE    0x27
-#define XROM_USB_WRITE_SC_REG		0xB2
-#define XROM_USB_READ_SC_REG		0xB3
-#define XROM_USB_WRITE_NM_REG		0xB4
-#define XROM_USB_READ_NM_REG		0xB5
+#define XROM_USB_WRITE_SC_REG       0xB2
+#define XROM_USB_READ_SC_REG        0xB3
+#define XROM_USB_WRITE_NM_REG       0xB4
+#define XROM_USB_READ_NM_REG        0xB5
+#define XROM_USB_HID_DATA           0xC0
 
 
 typedef enum _USB_MST_UPDATE_STATUS
@@ -39,7 +40,13 @@ void usb_connect(void);
 void USB_Device_Init(void);
 void USB_Handler(void);
 void USB_CMDHandler(void);
+
+#if ENABLE_USB_DEVICE_HID_MODE
+void USB_DataHandler(BYTE* USB_Data);
+#else
 void USB_DataHandler(void);
+#endif
+
 extern void msWrite4Byte( unsigned long u32RegLoAddr, unsigned long u32Value );
 extern void APPSystem_USBDeviceCB(BYTE* DataAddress,DWORD DataSize, BYTE CheckSum_flag);
 void USB_SendUpdateScuessCmd(BYTE u8Scuess);

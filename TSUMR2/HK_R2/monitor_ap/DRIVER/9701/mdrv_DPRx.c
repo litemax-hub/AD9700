@@ -1774,10 +1774,19 @@ BOOL _mdrv_DPRx_StateHandler(DPRx_ID dprx_id)
                     }
                     else
                     {
-                        glDPRxInfo[dprx_id].DPCheckModeCnt = 0;
-                        glDPRxInfo[dprx_id].ucState = DPRx_STATE_MEASURE;
+                        if(mhal_DPRx_IsAutoEQDone(dprx_id, dprx_phy_id) == FALSE)
+                        {
+                            mhal_DPRx_HWFastTrainingEnable(dprx_id, FALSE);
+                            mhal_DPRx_HWFastTrainingEnable(dprx_id, TRUE);
+                            DP_DRV_DPRINTF("Rx%d 8b10b error some lane not start auto eq ==> Reset Fast Training !!!!\r\n", dprx_id);
+                        }
+                        else
+                        {
+                            glDPRxInfo[dprx_id].DPCheckModeCnt = 0;
+                            glDPRxInfo[dprx_id].ucState = DPRx_STATE_MEASURE;
 
-                        DP_DRV_DPRINTF("\r\n** DP fast training lock check -> measure! port %d\r\n", dprx_id);
+                            DP_DRV_DPRINTF("\r\n** DP fast training lock check -> measure! port %d\r\n", dprx_id);
+                        }
                     }
                 }
                 else
@@ -2269,7 +2278,11 @@ void _mdrv_DPRx_CableDisconnectReset(DPRx_ID dprx_id)
     }
 
     glDPRxInfo[(BYTE)dprx_id].ucState = DPRx_STATE_STARTUP;
-    glDPRxDecoderInfo[dprx_decoder_id].bAudioEnable = FALSE;
+
+    if(_mdrv_DPRx_GetOnlineRxID() == dprx_id)
+    {
+        glDPRxDecoderInfo[dprx_decoder_id].bAudioEnable = FALSE;
+    }
 
     return;
 }
@@ -2870,11 +2883,11 @@ void mdrv_DPRx_Initial(void)
 
             if(dprx_id == DPRx_ID_2)
             {
-                mhal_DPRx_PHYPowerModeSetting(mhal_ePM_POWEROFF, dprx_id, DPRx_PHY_ID_1);
+                mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWEROFF, dprx_id, DPRx_PHY_ID_1);
             }
             else
             {
-                mhal_DPRx_PHYPowerModeSetting(mhal_ePM_POWEROFF, dprx_id, DPRx_PHY_ID_0);
+                mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWEROFF, dprx_id, DPRx_PHY_ID_0);
             }
 
             #if (DP_RX_FT_TIMER_A_WAIT_SQ_SIGNAL == 0x0)
@@ -3041,7 +3054,7 @@ void mdrv_DPRx_SetupInputPort_DisplayPort(DPRx_ID dprx_id)
 {
     DPRx_AUX_ID dprx_aux_id = _mdrv_DPRx_MSCHIP_DPRxID2AuxID(dprx_id);
     DPRx_DECODER_ID dprx_decoder_id = _mdrv_DPRx_MSCHIP_DPRxID2DecodeID(dprx_id);
-    
+
     BYTE ubCheckAuxIdleTimes;
     BYTE ubLinkRate;
     BYTE ubLaneCount;
@@ -3107,21 +3120,21 @@ void mdrv_DPRx_SetupInputPort_DisplayPort(DPRx_ID dprx_id)
     {
         if(glLastRxID == DPRx_ID_2)
         {
-            mhal_DPRx_PHYPowerModeSetting(mhal_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_1);
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_1);
         }
         else
         {
-            mhal_DPRx_PHYPowerModeSetting(mhal_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_0);
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_0);
         }
     }
 
     if(dprx_id == DPRx_ID_2)
     {
-        mhal_DPRx_PHYPowerModeSetting(mhal_ePM_POWERON, dprx_id, DPRx_PHY_ID_1);
+        mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWERON, dprx_id, DPRx_PHY_ID_1);
     }
     else
     {
-        mhal_DPRx_PHYPowerModeSetting(mhal_ePM_POWERON, dprx_id, DPRx_PHY_ID_0);
+        mhal_DPRx_PHYPowerModeSetting(DP_ePM_POWERON, dprx_id, DPRx_PHY_ID_0);
     }
 
     mhal_DPRx_HWFastTrainingEnable(dprx_id, TRUE);
@@ -3185,6 +3198,8 @@ void mdrv_DPRx_SetupInputPort_DisplayPort(DPRx_ID dprx_id)
     if((mhal_DPRx_GetDPCDValueByRIU(dprx_aux_id, DPCD_00202) & 0x0F) != 0x7) // offline -> online
     {
         mhal_DPRx_SetOffLine(dprx_id, dprx_aux_id, FALSE); //ov non_pm 202 203
+	    mhal_DPRx_MCUWriteNonPMDPCD(dprx_id, dprx_aux_id, DPCD_00100, 0x6);
+	    mhal_DPRx_MCUWriteNonPMDPCD(dprx_id, dprx_aux_id, DPCD_00101, 0x1);
     }
     else
     {
@@ -3244,11 +3259,11 @@ void mdrv_DPRx_Switch_Port_Check(void)
 
         if(glLastRxID == DPRx_ID_2)
         {
-            mhal_DPRx_PHYPowerModeSetting(mhal_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_1);
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_1);
         }
         else
         {
-            mhal_DPRx_PHYPowerModeSetting(mhal_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_0);
+            mhal_DPRx_PHYPowerModeSetting(DP_ePM_STANDBY, glLastRxID, DPRx_PHY_ID_0);
         }
 
         #if (DPRX_HDCP2_ENABLE == 1)
@@ -5489,6 +5504,15 @@ BOOL mdrv_DPRx_HPDControl(DPRx_ID dprx_id, BOOL bSetHPD)
         return FALSE;
     }
 
+    if(bSetHPD == 0x0)
+    {
+        mhal_DPRx_AuxPause_Set(dprx_aux_id, TRUE);
+    }
+    else
+    {
+        mhal_DPRx_AuxPause_Set(dprx_aux_id, FALSE);
+    }
+
     mhal_DPRx_HPDControl(dprx_aux_id, bSetHPD);
     mhal_DPRx_PHYCDRDetectEnable(dprx_phy_id, bSetHPD);
 
@@ -5720,7 +5744,7 @@ void mdrv_DPRx_RX_IRQ_Handler(void)
         msWriteByte(REG_DPRX_DPCD1_31_L + usRegOffsetDPCD1ByID, BIT5);
         mhal_DPRx_DELAY_NOP(10);
         msWriteByte(REG_DPRX_DPCD1_31_L + usRegOffsetDPCD1ByID, 0);
-        
+
         mhal_DPRx_SetAuxDelayReply(dprx_aux_id, DP_AUX_DELAY_TRAINING);
 
         glDPRxInfo[dprx_id].bDPTrainingP1T = TRUE;
@@ -6396,17 +6420,6 @@ void mdrv_DPRx_RX2_IRQ_Handler(void)
             msWriteByteMask(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, BIT7, BIT7);
             mhal_DPRx_DELAY_NOP(10);
             msWriteByteMask(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, 0, BIT7);
-        }
-
-        if(msReadByte(REG_DPRX_DECODER_E0_0B_H + usRegOffsetDecoderByID) & BIT2) // vheight_unstable | (~msa_ignore_en & votal_unstable) | (~decompression_en & hwidth_unstable)
-        {
-			msWriteByteMask(REG_DPRX_DECODER_E0_0D_H + usRegOffsetDecoderByID, BIT2, BIT2);
-
-            msWriteByte(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, BIT2);
-            mhal_DPRx_DELAY_NOP(10);
-            msWriteByte(REG_DPRX_DECODER_E0_0F_H + usRegOffsetDecoderByID, 0);
-
-            _mdrv_DPRx_MSCHIP_ScreenMute();
         }
     }
 
@@ -8131,6 +8144,89 @@ DPRx_MCCS_WAKEUP mdrv_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(DPRx_ID dprx_id)
 
     return mhal_DPRx_CheckMCCSWakeUpXDATAProgrammableDPCD(dprx_aux_id);
 }
+
+
+//**************************************************************************
+//  [Function Name]:
+//                  mdrv_DPRx_PortInfo_Get()
+//  [Description]
+//					mdrv_DPRx_PortInfo_Get
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mdrv_DPRx_PortInfo_Get(DPRx_ID dprx_id, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{
+	BOOL bReturnValue = TRUE;
+	DPRx_DECODER_ID dprx_decoder_id = _mdrv_DPRx_MSCHIP_DPRxID2DecodeID(dprx_id);
+
+	if(dprx_id == DPRx_ID_MAX)
+    {
+        return FALSE;
+    }
+
+	switch(RxInfoSelect)
+	{
+		case COMBO_RX_INFO_VAR_HTT_RO:
+			if(dprx_decoder_id != DPRx_DECODER_ID_MAX)
+			{
+		    	pRxInfoUnion->ulValue = glDPRxDecoderInfo[dprx_decoder_id].uwDPHtotal;
+			}
+			break;
+
+		case COMBO_RX_INFO_VAR_PIXEL_CLOCK_10KHZ:
+			if(dprx_decoder_id != DPRx_DECODER_ID_MAX)
+			{
+				pRxInfoUnion->ulValue = mhal_DPRx_GetTimingPixelClock10K(dprx_id, dprx_decoder_id);
+			}
+			break;
+		default:
+			bReturnValue = FALSE;
+			break;
+	}
+
+	return bReturnValue;
+}
+
+//**************************************************************************
+//  [Function Name]:
+//                  mdrv_DPRx_PortInfo_Set()
+//  [Description]
+//					mdrv_DPRx_PortInfo_Set
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+BOOL mdrv_DPRx_PortInfo_Set(DPRx_ID dprx_id, ST_COMBO_RX_INFO_UNION *pRxInfoUnion, EN_COMBO_RX_INFO_SELECT RxInfoSelect)
+{
+	BOOL bReturnValue = TRUE;
+
+
+	if(dprx_id == DPRx_ID_MAX)
+    {
+        return FALSE;
+    }
+
+	switch(RxInfoSelect)
+	{
+		 case COMBO_RX_VAR_WAKEUPSTATUS_WO:
+		 	if(pRxInfoUnion->ulValue != 0x0)
+		 	{
+            	printf("value = 0x%x\r\n", pRxInfoUnion->ulValue);
+		 	}
+            break;
+
+		default:
+			bReturnValue = FALSE; //No support this enum
+			break;
+	}
+
+	return bReturnValue;
+}
+
+
 #endif // ENABLE_DP_INPUT
 
 //**************************************************************************

@@ -67,3 +67,5 @@ extern void msDrv_SuperResolutionOnOff(BOOL bOn);
 
 
 extern Bool msDrv_SetColorModeDemo(void);
+extern void mdrv_Adjust_EnableNonStdCSC_Set(BOOL u8Enable);
+extern BOOL mdrv_Adjust_EnableNonStdCSC_Get(void);

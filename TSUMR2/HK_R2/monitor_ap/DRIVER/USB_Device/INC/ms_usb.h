@@ -90,13 +90,14 @@
 #define USB_DT_INTERFACE                0x04
 #define USB_DT_ENDPOINT                 0x05
 #define USB_DT_DEVICE_QUALIFIER         0x06
-#define USB_DT_OTHER_SPEED                  0X07
+#define USB_DT_OTHER_SPEED              0X07
 #define USB_DT_INTERFACE_POWER          0x08
-#define USB_DT_OTG                              0x09
-#define USB_DT_DEVICE_SIZE                   18
-#define USB_DT_DEVICE_QUALIFIER_SIZE 10
-#define USB_DT_CONFIG_SIZE                    9
-#define USB_DT_INTERFACE_SIZE             9
-#define USB_DT_ENDPOINT_SIZE              7
-#define USB_DT_OTG_SIZE                       3
+#define USB_DT_OTG                      0x09
+#define USB_DT_HID_REPORT               0x22
+#define USB_DT_DEVICE_SIZE                18
+#define USB_DT_DEVICE_QUALIFIER_SIZE      10
+#define USB_DT_CONFIG_SIZE                 9
+#define USB_DT_INTERFACE_SIZE              9
+#define USB_DT_ENDPOINT_SIZE               7
+#define USB_DT_OTG_SIZE                    3
 #endif

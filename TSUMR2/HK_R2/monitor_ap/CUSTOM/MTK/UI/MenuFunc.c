@@ -80,7 +80,7 @@
 #if ENABLE_HDR
 #include "drvHDR.h"
 #endif
-#define MenuFunc_DEBUG    1
+#define MenuFunc_DEBUG    0
 #if ENABLE_DEBUG&&MenuFunc_DEBUG
     #define MenuFunc_printData(str, value)   printData(str, value)
     #define MenuFunc_printMsg(str)           printMsg(str)
@@ -126,9 +126,9 @@ BYTE* code ColorTempPtr[5][5] =
 {
     {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},
     {&UserPrefBrightnessNormal, &UserPrefContrastNormal, &UserPrefRedColorNormal, &UserPrefGreenColorNormal, &UserPrefBlueColorNormal},
-    {&UserPrefBrightnessWarm1, &UserPrefContrastWarm1, &UserPrefRedColorWarm1, &UserPrefGreenColorWarm1, &UserPrefBlueColorWarm1},
     {&FUserPrefBrightnessSRGB, &FUserPrefContrastSRGB, &UserPrefRedColorSRGB, &UserPrefGreenColorSRGB, &UserPrefBlueColorSRGB},
     {&UserPrefBrightnessUser, &UserPrefContrastUser, &UserPrefRedColorUser, &UserPrefGreenColorUser, &UserPrefBlueColorUser},
+    {&UserPrefBrightnessWarm1, &UserPrefContrastWarm1, &UserPrefRedColorWarm1, &UserPrefGreenColorWarm1, &UserPrefBlueColorWarm1},
 };
 //////////////////////////////////////////////////////////////////////////
 // Matrix for convert to sRGB space
@@ -239,6 +239,7 @@ WORD GetScale100Value( WORD value, WORD minValue, WORD maxValue )
     value %= 101;
     return value;
 }
+extern BYTE xdata PrevMenuItemIndex;
 extern BYTE xdata MenuItemIndex;
 extern BYTE xdata MenuPageIndex;
 #if MWEFunction
@@ -1442,6 +1443,7 @@ Bool PowerOffSystem( void )
 
     return TRUE;
 }
+
 Bool PowerOnSystem( void )
 {
     BootTimeStamp_Set(POWER_ON_TS, 0, TRUE); // power on timestamp 0
@@ -2031,7 +2033,10 @@ Bool AdjustLanguage( MenuItemActionType action )
 Bool ChangeSource( void )
 {
     if (UserPrefInputPriorityType == MenuItemIndex)
+    {
+        PrevMenuItemIndex = MenuItemIndex;
         return FALSE;
+    }
     UserPrefInputPriorityType = MenuItemIndex;
 
     if( UserPrefInputPriorityType == Input_Priority_Auto )
@@ -2088,6 +2093,22 @@ Bool ChangeSource( void )
     //if( !ProductModeFlag )
     //    Set_ShowInputInfoFlag();
     return TRUE;
+}
+
+void DDC_ChangeSource( void )
+{
+    if(UserPrefInputPriorityType == (UserPrefInputType+1))
+        return;
+    UserPrefInputPriorityType = UserPrefInputType+1;
+    SrcInputType=UserPrefInputType;
+#if Enable_PanelHandler
+    Power_PanelCtrlOnOff(FALSE, TRUE);
+#else
+    Power_TurnOffPanel();
+#endif
+
+    mStar_SetupInputPort();
+    Set_InputTimingChangeFlag();
 }
 
 Bool ChangeDPVersion( void )
@@ -2330,7 +2351,7 @@ Bool ResetAllSetting( void )
 #if Enable_PanelHandler
     Power_PanelCtrlOnOff(FALSE, TRUE);
 #else
-    Power_TurnOffPanel();
+    mStar_BlackWhiteScreenCtrl(BW_SCREEN_BLACK);//Power_TurnOffPanel();
 #endif
 
     /*          //remove down
@@ -2494,6 +2515,7 @@ Bool ResetAllSetting( void )
     UserprefHistogram2 = 0xB0;
     UserprefALha = 50;
     UserprefBata = 50;
+    UserPrefPowerSavingEn = PowerSavingMenuItems_On;
 
     if(CURRENT_INPUT_IS_VGA())//(( SrcInputType < Input_Digital ) )
     {
