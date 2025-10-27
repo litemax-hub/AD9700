@@ -134,7 +134,7 @@ TSUMR2/HK_R2/boot/R2_MT9701_MTK/BOOT.bin
 # *.l1p
 # *.l2p
 # *.iex
-# *.pyc
+*.pyc
 # **/AP.sym
 # **/AP.dis
 
