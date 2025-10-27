@@ -1250,6 +1250,10 @@ void KHal_HDMIRx_CEDCheck(BYTE enInputPortType)
             && ((msReadByte(REG_SCDC_P0_0D_L + u32PMSCDCBankOffset) & BIT2) == 0x00))
         {
             msWriteByteMask(REG_SCDC_P0_0D_L + u32PMSCDCBankOffset, (BIT1|BIT2), (BIT1|BIT2)); //  scdc_05[0]: error_cnt_ov
+
+            KHal_HDMIRx_SetSCDCValue(enInputPortType, 0x02, 0x00);
+            KHal_HDMIRx_SetSCDCValue(enInputPortType, 0x03, 0x00);
+            KHal_HDMIRx_SetSCDCValue(enInputPortType, 0x10, 0x00);
             KHal_HDMIRx_SetSCDCValue(enInputPortType, 0x50, 0x00); // 0x50
             KHal_HDMIRx_SetSCDCValue(enInputPortType, 0x51, 0x00); // 0x51
             KHal_HDMIRx_SetSCDCValue(enInputPortType, 0x52, 0x00); // 0x52
@@ -2760,6 +2764,31 @@ Bool mhal_tmds_HDCP2CheckRomCodeResult(void)
 
 //**************************************************************************
 //  [Function Name]:
+//                  mhal_tmds_HDCP_IRQ_Clear()
+//  [Description]:
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+void mhal_tmds_HDCP_IRQ_Clear(MSCombo_TMDS_PORT_INDEX enInputPort)
+{
+    UNUSED(enInputPort);
+    WORD wTemp;
+
+    if(msReadByte(REG_HDMIRX_DTOP_P0_3B_L) & BIT6)
+    {
+        wTemp = msRead2Byte(REG_HDMIRX_DTOP_P0_3B_L);
+        msWriteByte(REG_HDMIRX_DTOP_P0_3D_L, 0x01); //[0] irq clr select
+        msWrite2Byte(REG_HDMIRX_DTOP_P0_3B_L, wTemp); //clear hdcp irq
+        msWriteByte(REG_HDMIRX_DTOP_P0_3D_L, 0x00); //[0] irq clr select
+    }
+}
+
+
+//**************************************************************************
+//  [Function Name]:
 //                  mhal_tmds_HDCP2WriteDone()
 //  [Description]:
 //
@@ -2780,10 +2809,8 @@ BOOL mhal_tmds_HDCP2CheckWriteDone(MSCombo_TMDS_PORT_INDEX enInputPort)
             msWriteByte(REG_HDMIRX_HDCP_P0_66_L + wOffset, 0x04); //clear wirte done status
             msWriteByte(REG_HDMIRX_HDCP_P0_66_L + wOffset, 0x10); //clear write start status
 
-            //msWriteByte(REG_HDCPKEY_3C_H + wOffset, 0x40); //clear dtop w/r done status
-            //msWriteByte(REG_HDCPKEY_3C_H + wOffset, 0x00); //clear dtop w/r done status
-            msWrite2Byte(REG_HDMIRX_DTOP_P0_3C_L + wOffset, BIT14); //clear wirte done status adcdvi_irq
-            msWrite2Byte(REG_HDMIRX_DTOP_P0_3C_L + wOffset, 0x0000); //clear wirte done status
+            msWrite2Byte(REG_HDMIRX_DTOP_P0_3C_L + wOffset, 0x4000); //clear dtop w/r done status
+            msWrite2Byte(REG_HDMIRX_DTOP_P0_3C_L + wOffset, 0x0000); //clear dtop w/r done status
 
             return TRUE;
         }
@@ -2817,8 +2844,8 @@ BOOL mhal_tmds_HDCP2ReadDone(MSCombo_TMDS_PORT_INDEX enInputPort)
         {
             msWriteByte(REG_HDMIRX_HDCP_P0_66_L, 0x08); //clear read done status
 
-            msWriteByte(REG_HDMIRX_DTOP_P0_3C_H + wOffset, 0x40); //clear dtop w/r done status
-            msWriteByte(REG_HDMIRX_DTOP_P0_3C_H + wOffset, 0x00); //clear dtop w/r done status
+            msWrite2Byte(REG_HDMIRX_DTOP_P0_3C_L + wOffset, 0x4000); //clear dtop w/r done status
+            msWrite2Byte(REG_HDMIRX_DTOP_P0_3C_L + wOffset, 0x0000); //clear dtop w/r done status
 
             return TRUE;
         }
@@ -4236,6 +4263,8 @@ void _Hal_tmds_MACInit(BYTE enInputPortSelect __attribute__ ((unused)))
 //**************************************************************************
 void _Hal_tmds_HDMIInit(BYTE enInputPortSelect  __attribute__ ((unused)))
 {
+#warning "to support hdmi2.0, please make sure: (1)support 5v detect (2) enable scdc: ENABLE_HDMI_SCDC = 1 (3) disable replace mode: ENABLE_HPD_REPLACE_MODE = 0"
+
     DWORD u32HDMIBankOffset = 0;//_Hal_tmds_GetHDMIBankOffset(u8HDMIInfoSource);
 
     msWrite2ByteMask(REG_HDMI2_U0_24_L +u32HDMIBankOffset, 0, BIT(10)); // hdmi2_u0_24[10]: reg_pkt_8p_en
@@ -6714,7 +6743,7 @@ void Hal_HDMI_init(BYTE enInputPortSelect)
         _Hal_tmds_HDMIInit(enInputPortSelect);
 	}
 
-    Hal_HDMI_Audio_MUTE_Enable(0xAF, 0xAF);
+    Hal_HDMI_Audio_MUTE_Enable(0xBF, 0xBF); //enable aud_flat mute event for hdmi2.0 CTS;
     msWrite2ByteMask(REG_COMBO_GP_TOP_4D_L, 0, BIT(6)); // combo_gp_top_4D[6]: reg_hdmi_audio_status_en:audio fifo overflow/underflow for QD980 cts 8-21/23 audio cutting
 
     msWrite2ByteMask(REG_COMBO_GP_TOP_01_L, BIT(6), BIT(6)); // combo_gp_top_01[6]: DVI2MIU enable
@@ -7087,8 +7116,16 @@ Bool Hal_HDMI_GetDEStableStatus(BYTE enInputPortSelect __attribute__ ((unused)))
 
 	if((msRead2Byte(REG_HDMIRX_DTOP_P0_30_L + u32DTOPBankOffset) & BIT(5))) // hdmirx_dtop_30[5]: reg_de_stable
 	{
-		bDEStableFlag = TRUE;
-	}
+		if(_Hal_tmds_GetHDMIModeFlag(enInputPortSelect))
+        {
+            if(mhal_tmds_HDMIGetBCHErrorStatus(enInputPortSelect))
+                bDEStableFlag = FALSE;
+            else
+                bDEStableFlag = TRUE;
+        }
+        else
+            bDEStableFlag = TRUE;
+    }
 
 	return bDEStableFlag;
 }

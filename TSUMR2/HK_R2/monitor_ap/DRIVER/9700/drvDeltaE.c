@@ -41,9 +41,7 @@ short HSt = 0;
 short HEd = 0;
 static WORD _u16ColorTempRed = 0x400, _u16ColorTempGreen = 0x400, _u16ColorTempBlue = 0x400;
 extern BYTE CurrentOutputPattern[6];
-#define _maxWinNum 2
-WORD _hSizeOfIP2TestPtn[_maxWinNum] = {3840};
-WORD _vSizeOfIP2TestPtn[_maxWinNum] = {2160};
+
 DWORD _addrOfAutoColorBlock = ADDR_DELTAE_BLOCK;//0x1000;
 static MemoryType _memoryType = enMemoryType_EEPROM;
 static Bool _bDoWP = TRUE;
@@ -4158,56 +4156,6 @@ void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G,
 
 #endif
 
-void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD R, WORD G, WORD B)
-{
-    UNUSED(u8WinIdx);
-    DWORD PIPWin_hsize = PANEL_WIDTH * sqrt(percentOfCentralArea);
-    DWORD PIPWin_vsize = PANEL_HEIGHT * sqrt(percentOfCentralArea);
-
-    DWORD PIPWin_hst = (PANEL_WIDTH -  PIPWin_hsize) / 2;
-    DWORD PIPWin_hend = PIPWin_hst + PIPWin_hsize;
-    DWORD PIPWin_vst = (PANEL_HEIGHT - PIPWin_vsize) / 2;
-    DWORD PIPWin_vend = PIPWin_vst + PIPWin_vsize;
-
-    DWORD u32R, u32G, u32B;
-
-    u32R = R;
-    u32G = G;
-    u32B = B;
-
-
-
-    msWriteByteMask(SC53_15, 0, BIT7); // bypass tgen pattern
-    msWriteByteMask(SC53_15, BIT1, BIT1); //Display pip pattern
-
-	msWrite2Byte(SC53_24, u32R);//msWrite2Byte(SC53_02, u32R);
-	msWrite2Byte(SC53_26, u32G);//msWrite2Byte(SC53_08, u32G);
-	msWrite2Byte(SC53_28, u32B);//msWrite2Byte(SC53_0E, u32B);
-
-    msWrite2Byte(SC53_34, (WORD)PIPWin_hst);
-    msWrite2Byte(SC53_36, (WORD)PIPWin_hend);
-    msWrite2Byte(SC53_38, (WORD)PIPWin_vst);
-    msWrite2Byte(SC53_3A, (WORD)PIPWin_vend);
-    msWrite2Byte(SC53_18, PANEL_WIDTH);
-    msWrite2Byte(SC53_1C, PANEL_HEIGHT);
-}
-void msSetIP2TestPattern_Off(void)
-{
-    msWriteByteMask(SC53_15, BIT7, BIT7); // bypass tgen pattern
-    msWriteByteMask(SC53_15, 0, BIT1); //Display pip pattern
-    msWrite2Byte(SC53_34, 0x0000);//(WORD)PIPWin_hst
-    msWrite2Byte(SC53_36, 0x0000);//(WORD)PIPWin_hend
-    msWrite2Byte(SC53_38, 0x0000);//(WORD)PIPWin_vst
-    msWrite2Byte(SC53_3A, 0x0000);//(WORD)PIPWin_vend
-    msWrite2Byte(SC53_18, 0x0000);//PANEL_WIDTH
-    msWrite2Byte(SC53_1C, 0x0000);//PANEL_HEIGHT
-}
-void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize)
-{
-UNUSED(u8WinIdx);
-    _hSizeOfIP2TestPtn[0] = hSize;
-    _vSizeOfIP2TestPtn[0] = vSize;    
-}
 //-------------------------------------------------------------------------------
 // Toggle color engine
 //-------------------------------------------------------------------------------
@@ -6696,23 +6644,6 @@ void _EEPROMPostGammaCheckSum_Get(BYTE mode, BYTE idx, BYTE AckType, WORD* check
     } 
 }
 #else//ENABLE_DeltaE off
-
-void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD R, WORD G, WORD B)
-{
-    UNUSED(u8WinIdx);
-    UNUSED(percentOfCentralArea);
-    UNUSED(R);
-    UNUSED(G);
-    UNUSED(B);
-}
-void msSetIP2TestPattern_Off(void)
-{}
-void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize)
-{
-    UNUSED(u8WinIdx);
-    UNUSED(hSize);
-    UNUSED(vSize);
-}
 void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue)
 {
     UNUSED(u16Red);
@@ -6721,4 +6652,56 @@ void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue)
 }
 
 #endif
+#define _maxWinNum 2
+WORD _hSizeOfIP2TestPtn[_maxWinNum] = {3840};
+WORD _vSizeOfIP2TestPtn[_maxWinNum] = {2160};
+void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD R, WORD G, WORD B)
+{
+    UNUSED(u8WinIdx);
+    DWORD PIPWin_hsize = PANEL_WIDTH * sqrt(percentOfCentralArea);
+    DWORD PIPWin_vsize = PANEL_HEIGHT * sqrt(percentOfCentralArea);
 
+    DWORD PIPWin_hst = (PANEL_WIDTH -  PIPWin_hsize) / 2;
+    DWORD PIPWin_hend = PIPWin_hst + PIPWin_hsize;
+    DWORD PIPWin_vst = (PANEL_HEIGHT - PIPWin_vsize) / 2;
+    DWORD PIPWin_vend = PIPWin_vst + PIPWin_vsize;
+
+    DWORD u32R, u32G, u32B;
+
+    u32R = R;
+    u32G = G;
+    u32B = B;
+
+
+
+    msWriteByteMask(SC53_15, 0, BIT7); // bypass tgen pattern
+    msWriteByteMask(SC53_15, BIT1, BIT1); //Display pip pattern
+
+	msWrite2Byte(SC53_24, u32R);//msWrite2Byte(SC53_02, u32R);
+	msWrite2Byte(SC53_26, u32G);//msWrite2Byte(SC53_08, u32G);
+	msWrite2Byte(SC53_28, u32B);//msWrite2Byte(SC53_0E, u32B);
+
+    msWrite2Byte(SC53_34, (WORD)PIPWin_hst);
+    msWrite2Byte(SC53_36, (WORD)PIPWin_hend);
+    msWrite2Byte(SC53_38, (WORD)PIPWin_vst);
+    msWrite2Byte(SC53_3A, (WORD)PIPWin_vend);
+    msWrite2Byte(SC53_18, PANEL_WIDTH);
+    msWrite2Byte(SC53_1C, PANEL_HEIGHT);
+}
+void msSetIP2TestPattern_Off(void)
+{
+    msWriteByteMask(SC53_15, BIT7, BIT7); // bypass tgen pattern
+    msWriteByteMask(SC53_15, 0, BIT1); //Display pip pattern
+    msWrite2Byte(SC53_34, 0x0000);//(WORD)PIPWin_hst
+    msWrite2Byte(SC53_36, 0x0000);//(WORD)PIPWin_hend
+    msWrite2Byte(SC53_38, 0x0000);//(WORD)PIPWin_vst
+    msWrite2Byte(SC53_3A, 0x0000);//(WORD)PIPWin_vend
+    msWrite2Byte(SC53_18, 0x0000);//PANEL_WIDTH
+    msWrite2Byte(SC53_1C, 0x0000);//PANEL_HEIGHT
+}
+void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize)
+{
+UNUSED(u8WinIdx);
+    _hSizeOfIP2TestPtn[0] = hSize;
+    _vSizeOfIP2TestPtn[0] = vSize;    
+}

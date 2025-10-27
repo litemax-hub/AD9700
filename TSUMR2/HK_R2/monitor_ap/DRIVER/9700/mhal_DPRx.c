@@ -1717,7 +1717,7 @@ WORD mhal_DPRx_GetTimingPixelClock(DPRx_ID dprx_id, DPRx_DECODER_ID dprx_decoder
     	Temp = ((unsigned long long)ulBaseMValue * ulLSClock) / ulBaseNValue;
 		ulPixelClock = Temp & 0xFFFFFFFF;
     }
-    
+
 #if (DPRX_M_RANGE_NEW_MODE == 1)
 
     usTargetRange = ulBaseMValue * DPRX_M_RANGE_NEW_MODE_VALUE / 1000;
@@ -1793,7 +1793,7 @@ WORD mhal_DPRx_GetTimingPixelClock10K(DPRx_ID dprx_id, DPRx_DECODER_ID dprx_deco
 
 #if (DPRX_M_RANGE_NEW_MODE == 1)
         usTargetRange = ulBaseMValue / 100 * DPRX_M_RANGE_NEW_MODE_VALUE / 1000;
-    
+
         if(usTargetRange > 0x40)
         {
             usTargetRange = usTargetRange + 0x100;
@@ -1808,7 +1808,7 @@ WORD mhal_DPRx_GetTimingPixelClock10K(DPRx_ID dprx_id, DPRx_DECODER_ID dprx_deco
             usTargetRange = 0x20;
         }
 #endif
-    
+
         usPreviousRange = msRead2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID);
         msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, (usTargetRange | usPreviousRange));
         msWrite2Byte(REG_DPRX_DECODER_E0_16_L + usRegOffsetDecoderByID, usTargetRange);                     // MVID_Range[15:0]
@@ -2435,7 +2435,7 @@ BOOL mhal_DPRx_GetVSC_EXT(DPRx_ID dprx_id, DP_VSC_EXT_TYPE Type, BYTE *VSC_EXT)
 
 			for(j = 0; j < 32; j++)
 			{
-				VSC_EXT[j] = msReadByte(REG_DPRX_SDP_E0_20_L + j + usRegOffsetSDPByID);
+				VSC_EXT[Data_Count] = msReadByte(REG_DPRX_SDP_E0_20_L + j + usRegOffsetSDPByID);
 
 				DPRX_HAL_DPRINTF("\r\n VSC_EXT = %x", VSC_EXT[Data_Count]);
 
@@ -5612,6 +5612,12 @@ void mhal_DPRx_MCUWritePMDPCD(DPRx_AUX_ID dprx_aux_id, DWORD ulDPCDAddress, BYTE
 		return;
 	}
 
+	if((msReadByte(REG_DPRX_AUX_54_H + usRegOffsetAuxByID) & BIT5) == BIT5)
+	{
+	    printf("[DPRXAUX%d] MCU Write PM FAIL because of R-term power down\r\n", dprx_aux_id);
+	    return;
+	}
+
     // Address overwrite enable
     msWriteByteMask(REG_DPRX_AUX_67_H + usRegOffsetAuxByID, BIT4, BIT4);
 
@@ -5670,6 +5676,12 @@ BYTE mhal_DPRx_MCUReadPMDPCD(DPRx_AUX_ID dprx_aux_id, DWORD ulDPCDAddress)
 		return 0;
 	}
 
+	if((msReadByte(REG_DPRX_AUX_54_H + usRegOffsetAuxByID) & BIT5) == BIT5)
+	{
+	    printf("[DPRXAUX%d] MCU Read PM FAIL because of R-term power down\r\n", dprx_aux_id);
+	    return 0;
+	}
+
     // Address overwrite enable
     msWriteByteMask(REG_DPRX_AUX_67_H + usRegOffsetAuxByID, BIT4, BIT4);
 
@@ -5721,10 +5733,17 @@ void mhal_DPRx_MCUWriteNonPMDPCD(DPRx_ID dprx_id, DPRx_AUX_ID dprx_aux_id, DWORD
 {
     WORD XDATA ubTimeOutLimt = 500;
 	WORD usRegOffsetDPCD0ByID = DP_REG_OFFSET000(dprx_id);
+	WORD usRegOffsetAuxByID = DP_REG_OFFSET300(dprx_aux_id);
 
 	if(dprx_id == DPRx_ID_MAX)
 	{
 		return;
+	}
+
+	if((msReadByte(REG_DPRX_AUX_54_H + usRegOffsetAuxByID) & BIT5) == BIT5)
+	{
+	    printf("[DPRXAUX%d] MCU Write NPM FAIL because of R-term power down\r\n", dprx_aux_id);
+	    return;
 	}
 
     // Address overwrite enable
@@ -5779,10 +5798,17 @@ BYTE mhal_DPRx_MCUReadNonPMDPCD(DPRx_ID dprx_id, DPRx_AUX_ID dprx_aux_id, DWORD 
     WORD XDATA ubTimeOutLimt = 500;
     BYTE XDATA Data = 0;
 	WORD usRegOffsetDPCD0ByID = DP_REG_OFFSET000(dprx_id);
+	WORD usRegOffsetAuxByID = DP_REG_OFFSET300(dprx_aux_id);
 
 	if(dprx_id == DPRx_ID_MAX)
 	{
 		return 0;
+	}
+
+	if((msReadByte(REG_DPRX_AUX_54_H + usRegOffsetAuxByID) & BIT5) == BIT5)
+	{
+	    printf("[DPRXAUX%d] MCU Read NPM FAIL because of R-term power down\r\n", dprx_aux_id);
+	    return 0;
 	}
 
     // Address overwrite enable

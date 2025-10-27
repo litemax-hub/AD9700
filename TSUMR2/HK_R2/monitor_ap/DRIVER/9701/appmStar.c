@@ -289,6 +289,7 @@ Bool appmStar_SetPanelTiming( void )
             {
                 dclk = (float)wDclkMin * 1000;
                 dstHTotal = (((U64)dclk*hPeriod*(wHeight-1)) + ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1)/2)) / ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1));
+                dstHTotal = mStar_DrvOutputHttAlign(dstHTotal);
                 if((dstHTotal < (g_sPnlInfo.sPnlTiming.u16HttMin+u16HttOutTol)) || (dstHTotal > (g_sPnlInfo.sPnlTiming.u16HttMax-u16HttOutTol)))
                 {
                     #if DEBUG_PRINT_ENABLE
@@ -314,13 +315,10 @@ Bool appmStar_SetPanelTiming( void )
 
         if(dclk < wDclkMin) 
         {
-            WORD wHeight;
-            
-            wHeight = ((DWORD)dstHTotal*g_sPnlInfo.sPnlTiming.u16Height*((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)/1000))/((float)hPeriod*wDclkMin) + 1;
-
             dclk = (float)wDclkMin * 1000;
-            dstHTotal = (((U64)dclk*hPeriod*(wHeight-1)) + ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1)/2)) / ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1));
-            if((dstHTotal < (g_sPnlInfo.sPnlTiming.u16HttMin+u16HttOutTol)) || (dstHTotal > (g_sPnlInfo.sPnlTiming.u16HttMax-u16HttOutTol)))
+            dstHTotal = (((U64)dclk*hPeriod*(height-1)) + ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1)/2)) / ((bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT)*(g_sPnlInfo.sPnlTiming.u16Height-1));
+            dstHTotal = mStar_DrvOutputHttAlign(dstHTotal);
+            if(dstHTotal > (g_sPnlInfo.sPnlTiming.u16HttMax-u16HttOutTol))
             {
                 SrcFlags|= bUnsupportMode;
                 return FALSE;

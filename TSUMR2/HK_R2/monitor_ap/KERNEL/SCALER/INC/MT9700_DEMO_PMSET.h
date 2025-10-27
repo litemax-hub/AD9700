@@ -2,7 +2,7 @@
 #define _MS_PMDEF_H
 
 
-#define PM_CLOCK                		           SLOW_CLK   //modified clock rate on PM mode - A059
+#define PM_CLOCK                		           XTAL//SLOW_CLK   //modified clock rate on PM mode - A059
 
 #define PM_SUPPORT_SOG_TIME_SHARE       (0) 	// (1)supports to SOG time sharing function to reduce power consumption  (0)doesn't support to SOG time sharing function
 #define PM_SUPPORT_DVI_TIME_SHARE       (0) 	// (1)supports to DVI time sharing function to reduce power consumption  (0)doesn't support to DVI time sharing function

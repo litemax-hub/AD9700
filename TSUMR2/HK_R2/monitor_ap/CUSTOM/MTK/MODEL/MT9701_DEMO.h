@@ -170,7 +170,7 @@
 #define ENABLE_POWER_MEASUREMENT        0
 #define XVYCC_GAMMA_EXT 1
 #define ENABLE_HPERIOD_16LINE_MODE      1 // dynamic 8/16 line mode switch
-
+#define ENABLE_SaveMCCSData             (0 && ENABLE_DeltaE)
 #define tool_model_panel_name			"MT9701_PanelCMIM236HGJ_L21"
 #define USER_PREF_SERIALNUMBER(SN)      (_serialNumber[SN]) //length must smaller than 32
 

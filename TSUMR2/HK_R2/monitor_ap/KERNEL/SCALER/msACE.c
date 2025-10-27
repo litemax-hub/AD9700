@@ -441,6 +441,7 @@ BOOL msACEGetEnableGlobalHueSat(void)
 
 void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange)
 {
+    //RGB is R2R flow.
 	xdata BYTE u8Bank=_scReadByte(SC00_00);
 	xdata WORD sROffset, sGOffset, sBOffset;
 
@@ -462,21 +463,63 @@ void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange)
     {   
         gain =1.1678;//0x4AC
     }
-    //BYTE bY_sub16;
-	if(bLimitRange)
-	{
-	    sROffset = 0x3C0;//1024 - 64;
-	    sGOffset = 0x3C0;//1024 - 64;
-	    sBOffset = 0x3C0;//1024 - 64;
-	    g_ucSubContrast = ((1024 *10* gain)+5)/10;
-	}
-	else
-	{
-	    g_ucSubContrast = 1024;
-	    sROffset = 0x400;
-	    sGOffset = 0x400;
-	    sBOffset = 0x400;
-	}
+ //USE SC10/SC0F R2R Matrix
+    _scWriteByte(SC00_00,0x07);
+    _scWriteByteMask(SC07_40, FALSE, BIT4|BIT0);
+    _scWriteByte(SC00_00, u8Bank);
+
+    _scWriteByte(SC00_00,0x0F);
+        if( (bScalerWin == MAIN_WINDOW) == 1)// Main Win
+        {
+            //bY_sub16 = msReadByte(SC0F_AE )&BIT6;
+            if(bLimitRange)
+            {
+                _scWriteByteMask( SC0F_30 , BIT3, BIT3);
+                _scWriteByteMask( SC0F_31 , BIT1, BIT1);
+                _scWriteByteMask( SC0F_AE , BIT6, BIT6);
+                //s_AceInfo[ucWinIndex].sContrastRGBMatrix[0][0] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[1][1] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[2][2] = ((1024 * 10 * gain)+5)/10;
+                g_sPCRGBMatrix_Range[MAIN_WINDOW][0][0] = g_sPCRGBMatrix_Range[MAIN_WINDOW][1][1] = g_sPCRGBMatrix_Range[MAIN_WINDOW][2][2] = ((1024 * 10 * gain)+5)/10;
+
+            }else
+            {
+                _scWriteByteMask( SC0F_30 , 0, BIT3);
+                _scWriteByteMask( SC0F_31 , 0, BIT1);
+                //_scWriteByteMask( SC0F_AE , (bY_sub16 ? BIT6 : 0), BIT6);
+                //s_AceInfo[ucWinIndex].sContrastRGBMatrix[0][0] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[1][1] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[2][2] =  1024;
+                g_sPCRGBMatrix_Range[MAIN_WINDOW][0][0] = g_sPCRGBMatrix_Range[MAIN_WINDOW][1][1] = g_sPCRGBMatrix_Range[MAIN_WINDOW][2][2] = 1024;
+            }
+
+        }
+        else
+        {
+            //bY_sub16 = msReadByte(SC0F_AE )&BIT7;
+            if(bLimitRange)
+            {
+                _scWriteByteMask( SC0F_30 , BIT1|BIT2, BIT1|BIT2);
+                _scWriteByteMask( SC0F_AE , BIT7, BIT7);
+
+                //s_AceInfo[ucWinIndex].sContrastRGBMatrix[0][0] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[1][1] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[2][2] = ((1024 * 10 * gain)+5)/10;
+                g_sPCRGBMatrix_Range[SUB_WINDOW][0][0] = g_sPCRGBMatrix_Range[SUB_WINDOW][1][1] = g_sPCRGBMatrix_Range[SUB_WINDOW][2][2] = ((1024 * 10 * gain)+5)/10;
+
+            }else
+            {
+                _scWriteByteMask( SC0F_30 , 0, BIT1|BIT2);
+                //_scWriteByteMask( SC0F_AE , (bY_sub16 ? BIT7 : 0), BIT7);
+                //s_AceInfo[ucWinIndex].sContrastRGBMatrix[0][0] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[1][1] = s_AceInfo[ucWinIndex].sContrastRGBMatrix[2][2] = 1024;
+                g_sPCRGBMatrix_Range[SUB_WINDOW][0][0] = g_sPCRGBMatrix_Range[SUB_WINDOW][1][1] = g_sPCRGBMatrix_Range[SUB_WINDOW][2][2] = 1024;
+            }
+        }
+
+    _scWriteByte(SC00_00, u8Bank);
+
+     //SC25 post gain/offset reset default
+    En =0;
+
+	g_ucSubContrast = 1024;
+	sROffset = 0x400;
+	sGOffset = 0x400;
+	sBOffset = 0x400;
+
 
 	_scWriteByte(SC00_00,0x25);
 	if(bScalerWin == MAIN_WINDOW)
@@ -485,9 +528,6 @@ void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange)
 		_scWrite2Byte( SC25_42, sROffset );
 		_scWrite2Byte( SC25_44, sGOffset );
 		_scWrite2Byte( SC25_46, sBOffset );
-		//_scWrite2Byte( SC0E_48, g_ucSubContrast );
-		//_scWrite2Byte( SC0E_4A, g_ucSubContrast );
-		//_scWrite2Byte( SC0E_4C, g_ucSubContrast );
 	}
 	else
 	{
@@ -495,12 +535,10 @@ void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange)
 		_scWrite2Byte( SC25_4E, sROffset );
 		_scWrite2Byte( SC25_50, sGOffset );
 		_scWrite2Byte( SC25_52, sBOffset );
-		//_scWrite2Byte( SC0E_54, g_ucSubContrast );
-		//_scWrite2Byte( SC0E_56, g_ucSubContrast );
-		//_scWrite2Byte( SC0E_58, g_ucSubContrast );
 	}
-
 	_scWriteByte(SC00_00, u8Bank);
+
+
 }
 
 
@@ -1966,6 +2004,19 @@ void msACECSCControl(void)
                 msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
                 msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
             }
+            //Y2R limit(nonSTD) YUV709 to full RGB
+            #if ENABLE_HDR
+                if(mapi_Adjust_EnableNonStdCSC_Get() && (msGetHDRStatus(MAIN_WINDOW) == HDR_OFF))
+            #else
+                if(mapi_Adjust_EnableNonStdCSC_Get())
+            #endif
+                {
+                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD);
+                }
+                else
+                {
+                    g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT);    
+                } 
         }
         else
         {
@@ -1985,7 +2036,7 @@ void msACECSCControl(void)
             else
             {
                 // keep full path
-                //printf("Case4 : RGB-> RGB , range = Limit\r\n");
+                //printf("Case4 : RGB-> RGB , range = Full\r\n");
                 g_sPCRGBMatrix_Range[MAIN_WINDOW][0][0] = g_sPCRGBMatrix_Range[MAIN_WINDOW][1][1] = g_sPCRGBMatrix_Range[MAIN_WINDOW][2][2] = 1024;
                 g_sPCRGBMatrix_Range[SUB_WINDOW][0][0] = g_sPCRGBMatrix_Range[SUB_WINDOW][1][1] = g_sPCRGBMatrix_Range[SUB_WINDOW][2][2] = 1024;
 
@@ -2030,7 +2081,7 @@ void msACECSCControl(void)
         else 
         {
                 //YUV FULL, disable Y-16 & 1.164 gain on 3x3 matrix.
-                //printf("Case6 : YUV-> RGB , range = Limit\r\n");
+                //printf("Case6 : YUV-> RGB , range = FULL\r\n");
                 msWriteByteMask(SC0F_AE, 0, BIT6|BIT7);
                 if (cf.ucYuvColorimetry == COMBO_YUV_COLORIMETRY_ITU601)
                     g_MatrixIdx = (ACE_YUV_TO_RGB_MATRIX_SDTV);    

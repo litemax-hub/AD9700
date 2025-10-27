@@ -12,7 +12,7 @@
 #include "AutoGamma.h"
 #include "msflash.h"
 #include "msACE.h"
-
+#include "NVRam.h"
 #undef MST9U4 // TSUMR2 TBD
 #define MST9U4 CHIP_ID // TSUMR2 TBD
 //#define MST9U3 0

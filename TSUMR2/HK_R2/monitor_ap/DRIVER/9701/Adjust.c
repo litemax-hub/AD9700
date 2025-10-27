@@ -194,12 +194,12 @@ void mStar_AdjustBrightness( BYTE brightness )
     //drvGPIO_SetBacklightDuty(BrightnessPWM, 0xff);
     #endif
 }
-
+#if ENABLE_DeltaE
 BYTE mAPI_appAdjust_IDXColorMode_Load(BYTE u8DispWin, WORD IDX)
 {
     return mdrv_DetalE_IDXColorMode_Load(u8DispWin, IDX);
 }
-
+#endif
 WORD PWMBoundaryClamp(WORD PWMvalue)
 {
     //printData("Before Clamp BRIGHTNESS PWM value: %x\n", PWMvalue);
@@ -727,7 +727,7 @@ BOOL mapi_Adjust_EnableNonStdCSC_Get(void)
 {
     return mdrv_Adjust_EnableNonStdCSC_Get();
 }
-#if (USEFLASH && COLORDATA_USEFLASH)
+#if (USEFLASH && COLORDATA_USEFLASH && ENABLE_DeltaE)
 #warning "!! Please implement customized functions below for FlashWriter(Byte/Table) !!"
 #warning "!! The function should contain FLASH erase sector inside !!"
 
@@ -804,5 +804,5 @@ void mStar_SetupSuperResolution( BYTE SuperResolutionMode )
 
 Bool SetColorModeDemo(void)
 {
-    msDrv_SetColorModeDemo();
+    return msDrv_SetColorModeDemo();
 }

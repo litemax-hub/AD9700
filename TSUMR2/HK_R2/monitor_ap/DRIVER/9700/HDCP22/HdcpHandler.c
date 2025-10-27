@@ -1115,6 +1115,27 @@ void HDCPHandler_LoadHDCP14RxBksv(BYTE *pu8BKSV, BYTE *pu8Hdcp1RxKey, BOOL bExte
     msWrite2ByteMask(REG_HDMIRX_HDCP_P0_17_L,0x0000,0x03ff);//74 address
     msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L,BIT5,BIT5);//trig latch address reg_load_adr_p,HDCP address load pulse generate [5]0: not gen pulse/1: gen pulse
 
+    for(ustemp = 0; ustemp < 0x50; ustemp++)   {
+        msWrite2ByteMask(REG_HDMIRX_HDCP_P0_18_L, 0, BMASK(7:0));
+        msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(4), BIT(4));
+        // wait write ready
+        while(msRead2Byte(REG_HDMIRX_HDCP_P0_19_L) & BIT(7));
+    }
+    //avoid overwrite offset 0x50 (hdcp22 capability)
+    msWrite2ByteMask(REG_HDMIRX_HDCP_P0_17_L, 0x51, BMASK(9:0));
+    msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(5), BIT(5));
+
+    for(ustemp = 0x51; ustemp <= 0xff; ustemp++)   {
+        msWrite2ByteMask(REG_HDMIRX_HDCP_P0_18_L, 0, BMASK(7:0));
+        msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(4), BIT(4));
+        // wait write ready
+        while(msRead2Byte(REG_HDMIRX_HDCP_P0_19_L) & BIT(7));
+    }
+
+    //restore address back to offset 0x00
+    msWrite2ByteMask(REG_HDMIRX_HDCP_P0_17_L, 0, BMASK(9:0)); // CPU r/w address (for hdcp_key_sram/74reg)
+    msWrite2ByteMask(REG_HDMIRX_HDCP_P0_19_L, BIT(5), BIT(5)); // HDCP address load pulse generate
+
     //bksv
     for(ustemp = 0; ustemp < DEF_HDCP1X_BKSV_SIZE; ustemp++)
     {
@@ -1137,7 +1158,7 @@ void HDCPHandler_LoadHDCP14RxBksv(BYTE *pu8BKSV, BYTE *pu8Hdcp1RxKey, BOOL bExte
 
 
     //======================= DP port load BKSV=======================//
-    
+
     for(ustemp = 0; ustemp < AUX_None; ustemp++)
     {
         if((ustemp == DPRx_C1_AUX) || (ustemp == DPRx_C2_AUX) || (ustemp == DPRx_C3_AUX) || (ustemp == DPRx_C4_AUX))
@@ -1152,7 +1173,7 @@ void HDCPHandler_LoadHDCP14RxBksv(BYTE *pu8BKSV, BYTE *pu8Hdcp1RxKey, BOOL bExte
         msWriteByte(REG_DPRX_AUX_DPCD_2A_H + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[1]); // BKSV
         msWriteByte(REG_DPRX_AUX_DPCD_2B_L + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[2]); // BKSV
         msWriteByte(REG_DPRX_AUX_DPCD_2B_H + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[3]); // BKSV
-        msWriteByte(REG_DPRX_AUX_DPCD_2C_L + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[4]); // BKSV    
+        msWriteByte(REG_DPRX_AUX_DPCD_2C_L + usRegOffsetAuxDPCDByID, tCOMBO_HDCP14_BKSV[4]); // BKSV
     }
 
     msWriteByte(REG_DPRX_DPCD1_22_L, tCOMBO_HDCP14_BKSV[0]); // BKSV // Move to R2

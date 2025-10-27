@@ -206,7 +206,7 @@ typedef enum{
     ColorToolStatus_End = 0xFF,
 }ColorToolStatus;
 
-
+#if ENABLE_DeltaE
 #define GammaTableSize    320
 typedef struct{
 	BYTE ColorMode;
@@ -495,12 +495,12 @@ void mdrv_DetalE_CustomizedDefaultColorMode_Set(CustomizedColorMode stCustomized
 void mdrv_DetalE_AllIDXColorMode_PreLoad(void);
 void mdrv_DeltaE_Init(DWORD addr, MemoryType enType);
 #endif
+
 LoadStatus mdrv_DetalE_IDXColorMode_Load(BYTE u8DispWin, WORD IDX);
 LoadStatus mdrv_DetalE_IDXGammaCurveMode_Load(BYTE u8DispWin, WORD IDX, BYTE GammaIndex);
 BYTE* mdrv_DeltaE_DegammaTbl_Get(BYTE GammaValue);
 BYTE* mdrv_DeltaE_FixgammaTbl_Get(BYTE GammaValue);
-BYTE mdrv_DeltaE_AutoColorToolStatus_Get(void);
-void mdrv_DeltaE_AutoColorToolStatus_Set(BYTE value);
+
 //-------------------------------------------------------------------------------
 // Specify the Delta-E color mode. sRGB/AdobeRGB
 //-------------------------------------------------------------------------------
@@ -522,19 +522,6 @@ extern DWORD GetAddrOfDICOM(BYTE idx);
 //-------------------------------------------------------------------------------
 extern LoadStatus msSetGammaCurve(BYTE u8DispWin, BYTE GammaIndex);
 extern DWORD GetAddrOfPostGamma(void);
-//-------------------------------------------------------------------------------
-// Output Test Pattern For Measurement. sRGB/AdobeRGB
-//-------------------------------------------------------------------------------
-extern void msSetTestPattern(BOOL IsOn, BYTE R, BYTE G , BYTE B);
-//-------------------------------------------------------------------------------
-// Output Color Engine Test Pattern For Verify Color Function ( sRGB , AdobeRGB , BT709 , BT2020 ... )
-//-------------------------------------------------------------------------------
-extern void msSetColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, WORD u16Red, WORD u16Green, WORD u16Blue);
-extern void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G, BYTE B, int stepAddr);
-//extern void msInitTestPattern_WithoutSignal(void); //modified name
-//extern void msExitTestPattern_WithoutSignal(void); //modified name
-extern void msInitIP2TestPattern_WithoutSignal(void);
-extern void msExitIP2TestPattern_WithoutSignal(void);
 
 //-------------------------------------------------------------------------------
 // Control Color Engine to On/Off, it includes de-gamma/fix-gamma/post-gamma & color matrix.
@@ -558,7 +545,7 @@ extern void msSaveColorMatrixData(BYTE ucDeltaEColorMode, BYTE idx);
 //-------------------------------------------------------------------------------
 // Assign 3D LUT data.
 //-------------------------------------------------------------------------------
-extern void msSet3DLUTData(int ch, int idx, BYTE data);
+extern void msSet3DLUTData(int ch, int idx, BYTE val);
 //-------------------------------------------------------------------------------
 // Save 3D LUT data to EEPROM.
 //-------------------------------------------------------------------------------
@@ -595,7 +582,7 @@ extern void msSetColorTempData(int idx, WORD u16Red, WORD u16Green, WORD u16Blue
 #endif
 #endif
 extern void msByPassGainOffset(BYTE u8DispWin);
-extern void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue);
+
 //-------------------------------------------------------------------------------
 // Save color temp data to EEPROM.
 //-------------------------------------------------------------------------------
@@ -737,21 +724,7 @@ extern void msLoadHDRColorMode(short* p3x3);
 extern LoadStatus msReloadGammaData(BYTE u8DispWin, DWORD addr);
 extern DWORD GetAddrOfHDRPostGamma(void);
 
-//-------------------------------------------------------------------------------
-// Output Test Pattern For verfiy HDR
-//-------------------------------------------------------------------------------
-extern void msSetIP2TestPattern_Off(void);
-extern void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize);
-void msSetIP2TestPattern_ScalerMask(WORD u16ScMask);
-extern void msSetIP2TestPattern_WithoutSignal(BOOL IsOn);
-extern BOOL msGetIP2TestPattern_WithoutSignal(void);
-extern void msSetIP2TestPattern_PureColor(BYTE u8WinIdx, WORD u16R, WORD u16G, WORD u16B);
-extern void msSetIP2TestPattern_GreyScale(BYTE u8WinIdx, WORD numOfScale, BOOL bIsHorizontal);
-extern void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD u16R, WORD u16G, WORD u16B);
-extern void msSetIP2TestPattern_CheckBoardBox(BYTE u8WinIdx, WORD u16GregCode, WORD numOfBlock_h, WORD numOfBlock_v);
 
-extern void SetStopLDUpdateStatus(BOOL bStopLDUpdate);
-extern void mdrv_DetalE_XPercentPIP_SetSize(BYTE u8WinIdx, double percentOfCentralArea);
 //-------------------------------------------------------------------------------
 // Flash Read Write
 //-------------------------------------------------------------------------------
@@ -777,3 +750,38 @@ extern DWORD GetAddrOfAutoColorFunctionPostGamma(BYTE mode, BYTE idx);
 
 #endif
 #endif
+
+#endif //ENABLE_DeltaE
+
+extern void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue);
+BYTE mdrv_DeltaE_AutoColorToolStatus_Get(void);
+void mdrv_DeltaE_AutoColorToolStatus_Set(BYTE value);
+//-------------------------------------------------------------------------------
+// Output Test Pattern For Measurement. sRGB/AdobeRGB
+//-------------------------------------------------------------------------------
+extern void msSetTestPattern(BOOL IsOn, BYTE R, BYTE G , BYTE B);
+//-------------------------------------------------------------------------------
+// Output Color Engine Test Pattern For Verify Color Function ( sRGB , AdobeRGB , BT709 , BT2020 ... )
+//-------------------------------------------------------------------------------
+extern void msSetColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, WORD u16Red, WORD u16Green, WORD u16Blue);
+extern void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G, BYTE B, int stepAddr);
+//extern void msInitTestPattern_WithoutSignal(void); //modified name
+//extern void msExitTestPattern_WithoutSignal(void); //modified name
+extern void msInitIP2TestPattern_WithoutSignal(void);
+extern void msExitIP2TestPattern_WithoutSignal(void);
+//-------------------------------------------------------------------------------
+// Output Test Pattern For verfiy HDR
+//-------------------------------------------------------------------------------
+extern void msSetIP2TestPattern_Off(void);
+extern void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize);
+void msSetIP2TestPattern_ScalerMask(WORD u16ScMask);
+extern void msSetIP2TestPattern_WithoutSignal(BOOL IsOn);
+extern BOOL msGetIP2TestPattern_WithoutSignal(void);
+extern void msSetIP2TestPattern_PureColor(BYTE u8WinIdx, WORD u16R, WORD u16G, WORD u16B);
+extern void msSetIP2TestPattern_GreyScale(BYTE u8WinIdx, WORD numOfScale, BOOL bIsHorizontal);
+extern void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD u16R, WORD u16G, WORD u16B);
+extern void msSetIP2TestPattern_CheckBoardBox(BYTE u8WinIdx, WORD u16GregCode, WORD numOfBlock_h, WORD numOfBlock_v);
+
+extern void SetStopLDUpdateStatus(BOOL bStopLDUpdate);
+extern void mdrv_DetalE_XPercentPIP_SetSize(BYTE u8WinIdx, double percentOfCentralArea);
+

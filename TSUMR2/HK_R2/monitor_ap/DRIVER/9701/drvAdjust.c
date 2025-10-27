@@ -4,6 +4,7 @@
 #include "msACE.h"
 #include "AutoGamma.h"
 #include "drvLutAutoDownload.h"
+#include "drvGamma.h"
 
 #define drvAdjust_DEBUG    1
 #if ENABLE_MSTV_UART_DEBUG && drvAdjust_DEBUG

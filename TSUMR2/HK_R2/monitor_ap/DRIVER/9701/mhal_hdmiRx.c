@@ -75,6 +75,12 @@ static MS_U16 usTemp1 = 0;
 static MS_U8 ubTemp2= 0;
 static MS_U64 U64reset_pkt_timer = 0;
 
+MS_U32 _KHal_HDMIRx_GetSystemTime(void)
+{
+    return MsOS_GetSystemTime();
+    //return GetTick()/500;   //since current R2 enviroment is 432MHz
+}
+
 MS_U32 _KHal_HDMIRx_GetPMSCDCBankOffset(MS_U8 enInputPortType)
 {
     MS_U32 u32PortBankOffset = 0;
@@ -493,6 +499,7 @@ MS_BOOL _KHal_HDMIRx_Pll_TOP_Stable(MS_U8 enInputPortType, MS_U32 u32_tol)
     UNUSED(enInputPortType);
     MS_U32 u32_plltop_bkofs = _KHal_HDMIRx_GetPLLTOPBankOffset(enInputPortType);
     MS_U16 u16_plltop_lock_status = u4IO32ReadFld_1(REG_00A8_P0_PLL_TOP + u32_plltop_bkofs, FLD_BMSK(8:0));
+    MS_U32 u32_dif = 0;
 
     MS_U32 u32_ivs =
             (u4IO32ReadFld_1(REG_0084_P0_PLL_TOP + u32_plltop_bkofs,
@@ -506,23 +513,36 @@ MS_BOOL _KHal_HDMIRx_Pll_TOP_Stable(MS_U8 enInputPortType, MS_U32 u32_tol)
              (u4IO32ReadFld_1(REG_0090_P0_PLL_TOP + u32_plltop_bkofs,
              REG_0090_P0_PLL_TOP_REG_OVS_PRD_VALUE_1) << 16));
 
-    /*
-    if (u32_tol == PLLTOP_IVS_OVS_TOLERANCE_REGEN_DONE)
+    UNUSED(u32_tol);
+    if(u16_plltop_lock_status == 0x1F4)
     {
-        MHAL_HDMIRX_MSG_DEBUG("%x,%x,%x,%x\n",u16_plltop_lock_status,u32_ivs,u32_ovs,abs_diff(u32_ivs,u32_ovs) );
+        return TRUE;
     }
-    */
-    if ((u16_plltop_lock_status&PLLTOP_STABLE_LOCK) != PLLTOP_STABLE_LOCK)
+    else if(u16_plltop_lock_status == 0x0F4)
     {
-        return FALSE;
+        if(u32_ivs != 0)
+        {
+            if(u32_ivs >= 1000) // tolerance is 0.5%
+            {
+                u32_dif = abs_diff(u32_ivs,u32_ovs)*1000/u32_ivs;
+                if(u32_dif <= 5)
+                    return TRUE;
+            }
+            else if(u32_ivs >= 400) // tolerance is 2%
+            {
+                u32_dif = abs_diff(u32_ivs,u32_ovs)*100/u32_ivs;
+                if(u32_dif <= 2)
+                    return TRUE;
+            }
+            else    // tolerance is 3%
+            {
+                u32_dif = abs_diff(u32_ivs,u32_ovs)*100/u32_ivs;
+                if(u32_dif <= 3)
+                    return TRUE;
+            }
+        }
     }
-
-    if (abs_diff(u32_ivs,u32_ovs) > u32_tol)
-    {
-        return FALSE;
-    }
-
-    return TRUE;
+    return FALSE;
 }
 
 MS_BOOL _KHal_IsVRR(MS_U8 enInputPortType)
@@ -2987,7 +3007,6 @@ MS_U32 Hal_tmds_GetClockRatePort(MS_U8 enInputPortType, MS_U8 u8SourceVersion, E
     }
 
     u32ClockCount = GetSortMiddleNumber(&u32ClockRateCal[0],10);
-    u32ClockCount = u32ClockCount * HDMI_XTAL_CLOCK_MHZ / HDMI_XTAL_DIVIDER;
 
     if(enType == HDMI_SIGNAL_PIX_MHZ)
         u32ClockCount = u32ClockCount * HDMI_XTAL_CLOCK_MHZ / HDMI_XTAL_DIVIDER;
@@ -7842,6 +7861,255 @@ void _Hal_tmds_FastTrainingProc(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_INFO *
     }while(bNextStateFlag);
 }
 
+#ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+//**************************************************************************
+//  [Function Name]:
+//                  _KHal_HDMIRx_ToggeleHsyncPolarity()
+//  [Description]
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+MS_U8 _KHal_HDMIRx_ToggeleHsyncPolarity(MS_U8 enInputPortType, MS_U8 u8_dtop_dec_hsync_polarity,MS_BOOL bOveEn)
+{
+    MS_U32 u32_dtop_dec_bkofs = _KHal_HDMIRx_GetDTOPDECBankOffset(enInputPortType);
+    MS_U8 u8_toggle_dtop_dec_hsync_polarity = 0;
+
+    UNUSED(enInputPortType);
+
+    if(u8_dtop_dec_hsync_polarity)
+    {
+        SET_DTOP_DEC_SRC_H_POL_OV(u32_dtop_dec_bkofs,FALSE);
+        u8_toggle_dtop_dec_hsync_polarity=FALSE;
+    }
+    else
+    {
+        SET_DTOP_DEC_SRC_H_POL_OV(u32_dtop_dec_bkofs,TRUE);
+        u8_toggle_dtop_dec_hsync_polarity=TRUE;
+    }
+    SET_DTOP_DEC_SRC_H_POL_OVE(u32_dtop_dec_bkofs,bOveEn?TRUE:FALSE);
+
+    return u8_toggle_dtop_dec_hsync_polarity;
+}
+
+//**************************************************************************
+//  [Function Name]:
+//                  _KHal_HDMIRx_HVSyncAlignState_Rst()
+//  [Description]
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+static void _KHal_HDMIRx_HVSyncAlignState_Rst(ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo, MS_U8 enInputPortType)
+{
+    MS_U32 u32_dtop_dec_bkofs = _KHal_HDMIRx_GetDTOPDECBankOffset(enInputPortType);
+
+    UNUSED(enInputPortType);
+
+    pstHDMIPollingInfo->u8HVSynFSM = HDMI_HV_SYNC_P_CHECK;
+    pstHDMIPollingInfo->u8preVSynAlignCase = HDMI_V_SYNC_BOTH_ALIGHN;
+    pstHDMIPollingInfo->u8VSynAlignCase = HDMI_V_SYNC_BOTH_ALIGHN;
+    pstHDMIPollingInfo->bHSYNCReverseReadyFlag = TRUE;
+    pstHDMIPollingInfo->u8VSynAlign_dtop_dec_hsync_polarity = GET_DTOP_DEC_DET_HS_POLARITY(u32_dtop_dec_bkofs);
+    SET_DTOP_DEC_SRC_H_POL_OVE(u32_dtop_dec_bkofs,FALSE);
+    SET_DTOP_DEC_SRC_H_POL_OV(u32_dtop_dec_bkofs,FALSE);
+    pstHDMIPollingInfo->u8HVChkHitCnt = 0;
+    pstHDMIPollingInfo->u8HVChkCnt = 0;
+}
+
+void _KHal_HDMIRx_Get_vsync_timing(MS_U8 enInputPortType, MS_U32 *u32_ptr_vsyc_timing)
+{
+    MS_U32 u32_dtop_dec_bkofs = _KHal_HDMIRx_GetDTOPDEPBankOffset(enInputPortType);
+
+    UNUSED(enInputPortType);
+
+    u32_ptr_vsyc_timing[HDMI_V_FRONT]=GET_DTOP_DEC_VFRONT(u32_dtop_dec_bkofs);
+    u32_ptr_vsyc_timing[HDMI_V_SYNC]=GET_DTOP_DEC_VSYNC(u32_dtop_dec_bkofs);
+    u32_ptr_vsyc_timing[HDMI_V_BACK]=GET_DTOP_DEC_VBACK(u32_dtop_dec_bkofs);
+    u32_ptr_vsyc_timing[HDMI_V_DE]=GET_DTOP_DEC_VDE(u32_dtop_dec_bkofs);
+    u32_ptr_vsyc_timing[HDMI_V_TOTAL]=GET_DTOP_DEC_VTT(u32_dtop_dec_bkofs);
+    return;
+}
+
+//**************************************************************************
+//  [Function Name]:
+//                  _KHal_HDMIRx_DetectHVSyncAlignCase()
+//  [Description]
+//
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+
+MS_U8 _KHal_HDMIRx_DetectHVSyncAlignCase(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo)
+{
+#define VTIMING_NUM 5
+#define DEF_HDMIRX_MAX_WAIT_TIME 250
+#define DEF_HVALIGN_CHK_DBG_EN 0
+    MS_U32 u32_vsyc_current_timing[VTIMING_NUM] = {0};
+    static MS_U32 u32_timer_inverse_start = 0;
+    static MS_U32 u32_timer_inverse_duration = 0;
+    static MS_U32 u32_timer_recover_start = 0 ;
+    static MS_U32 u32_timer_recover_duration = 0;
+    MS_U8 i=0;
+    MS_BOOL bSameTiming=TRUE;
+    MS_U16 u16ChkDuration = 0;
+    MS_U32 u32FrameRate = 0;
+    MS_U32 u32ClkRate = 0;
+    MS_U32 u32VTT = GET_DTOP_DEC_VTT(0);
+    MS_U32 u32HTT = GET_DTOP_DEC_HTT(0);
+
+    u32ClkRate = Hal_tmds_GetClockRatePort(enInputPortType, pstHDMIPollingInfo->ucSourceVersion, HDMI_SIGNAL_PIX_MHZ);
+
+    if (pstHDMIPollingInfo->ucSourceVersion == HDMI_SOURCE_VERSION_HDMI20)
+        u32ClkRate *= 4; //clock ratio
+
+    if (pstHDMIPollingInfo->bYUV420Flag)
+        u32ClkRate *= 2;
+
+    //handle color depth/format
+    if (Hal_HDMI_GetColorFormat(enInputPortType)==COMBO_COLOR_FORMAT_YUV_422)
+        u32ClkRate = (u32ClkRate*2)/3;  //color-depth = 12-bit;
+    else
+    {
+        if (pstHDMIPollingInfo->u8Colordepth == HDMI_COLOR_DEPTH_10BIT)
+            u32ClkRate = (u32ClkRate*4)/5;
+
+        if (pstHDMIPollingInfo->u8Colordepth == HDMI_COLOR_DEPTH_12BIT)
+            u32ClkRate = (u32ClkRate*2)/3;
+
+        if (pstHDMIPollingInfo->u8Colordepth == HDMI_COLOR_DEPTH_16BIT)
+            u32ClkRate = (u32ClkRate/2);
+    }
+
+    if (((u32VTT != 0) && (u32HTT != 0)) && (u32ClkRate != 0))
+    {
+        u32FrameRate = (u32ClkRate*(1000000/u32VTT))/u32HTT;
+
+        if (u32FrameRate != 0)
+            u16ChkDuration = 1 + 1500/u32FrameRate; //Unit: ms, using 1500ms as base
+        else
+            u16ChkDuration = 100;
+    }
+    else
+        u16ChkDuration = 100;
+
+    switch (pstHDMIPollingInfo->u8HVSynFSM)
+    {
+        case HDMI_HV_SYNC_P_CHECK:
+            pstHDMIPollingInfo->u8VSynAlign_dtop_dec_hsync_polarity=GET_DTOP_DEC_DET_HS_POLARITY(0);
+            _KHal_HDMIRx_Get_vsync_timing(enInputPortType,  &pstHDMIPollingInfo->u32_vsyc_timing[0]);
+            u32_timer_inverse_start = _KHal_HDMIRx_GetSystemTime();
+
+            pstHDMIPollingInfo->bHSYNCReverseReadyFlag=FALSE;
+            pstHDMIPollingInfo->u8VSynAlign_dtop_dec_hsync_polarity=_KHal_HDMIRx_ToggeleHsyncPolarity(enInputPortType, pstHDMIPollingInfo->u8VSynAlign_dtop_dec_hsync_polarity,TRUE);
+
+            pstHDMIPollingInfo->u8HVSynFSM = HDMI_HV_SYNC_P_H_SYNC_REVERSE;
+            break;
+
+        case HDMI_HV_SYNC_P_H_SYNC_REVERSE:
+
+            u32_timer_inverse_duration = diff(_KHal_HDMIRx_GetSystemTime(),u32_timer_inverse_start);
+            if ((u32_timer_inverse_duration > u16ChkDuration)&& GET_DTOP_DEC_DET_TIMING_STABLE())
+                pstHDMIPollingInfo->bHSYNCReverseReadyFlag=TRUE;
+            else if (u32_timer_inverse_duration > DEF_HDMIRX_MAX_WAIT_TIME) //avoid timeout
+                pstHDMIPollingInfo->bHSYNCReverseReadyFlag=TRUE;
+
+            if(pstHDMIPollingInfo->bHSYNCReverseReadyFlag)
+            {
+                _KHal_HDMIRx_Get_vsync_timing(enInputPortType,  &u32_vsyc_current_timing[0]);
+
+                if((pstHDMIPollingInfo->u32_vsyc_timing[0]!=u32_vsyc_current_timing[0])&&(pstHDMIPollingInfo->u32_vsyc_timing[2]!=u32_vsyc_current_timing[2]))
+                {
+                    #if (DEF_HVALIGN_CHK_DBG_EN == 1)
+                        MHAL_HDMIRX_MSG_INFO("[HDMI][HVA_CHK]P[%d]H/V align Status:[N,N]\r\n", enInputPortType);
+                    #endif
+                    pstHDMIPollingInfo->u8VSynAlignCase = HDMI_HV_SYNC_BOTH_UNALIGHN;
+                }
+                else if((pstHDMIPollingInfo->u32_vsyc_timing[1]!=u32_vsyc_current_timing[1])&&(pstHDMIPollingInfo->u32_vsyc_timing[2]!=u32_vsyc_current_timing[2]))
+                {
+                    #if (DEF_HVALIGN_CHK_DBG_EN == 1)
+                        MHAL_HDMIRX_MSG_INFO("[HDMI][HVA_CHK]P[%d]H/V align Status:[T,N]\r\n", enInputPortType);
+                    #endif
+                    pstHDMIPollingInfo->u8VSynAlignCase = HDMI_HV_SYNC_TAIL_UNALIGHN;
+                }
+                else if((pstHDMIPollingInfo->u32_vsyc_timing[0]!=u32_vsyc_current_timing[0])&&(pstHDMIPollingInfo->u32_vsyc_timing[1]!=u32_vsyc_current_timing[1]))
+                {
+                    #if (DEF_HVALIGN_CHK_DBG_EN == 1)
+                        MHAL_HDMIRX_MSG_INFO("[HDMI][HVA_CHK]P[%d]H/V align Status:[N,T]\r\n", enInputPortType);
+                    #endif
+                    pstHDMIPollingInfo->u8VSynAlignCase = HDMI_HV_SYNC_HEAD_UNALIGHN;
+                }
+                else
+                {
+                    #if (DEF_HVALIGN_CHK_DBG_EN == 1)
+                        MHAL_HDMIRX_MSG_INFO("[HDMI][HVA_CHK]P[%d]H/V align Status:[T,T]\r\n", enInputPortType);
+                    #endif
+                    pstHDMIPollingInfo->u8VSynAlignCase = HDMI_V_SYNC_BOTH_ALIGHN;
+                }
+
+                pstHDMIPollingInfo->bHSYNCReverseReadyFlag=FALSE;
+                pstHDMIPollingInfo->u8VSynAlign_dtop_dec_hsync_polarity=_KHal_HDMIRx_ToggeleHsyncPolarity(enInputPortType, pstHDMIPollingInfo->u8VSynAlign_dtop_dec_hsync_polarity,FALSE);
+                pstHDMIPollingInfo->u8HVSynFSM=HDMI_HV_SYNC_P_FINAL;
+                u32_timer_recover_start = _KHal_HDMIRx_GetSystemTime();
+            }
+            break;
+
+        case HDMI_HV_SYNC_P_FINAL:
+            u32_timer_recover_duration = diff(_KHal_HDMIRx_GetSystemTime(),u32_timer_recover_start);
+            if ((u32_timer_recover_duration > u16ChkDuration) && GET_DTOP_DEC_DET_TIMING_STABLE())
+                pstHDMIPollingInfo->bHSYNCReverseReadyFlag=TRUE;
+            else if (u32_timer_recover_duration > DEF_HDMIRX_MAX_WAIT_TIME) //avoid timeout
+                pstHDMIPollingInfo->bHSYNCReverseReadyFlag=TRUE;
+
+            if(pstHDMIPollingInfo->bHSYNCReverseReadyFlag)
+            {
+                #define DEF_HVALIGN_TIMING_DIFF 2
+                //printf("Final, dur:%d, diff:%d\r\n", u16ChkDuration, u32_timer_recover_duration[HDMI_GET_PORT_SELECT(enInputPortType)]);
+                _KHal_HDMIRx_Get_vsync_timing(enInputPortType,  &u32_vsyc_current_timing[0]);
+                for(i=0;i<VTIMING_NUM;i++)
+                {
+                    if (abs_diff(pstHDMIPollingInfo->u32_vsyc_timing[i], u32_vsyc_current_timing[i]) > DEF_HVALIGN_TIMING_DIFF)
+                    {
+                        #if (DEF_HVALIGN_CHK_DBG_EN == 1)
+                            MHAL_HDMIRX_MSG_INFO("[HDMI][HVA_CHK]P[%d] diff idx[%d], Pre:%d, Cur:%d\r\n", enInputPortType, i,pstHDMIPollingInfo->u32_vsyc_timing[i],u32_vsyc_current_timing[i]);
+                        #endif
+                        bSameTiming=FALSE;
+                    }
+                    if(!bSameTiming)
+                    {
+                        _KHal_HDMIRx_HVSyncAlignState_Rst(pstHDMIPollingInfo, enInputPortType);
+                        #if (DEF_HVALIGN_CHK_DBG_EN == 1)
+                            MHAL_HDMIRX_MSG_INFO("[HDMI][HVA_CHK]P[%d]Not same timing after restore polarity!!\r\n", enInputPortType);
+                        #endif
+                    }
+                }
+                if (pstHDMIPollingInfo->u8HVSynFSM == HDMI_HV_SYNC_P_FINAL)
+                {
+                    pstHDMIPollingInfo->u8HVSynFSM = HDMI_HV_SYNC_FINISHED;
+                    #if (DEF_HVALIGN_CHK_DBG_EN == 1)
+                        MHAL_HDMIRX_MSG_INFO("[HDMI][HVA_CHK]P[%d]HV align check finished, case:%d,fr:%d, CD:%d, CT:%d\r\n", enInputPortType, pstHDMIPollingInfo->u8VSynAlignCase, u32FrameRate, pstHDMIPollingInfo->u8Colordepth, Hal_HDMI_GetColorFormat(enInputPortType));
+                    #endif
+                }
+
+            }
+
+            break;
+        case HDMI_HV_SYNC_FINISHED:
+        default:
+            //MHAL_HDMIRX_MSG_INFO("!!!!!!!!!!!!!!! invalid stHDMIPollingInfo->u8HVSynFSM [ %d]!!!!!!!!!!!!!\r\n",stHDMIPollingInfo->u8HVSynFSM);
+            //stHDMIPollingInfo->u8HVSynFSM = HDMI_HV_SYNC_P_CHECK;
+            break;
+    }
+    return pstHDMIPollingInfo->u8HVSynFSM;
+}
+#endif
+
 //**************************************************************************
 //  [Function Name]:
 //                  Hal_HDMI_GetFreeSyncInfo()
@@ -7934,6 +8202,7 @@ void _Hal_tmds_SetDEStableFlag(MS_U8 enInputPortSelect, ST_HDMI_RX_POLLING_INFO 
     }
 }
 #endif
+
 //**************************************************************************
 //  [Function Name]:
 //                  _Hal_tmds_UpdateErrorStatus()
@@ -8121,6 +8390,8 @@ MS_U16 _Hal_tmds_GetEMPacketInfo(MS_U8 enInputPortSelect  __attribute__ ((unused
     return u16EMPacketStatus;
 }
 
+#define DEF_HDMI_REGEN_LOOP_TH 20
+
 //**************************************************************************
 //  [Function Name]:
 //                  _KHal_HDMIRx_RegenTimingProc()
@@ -8131,7 +8402,7 @@ MS_U16 _Hal_tmds_GetEMPacketInfo(MS_U8 enInputPortSelect  __attribute__ ((unused
 //  [Return]:
 //
 //**************************************************************************
-static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo, MS_U8 enInputPortType , MS_BOOL bIsFreeSync)
+static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo, MS_U8 enInputPortType)
 {
     UNUSED(enInputPortType);
     ST_HDMI_REGEN_TIMING_INFO stRegenTimingInfo;
@@ -8155,7 +8426,7 @@ static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPolling
     MS_U16 u16temp = 0;
     MS_U8 u8_det_i_md = GET_DTOP_DEC_DET_I_MD_EN(u32_dtop_dec_bkofs);
     MS_U8 u8_emp_vrr_en = (_KHal_IsVRR(enInputPortType)==TRUE)?1:0;
-    MS_U8 u8_emp_Freesync_en = (bIsFreeSync==TRUE)?1:0;
+    MS_U8 u8_emp_Freesync_en = 0;
     MS_U8 u8_pix_rep = (MS_U8)(1 +
                                (u4IO32ReadFld_1(REG_008C_P0_HDMIRX_PKT_DEC + u32_pkt_dec_bkofs,
                                                 REG_008C_P0_HDMIRX_PKT_DEC_REG_AVI_PB05) &0xf));
@@ -8190,7 +8461,12 @@ static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPolling
     MS_U32 u32_tmp = 0, u32_tmp2 = 0;
 
     MS_U16 u16_VIC = 0;
+    MS_U32 u32PacketStatus = 0;
 
+    if (Hal_HDMI_GetFreeSyncInfo(enInputPortType, &u32PacketStatus, NULL) & BIT(2))
+    {
+        u8_emp_Freesync_en = 1;
+    }
 
     // Setting rcv_tgen:
     stRegenTimingInfo.u16HTTValue = GET_DTOP_DEC_HTT(u32_dtop_dec_bkofs);
@@ -8224,7 +8500,36 @@ static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPolling
     pstHDMIPollingInfo->u16PreVTT=stRegenTimingInfo.u16VTTValue;
     pstHDMIPollingInfo->u16PreVSB=stRegenTimingInfo.u16VSyncBackValue;
 
-
+#ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+    if(pstHDMIPollingInfo->u8VSynAlignCase==HDMI_HV_SYNC_BOTH_UNALIGHN)
+    {
+        stRegenTimingInfo.u16VFrontValue-=1;
+        //stRegenTimingInfo.u16VSyncValue-=0;
+        stRegenTimingInfo.u16VBackValue+=1;
+        stRegenTimingInfo.u16VSyncBackValue+=1;
+        MHAL_HDMIRX_MSG_INFO("[HDMI][Regen]P[%d]Align Status: HV[N,N] !!\r\n", enInputPortType);
+    }
+    else if(pstHDMIPollingInfo->u8VSynAlignCase==HDMI_HV_SYNC_TAIL_UNALIGHN)
+    {
+        //stRegenTimingInfo.u16VFrontValue-=0;
+        stRegenTimingInfo.u16VSyncValue-=1;
+        stRegenTimingInfo.u16VBackValue+=1;
+        //stRegenTimingInfo.u16VSyncBackValue+=0;
+        MHAL_HDMIRX_MSG_INFO("[HDMI][Regen]P[%d]Align Status: HV[Y,N] !!\r\n", enInputPortType);
+    }
+    else if(pstHDMIPollingInfo->u8VSynAlignCase==HDMI_HV_SYNC_HEAD_UNALIGHN)
+    {
+        stRegenTimingInfo.u16VFrontValue-=1;
+        stRegenTimingInfo.u16VSyncValue+=1;
+        //stRegenTimingInfo.u16VBackValue+=0;
+        stRegenTimingInfo.u16VSyncBackValue+=1;
+        MHAL_HDMIRX_MSG_INFO("[HDMI][Regen]P[%d]Align Status: HV[N,Y] !!\r\n", enInputPortType);
+    }
+    else
+    {
+        MHAL_HDMIRX_MSG_INFO("[HDMI][Regen]P[%d]Align Status: HV[Y,Y]\r\n", enInputPortType);
+    }
+#endif
 
    //AMD VIC39 non-standard issue
      u16_VIC = (MS_U16)u4IO32ReadFld_1(REG_008C_P0_HDMIRX_PKT_DEC + u32_pktdec_bkofs, REG_008C_P0_HDMIRX_PKT_DEC_REG_AVI_PB04);
@@ -8254,6 +8559,7 @@ static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPolling
 
     if ((stRegenTimingInfo.u16HTTValue == 0) || (stRegenTimingInfo.u16HSyncValue == 0) || (stRegenTimingInfo.u16HSyncBackValue == 0) || (stRegenTimingInfo.u16HDEValue == 0) || (stRegenTimingInfo.u16VTTValue == 0) || (stRegenTimingInfo.u16VSyncValue == 0) || (stRegenTimingInfo.u16VSyncBackValue == 0) || (stRegenTimingInfo.u16VDEValue == 0))
     {
+        pstHDMIPollingInfo->u8RegenCount++;
         _KHal_HDMIRx_RegenTimingProc_Rst(pstHDMIPollingInfo, enInputPortType);
         MHAL_HDMIRX_MSG_INFO("** HDMI Regen incorrect timing!! \r\n");
         return;
@@ -8278,6 +8584,7 @@ static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPolling
 
     if (u32IVSPRDValue == 0)
     {
+        pstHDMIPollingInfo->u8RegenCount++;
         pstHDMIPollingInfo->u32TMDSPLLPixelFrequency = 0;
         MHAL_HDMIRX_MSG_ERROR("** HDMI Regen IVS = 0 \r\n");
         return;
@@ -8553,6 +8860,22 @@ static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPolling
     // vsync+back
     vIO32WriteFld_1(REG_0098_P0_DSCD_SERVICES + u32_dscdservice_bkofs, stRegenTimingInfo.u16VSyncBackValue-1, REG_0098_P0_DSCD_SERVICES_REG_TG_V_BP_ED);
 
+    MS_U8 u8_dscd_s_vrr_en = u4IO32ReadFld_1(
+        REG_006C_P0_DSCD_SERVICES + u32_dscdservice_bkofs,
+        REG_006C_P0_DSCD_SERVICES_REG_TGEN_VRR_EN);
+    if (u8_emp_vrr_en || u8_emp_Freesync_en) {
+        if(u8_dscd_s_vrr_en == 0)
+            vIO32WriteFld_1(REG_006C_P0_DSCD_SERVICES + u32_dscdservice_bkofs, 1, REG_006C_P0_DSCD_SERVICES_REG_TGEN_VRR_EN);
+    }
+    else if (GET_DTOP_DEC_VBACK(u32_dtop_dec_bkofs)<4) { //scaler needs vbp >= 2
+        if(u8_dscd_s_vrr_en)
+            vIO32WriteFld_1(REG_006C_P0_DSCD_SERVICES + u32_dscdservice_bkofs, 0, REG_006C_P0_DSCD_SERVICES_REG_TGEN_VRR_EN);
+    }
+    else {
+        if(u8_dscd_s_vrr_en == 0)
+            vIO32WriteFld_1(REG_006C_P0_DSCD_SERVICES + u32_dscdservice_bkofs, 1, REG_006C_P0_DSCD_SERVICES_REG_TGEN_VRR_EN);
+    }
+
     // vde
     vIO32WriteFld_1(REG_009C_P0_DSCD_SERVICES + u32_dscdservice_bkofs, stRegenTimingInfo.u16VDEValue, REG_009C_P0_DSCD_SERVICES_REG_TG_V_DE);
 #if REGEN_LOG
@@ -8626,13 +8949,10 @@ static void _KHal_HDMIRx_RegenTimingProc(ST_HDMI_RX_POLLING_INFO *pstHDMIPolling
 #endif
     vIO32WriteFld_1(REG_0030_P0_PLL_TOP + u32_plltop_bkofs, 0x1,REG_0030_P0_PLL_TOP_REG_FRAME_LPLL_EN);
 
-
     pstHDMIPollingInfo->u8RegenFsm = E_REGEN_CONFIG;
 
-
-
     if (_KHal_HDMIRx_Pll_TOP_Stable(enInputPortType, PLLTOP_IVS_OVS_TOLERANCE_REGEN_DONE)
-        || pstHDMIPollingInfo->u8RegenCount > 10)
+        || pstHDMIPollingInfo->u8RegenCount > DEF_HDMI_REGEN_LOOP_TH)
     {
         pstHDMIPollingInfo->u8RegenFsm = E_REGEN_DONE;
         #if 0//MT9701_TBD_ENABLE todo
@@ -8691,11 +9011,12 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
     MS_BOOL bTimingChgStatus = FALSE;
     MS_BOOL b_vtt_diff = FALSE;
     MS_BOOL b_vsb_diff = FALSE;
-    MS_BOOL b_freesync_chg = FALSE;
     static MS_U8 u8_hde_chg_count = 0;
     //MS_U32 u32PHY2P1BankOffset = 0; // _Hal_tmds_GetPHY2P1BankOffset(enInputPortType);
     MS_U8 u8Colordepth;
     //MS_U32 u32_dtop_dec_bkofs = _KHal_HDMIRx_GetDTOPDECBankOffset(enInputPortSelect);
+    MS_BOOL b_I_mode = FALSE;
+    MS_BOOL b_dec_I_mode = FALSE;
 
     do
     {
@@ -8712,6 +9033,9 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                         pstHDMIPollingInfo->bResetDCFifoFlag = FALSE;
                         pstHDMIPollingInfo->u8FrameRateCnt = 0;
                         pstHDMIPollingInfo->u8ActiveCableState = HDMI_ACTIVE_CABLE_START;
+                        #ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+                        _KHal_HDMIRx_HVSyncAlignState_Rst(pstHDMIPollingInfo, enInputPortSelect);
+                        #endif
                         _KHal_HDMIRx_RegenTimingProc_Rst(pstHDMIPollingInfo, enInputPortSelect);
 
                         HDMI_HAL_DPRINTF("** HDMI clock stable port %d\r\n", enInputPortSelect);
@@ -8757,6 +9081,9 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                         pstHDMIPollingInfo->u8_prev_repetition = 0;
                         pstHDMIPollingInfo->u8RegenFsm = E_REGEN_INIT;
                         //_Hal_tmds_ClearEDRVaildFlag(pstHDMIPollingInfo->ucHDMIInfoSource);
+                        #ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+                        _KHal_HDMIRx_HVSyncAlignState_Rst(pstHDMIPollingInfo, enInputPortSelect);
+                        #endif
 
                         // hdmirx_dtop_35[15] = 1 reg_dep_de_det_vsync_en (default setting, fix)
                         //_Hal_tmds_SetDEStableFlag(enInputPortSelect, pstHDMIPollingInfo, &u32PacketStatus, FALSE);
@@ -8875,6 +9202,9 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                     //_Hal_tmds_SetDEStableFlag(enInputPortType, pstHDMIPollingInfo, u32PacketStatus, FALSE);
                     pstHDMIPollingInfo->bDEStableFlag = FALSE;
                     pstHDMIPollingInfo->u8_prev_repetition = 0;
+                    #ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+                    _KHal_HDMIRx_HVSyncAlignState_Rst(pstHDMIPollingInfo, enInputPortSelect);
+                    #endif
 
                     if(pstHDMIPollingInfo->bYUV420Flag)
                     {
@@ -8944,6 +9274,9 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                     MHAL_HDMIRX_MSG_INFO("** HDMI detect DVI mode, port %d\r\n", enInputPortSelect);
                 }
 
+                //update i-mode flag here for h/v align check state
+                b_dec_I_mode = GET_DTOP_DEC_DET_I_MD_EN(0);
+                b_I_mode = b_dec_I_mode;
                 bNextStateFlag = TRUE;
 
                 break;
@@ -8997,14 +9330,69 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                 bNextStateFlag = TRUE;
 
                 break;
+        #ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+        case HDMI_SIGNAL_DETECT_HVALIGN_CHK:
+        {
+            #define DEF_HVALIGN_CHK_DEBOUNCE 2 // debounce 1 means no debounce
+            #define DEF_HVALIGN_CHK_TH 5
+
+            MS_U8 u8VsyncAlignCase=0;
+            MS_U8 u8_IsVRR = _KHal_IsVRR(enInputPortSelect);
+            MS_U8 u8_IsFRL = IsFRL(pstHDMIPollingInfo->u8FRLRate);
+            MS_BOOL bIsFreeSync = FALSE;
+
+            if (Hal_HDMI_GetFreeSyncInfo(enInputPortSelect, u32PacketStatus, NULL) & BIT(2))
+            {
+                bIsFreeSync = TRUE;
+            }
+
+            //change h/v polarity will cause i-mode flag false asserted, so we update i-mode flag on DE stable state
+            if (pstHDMIPollingInfo->u8HVSynFSM == HDMI_HV_SYNC_FINISHED) {
+                bNextStateFlag = TRUE;
+            }
+            else {
+                if (!(bIsFreeSync || u8_IsVRR || b_I_mode ||u8_IsFRL))
+                {
+                    if (pstHDMIPollingInfo->u8HVSynFSM == HDMI_HV_SYNC_FINISHED)
+                    {
+                        if (!((pstHDMIPollingInfo->u8HVChkHitCnt >= DEF_HVALIGN_CHK_DEBOUNCE) || (pstHDMIPollingInfo->u8HVChkCnt > DEF_HVALIGN_CHK_TH)))
+                        {
+                            pstHDMIPollingInfo->u8HVChkCnt++;
+                            if (pstHDMIPollingInfo->u8preVSynAlignCase == pstHDMIPollingInfo->u8VSynAlignCase)
+                            {
+                                pstHDMIPollingInfo->u8HVChkHitCnt++;
+                            }
+                            else
+                            {
+                                pstHDMIPollingInfo->u8preVSynAlignCase = pstHDMIPollingInfo->u8VSynAlignCase;
+                            }
+                            pstHDMIPollingInfo->u8HVSynFSM = HDMI_HV_SYNC_P_CHECK;
+                            MHAL_HDMIRX_MSG_INFO("[HDMI][SigDet]P[%d] Hit:%d, Cnt:%d;\r\n", enInputPortSelect, pstHDMIPollingInfo->u8HVChkHitCnt, pstHDMIPollingInfo->u8HVChkCnt);
+                        }
+                    }
+                    else
+                    {
+                        //if (pstHDMIPollingInfo->u8RegenFsm != E_REGEN_DONE)
+                            u8VsyncAlignCase=_KHal_HDMIRx_DetectHVSyncAlignCase(enInputPortSelect,pstHDMIPollingInfo);
+                    }
+                }
+                else
+                {
+                    _KHal_HDMIRx_HVSyncAlignState_Rst(pstHDMIPollingInfo, enInputPortSelect);
+                    pstHDMIPollingInfo->u8HVSynFSM = HDMI_HV_SYNC_FINISHED;
+                    MHAL_HDMIRX_MSG_INFO("[HDMI][SigDet]P[%d] Ignore H/V align Check, i-mode:%d\r\n", enInputPortSelect, b_I_mode);
+                }
+
+                bNextStateFlag = TRUE; //keep running signal detect and do h/v align checking
+            }
+        }
+        break;
+        #endif
             case HDMI_SIGNAL_DETECT_REGEN_TIMING:
                 {
                     //MS_U32 u32PortBankOffset = _KHal_HDMIRx_GetPortBankOffset(enInputPortSelect);
-                    MS_U32 u32_dtopdec_bkofs = _KHal_HDMIRx_GetDTOPDECBankOffset(enInputPortSelect);
                     MS_U32 u32_dtopdep_bkofs = _KHal_HDMIRx_GetDTOPDEPBankOffset(enInputPortSelect);
                     MS_U32 u32_pkt_dec_bkofs = _KHal_HDMIRx_GetPKTBankOffset(enInputPortSelect);
-                    MS_BOOL b_I_mode = FALSE;
-                    MS_BOOL b_dec_I_mode = GET_DTOP_DEC_DET_I_MD_EN(u32_dtopdec_bkofs);
                     MS_BOOL b_dep_I_mode = GET_DTOP_DEP_DET_I_MD_EN(u32_dtopdep_bkofs);
                     ST_HDMI_INTERLACE_INFO st_interlace_info;
                     memset(&st_interlace_info, 0, sizeof(ST_HDMI_INTERLACE_INFO));
@@ -9033,20 +9421,7 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                         bIsFreeSync = TRUE;
                     }
 
-                    if (pstHDMIPollingInfo->bPreFreeSync!= bIsFreeSync)
-                    {
-                        pstHDMIPollingInfo->bPreFreeSync = bIsFreeSync;
-                        b_freesync_chg = TRUE;
-                    }
-
-                    if(bIsFreeSync || u8_IsVRR)
-                    {
-                        b_I_mode = b_dep_I_mode;
-                    }
-                    else
-                    {
-                        b_I_mode = b_dec_I_mode;
-                    }
+                    b_I_mode = (bIsFreeSync || u8_IsVRR)? b_dep_I_mode : b_dec_I_mode;
 
                     if (pstHDMIPollingInfo->bPreInterlace != b_I_mode)
                     {
@@ -9091,7 +9466,7 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                         pstHDMIPollingInfo->u8RegenReDoDebounceCnt = 0;
                     }
 
-                    if (b_I_mode)
+                    if ((b_I_mode) && (!(bIsFreeSync || u8_IsVRR)))
                     {
                         if(st_interlace_info.u8OiMd)
                         {
@@ -9103,20 +9478,12 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                             //bTimingChgStatus = b_vde_chg || b_htt_chg || b_vtt_diff || b_vsb_diff;
                             bTimingChgStatus = b_vde_chg || b_htt_chg;
                         }
-                        if(bIsFreeSync || u8_IsVRR)
-                        {
-                            if (b_I_mode)
-                            {
-                                MHAL_HDMIRX_MSG_INFO("** HDMI error, I mode false alarm, VRR supported P mode only. %d,I=%d\r\n", (enInputPortSelect), b_I_mode);
-                            }
-                        }
                     }
-                    else if(bIsFreeSync || u8_IsVRR)
+                    else if (bIsFreeSync || u8_IsVRR)
                     {
                         // p mode, vrr, vtt, vfront chg, check vde
-                        bTimingChgStatus = b_vde_chg||b_htt_chg|| b_vback_chg||b_freesync_chg;
+                        bTimingChgStatus = b_vde_chg||b_htt_chg|| b_vback_chg;
                         pstHDMIPollingInfo->u8FrameRateCnt = 0;
-
 
                         if (b_I_mode)
                         {
@@ -9125,7 +9492,7 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                     }
                     else
                     {
-                        bTimingChgStatus = b_vde_chg||b_htt_chg || b_vback_chg||b_freesync_chg;
+                        bTimingChgStatus = b_vde_chg||b_htt_chg || b_vback_chg;
 
                         // p mode, non vrr, check vtt
                         if (pstHDMIPollingInfo->bFrameRateCHGFlag)
@@ -9145,12 +9512,19 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                             pstHDMIPollingInfo->u8FrameRateCnt++;
                         }
                     }
+
                     if (bTimingChgStatus)
                     {
-                        _KHal_HDMIRx_RegenTimingProc_Rst(pstHDMIPollingInfo, enInputPortSelect);
+                        if (pstHDMIPollingInfo->u8RegenCount >= DEF_HDMI_REGEN_LOOP_TH)
+                        {
+                            _KHal_HDMIRx_RegenTimingProc_Rst(pstHDMIPollingInfo, enInputPortSelect);
+                            Hal_HDMI_pkt_reset(enInputPortSelect, REST_HDMI_STATUS, pstHDMIPollingInfo, FALSE);
+                            pstHDMIPollingInfo->u8RegenFsm = E_REGEN_DONE; //force done, make FSM go back to origional state;
+                            MHAL_HDMIRX_MSG_INFO("[HDMI][SigDet]P[%d] force Regen Done\r\n", enInputPortSelect);
+                            break;//break switch case;
+                        }
                     }
-
-                    if (KHal_HDMIRx_Get_Pkt_Diff(enInputPortSelect, PKT_AVI))
+                    else if (KHal_HDMIRx_Get_Pkt_Diff(enInputPortSelect, PKT_AVI))
                     {
                         if(_KHAL_HDMIRX_Is_AVIRepetition_Diff(pstHDMIPollingInfo, enInputPortSelect))
                             _KHal_HDMIRx_RegenTimingProc_Rst(pstHDMIPollingInfo, enInputPortSelect);
@@ -9170,7 +9544,7 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                         {
                             // clear clock big change
                         }
-                        _KHal_HDMIRx_RegenTimingProc(pstHDMIPollingInfo, enInputPortSelect,bIsFreeSync);
+                        _KHal_HDMIRx_RegenTimingProc(pstHDMIPollingInfo, enInputPortSelect);
                     }
                     bNextStateFlag = TRUE;
                 }
@@ -9187,8 +9561,34 @@ void _Hal_tmds_SignalDetectProc(MS_U8 enInputPortSelect, MS_U32 *u32PacketStatus
                 break;
         };
 
-        u8SignalDetectState++;
-    }while(bNextStateFlag);
+        #ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+        if (u8SignalDetectState == HDMI_SIGNAL_DETECT_HVALIGN_CHK)
+        {
+            if (pstHDMIPollingInfo->u8HVSynFSM == HDMI_HV_SYNC_FINISHED) //stay in h/v align check state before it is finished
+            {
+                if (!(((Hal_HDMI_GetFreeSyncInfo(enInputPortSelect, u32PacketStatus, NULL) & BIT(2))) || _KHal_IsVRR(enInputPortSelect) || b_I_mode ||IsFRL(pstHDMIPollingInfo->u8FRLRate)))
+                {
+                    //update h/v timing info when h/v check done;
+                    _KHal_HDMIRx_GetTimingChangeStatus(HDMI_TIMING_CHG_DTOPDEC_VDE_CHG, enInputPortSelect);
+                    _KHal_HDMIRx_GetTimingChangeStatus(HDMI_TIMING_CHG_DTOPDEC_HTT_CHG, enInputPortSelect);
+                    _KHal_HDMIRx_GetTimingChangeStatus(HDMI_TIMING_CHG_DTOPDEC_VTT_CHG, enInputPortSelect);
+                    _KHal_HDMIRx_GetTimingChangeStatus(HDMI_TIMING_CHG_DTOPDEC_VBACK_CHG, enInputPortSelect);
+                }
+                u8SignalDetectState++;
+            }
+        }
+        else if (u8SignalDetectState == HDMI_SIGNAL_DETECT_REGEN_TIMING)
+        #else
+        if (u8SignalDetectState == HDMI_SIGNAL_DETECT_REGEN_TIMING)
+        #endif
+        {
+            if(((pstHDMIPollingInfo->u8RegenFsm == E_REGEN_DONE) || (pstHDMIPollingInfo->u8RegenCount >= DEF_HDMI_REGEN_LOOP_TH)))
+                u8SignalDetectState++;
+        }
+        else
+            u8SignalDetectState++;
+
+    } while (bNextStateFlag);
 }
 
 //**************************************************************************

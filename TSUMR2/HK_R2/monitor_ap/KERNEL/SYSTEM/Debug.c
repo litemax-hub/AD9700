@@ -2189,12 +2189,14 @@ BOOL ExecTestCommand( void )
         break;
 #endif
 
+#if MS_PM
         case 0x0F:
         {
 			DB_printData("SlowClkDetForceDisable = %d\n", ucPara1);
             msPM_SlowClkDetForceDisable(ucPara1);
         }
         break;
+#endif
 
 #if ENABLE_MSBHK
         case 0x22:

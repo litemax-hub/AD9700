@@ -974,7 +974,7 @@ BOOL _mdrv_DPRx_HDCP2GetRxData(DPRx_ID dprx_id, BYTE ucMessageID, BYTE *pHDCPDat
 void _mdrv_DPRx_HDCP2SetTxData(DPRx_ID dprx_id, BYTE ucMessageID, BYTE *pHDCPData);
 void _mdrv_DPRx_HDCP2Handler(DPRx_ID dprx_id);
 #endif
-void _mdrv_DPRx_MSCHIP_ScreenMute(void);
+void _mdrv_DPRx_MSCHIP_ScreenMute(DPRx_ID dprx_id);
 BYTE _mdrv_DPRx_MSCHIP_DPRxID2PortNumber(DPRx_ID dprx_id);
 DPRx_AUX_ID _mdrv_DPRx_MSCHIP_DPRxID2AuxID(DPRx_ID dprx_id);
 DPRx_DECODER_ID _mdrv_DPRx_MSCHIP_DPRxID2DecodeID(DPRx_ID dprx_id);
@@ -1776,6 +1776,7 @@ BOOL _mdrv_DPRx_StateHandler(DPRx_ID dprx_id)
                     {
                         if(mhal_DPRx_IsAutoEQDone(dprx_id, dprx_phy_id) == FALSE)
                         {
+                            mhal_DPRx_AutoEQDoneStatus_Clear(dprx_phy_id);
                             mhal_DPRx_HWFastTrainingEnable(dprx_id, FALSE);
                             mhal_DPRx_HWFastTrainingEnable(dprx_id, TRUE);
                             DP_DRV_DPRINTF("Rx%d 8b10b error some lane not start auto eq ==> Reset Fast Training !!!!\r\n", dprx_id);
@@ -2694,11 +2695,14 @@ void _mdrv_DPRx_HDCP14Handler(DPRx_ID dprx_id)
 //  [Return]:
 //
 //**************************************************************************
-void _mdrv_DPRx_MSCHIP_ScreenMute(void)
+void _mdrv_DPRx_MSCHIP_ScreenMute(DPRx_ID dprx_id)
 {
     if((INPUT_IS_DISPLAYPORT(SrcInputType) == TRUE) || (INPUT_IS_USBTYPEC(SrcInputType) == TRUE))
     {
-        MuteVideoAndAudio();
+        if((dprx_id == glDPRxInfo[dprx_id].OnlinePort) && (glDPRxInfo[dprx_id].ucState == DPRx_STATE_NORMAL))
+        {
+            MuteVideoAndAudio();
+        }
     }
 
     return;
@@ -6126,7 +6130,7 @@ void mdrv_DPRx_RX_IRQ_Handler(void)
 
         if(mhal_DPRx_CheckSquelch(dprx_id) == TRUE)
         {
-            _mdrv_DPRx_MSCHIP_ScreenMute();
+            _mdrv_DPRx_MSCHIP_ScreenMute(dprx_id);
         }
 
         glDPRxInfo[dprx_id].bDPLoseCDRLockIRQ = TRUE;
@@ -6142,7 +6146,7 @@ void mdrv_DPRx_RX_IRQ_Handler(void)
 
         if(mhal_DPRx_CheckSquelch(dprx_id) == TRUE)
         {
-            _mdrv_DPRx_MSCHIP_ScreenMute();
+            _mdrv_DPRx_MSCHIP_ScreenMute(dprx_id);
         }
 	}
 
@@ -6155,7 +6159,7 @@ void mdrv_DPRx_RX_IRQ_Handler(void)
 
         if(mhal_DPRx_CheckSquelch(dprx_id) == TRUE)
         {
-            _mdrv_DPRx_MSCHIP_ScreenMute();
+            _mdrv_DPRx_MSCHIP_ScreenMute(dprx_id);
         }
 
         glDPRxInfo[dprx_id].bDPInterlaneSkewLoseIRQ = TRUE;
@@ -6282,7 +6286,7 @@ void mdrv_DPRx_RX2_IRQ_Handler(void)
             mhal_DPRx_DELAY_NOP(10);
             msWriteByte(REG_DPRX_DECODER_E0_0F_L + usRegOffsetDecoderByID, 0);
 
-            _mdrv_DPRx_MSCHIP_ScreenMute();
+            _mdrv_DPRx_MSCHIP_ScreenMute(dprx_id);
 
             glDPRxDecoderInfo[dprx_decoder_id].bDPVPLLBIGChange = TRUE;
 
@@ -6318,7 +6322,7 @@ void mdrv_DPRx_RX2_IRQ_Handler(void)
             mhal_DPRx_DELAY_NOP(10);
             msWriteByte(REG_DPRX_DECODER_E0_0F_L + usRegOffsetDecoderByID, 0);
 
-            _mdrv_DPRx_MSCHIP_ScreenMute();
+            _mdrv_DPRx_MSCHIP_ScreenMute(dprx_id);
 
             glDPRxDecoderInfo[dprx_decoder_id].bDPVPLLBIGChange = TRUE;
             glDPRxDecoderInfo[dprx_decoder_id].bDPMSAChange = TRUE; // For system used on 800x600@60Hz switch to 800x600@75Hz, system read/clear this flag
@@ -6392,7 +6396,7 @@ void mdrv_DPRx_RX2_IRQ_Handler(void)
 			mhal_DPRx_DELAY_NOP(10);
             msWriteByte(REG_DPRX_SDP_E0_47_H + usRegOffsetSdpByID, 0);
 
-            _mdrv_DPRx_MSCHIP_ScreenMute();
+            _mdrv_DPRx_MSCHIP_ScreenMute(dprx_id);
 		}
 
     	if(msReadByte(REG_DPRX_SDP_E0_44_H + usRegOffsetSdpByID) & BIT4) // MISC1 change
@@ -6401,7 +6405,7 @@ void mdrv_DPRx_RX2_IRQ_Handler(void)
 			mhal_DPRx_DELAY_NOP(10);
             msWriteByte(REG_DPRX_SDP_E0_47_H + usRegOffsetSdpByID, 0);
 
-            _mdrv_DPRx_MSCHIP_ScreenMute();
+            _mdrv_DPRx_MSCHIP_ScreenMute(dprx_id);
 		}
 
         if(msReadByte(REG_DPRX_DECODER_E0_0B_H + usRegOffsetDecoderByID) & BIT5) // PPS received ISR
@@ -7760,7 +7764,7 @@ BOOL mdrv_DPRx_SetTypeCInfo(DPRx_ID dprx_id, BYTE ubCCpinInfo, BYTE ubPinAssingI
     glDPRxInfo[dprx_id].ubTypeC_CC = ubCCpinInfo;
     glDPRxInfo[dprx_id].ubTypeC_PinAssign = ubPinAssingInfo;
 
-    if(ubCCpinInfo < 2)
+    if((ubCCpinInfo < 2) && ((ubPinAssingInfo == BIT2) || (ubPinAssingInfo == BIT3) || (ubPinAssingInfo == BIT4)))
     {
         glDPRxInfo[dprx_id].bDPcableConnent = TRUE;
     }
@@ -8030,10 +8034,11 @@ void mdrv_DPRx_MSCHIP_EnableDPDetect(BYTE ucPMMode, BOOL bEnable)
 				mhal_DPRx_SetProgrammableDPCDEnable(dprx_aux_id, FALSE);
                 mhal_DPRx_SetXDATAProgrammableDPCDEnable(dprx_aux_id, DPRx_XDATAPROGRAM_DPCD_0, TRUE, FALSE);
                 mhal_DPRx_SetXDATAProgrammableDPCDEnable(dprx_aux_id, DPRx_XDATAPROGRAM_DPCD_1, TRUE, FALSE);
-
                 mhal_DPRx_EnableAuxInterrupt(dprx_aux_id, FALSE);
                 mhal_DPRx_EnableDPAUXRecvInterrupt(dprx_aux_id, FALSE);
             	mhal_DPRx_EnablePHYInterrupt(dprx_phy_id, FALSE);
+
+            	mdrv_DPRx_HPDControl(dprx_id, TRUE);
 
                 if(GET_DPRx_FUNCTION_ENABLE_PORT(dprx_id))
                 {

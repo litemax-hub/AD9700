@@ -283,7 +283,6 @@ code RegUnitType2 tblInitMODVby1Ch1Bit10[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x2000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -362,7 +361,6 @@ code RegUnitType2 tblInitMODVby1Ch2Bit10[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x2000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -441,7 +439,6 @@ code RegUnitType2 tblInitMODVby1Ch4Bit10[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x2000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -520,7 +517,6 @@ code RegUnitType2 tblInitMODVby1Ch8Bit10[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x2000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -598,7 +594,6 @@ code RegUnitType2 tblInitMODVby1Ch1Bit8[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x3000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -677,7 +672,6 @@ code RegUnitType2 tblInitMODVby1Ch2Bit8[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x3000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -756,7 +750,6 @@ code RegUnitType2 tblInitMODVby1Ch4Bit8[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x3000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -835,7 +828,6 @@ code RegUnitType2 tblInitMODVby1Ch8Bit8[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x3000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -2781,7 +2773,7 @@ void msDrvIGenTuning( void )
 
         //Calculate icon setting for LVDS/eDP Swing
         i = (((WORD)LVDS_SWING_TARGET-60)*10/75);
-        for (j = 0; j < 5; j++)
+        for (j = 0; j < 11; j++)
             msWrite2Byte(REG_MOD2_A0+(j*2), (((WORD)i<<8)&0xFF00)|i); // [7:0]Control swing of channel X (Icon), value: 0~0xFF
 
         if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_NONE ) //LVDS

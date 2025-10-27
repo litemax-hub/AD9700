@@ -898,7 +898,7 @@ void mStar_SetupInputPort( void )
     Set_ShowInputInfoFlag();
 
     mStar_IPPowerControl();
-#if (MainBoardType == BD_MT9700_LITEMAX)
+#if (ENABLE_DVI_HDMI_SWITCH)
     if(SrcInputType == Input_Digital)
         SELECT_DVI();
     else
@@ -916,13 +916,58 @@ void mStar_SetupInputPort( void )
         msAPI_combo_HDMIRx_SCDC_config(u8HDMIPreInputPort,TRUE);
         msAPI_combo_HDMIRx_SCDC_Clr(u8HDMIPreInputPort);
         msAPI_combo_HDMIRx_DataRtermControl(u8HDMIPreInputPort,FALSE);
-        msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, SrcInputType, HDMI_ACTIVE_CABLE_CR_LOCK, FALSE);
-        msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, SrcInputType, 0x3, FALSE);
+
+        #if (CHIP_ID==CHIP_MT9701)
+            #if ENABLE_DVI
+                msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_DVI, HDMI_ACTIVE_CABLE_CR_LOCK, FALSE);
+                msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_DVI, 0x3, FALSE);
+            #endif
+
+            #if ENABLE_HDMI
+                msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_HDMI, HDMI_ACTIVE_CABLE_CR_LOCK, FALSE);
+                msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_HDMI, 0x3, FALSE);
+
+                if (Input_HDMI2 != Input_Nothing) {
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_HDMI2, HDMI_ACTIVE_CABLE_CR_LOCK, FALSE);
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_HDMI2, 0x3, FALSE);
+                }
+            #endif
+        #endif
+
     }
     else
     {
-        msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, SrcInputType, HDMI_ACTIVE_CABLE_CR_LOCK, TRUE);
-        msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, SrcInputType, 0x3, TRUE);
+        #if (CHIP_ID==CHIP_MT9701)
+            #if ENABLE_DVI
+                if (SrcInputType == Input_DVI) {
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_DVI, HDMI_ACTIVE_CABLE_CR_LOCK, TRUE);
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_DVI, 0x3, TRUE);
+                }
+                else {
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_DVI, HDMI_ACTIVE_CABLE_CR_LOCK, FALSE);
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_DVI, 0x3, FALSE);
+                }
+            #endif
+
+            #if ENABLE_HDMI
+                if (SrcInputType == Input_HDMI) {
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_HDMI, HDMI_ACTIVE_CABLE_CR_LOCK, TRUE);
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_HDMI, 0x3, TRUE);
+                }
+                else {
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_HDMI, HDMI_ACTIVE_CABLE_CR_LOCK, FALSE);
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_HDMI, 0x3, FALSE);
+                }
+                if (SrcInputType == Input_HDMI2) {
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_HDMI2, HDMI_ACTIVE_CABLE_CR_LOCK, TRUE);
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_HDMI2, 0x3, TRUE);
+                }
+                else {
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PHY, Input_HDMI2, HDMI_ACTIVE_CABLE_CR_LOCK, FALSE);
+                    msAPI_combo_HDMIRx_IRQ_Enable(COMBO_HDMI_IRQ_PM_SCDC, Input_HDMI2, 0x3, FALSE);
+                }
+            #endif
+        #endif
     }
 #else
     msAPI_combo_HDMIRx_DDCControl(Input_HDMI, FALSE);

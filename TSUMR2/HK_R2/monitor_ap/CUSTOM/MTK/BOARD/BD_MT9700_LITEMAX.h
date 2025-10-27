@@ -27,35 +27,35 @@
 #define USB_HUB                 (1&ENABLE_USB_TYPEC)
 
 // Mapping to InputPortType
-#define Input_DVI_C1            Input_Digital
+#define Input_DVI_C1            Input_Nothing
 #define Input_DVI_C2            Input_Nothing
 #define Input_DVI_C3            Input_Nothing
 #define Input_DVI_C4            Input_Nothing
 #define Input_DualDVI_C1        Input_Nothing
 #define Input_DualDVI_C2        Input_Nothing
-#define Input_HDMI_C1           Input_Digital2
+#define Input_HDMI_C1           Input_Digital
 #define Input_HDMI_C2           Input_Nothing
 #define Input_HDMI_C3           Input_Nothing
 #define Input_HDMI_C4           Input_Nothing
 #define Input_Displayport_C1    Input_Nothing
-#define Input_Displayport_C2    Input_Digital3
+#define Input_Displayport_C2    Input_Digital2
 #define Input_Displayport_C3    Input_Nothing
 #define Input_Displayport_C4    Input_Nothing
 #define Input_UsbTypeC_C3       Input_Nothing
 #define Input_UsbTypeC_C4       Input_Nothing
 
-#define CInput_DVI_C1           CInput_Digital
+#define CInput_DVI_C1           CInput_Nothing
 #define CInput_DVI_C2           CInput_Nothing
 #define CInput_DVI_C3           CInput_Nothing
 #define CInput_DVI_C4           CInput_Nothing
 #define CInput_DualDVI_C1       CInput_Nothing
 #define CInput_DualDVI_C2       CInput_Nothing
-#define CInput_HDMI_C1          CInput_Digital2
+#define CInput_HDMI_C1          CInput_Digital
 #define CInput_HDMI_C2          CInput_Nothing
 #define CInput_HDMI_C3          CInput_Nothing
 #define CInput_HDMI_C4          CInput_Nothing
 #define CInput_Displayport_C1   CInput_Nothing
-#define CInput_Displayport_C2   CInput_Digital3
+#define CInput_Displayport_C2   CInput_Digital2
 #define CInput_Displayport_C3   CInput_Nothing
 #define CInput_Displayport_C4   CInput_Nothing
 #define CInput_UsbTypeC_C3      CInput_Nothing
@@ -142,8 +142,9 @@
 #if ENABLE_DVI_HDMI_SWITCH
 #define SELECT_HDMI()       (MEM_MSWRITE_BIT(_REG_GPIO2_OUT, 0, BIT7), MEM_MSWRITE_BIT(_REG_GPIO2_OEZ, 0, BIT7))
 #define SELECT_DVI()       (MEM_MSWRITE_BIT(_REG_GPIO2_OUT, 1, BIT7), MEM_MSWRITE_BIT(_REG_GPIO2_OEZ, 0, BIT7))
-
 #define DVI_HDMI_EN()       (MEM_MSWRITE_BIT(_REG_GPIOL1_OUT, 1, BIT1), MEM_MSWRITE_BIT(_REG_GPIOL1_OEZ, 0, BIT1))
+#else
+#define DVI_HDMI_EN()       (MEM_MSWRITE_BIT(_REG_GPIO2_OUT, 0, BIT7), MEM_MSWRITE_BIT(_REG_GPIO2_OEZ, 0, BIT7),MEM_MSWRITE_BIT(_REG_GPIOL1_OUT, 1, BIT1), MEM_MSWRITE_BIT(_REG_GPIOL1_OEZ, 0, BIT1))
 #endif
 
 //================================================================================================================

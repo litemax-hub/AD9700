@@ -1,6 +1,8 @@
 #include "datatype.h" //roger: should I use it
 #include "ComboApp.h"
 
+//Source MSPG7800 hv sync unalignement nonstandard signal patch(485,487)
+//#define SUPPORT_HDMI_HVSYNC_ALIGN
 // 9701
 #include "HDMIRX_SCDC_P0.h"
 #include "HDMIRX_AUDIO_S0.h"
@@ -85,7 +87,7 @@
 #include "mhal_hdmirx_pkt_que.h"
 #endif
 
-#define ENABLE_BRINGUP_LOG  FALSE
+#define ENABLE_BRINGUP_LOG  TRUE
 
 #define _KHal_HDMIRx_GetDTOPMISCBankOffset(x) (0)  // e222
 #define _KHal_HDMIRx_GetDSCDSERVICEPBankOffset(x) (0) //_KHal_HDMIRx_GetPortBankOffset(x)
@@ -139,6 +141,8 @@
     (MS_U16)u4IO32ReadFld_1(REG_0108_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, REG_0108_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_TIMING_DET_HTT)
 #define GET_DTOP_DEC_HSYNC(port_ofs)\
     (MS_U16)u4IO32ReadFld_1(REG_011C_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, REG_011C_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_TIMING_DET_HS_LENGTH)
+#define GET_DTOP_DEC_VFRONT(port_ofs)\
+        (MS_U16)u4IO32ReadFld_1(REG_0128_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, REG_0128_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_TIMING_DET_V_FRONT_PORCH_0)
 #define GET_DTOP_DEC_VSYNC(port_ofs)\
     (MS_U16)u4IO32ReadFld_1(REG_0120_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, REG_0120_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_TIMING_DET_VS_LENGTH)
 #define GET_DTOP_DEC_HFRONT(port_ofs)\
@@ -151,6 +155,9 @@
     (MS_U16)u4IO32ReadFld_1(REG_0110_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, REG_0110_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_HS_POL)
 #define GET_DTOP_DEC_DET_VS_POLARITY(port_ofs)\
     (MS_U16)u4IO32ReadFld_1(REG_0110_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, REG_0110_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_VS_POL)
+
+#define IsFRL(x) (((x)>HDMI_FRL_MODE_LEGACY) && ((x) <HDMI_FRL_MODE_NONE))
+
 
 //#include "hwreg_hdmirx.h"
 
@@ -472,6 +479,10 @@ typedef struct
     MS_U16 u16VSyncBackValue;
     MS_U16 u16VDEValue;
     MS_U32 u32FrameRate;
+#ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+    MS_U16 u16VBackValue;
+    MS_U16 u16VFrontValue;
+#endif
 }ST_HDMI_REGEN_TIMING_INFO;
 
 typedef struct
@@ -572,6 +583,16 @@ typedef struct
     MS_U32 u8RegenReDoDebounceCnt;
     MS_U32 u32_dc_fifo;
     MS_U32 u32TMDSPLLPixelFrequency;
+    #ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+    MS_U8  u8HVSynFSM;
+    MS_U8  u8preVSynAlignCase;
+    MS_U8  u8VSynAlignCase;
+    MS_U8  u8VSynAlign_dtop_dec_hsync_polarity;
+    MS_BOOL bHSYNCReverseReadyFlag;
+    MS_U32 u32_vsyc_timing[5];
+    MS_U8 u8HVChkHitCnt;
+    MS_U8 u8HVChkCnt;
+#endif
 }ST_HDMI_RX_POLLING_INFO;
 
 enum HDMI_PKT_DIFF_BIT
@@ -720,6 +741,11 @@ enum HDMI_SOURCE_VERSION_TYPE
     HDMI_SOURCE_VERSION_HDMI21,
 };
 
+#define HDMI_XTAL_CLOCK_MHZ                 12U
+#define HDMI_XTAL_CLOCK_10kHZ               1200U
+#define HDMI_XTAL_CLOCK_HZ                  12000000U
+#define HDMI_XTAL_DIVIDER                   128U
+
 enum HDMI_SIGNAL_DETECT_TYPE
 {
     HDMI_SIGNAL_DETECT_NONE = 0,
@@ -730,6 +756,9 @@ enum HDMI_SIGNAL_DETECT_TYPE
     HDMI_SIGNAL_DETECT_HDCP_STATUS,
     HDMI_SIGNAL_DETECT_AUDIO_MUTE_EVENT,
     HDMI_SIGNAL_DETECT_YUV420,
+#ifdef SUPPORT_HDMI_HVSYNC_ALIGN
+    HDMI_SIGNAL_DETECT_HVALIGN_CHK,
+#endif
     HDMI_SIGNAL_DETECT_REGEN_TIMING,
     HDMI_SIGNAL_DETECT_EMP,
 };
@@ -1156,6 +1185,26 @@ typedef enum
     HDMI_SAWP_TYPE_RB,
 }HDMI_SWAP_TYPE;
 
+typedef enum
+{
+    HDMI_V_FRONT    = 0,
+    HDMI_V_SYNC     = 1,
+    HDMI_V_BACK     = 2,
+    HDMI_V_DE       = 3,
+    HDMI_V_TOTAL    = 4,
+    HDMI_V_TYPE_NUM = 5,
+} HDMI_V_TIMING_TYPE;
+
+typedef enum
+{
+    HDMI_H_FRONT    = 0,
+    HDMI_H_SYNC     = 1,
+    HDMI_H_BACK     = 2,
+    HDMI_H_DE       = 3,
+    HDMI_H_TOTAL    = 4,
+    HDMI_H_TYPE_NUM = 5,
+} HDMI_H_TIMING_TYPE;
+
 MS_BOOL _Hal_tmds_CheckActiveCableProc(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo);
 MS_BOOL _Hal_tmds_GetErrorCountStatus(MS_U8 enInputPortType, MS_BOOL bHDMI20Flag, stHDMI_ERROR_STATUS *pstErrorStatus);
 MS_BOOL _Hal_tmds_ActiveCableCheckDLEV(MS_U8 enInputPortType, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo);
@@ -1242,3 +1291,8 @@ Bool Hal_HDMIRx_Set_RB_PN_Swap(BYTE ucPortIndex, HDMI_SWAP_TYPE enHDMI_SWAP_TYPE
 Bool Hal_HDMIRx_Check_OnLinePort(BYTE ucPortIndex);
 
 
+#define SET_DTOP_DEC_SRC_H_POL_OVE(port_ofs,value)\
+   vIO32WriteFld_1(REG_0100_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, value,REG_0100_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_SRC_H_POL_OVE)
+
+#define SET_DTOP_DEC_SRC_H_POL_OV(port_ofs,value)\
+       vIO32WriteFld_1(REG_0100_P0_HDMIRX_DTOP_DEC_MISC + port_ofs, value,REG_0100_P0_HDMIRX_DTOP_DEC_MISC_REG_HDMIRX_DEC_SRC_H_POL_OV)

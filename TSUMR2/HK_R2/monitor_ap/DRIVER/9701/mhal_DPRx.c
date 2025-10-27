@@ -2256,7 +2256,7 @@ BOOL mhal_DPRx_GetVSC_EXT(DPRx_DECODER_ID dprx_decoder_id, DP_VSC_EXT_TYPE ucTyp
 
 			for(j = 0; j < 32; j++)
 			{
-				ucVSC_EXT[j] = msReadByte(REG_DPRX_SDP_E0_20_L + j + usRegOffsetSdpByID);
+				ucVSC_EXT[ucDataCount] = msReadByte(REG_DPRX_SDP_E0_20_L + j + usRegOffsetSdpByID);
 
 				DPRX_HAL_DPRINTF("\r\n VSC_EXT = %x", ucVSC_EXT[ucDataCount]);
 

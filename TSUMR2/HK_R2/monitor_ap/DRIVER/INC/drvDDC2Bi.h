@@ -12,7 +12,7 @@
 #define D2BMode_FIFO_Normal_XSharedAll          3 // New DDC normal mode using xdata as tx/rx buffer, and xdata shared with DDCBuffer & All Ports
 
 // DDC mode selection
-#define D2BModeSel  D2BMode_SingleBuffer//D2BMode_FIFO_Nornal//D2BMode_FIFO_Normal_XSharedAll // Be aware of buffer overflow problem, MUST reserved enough buffer size!!!!!
+#define D2BModeSel  D2BMode_FIFO_Nornal//D2BMode_SingleBuffer//D2BMode_FIFO_Nornal//D2BMode_FIFO_Normal_XSharedAll // Be aware of buffer overflow problem, MUST reserved enough buffer size!!!!!
 
 // Enum of DDC FIFO length
 #define D2B_FIFO_8Level     0

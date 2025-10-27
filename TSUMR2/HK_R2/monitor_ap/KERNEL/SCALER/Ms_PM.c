@@ -223,7 +223,7 @@ void msPM_SetFlag_Standby(void)
     }
     else
     {
-        sPMInfo.sPMConfig.bDP_enable = 0;
+        sPMInfo.sPMConfig.bDP_enable = PM_SUPPORT_WAKEUP_DP;
     }
 
     sPMInfo.sPMConfig.bSAR_enable = PM_POWERSAVING_WAKEUP_SAR;
@@ -773,6 +773,7 @@ BOOL msPM_CompareSARChannel(void)
         else if(sPMSARKey.u8SAR_CmpLvl == EN_SAR_05V)
             u8CmpThreshold = SARTHR_05V;
     }
+
     if((_bit0_(sPMSARKey.u8SAR_KeyMask)) && (KEYPAD_SAR00 <= u8CmpThreshold))
         bSAR_Result = TRUE;
     else if((_bit1_(sPMSARKey.u8SAR_KeyMask)) && (KEYPAD_SAR01 <= u8CmpThreshold))
@@ -781,15 +782,6 @@ BOOL msPM_CompareSARChannel(void)
         bSAR_Result = TRUE;
     else if((_bit3_(sPMSARKey.u8SAR_KeyMask)) && (KEYPAD_SAR03 <= u8CmpThreshold))
         bSAR_Result = TRUE;
-    if(bSAR_Result)
-    {
-printf("\r\n sPMSARKey.u8SAR_KeyMask=%x",sPMSARKey.u8SAR_KeyMask);
-printf("\r\n u8CmpThreshold=%x",u8CmpThreshold);
-printf("\r\n KEYPAD_SAR00=%x",KEYPAD_SAR00);
-printf("\r\n KEYPAD_SAR01=%x",KEYPAD_SAR01);
-printf("\r\n KEYPAD_SAR02=%x",KEYPAD_SAR02);
-printf("\r\n KEYPAD_SAR03=%x",KEYPAD_SAR03);
-    }
     return bSAR_Result;
 }
 
@@ -1361,6 +1353,7 @@ Bool msPM_GetPMStatus(void)
         //================================================================================
 #if (ENABLE_DP_INPUT)
         else if(sPMInfo.sPMConfig.bDP_enable && ((u8ActivePort = msPM_GetActiveDPPort(0x1F)) != 0xFF)) // Normal Trining Wake up
+//        else if((u8ActivePort = msPM_GetActiveDPPort(0x1F)) != 0xFF) // Normal Trining Wake up
         {
             #if(PM_SUPPORT_WAKEUP_DP)
             ucWakeupStatus = ePMSTS_DP_ACT;
@@ -1616,6 +1609,7 @@ BYTE msPM_GetActiveDPPort(BYTE u8InputPortl)
     }
 #endif
 
+#if 1
     if(UserPrefInputPriorityType != Input_Priority_Auto)
     {
         if(SrcInputType == Input_Displayport)
@@ -1639,14 +1633,15 @@ BYTE msPM_GetActiveDPPort(BYTE u8InputPortl)
             ubDPFixPort_Detect = 0;
         }
     }
-
+#endif
     for(dprx_id = DPRx_ID_0; dprx_id < DPRx_ID_MAX; dprx_id++)
     {
+#if 1
         if((UserPrefInputPriorityType != Input_Priority_Auto) && (!((ubDPFixPort_Detect) & (BIT0 << dprx_id))))
         {
             continue;
         }
-
+#endif
 		dprx_aux_id = _mdrv_DPRx_MSCHIP_DPRxID2AuxID(dprx_id);
 
         #if (CHIP_ID == CHIP_MT9701)
@@ -1851,6 +1846,7 @@ BYTE msPM_GetActiveDPPort(BYTE u8InputPortl)
                 #endif
                 else
                 #endif
+#if 1
                 {
     				if(mhal_DPRx_CheckSquelch(dprx_id) == TRUE)
                     {
@@ -1867,6 +1863,7 @@ BYTE msPM_GetActiveDPPort(BYTE u8InputPortl)
                         glDP_SQDebounce[dprx_id] = 50; // Unit: 1ms
                     }
                 }
+#endif
                 //==================== DPCD 600h wake-up detect ====================
                 #if(CHIP_ID == CHIP_MT9701)
                 /* for verification

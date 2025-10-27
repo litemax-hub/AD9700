@@ -977,6 +977,8 @@ void mhal_DPRx_PHYInitialSetting(DPRx_ID dprx_id, DPRx_PHY_ID dprx_phy_id)
 
     msEread_Init(&usTemp1, &ubTemp2);
 
+    msWriteByteMask(REG_DPRX_PHY3_00_L + usRegOffsetPHY3ByID, BIT1|BIT0, BIT1|BIT0); // Reset 10-bit to 40-bit FIFO
+
 	// rterm
     msWriteByteMask(REG_DPRX_PHY_PM_03_H + usRegOffset40ByID, 0, BIT4|BIT5);
 
@@ -1619,6 +1621,9 @@ void mhal_DPRx_PHYInitialSetting(DPRx_ID dprx_id, DPRx_PHY_ID dprx_phy_id)
 	//=================================================================================
 	msWrite2Byte(REG_DPRX_PHY0_2D_L + usRegOffsetPHY0ByID, 0x300); // For DP1.2 CTS 5.3.1.4 and 5.3.1.5 patch
 
+	msWriteByteMask(REG_DPRX_PHY3_00_L + usRegOffsetPHY3ByID, 0, BIT0); // Reset 10-bit to 40-bit FIFO
+	msWriteByteMask(REG_DPRX_PHY3_00_L + usRegOffsetPHY3ByID, 0, BIT1); // Reset 10-bit to 40-bit FIFO
+
     return;
 }
 
@@ -1813,6 +1818,29 @@ void mhal_DPRx_SetPHYPRBS7PNSwapEnable(DPRx_PHY_ID dprx_phy_id, BYTE ubLanePNSwa
 }
 
 void ______RX_PHY_AUTO_EQ________(void);
+
+//**************************************************************************
+//  [Function Name]:
+//                  mhal_DPRx_AutoEQDoneStatus_Clear()
+//  [Description]
+//					mhal_DPRx_AutoEQDoneStatus_Clear
+//  [Arguments]:
+//
+//  [Return]:
+//
+//**************************************************************************
+void mhal_DPRx_AutoEQDoneStatus_Clear(DPRx_PHY_ID dprx_phy_id)
+{
+	DWORD usRegOffsetPhy2ByID = DP_REG_OFFSET_PHY0(dprx_phy_id);
+
+	msWriteByteMask(REG_DPRX_PHY2_47_H + usRegOffsetPhy2ByID, BIT5, BIT5);
+    msWriteByteMask(REG_DPRX_PHY2_4B_H + usRegOffsetPhy2ByID, BIT5, BIT5);
+    msWriteByteMask(REG_DPRX_PHY2_4F_H + usRegOffsetPhy2ByID, BIT5, BIT5);
+    msWriteByteMask(REG_DPRX_PHY2_53_H + usRegOffsetPhy2ByID, BIT5, BIT5);
+
+	return ;
+}
+
 //**************************************************************************
 //  [Function Name]:
 //                  mhal_DPRx_IsAutoEQDone()
@@ -1824,13 +1852,13 @@ void ______RX_PHY_AUTO_EQ________(void);
 //
 //**************************************************************************
 BOOL mhal_DPRx_IsAutoEQDone(DPRx_ID dprx_id, DPRx_PHY_ID dprx_phy_id)
-{    
+{
 	WORD usRegOffsetTransCTRLByID = DP_REG_OFFSET_TRANS_CTRL(dprx_id);
 	WORD usRegOffsetPHY2ByID = DP_REG_OFFSET_PHY0(dprx_phy_id);
-    
+
 	BYTE ubLaneCount = 0;
 	BYTE i = 0x0;
-	
+
 	if((dprx_id == DPRx_ID_MAX) || (dprx_phy_id == DPRx_PHY_ID_MAX))
 	{
         return FALSE;

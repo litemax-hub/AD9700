@@ -355,17 +355,6 @@ ENUM_HDCP_KEY_INIT_STATUS msAPI_combo_HDCP2InitHandler(BOOL bUseCustomizeKey)
         #if(COMBO_HDCP2_DECODE_KEY)
         if(mdrv_combo_HDCP2KeyDecodeDone() && bSecRomCodeDone)
         {
-            WORD i = 0;
-            for ( i = 0; i < sizeof(tCOMBO_HDCP2_CERTRX_TABLE); i++ ) //update from DRAM
-            {
-                tCOMBO_HDCP2_CERTRX_TABLE[i] = msMemReadByte((ULONG)tCOMBO_HDCP2_CERTRX_TABLE + i);
-                #if 0
-                printf("0x%02X ", tCOMBO_HDCP2_CERTRX_TABLE[i]);
-                if ((i+1) % 16 == 0)
-                    printf("\r\n");
-                #endif
-            }
-
             bHDCP22InitProcDone = TRUE;
             bSecuStoreDone = TRUE;
             enInitStatus = EN_HDCP_KEY_INIT_STATUS_PASS;

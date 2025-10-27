@@ -1,7 +1,6 @@
 
 #include "Global.h"
 #include "drvDeltaE.h"
-//#include "drvMCCSCal.h"
 #include "string.h"
 #include "msACE.h"
 #include "NVRam.h"
@@ -12,6 +11,10 @@
 #include <stddef.h>
 #include "msflash.h"
 #include "AutoGamma.h"
+#if ENABLE_SaveMCCSData 
+#include "drvMCCSCal.h"
+#endif
+
 #if (ENABLE_ACHDR_FUNCTION)
 #include "drvHDR.h"
 #include "drvHDRPanelInfo.h"
@@ -46,17 +49,48 @@ short _R0HEd = 0;
 extern BYTE CurrentOutputPattern[6];
 
 //Actual entry of post gamma fomat is 1024, this is compressed format.
+static BYTE _AutoColorToolStatus = 0;
 
+#include <math.h>
+#define _maxWinNum 2
+WORD _hSizeOfIP2TestPtn[_maxWinNum] = {3840};
+WORD _vSizeOfIP2TestPtn[_maxWinNum] = {2160};
+BOOL _IsIP2TestPtnWithoutSignal = FALSE;
+WORD _u16ScalerMaskOfTestPtnWithoutSignal = BIT1;
+
+#if ENABLE_DeltaE
 static DWORD _addrOfAutoColorBlock = ADDR_DELTAE_BLOCK;
 static MemoryType _memoryType = enMemoryType_EEPROM;
 static Bool _bDoWP = TRUE;
 static void (*s_FlashWriteByte)(Bool, DWORD, BYTE) = 0;
 static void (*s_FlashWriteTbl)(Bool, DWORD, BYTE*, DWORD) = 0;
-static BYTE _AutoColorToolStatus = 0;
 static BYTE _AutoColorToolCCTbase = 0;
 StoredFormatOfPostGamma _postGamma;
+//===============================drvMCCScal=======================================================
+#if ENABLE_SaveMCCSData 
+#if !USEFLASH
 
-//MCCS_MeasurePatternInfo _PanelNative;
+MCCS_MeasurePatternInfo _PanelNative;
+DWORD _addrOfMCCSStruct = ADDR_THIRD_PARTY_BLOCK;
+xdata MCCS_MeasurePatternInfo g_MCCS_MeasurePatternInfo;
+//xdata struct  MCCS_PARAMETER  g_MCCS_parameter;
+void mdrv_MCCS_PatternInfo_Set(MCCS_MeasurePatternInfo* ptnInfo)
+{
+    memcpy((BYTE*)&g_MCCS_MeasurePatternInfo, (BYTE*)ptnInfo, sizeof(g_MCCS_MeasurePatternInfo));
+    printf("sizeof(g_MCCS_MeasurePatternInfo) = %d \n",sizeof(g_MCCS_MeasurePatternInfo));
+}
+void msSaveNativeData(void)
+{
+    DWORD addr = GetAddrOfNativeData();
+    NVRam_WriteTbl(addr, (BYTE*)(&g_MCCS_MeasurePatternInfo), sizeof(g_MCCS_MeasurePatternInfo));
+}
+DWORD GetAddrOfNativeData(void)
+{
+    return _addrOfMCCSStruct;// + sizeof(g_MCCS_parameter) * NUM_OF_USER_CALIBRATION_BLOCK;
+}
+#endif
+#endif
+//==================================================================================================
 #if (ENABLE_ColorMode_Preload_Function)
 #define NUM_OF_IDX   NUM_OF_AC_IDX+NUM_OF_MCCS_IDX
 static BOOL _bIDXpreloaded = false;
@@ -3347,12 +3381,7 @@ static LoadStatus _mdrv_ColorTool_ColorMode_Apply(BYTE u8DispWin, BYTE ucColorMo
 //=========================================================================================================================
 
 
-#include <math.h>
-#define _maxWinNum 2
-WORD _hSizeOfIP2TestPtn[_maxWinNum] = {3840};
-WORD _vSizeOfIP2TestPtn[_maxWinNum] = {2160};
-BOOL _IsIP2TestPtnWithoutSignal = FALSE;
-WORD _u16ScalerMaskOfTestPtnWithoutSignal = BIT1;
+
 #if DIFF_MST9U
 extern void msDrvVsyncINTEnable(void);
 #endif
@@ -3751,15 +3780,7 @@ LoadStatus IDXLoadDeltaEColorMode(BYTE u8DispWin, WORD IDX)
 }
 #endif
 
-BYTE mdrv_DeltaE_AutoColorToolStatus_Get(void)
-{
-    return _AutoColorToolStatus;
-}
 
-void mdrv_DeltaE_AutoColorToolStatus_Set(BYTE value)
-{
-	_AutoColorToolStatus = value;
-}
 
 BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
 {
@@ -4327,6 +4348,7 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
                 break;
                 case MS_Set_3DLUT:
                 {
+                    BYTE sum = 0;
                     DWORD addr = 0, idx = 0;
                     BYTE cnt = 0, ch = 0;
 
@@ -4959,7 +4981,8 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
             break;
 
 #endif
-        #if DIFF_MST9U
+        #if ENABLE_SaveMCCSData
+        #if !USEFLASH
             case MS_PanelNative_Data:
             {
                 BYTE ch, addr, sum = 0, idx = 0;
@@ -4980,7 +5003,7 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
                 {
                     DDCBuffer[0] = 9;
 
-			if(pPNInfo != NULL)
+			        if(pPNInfo != NULL)
                     	memcpy((BYTE*)(&DDCBuffer[1]), (BYTE*)(pPNInfo), sizeof(*pPNInfo));
 
                     for(idx = 1; idx < 10; idx++){
@@ -5002,7 +5025,6 @@ BYTE AutoColorCalibrationHandler(BYTE u8WinIdx, WORD *checkSum)
                 }
             }
             break;
-        #if ENABLE_SaveMCCSData
             case MS_PanelNative_Data_Save:
             {
 				mdrv_MCCS_PatternInfo_Set(&_PanelNative);
@@ -5183,6 +5205,7 @@ void mdrv_DeltaE_PostGammaData_Apply(BYTE u8DispWin, BYTE** PostGammaData, PostG
     else
     {
         LUT_printData("%s()enPostGammaType_NonCompressed\n", __FUNCTION__);
+        #if ENABLE_LUT_AUTODOWNLOAD
         static BYTE tGammaTbl[3][POSTGAMMA_TABLE_ENTRIES*2];
         memcpy(&tGammaTbl[0], &PostGammaData[0][0], POSTGAMMA_TABLE_ENTRIES*2);
         memcpy(&tGammaTbl[1], &PostGammaData[1][0], POSTGAMMA_TABLE_ENTRIES*2);
@@ -5196,6 +5219,7 @@ void mdrv_DeltaE_PostGammaData_Apply(BYTE u8DispWin, BYTE** PostGammaData, PostG
             },
         };
 		msAPI_GammaLoadTbl_1024E_12B_N(u8DispWin, StoredPostGamma[0]);
+        #endif
     }
     if(pstPostGammaMaxValue != NULL)
     {
@@ -5520,54 +5544,6 @@ void msFindMaxDelta(float nativeGma[_channelNum][_maxEntries], int maxDelta[_cha
 	}
 }
 
-//-------------------------------------------------------------------------------
-// Set test pattern
-//-------------------------------------------------------------------------------
-short HSt = 0;
-short HEd = 0;
-extern void msSetTestPattern(BOOL IsOn, BYTE R, BYTE G, BYTE B)
-{
-    short horSt, horEd;
-    if (IsOn)
-    {
-        horSt = msRead2Byte(SC00_18);
-        horEd = msRead2Byte(SC00_1C);
-        if (horSt != 0 || horEd !=0)
-        {
-            HSt = horSt;
-            HEd = horEd;
-            msWrite2Byte(SC00_18, 0x00);
-            msWrite2Byte(SC00_1C, 0x00);
-        }
-            msWrite2Byte(SC65_E8,R<<2); //MT9701 from 8 bits to 10 bits
-            msWrite2Byte(SC65_EA,B<<2);//MT9701 from 8 bits to 10 bits
-            msWrite2Byte(SC65_EC,G<<2);//MT9701 from 8 bits to 10 bits
-            /*
-        msWriteByte(SC10_33, R);
-        msWriteByte(SC10_34, G);
-        msWriteByte(SC10_35, B);
-            */
-            msWriteByte(SC65_32,0x10);
-            //msWriteByte(SC10_32, 0x10);
-    }
-    else
-    {
-        if (HSt != 0 || HEd != 0)
-        {
-            //msWriteByte(0x102F00, 0x10);
-            msWrite2Byte(SC00_18, HSt);
-            msWrite2Byte(SC00_1C, HEd);
-        }
-            msWriteByte(SC65_32,DISABLE);
-            //msWriteByte(SC10_32, DISABLE);
-        /*if (HSt != 0 || HEd != 0)
-        {
-            //msWriteByte(0x102B00, 0x10);
-            msWrite2Byte(SC10_10, HSt);
-            msWrite2Byte(SC10_12, HEd);
-        }*/
-    }
-}
 
 #if DIFF_MST9U
 void mdrv_DeltaE_MergeLayerBackgroudColor_Set(WORD u16Red, WORD u16Green, WORD u16Blue)
@@ -5582,53 +5558,7 @@ void mdrv_DeltaE_MergeLayerBackgroudColor_Set(WORD u16Red, WORD u16Green, WORD u
 #endif
 }
 #endif
-//-------------------------------------------------------------------------------
-// Set Color Engine test pattern
-//
-void msSetColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, WORD u16Red, WORD u16Green, WORD u16Blue)
-{
-	UNUSED(u8WinIdx);
-    //BYTE u8ScalerIdx = 0;
-    //WORD u16ScalerMask = g_DisplayWindow[u8WinIdx].u16DwScMaskOut;
-    //DWORD u32BaseAddr = g_ScalerInfo[u8ScalerIdx].u32SiRegBase;
 
-    //while(u16ScalerMask)
-    {
-        //if(u16ScalerMask & BIT0)
-        {
-            //u32BaseAddr = g_ScalerInfo[u8ScalerIdx].u32SiRegBase;
-
-            msWriteByte(SC14_03, (bEnable ? BIT0: 0));
-            msWriteByteMask(SC25_60, (bEnable ? BIT0: 0), BIT0);
-            msWriteByteMask(SC25_62, (bEnable ? BIT0: 0), BIT0);
-            msWrite2Byte(SC25_64, u16Red);
-            msWrite2Byte(SC25_66, u16Green);
-            msWrite2Byte(SC25_68, u16Blue);
-
-        }
-        //u8ScalerIdx++;
-        //u16ScalerMask >>= 1;
-    }
-}
-
-void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G, BYTE B, int stepAddr)
-{
-    UNUSED(stepAddr);
-
-    if(!bEnable)
-    {
-        msSetIP2TestPattern_Off();
-    }
-    else
-    {
-        //8 bits format to 10 bits
-        WORD colorRst_10bits = ((WORD)R) << 2;
-        WORD colorGst_10bits = ((WORD)G) << 2;
-        WORD colorBst_10bits = ((WORD)B) << 2;
-
-        msSetIP2TestPattern_PureColor(u8WinIdx, colorRst_10bits, colorGst_10bits, colorBst_10bits);
-    }
-}
 
 //-------------------------------------------------------------------------------
 // Toggle color engine
@@ -6118,10 +6048,10 @@ void Reset3DLUTData(void)
 
 }
 
-void msSet3DLUTData(int ch, int idx, BYTE data)
+void msSet3DLUTData(int ch, int idx, BYTE val)
 {
 	if ((ch >= 0 && ch < 3) && (idx >=0 && idx < _3DLUTTableSize)){
-		_3DLUT.Data[ch][idx] = data;
+		_3DLUT.Data[ch][idx] = val;
 	}
 }
 
@@ -6225,7 +6155,7 @@ LUT_printMsg("=====msNewLoadColorMode=====");
 		LUT_printMsg("msLoad3DLUTData");
 		loadStatus |= msLoad3DLUTData(ucColorMode, funcIdx);
 		LUT_printMsg("drv3DLut_WriteCompressedLUT");
-	    drv3DLut_WriteCompressedLUT(u8DispWin, &_3DLUT.Data[0][0]);
+	    //TBD, drv3DLut_WriteCompressedLUT(u8DispWin, &_3DLUT.Data[0][0]);
 		//LUT_printMsg("ms3DLutGrayGuard");
 	    //ms3DLutGrayGuard(0, TRUE);
 	}
@@ -8014,23 +7944,6 @@ void msResetWholeColorCalibrationData()
 
 }
 
-void msSetIP2TestPattern_Off(void)
-{
-    msWrite2Byte(SC53_02, 0x8000);
-    msWrite2Byte(SC53_42, 0x8000);
-    msWrite2Byte(SC53_82, 0x8000);
-    msWrite2Byte(SC53_C2, 0x8000);
-}
-
-void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize)
-{
-    if (_maxWinNum <= u8WinIdx)
-    {
-        return;
-    }
-    _hSizeOfIP2TestPtn[u8WinIdx] = hSize;
-    _vSizeOfIP2TestPtn[u8WinIdx] = vSize;    
-}
 #if DIFF_MST9U
 static void _mdrv_DeltaE_RegBackup_Add(DWORD *u32RegTbl, WORD *u16RalTbl, WORD *u16BackCnt, DWORD u32RegAddr)
 {
@@ -8118,304 +8031,7 @@ static void _mdrv_DeltaE_TestPtnWithoutSingal_Config(BOOL u8Backup)
     }
 }
 #endif
-void msSetIP2TestPattern_ScalerMask(WORD u16ScMask)
-{
-    _u16ScalerMaskOfTestPtnWithoutSignal = u16ScMask;
-}
 
-void msInitIP2TestPattern_WithoutSignal(void)
-{
-    drvOSD_FrameColorEnable(FALSE);   
-
-    msWrite2Byte(REG_120FCA, 0x00A4);
-        
-    msWrite2Byte(REG_102E02, 0x00F0); // from Allen-by
-    msWrite2Byte(REG_102E20, 0x0101);                                            
-    msWrite2Byte(REG_102E24, 0x0001); 
-    msWrite2Byte(REG_102E26, 0x0001);
-    msWrite2Byte(REG_102E28, 0x0001);
-    msWrite2Byte(REG_102E2A, 0x0fff);
-    msWrite2Byte(REG_102E2C, 0x0001); 
-    msWrite2Byte(REG_102E2E, 0x0001); 
-    msWrite2Byte(REG_102E30, 0x0001); 
-    msWrite2Byte(REG_102E32, 0x0fff); 
- 
-    msWriteBit(SC53_03, TRUE, BIT5);  //IP2 ptngen  force timing enable
-    msWriteByte(SC53_04, 0x80);
-    msWriteByte(SC53_05, 0x08);
-    msWrite2Byte(SC53_38, PANEL_WIDTH);
-    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
-
-
-    msWriteByte(SC00_02, 0x07);
-    msWriteByte(SC00_03, 0x80);
-    //msWriteByte(SC00_1E, 0x70);  //from Mark
-    //msWriteByte(SC00_1F, 0x02);   //from Mark
-    //msWriteByte(SC00_26, 0x20);   // from Allen-by
-    //msWriteByte(SC00_27, 0xd9); // h13[9]=0 : auto htt off
-    msWriteBit(SC00_27, FALSE, BIT1); //from Allen-by
-    //msWriteByte(SC00_28, 0x08); // h14[3]=1 : output freerun
-    msWriteBit(SC00_28, TRUE, BIT3); //from Allen-by
-    //msWriteByte(SC00_29, 0x00); // from Allen-by
-    msWriteByte(SC00_C3, 0x08);
-
-    msWriteByte(SC0D_62, 0x80);
-
-    msWriteByte(SC12_0F, 0x00); // h07[15:13]=0 : rwdiff=0
-
-    //msWriteByte(SC00_18, 0x84); //Horizontal start of the output image DE. from Mark
-    msWrite2Byte(SC00_C8, PANEL_WIDTH); //HSP Output horizontal resolution
-    msWrite2Byte(SC00_C4, PANEL_HEIGHT); //VSP output image height   
-    _IsIP2TestPtnWithoutSignal = TRUE;
-	#if DIFF_MST9U
-	msDrvVsyncINTEnable();
-	#endif
-}
-
-void msExitIP2TestPattern_WithoutSignal(void)
-{
-    //Test Pattern Force Signal en
-     msWriteBit(SC53_03, FALSE, BIT5);  //IP2 ptngen  force timing enable
-                                        
-    //Test Pattern Width/Hight
-    msWrite2Byte(SC53_38, 0);
-    msWrite2Byte(SC53_3A, 0);
-    _IsIP2TestPtnWithoutSignal = FALSE;
-}
-
-BOOL msGetIP2TestPattern_WithoutSignal(void)
-{
-    return _IsIP2TestPtnWithoutSignal;
-}
-
-void msSetIP2TestPattern_PureColor(BYTE u8WinIdx, WORD u16R, WORD u16G, WORD u16B)
-{
-    if (_maxWinNum <= u8WinIdx)
-    {
-        return;
-    }
-
-    //10 bits format to 23 bits
-    DWORD colorRst_23bits = ((DWORD)u16R) << 13;
-    DWORD colorGst_23bits = ((DWORD)u16G) << 13;
-    DWORD colorBst_23bits = ((DWORD)u16B) << 13;
-
-    DWORD colorRend_23bits = colorRst_23bits;
-    DWORD colorGend_23bits = colorGst_23bits;
-    DWORD colorBend_23bits = colorBst_23bits;
-
-    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0000 : (0x0000 | BIT13);
-  
-    msWrite2Byte(SC53_02, u16PtnType);
-    msWrite2Byte(SC53_04, 0x10);
-    if (_IsIP2TestPtnWithoutSignal == FALSE)
-        msWrite2Byte(SC53_06, 0x1000);
-    else
-    msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal.
-
-    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
-    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
-    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
-    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
-    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
-    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
-    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
-
-    msWrite2Byte(SC53_10, 0x0);
-    msWrite2Byte(SC53_12, 0x20);
-    msWrite2Byte(SC53_14, 0x0);
-    msWrite2Byte(SC53_16, 0x1);
-    msWrite2Byte(SC53_20, 0x0);
-    msWrite2Byte(SC53_22, 0x10);
-    msWrite2Byte(SC53_24, 0x0);
-    msWrite2Byte(SC53_26, 0x1);
-    msWrite2Byte(SC53_30, 0x0);
-    msWrite2Byte(SC53_32, 0x0);
-    msWrite2Byte(SC53_34, 0x0);
-    msWrite2Byte(SC53_36, 0x0);
-    msWrite2Byte(SC53_38, PANEL_WIDTH);
-    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
-}
-
-void msSetIP2TestPattern_GreyScale(BYTE u8WinIdx, WORD numOfScale, BOOL bIsHorizontal)
-{
-    if (_maxWinNum <= u8WinIdx)
-    {
-        return;
-    }
-    DWORD colorRst_23bits = 0;
-    DWORD colorGst_23bits = 0;
-    DWORD colorBst_23bits = 0;
-    DWORD colorRend_23bits = (DWORD)(1023 * 8192);
-    DWORD colorGend_23bits = (DWORD)(1023 * 8192);
-    DWORD colorBend_23bits = (DWORD)(1023 * 8192);
-    DWORD diff_h = 0;
-    DWORD ratio_h = 0;
-    DWORD diff_v = 0;
-    DWORD ratio_v = 0;
-
-    if (bIsHorizontal)
-    {
-        diff_h = colorRend_23bits / (numOfScale - 1);
-        ratio_h = diff_h * numOfScale / PANEL_WIDTH;
-    }
-    else
-    {
-        diff_v = colorRend_23bits / (numOfScale - 1);
-        ratio_v = diff_v * numOfScale /PANEL_HEIGHT;
-    }
-
-    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0000 : (0x0000 | BIT13);	
-    msWrite2Byte(SC53_02, u16PtnType);
-
-    if (bIsHorizontal)
-        msWrite2Byte(SC53_04, 0x0);
-    else
-        msWrite2Byte(SC53_04, 0x20);
-
-    if (_IsIP2TestPtnWithoutSignal == FALSE)
-        msWrite2Byte(SC53_06, 0x1000);
-    else
-        msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal.
-
-
-    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
-    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
-    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
-    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
-    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
-    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
-    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
-
-    msWrite2Byte(SC53_10, (WORD)(diff_h >> 16));
-    msWrite2Byte(SC53_12, (WORD)(diff_h & 0xFFFF));
-    msWrite2Byte(SC53_14, (WORD)(ratio_h >> 16));
-    msWrite2Byte(SC53_16, (WORD)(ratio_h & 0xFFFF));
-    msWrite2Byte(SC53_20, (WORD)(diff_v >> 16));
-    msWrite2Byte(SC53_22, (WORD)(diff_v & 0xFFFF));
-    msWrite2Byte(SC53_24, (WORD)(ratio_v >> 16));
-    msWrite2Byte(SC53_26, (WORD)(ratio_v & 0xFFFF));
-    msWrite2Byte(SC53_30, 0x0);
-    msWrite2Byte(SC53_32, 0x0);
-    msWrite2Byte(SC53_34, 0x0);
-    msWrite2Byte(SC53_36, 0x0);
-    msWrite2Byte(SC53_38, PANEL_WIDTH);
-    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
-
-}
-
-void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD u16R, WORD u16G, WORD u16B)
-{
-    if (_maxWinNum <= u8WinIdx)
-    {
-        return;
-    }
-
-    DWORD colorRst_23bits = ((DWORD)u16R) << 13;
-    DWORD colorGst_23bits = ((DWORD)u16G) << 13;
-    DWORD colorBst_23bits = ((DWORD)u16B) << 13;
-
-    DWORD colorRend_23bits = 0;
-    DWORD colorGend_23bits = 0;
-    DWORD colorBend_23bits = 0;
-
-    DWORD PIPWin_hsize = PANEL_WIDTH * sqrt(percentOfCentralArea);
-    DWORD PIPWin_vsize = PANEL_HEIGHT * sqrt(percentOfCentralArea);
-
-    DWORD PIPWin_hst = (PANEL_WIDTH -  PIPWin_hsize) / 2;
-    DWORD PIPWin_hend = PIPWin_hst + PIPWin_hsize;
-    DWORD PIPWin_vst = (PANEL_HEIGHT - PIPWin_vsize) / 2;
-    DWORD PIPWin_vend = PIPWin_vst + PIPWin_vsize;
-
-    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0006 : (0x0006 | BIT13);
-    msWrite2Byte(SC53_02, u16PtnType);
-    msWrite2Byte(SC53_04, 0x10);
-    if (_IsIP2TestPtnWithoutSignal == FALSE)
-        msWrite2Byte(SC53_06, 0x1000);
-    else
-        msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal
-
-    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
-    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
-    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
-    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
-    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
-    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
-    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
-
-    msWrite2Byte(SC53_10, 0x0);
-    msWrite2Byte(SC53_12, 0x20);
-    msWrite2Byte(SC53_14, 0x0);
-    msWrite2Byte(SC53_16, 0x1);
-    msWrite2Byte(SC53_20, 0x0);
-    msWrite2Byte(SC53_22, 0x10);
-    msWrite2Byte(SC53_24, 0x0);
-    msWrite2Byte(SC53_26, 0x1);
-    msWrite2Byte(SC53_30, (WORD)PIPWin_hst);
-    msWrite2Byte(SC53_32, (WORD)PIPWin_hend);
-    msWrite2Byte(SC53_34, (WORD)PIPWin_vst);
-    msWrite2Byte(SC53_36, (WORD)PIPWin_vend);
-    msWrite2Byte(SC53_38, PANEL_WIDTH);
-    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
-}
-
-void msSetIP2TestPattern_CheckBoardBox(BYTE u8WinIdx, WORD u16GregCode, WORD numOfBlock_h, WORD numOfBlock_v)
-{
-    if (_maxWinNum <= u8WinIdx)
-    {
-        return;
-    }
-
-    DWORD colorRst_23bits = ((DWORD)u16GregCode) << 13;
-    DWORD colorGst_23bits = ((DWORD)u16GregCode) << 13;
-    DWORD colorBst_23bits = ((DWORD)u16GregCode) << 13;
-
-    DWORD colorRend_23bits = 0;
-    DWORD colorGend_23bits = 0;
-    DWORD colorBend_23bits = 0;
-
-    DWORD blockSize_h = PANEL_WIDTH / numOfBlock_h;
-    DWORD blockSize_v = PANEL_HEIGHT / numOfBlock_v;
-
-    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0003 : (0x0003 | BIT13) ;
-    msWrite2Byte(SC53_02, u16PtnType);
-    msWrite2Byte(SC53_04, 0x3C10);
-    if (_IsIP2TestPtnWithoutSignal == FALSE)
-        msWrite2Byte(SC53_06, 0x1000);
-    else
-        msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal
-
-    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
-    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
-    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
-    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
-    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
-    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
-    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
-    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
-
-    msWrite2Byte(SC53_10, 0x0);
-    msWrite2Byte(SC53_12, (WORD)blockSize_h);
-    msWrite2Byte(SC53_14, 0x0);
-    msWrite2Byte(SC53_16, 0x1);
-    msWrite2Byte(SC53_20, 0x0);
-    msWrite2Byte(SC53_22, (WORD)blockSize_v);
-    msWrite2Byte(SC53_24, 0x0);
-    msWrite2Byte(SC53_26, 0x1);
-    msWrite2Byte(SC53_30, 0x0);
-    msWrite2Byte(SC53_32, 0x0);
-    msWrite2Byte(SC53_34, 0x0);
-    msWrite2Byte(SC53_36, 0x0);
-    msWrite2Byte(SC53_38, PANEL_WIDTH);
-    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
-}
 
 void mdrv_DeltaE_Memory_Init(DWORD addr, MemoryType enMemoryType)
 {
@@ -9321,7 +8937,7 @@ static LoadStatus _mdrv_ColorTool_ColorMode_Apply(BYTE u8DispWin, BYTE ucColorMo
     if(canLoadColor)
     {
 #if ENABLE_AC3DLut_FUNCTION
-    drv3DLut_WriteCompressedLUT(u8DispWin, &_3DLUT.Data[0][0]);
+    //TBD,drv3DLut_WriteCompressedLUT(u8DispWin, &_3DLUT.Data[0][0]);
 #else
     short* psMatrix = &_colorMatrix.Data[0];
     msFormatMatrixToS2D10(psMatrix);
@@ -9489,4 +9105,431 @@ void _EEPROMPostGammaCheckSum_Get(BYTE mode, BYTE idx, BYTE AckType, WORD* check
         }
     } 
 }
+#else //ENABLE_DeltaE off
+void mdrv_DeltaE_RGBGain_Get(WORD *u16Red, WORD *u16Green, WORD *u16Blue)
+{
+    UNUSED(u16Red);
+    UNUSED(u16Green);
+    UNUSED(u16Blue);
+}
+#endif
+BYTE mdrv_DeltaE_AutoColorToolStatus_Get(void)
+{
+    return _AutoColorToolStatus;
+}
 
+void mdrv_DeltaE_AutoColorToolStatus_Set(BYTE value)
+{
+	_AutoColorToolStatus = value;
+}
+//-------------------------------------------------------------------------------
+// Set test pattern
+//-------------------------------------------------------------------------------
+short HSt = 0;
+short HEd = 0;
+extern void msSetTestPattern(BOOL IsOn, BYTE R, BYTE G, BYTE B)
+{
+    short horSt, horEd;
+    if (IsOn)
+    {
+        horSt = msRead2Byte(SC00_18);
+        horEd = msRead2Byte(SC00_1C);
+        if (horSt != 0 || horEd !=0)
+        {
+            HSt = horSt;
+            HEd = horEd;
+            msWrite2Byte(SC00_18, 0x00);
+            msWrite2Byte(SC00_1C, 0x00);
+        }
+            msWrite2Byte(SC65_E8,R<<2); //MT9701 from 8 bits to 10 bits
+            msWrite2Byte(SC65_EA,B<<2);//MT9701 from 8 bits to 10 bits
+            msWrite2Byte(SC65_EC,G<<2);//MT9701 from 8 bits to 10 bits
+            /*
+        msWriteByte(SC10_33, R);
+        msWriteByte(SC10_34, G);
+        msWriteByte(SC10_35, B);
+            */
+            msWriteByte(SC65_32,0x10);
+            //msWriteByte(SC10_32, 0x10);
+    }
+    else
+    {
+        if (HSt != 0 || HEd != 0)
+        {
+            //msWriteByte(0x102F00, 0x10);
+            msWrite2Byte(SC00_18, HSt);
+            msWrite2Byte(SC00_1C, HEd);
+        }
+            msWriteByte(SC65_32,DISABLE);
+            //msWriteByte(SC10_32, DISABLE);
+        /*if (HSt != 0 || HEd != 0)
+        {
+            //msWriteByte(0x102B00, 0x10);
+            msWrite2Byte(SC10_10, HSt);
+            msWrite2Byte(SC10_12, HEd);
+        }*/
+    }
+}
+
+//-------------------------------------------------------------------------------
+// Set Color Engine test pattern
+//
+void msSetColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, WORD u16Red, WORD u16Green, WORD u16Blue)
+{
+	UNUSED(u8WinIdx);
+    //BYTE u8ScalerIdx = 0;
+    //WORD u16ScalerMask = g_DisplayWindow[u8WinIdx].u16DwScMaskOut;
+    //DWORD u32BaseAddr = g_ScalerInfo[u8ScalerIdx].u32SiRegBase;
+
+    //while(u16ScalerMask)
+    {
+        //if(u16ScalerMask & BIT0)
+        {
+            //u32BaseAddr = g_ScalerInfo[u8ScalerIdx].u32SiRegBase;
+
+            msWriteByte(SC14_03, (bEnable ? BIT0: 0));
+            msWriteByteMask(SC25_60, (bEnable ? BIT0: 0), BIT0);
+            msWriteByteMask(SC25_62, (bEnable ? BIT0: 0), BIT0);
+            msWrite2Byte(SC25_64, u16Red);
+            msWrite2Byte(SC25_66, u16Green);
+            msWrite2Byte(SC25_68, u16Blue);
+
+        }
+        //u8ScalerIdx++;
+        //u16ScalerMask >>= 1;
+    }
+}
+
+void msSetHDRColorEngineTestPattern(BYTE u8WinIdx, Bool bEnable, BYTE R, BYTE G, BYTE B, int stepAddr)
+{
+    UNUSED(stepAddr);
+
+    if(!bEnable)
+    {
+        msSetIP2TestPattern_Off();
+    }
+    else
+    {
+        //8 bits format to 10 bits
+        WORD colorRst_10bits = ((WORD)R) << 2;
+        WORD colorGst_10bits = ((WORD)G) << 2;
+        WORD colorBst_10bits = ((WORD)B) << 2;
+
+        msSetIP2TestPattern_PureColor(u8WinIdx, colorRst_10bits, colorGst_10bits, colorBst_10bits);
+    }
+}
+void msSetIP2TestPattern_Off(void)
+{
+    msWrite2Byte(SC53_02, 0x8000);
+    msWrite2Byte(SC53_42, 0x8000);
+    msWrite2Byte(SC53_82, 0x8000);
+    msWrite2Byte(SC53_C2, 0x8000);
+}
+
+void msSetIP2TestPattern_ImageSize(BYTE u8WinIdx, WORD hSize, WORD vSize)
+{
+    if (_maxWinNum <= u8WinIdx)
+    {
+        return;
+    }
+    _hSizeOfIP2TestPtn[u8WinIdx] = hSize;
+    _vSizeOfIP2TestPtn[u8WinIdx] = vSize;    
+}
+void msSetIP2TestPattern_ScalerMask(WORD u16ScMask)
+{
+    _u16ScalerMaskOfTestPtnWithoutSignal = u16ScMask;
+}
+
+void msInitIP2TestPattern_WithoutSignal(void)
+{
+    drvOSD_FrameColorEnable(FALSE);   
+
+    msWrite2Byte(REG_120FCA, 0x00A4);
+        
+    msWrite2Byte(REG_102E02, 0x00F0); // from Allen-by
+    msWrite2Byte(REG_102E20, 0x0101);                                            
+    msWrite2Byte(REG_102E24, 0x0001); 
+    msWrite2Byte(REG_102E26, 0x0001);
+    msWrite2Byte(REG_102E28, 0x0001);
+    msWrite2Byte(REG_102E2A, 0x0fff);
+    msWrite2Byte(REG_102E2C, 0x0001); 
+    msWrite2Byte(REG_102E2E, 0x0001); 
+    msWrite2Byte(REG_102E30, 0x0001); 
+    msWrite2Byte(REG_102E32, 0x0fff); 
+ 
+    msWriteBit(SC53_03, TRUE, BIT5);  //IP2 ptngen  force timing enable
+    msWriteByte(SC53_04, 0x80);
+    msWriteByte(SC53_05, 0x08);
+    msWrite2Byte(SC53_38, PANEL_WIDTH);
+    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
+
+
+    msWriteByte(SC00_02, 0x07);
+    msWriteByte(SC00_03, 0x80);
+    //msWriteByte(SC00_1E, 0x70);  //from Mark
+    //msWriteByte(SC00_1F, 0x02);   //from Mark
+    //msWriteByte(SC00_26, 0x20);   // from Allen-by
+    //msWriteByte(SC00_27, 0xd9); // h13[9]=0 : auto htt off
+    msWriteBit(SC00_27, FALSE, BIT1); //from Allen-by
+    //msWriteByte(SC00_28, 0x08); // h14[3]=1 : output freerun
+    msWriteBit(SC00_28, TRUE, BIT3); //from Allen-by
+    //msWriteByte(SC00_29, 0x00); // from Allen-by
+    msWriteByte(SC00_C3, 0x08);
+
+    msWriteByte(SC0D_62, 0x80);
+
+    msWriteByte(SC12_0F, 0x00); // h07[15:13]=0 : rwdiff=0
+
+    //msWriteByte(SC00_18, 0x84); //Horizontal start of the output image DE. from Mark
+    msWrite2Byte(SC00_C8, PANEL_WIDTH); //HSP Output horizontal resolution
+    msWrite2Byte(SC00_C4, PANEL_HEIGHT); //VSP output image height   
+    _IsIP2TestPtnWithoutSignal = TRUE;
+	#if DIFF_MST9U
+	msDrvVsyncINTEnable();
+	#endif
+}
+
+void msExitIP2TestPattern_WithoutSignal(void)
+{
+    //Test Pattern Force Signal en
+     msWriteBit(SC53_03, FALSE, BIT5);  //IP2 ptngen  force timing enable
+                                        
+    //Test Pattern Width/Hight
+    msWrite2Byte(SC53_38, 0);
+    msWrite2Byte(SC53_3A, 0);
+    _IsIP2TestPtnWithoutSignal = FALSE;
+}
+
+BOOL msGetIP2TestPattern_WithoutSignal(void)
+{
+    return _IsIP2TestPtnWithoutSignal;
+}
+
+void msSetIP2TestPattern_PureColor(BYTE u8WinIdx, WORD u16R, WORD u16G, WORD u16B)
+{
+    if (_maxWinNum <= u8WinIdx)
+    {
+        return;
+    }
+
+    //10 bits format to 23 bits
+    DWORD colorRst_23bits = ((DWORD)u16R) << 13;
+    DWORD colorGst_23bits = ((DWORD)u16G) << 13;
+    DWORD colorBst_23bits = ((DWORD)u16B) << 13;
+
+    DWORD colorRend_23bits = colorRst_23bits;
+    DWORD colorGend_23bits = colorGst_23bits;
+    DWORD colorBend_23bits = colorBst_23bits;
+
+    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0000 : (0x0000 | BIT13);
+  
+    msWrite2Byte(SC53_02, u16PtnType);
+    msWrite2Byte(SC53_04, 0x10);
+    if (_IsIP2TestPtnWithoutSignal == FALSE)
+        msWrite2Byte(SC53_06, 0x1000);
+    else
+    msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal.
+
+    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
+    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
+    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
+    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
+    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
+    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
+    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
+
+    msWrite2Byte(SC53_10, 0x0);
+    msWrite2Byte(SC53_12, 0x20);
+    msWrite2Byte(SC53_14, 0x0);
+    msWrite2Byte(SC53_16, 0x1);
+    msWrite2Byte(SC53_20, 0x0);
+    msWrite2Byte(SC53_22, 0x10);
+    msWrite2Byte(SC53_24, 0x0);
+    msWrite2Byte(SC53_26, 0x1);
+    msWrite2Byte(SC53_30, 0x0);
+    msWrite2Byte(SC53_32, 0x0);
+    msWrite2Byte(SC53_34, 0x0);
+    msWrite2Byte(SC53_36, 0x0);
+    msWrite2Byte(SC53_38, PANEL_WIDTH);
+    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
+}
+
+void msSetIP2TestPattern_GreyScale(BYTE u8WinIdx, WORD numOfScale, BOOL bIsHorizontal)
+{
+    if (_maxWinNum <= u8WinIdx)
+    {
+        return;
+    }
+    DWORD colorRst_23bits = 0;
+    DWORD colorGst_23bits = 0;
+    DWORD colorBst_23bits = 0;
+    DWORD colorRend_23bits = (DWORD)(1023 * 8192);
+    DWORD colorGend_23bits = (DWORD)(1023 * 8192);
+    DWORD colorBend_23bits = (DWORD)(1023 * 8192);
+    DWORD diff_h = 0;
+    DWORD ratio_h = 0;
+    DWORD diff_v = 0;
+    DWORD ratio_v = 0;
+
+    if (bIsHorizontal)
+    {
+        diff_h = colorRend_23bits / (numOfScale - 1);
+        ratio_h = diff_h * numOfScale / PANEL_WIDTH;
+    }
+    else
+    {
+        diff_v = colorRend_23bits / (numOfScale - 1);
+        ratio_v = diff_v * numOfScale /PANEL_HEIGHT;
+    }
+
+    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0000 : (0x0000 | BIT13);	
+    msWrite2Byte(SC53_02, u16PtnType);
+
+    if (bIsHorizontal)
+        msWrite2Byte(SC53_04, 0x0);
+    else
+        msWrite2Byte(SC53_04, 0x20);
+
+    if (_IsIP2TestPtnWithoutSignal == FALSE)
+        msWrite2Byte(SC53_06, 0x1000);
+    else
+        msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal.
+
+
+    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
+    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
+    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
+    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
+    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
+    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
+    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
+
+    msWrite2Byte(SC53_10, (WORD)(diff_h >> 16));
+    msWrite2Byte(SC53_12, (WORD)(diff_h & 0xFFFF));
+    msWrite2Byte(SC53_14, (WORD)(ratio_h >> 16));
+    msWrite2Byte(SC53_16, (WORD)(ratio_h & 0xFFFF));
+    msWrite2Byte(SC53_20, (WORD)(diff_v >> 16));
+    msWrite2Byte(SC53_22, (WORD)(diff_v & 0xFFFF));
+    msWrite2Byte(SC53_24, (WORD)(ratio_v >> 16));
+    msWrite2Byte(SC53_26, (WORD)(ratio_v & 0xFFFF));
+    msWrite2Byte(SC53_30, 0x0);
+    msWrite2Byte(SC53_32, 0x0);
+    msWrite2Byte(SC53_34, 0x0);
+    msWrite2Byte(SC53_36, 0x0);
+    msWrite2Byte(SC53_38, PANEL_WIDTH);
+    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
+
+}
+
+void msSetIP2TestPattern_XPercentPIP(BYTE u8WinIdx, double percentOfCentralArea, WORD u16R, WORD u16G, WORD u16B)
+{
+    if (_maxWinNum <= u8WinIdx)
+    {
+        return;
+    }
+
+    DWORD colorRst_23bits = ((DWORD)u16R) << 13;
+    DWORD colorGst_23bits = ((DWORD)u16G) << 13;
+    DWORD colorBst_23bits = ((DWORD)u16B) << 13;
+
+    DWORD colorRend_23bits = 0;
+    DWORD colorGend_23bits = 0;
+    DWORD colorBend_23bits = 0;
+
+    DWORD PIPWin_hsize = PANEL_WIDTH * sqrt(percentOfCentralArea);
+    DWORD PIPWin_vsize = PANEL_HEIGHT * sqrt(percentOfCentralArea);
+
+    DWORD PIPWin_hst = (PANEL_WIDTH -  PIPWin_hsize) / 2;
+    DWORD PIPWin_hend = PIPWin_hst + PIPWin_hsize;
+    DWORD PIPWin_vst = (PANEL_HEIGHT - PIPWin_vsize) / 2;
+    DWORD PIPWin_vend = PIPWin_vst + PIPWin_vsize;
+
+    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0006 : (0x0006 | BIT13);
+    msWrite2Byte(SC53_02, u16PtnType);
+    msWrite2Byte(SC53_04, 0x10);
+    if (_IsIP2TestPtnWithoutSignal == FALSE)
+        msWrite2Byte(SC53_06, 0x1000);
+    else
+        msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal
+
+    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
+    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
+    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
+    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
+    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
+    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
+    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
+
+    msWrite2Byte(SC53_10, 0x0);
+    msWrite2Byte(SC53_12, 0x20);
+    msWrite2Byte(SC53_14, 0x0);
+    msWrite2Byte(SC53_16, 0x1);
+    msWrite2Byte(SC53_20, 0x0);
+    msWrite2Byte(SC53_22, 0x10);
+    msWrite2Byte(SC53_24, 0x0);
+    msWrite2Byte(SC53_26, 0x1);
+    msWrite2Byte(SC53_30, (WORD)PIPWin_hst);
+    msWrite2Byte(SC53_32, (WORD)PIPWin_hend);
+    msWrite2Byte(SC53_34, (WORD)PIPWin_vst);
+    msWrite2Byte(SC53_36, (WORD)PIPWin_vend);
+    msWrite2Byte(SC53_38, PANEL_WIDTH);
+    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
+}
+
+void msSetIP2TestPattern_CheckBoardBox(BYTE u8WinIdx, WORD u16GregCode, WORD numOfBlock_h, WORD numOfBlock_v)
+{
+    if (_maxWinNum <= u8WinIdx)
+    {
+        return;
+    }
+
+    DWORD colorRst_23bits = ((DWORD)u16GregCode) << 13;
+    DWORD colorGst_23bits = ((DWORD)u16GregCode) << 13;
+    DWORD colorBst_23bits = ((DWORD)u16GregCode) << 13;
+
+    DWORD colorRend_23bits = 0;
+    DWORD colorGend_23bits = 0;
+    DWORD colorBend_23bits = 0;
+
+    DWORD blockSize_h = PANEL_WIDTH / numOfBlock_h;
+    DWORD blockSize_v = PANEL_HEIGHT / numOfBlock_v;
+
+    WORD u16PtnType = (_IsIP2TestPtnWithoutSignal == FALSE) ? 0x0003 : (0x0003 | BIT13) ;
+    msWrite2Byte(SC53_02, u16PtnType);
+    msWrite2Byte(SC53_04, 0x3C10);
+    if (_IsIP2TestPtnWithoutSignal == FALSE)
+        msWrite2Byte(SC53_06, 0x1000);
+    else
+        msWrite2Byte(SC53_06, 0x0000); //need check  if set 0x1000 the image is broke in case of no signal
+
+    msWrite2Byte(SC53_0A, (WORD)(colorRst_23bits >> 8));
+    msWrite2Byte(SC53_0C, (WORD)(((colorRst_23bits << 8) & 0xFF00) | (colorRend_23bits >> 16)));
+    msWrite2Byte(SC53_0E, (WORD)(colorRend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_1A, (WORD)(colorGst_23bits >> 8));
+    msWrite2Byte(SC53_1C, (WORD)(((colorGst_23bits << 8) & 0xFF00) | (colorGend_23bits >> 16)));
+    msWrite2Byte(SC53_1E, (WORD)(colorGend_23bits & 0xFFFF));
+    msWrite2Byte(SC53_2A, (WORD)(colorBst_23bits >> 8));
+    msWrite2Byte(SC53_2C, (WORD)(((colorBst_23bits << 8) & 0xFF00) | (colorBend_23bits >> 16)));
+    msWrite2Byte(SC53_2E, (WORD)(colorBend_23bits & 0xFFFF));
+
+    msWrite2Byte(SC53_10, 0x0);
+    msWrite2Byte(SC53_12, (WORD)blockSize_h);
+    msWrite2Byte(SC53_14, 0x0);
+    msWrite2Byte(SC53_16, 0x1);
+    msWrite2Byte(SC53_20, 0x0);
+    msWrite2Byte(SC53_22, (WORD)blockSize_v);
+    msWrite2Byte(SC53_24, 0x0);
+    msWrite2Byte(SC53_26, 0x1);
+    msWrite2Byte(SC53_30, 0x0);
+    msWrite2Byte(SC53_32, 0x0);
+    msWrite2Byte(SC53_34, 0x0);
+    msWrite2Byte(SC53_36, 0x0);
+    msWrite2Byte(SC53_38, PANEL_WIDTH);
+    msWrite2Byte(SC53_3A, PANEL_HEIGHT);
+}

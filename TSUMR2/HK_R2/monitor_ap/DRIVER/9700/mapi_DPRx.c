@@ -1095,7 +1095,7 @@ void mapi_DPRx_HDCP2TxEventProc(BYTE ucInputPort, BYTE ucMessageID, WORD wDataSi
 	#if (DPRX_HDCP2_ENABLE == 0x1)
     if(wDataSize <= DP_HDCP2_TX_QUEUE_SIZE)
     {
-        mdrv_DPRx_HDCP2TxEventProc(ucInputPort, ucMessageID, pMessageData);
+        mdrv_DPRx_HDCP2TxEventProc(SrcInputType, ucMessageID, pMessageData);
     }
     else
     {
@@ -1460,6 +1460,7 @@ void mapi_DPRx_SetPowerDownControl(BYTE ucInputPort, BYTE ucPMMode)
 {
 	DP_ePM_Mode dp_pm_Mode = DP_ePM_INVAILD;
 
+#if MS_PM
 	switch(ucPMMode)
 	{
 		case ePM_POWERON:
@@ -1478,7 +1479,9 @@ void mapi_DPRx_SetPowerDownControl(BYTE ucInputPort, BYTE ucPMMode)
 		default:
 			break;
 	}
-
+#else
+		dp_pm_Mode = DP_ePM_POWERON;
+#endif
     mdrv_DPRx_SetPowerDownControl(ucInputPort, dp_pm_Mode);
 
     return;
@@ -1498,6 +1501,7 @@ void mapi_DPRx_SetPhyPowerDownControl(BYTE ucInputPort, BYTE ucPMMode)
 {
 	DP_ePM_Mode dp_pm_Mode = DP_ePM_INVAILD;
 
+#if MS_PM
 	switch(ucPMMode)
 	{
 		case ePM_POWERON:
@@ -1516,7 +1520,9 @@ void mapi_DPRx_SetPhyPowerDownControl(BYTE ucInputPort, BYTE ucPMMode)
 		default:
 			break;
 	}
-
+#else
+	dp_pm_Mode = DP_ePM_POWERON;
+#endif
     mdrv_DPRx_SetPhyPowerDownControl(ucInputPort, dp_pm_Mode);
 
     return;

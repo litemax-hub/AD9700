@@ -387,11 +387,6 @@
 #define HDMI_CLOCK_RATE_FRL_12G_MIDDLE      0x1788U
 #define HDMI_CLOCK_RATE_FRL_OFFSET          0x3U
 
-#define HDMI_XTAL_CLOCK_MHZ                 12U
-#define HDMI_XTAL_CLOCK_10kHZ               1200U
-#define HDMI_XTAL_CLOCK_HZ                  12000000U
-#define HDMI_XTAL_DIVIDER                   128U
-
 #define GET_HDMI_FLAG(a, b)                 (MS_BOOL)((a &b) ?TRUE :FALSE)
 #define SET_HDMI_FLAG(a, b)                 (a |= b)
 #define CLR_HDMI_FLAG(a, b)                 (a &= ~b)
@@ -538,7 +533,7 @@ typedef struct
 
     MS_U32 u32AudioPreRstTime;
     MS_U16 u16DEStableCnt;
-   
+
 } stHDMI_POLLING_INFO;
 
 typedef struct
@@ -579,21 +574,6 @@ typedef struct
     MS_U16 u16HDCP22HwControlStatus;
     MS_U16 u16HDCP14IrqStatus;
 } stHDMI_HDCP_INFO;
-
-enum HDMI_SIGNAL_DETECT_TYPE
-{
-    HDMI_SIGNAL_DETECT_NONE = 0,
-    HDMI_SIGNAL_DETECT_SQUELCH, // 1
-    HDMI_SIGNAL_DETECT_CLOCK_STABLE, // 2
-    HDMI_SIGNAL_DETECT_CTS,
-    HDMI_SIGNAL_DETECT_DATA_ENABLE,
-    HDMI_SIGNAL_DETECT_HDMI_MODE, // 5
-    HDMI_SIGNAL_DETECT_HDCP_STATUS,
-    HDMI_SIGNAL_DETECT_AUDIO_MUTE_EVENT,
-    HDMI_SIGNAL_DETECT_YUV420,
-    HDMI_SIGNAL_DETECT_REGEN_TIMING,
-    HDMI_SIGNAL_DETECT_EMP, // 10
-};
 
 typedef enum
 {
@@ -995,7 +975,7 @@ enum HDMI_SCDC_INTERRUPT_STATUS
 enum HDMI_COLORDEPTH_TYPE
 {
     HDMI_COLOR_DEPTH_6BIT = 0,
-    HDMI_COLOR_DEPTH_8BIT,    
+    HDMI_COLOR_DEPTH_8BIT,
     HDMI_COLOR_DEPTH_10BIT,
     HDMI_COLOR_DEPTH_12BIT,
     HDMI_COLOR_DEPTH_16BIT,

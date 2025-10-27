@@ -387,11 +387,13 @@ void mcuSetMcuSpeed( BYTE ucSpeedIdx )
 
     g_u32CpuClock = g_mcuPLLFreqTable[ucSpeedIdx];
 
+#if MS_PM
     if( ucSpeedIdx == IDX_MCU_R2_SLOW_CLK)
     {
         msPM_SlowClkDetEnable(FALSE, HK_R2_RECOVERY_CLOCK);
     }
     else
+#endif
     {
         mcuSetCPUClock(g_u32CpuClock, ucSpeedIdx);
 

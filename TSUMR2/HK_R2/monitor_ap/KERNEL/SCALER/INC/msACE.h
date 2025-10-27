@@ -147,6 +147,7 @@ void msAdjustVideoHue(BYTE bScalerWin, BYTE ucHue );// 2004/12/10
 void msAdjustVideoRGB(BYTE bScalerWin, BYTE ucRCon, BYTE ucGCon, BYTE ucBCon);
 void msAdjustVideoContrastRGB(BYTE bScalerWin, BYTE ucContrast, BYTE ucRCon, BYTE ucGCon, BYTE ucBCon);
 extern void msAdjustHSC(BYTE bScalerWin,BYTE ucHue, BYTE ucSaturation, BYTE ucContrast);
+extern void msSetPCColorMatrix( BYTE bScalerWin );
 void msAdjustPCContrast( BYTE bScalerWin, BYTE ucContrast );
 void msAdjustPCRGB( BYTE bScalerWin, BYTE ucRed, BYTE ucGreen, BYTE ucBlue );
 void msAdjustPCContrastRGB( BYTE bScalerWin, BYTE ucContrast, BYTE ucRed, BYTE ucGreen, BYTE ucBlue );
@@ -194,7 +195,7 @@ void msWritexvYccColorMatrix( BYTE ucWinIndex, short* psMatrix);
 #define ACE_YUV_TO_RGB_MATRIX_SDTV_LIMIT_NONSTD  11   // Use NonStd(16-254) CSCM for SDTV
 #define ACE_YUV_TO_RGB_MATRIX_HDTV_LIMIT_NONSTD  12   // Use NonStd(16-254) CSCM for HDTV
 #define ACE_YUV_TO_RGB_MATRIX_BT2020_LIMIT_NONSTD  13  // Use NonStd BT2020(16-254)
-//void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange);
+void msACESetRGBColorRange(BYTE bScalerWin, Bool En, Bool bLimitRange);
 void msSetVideoColorMatrix_Contrast(BYTE bScalerWin, BYTE ucContrast);
 
 

@@ -310,6 +310,7 @@ void Init_ExternalInterrupt( void )
     MsOS_AttachInterrupt(E_INT_PM_IRQ_CEC0_OUT, (InterruptCb)ISR_R2IRQ_PM_CEC_IRQ);
     MsOS_EnableInterrupt(E_INT_PM_IRQ_CEC0_OUT);
 #endif
+
 #if ((CHIP_ID == CHIP_MT9701) && (ENABLE_HDMI || ENABLE_DVI))
     msWrite2ByteMask(0x101928,0x00,BIT6|BIT11);
 
@@ -319,10 +320,9 @@ void Init_ExternalInterrupt( void )
 
 #else
     msWriteByteMask(0x000D6B,0x00,BIT5);
-    msWriteByte(0x171B70,0x01);
-    msWriteByteMask(0x170377,0x00,BIT6);
-    msWriteByteMask(0x17052b,0x00,BIT7);
-    msWriteByteMask(0x1705CE,0x00,BIT2|BIT3);
+#if ((ENABLE_HDMI_BCHErrorIRQ || DEF_COMBO_HDCP2RX_ISR_MODE) && (ENABLE_HDMI || ENABLE_DVI))
+    msWriteByteMask(0x101968,0x00,BIT6); //[6] DVI_HDMI_HDCP_INT
+#endif
 #endif
 
 #if (CHIP_ID == CHIP_MT9701)

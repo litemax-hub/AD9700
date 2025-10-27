@@ -951,6 +951,7 @@ WORD Hal_HDMI_GetDataInfo(E_HDMI_GET_DATA_INFO enInfo, BYTE enInputPortSelect);
 DWORD Hal_HDMI_GetAudioContentInfo(BYTE enInputPortSelect, EN_HDMI_AUDIO_CONTENT_INFO enAudioContentInfo);
 DWORD Hal_HDMI_packet_info(BYTE enInputPortSelect, ST_HDMI_RX_POLLING_INFO *pstHDMIPollingInfo);
 ST_HDMI_RX_COLOR_FORMAT Hal_HDMI_GetColorimetry(BYTE enInputPortSelect);
+void mhal_tmds_HDCP_IRQ_Clear(MSCombo_TMDS_PORT_INDEX enInputPort);
 BOOL mhal_tmds_HDCP2CheckWriteDone(MSCombo_TMDS_PORT_INDEX enInputPort);
 BOOL mhal_tmds_HDCP2ReadDone(MSCombo_TMDS_PORT_INDEX enInputPort);
 void mhal_tmds_HDCP2GetRxData(MSCombo_TMDS_PORT_INDEX enInputPort, BYTE *pHDCPData);

@@ -1278,33 +1278,64 @@ void msDrv_SetupSuperResolution( BYTE SuperResolutionMode )
 
 void msDrv_VideoHueSaturation(void)
 {
-
+        bool RGBflow=WIN_COLOR_YUV; //Set RGB flow is WIN_COLOR_YUV: R2Y Y2R, WIN_COLOR_RGB: only R2R
         msACESetRGBMode(FALSE);
 
         if (IsColorspaceRGBInput())
         {
-        msWriteByteMask( SC07_40, BIT4|BIT0, BIT4|BIT0);
-#if ENABLE_HDR
-        if ((GetInputCombColorFormat().ucColorRange == COMBO_COLOR_RANGE_LIMIT) && (msGetHDRStatus(MAIN_WINDOW) != HDR_OFF))//RGB Limit
-#else
-        if (GetInputCombColorFormat().ucColorRange == COMBO_COLOR_RANGE_LIMIT)//RGB Limit
-#endif
-            {
-                msWriteByteMask(SC07_41, FALSE, BIT4|BIT0);
-                msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
-                msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
-            }
-            else//RGB Full
-            {
-				msWriteByteMask(SC07_41, BIT4|BIT0, BIT4|BIT0);
-                msWriteByteMask(SC0F_AE, BIT6, BIT6);
-                msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
-            }
+        	if(RGBflow ==WIN_COLOR_YUV)
+        	{
+        		//printf("RGB is R2Y,Y2R flow \n");
+        		msACESetRGBColorRange(MAIN_WINDOW,FALSE,FALSE);
+		        msACESetRGBColorRange(SUB_WINDOW,FALSE,FALSE);
+		        msWriteByteMask( SC07_40, BIT4|BIT0, BIT4|BIT0);//enable R2Y
+		        msWriteByteMask(SC0F_30, 0, BIT3);  //B-16, FOR RGB domain
+		        msWriteByteMask(SC0F_31, 0, BIT1);  //R-16, FOR RGB domain
+		        #if ENABLE_HDR
+		        if ((GetInputCombColorFormat().ucColorRange == COMBO_COLOR_RANGE_LIMIT) || (msGetHDRStatus(MAIN_WINDOW) != HDR_OFF))//RGB Limit
+		        #else
+		        if (GetInputCombColorFormat().ucColorRange == COMBO_COLOR_RANGE_LIMIT)//RGB Limit
+		        #endif
+	            {
+	                msWriteByteMask(SC07_41, FALSE, BIT4|BIT0);//R2Y Full to Full
+	                msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
+	                msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7);
+	            }
+	            else//RGB Full
+	            {
+					msWriteByteMask(SC07_41, BIT4|BIT0, BIT4|BIT0);//R2Y Full to limit
+	                msWriteByteMask(SC0F_AE, BIT6, BIT6);
+	                msWriteByteMask(SC0B_A0, BIT0|BIT4, BIT0|BIT4);
+	            }
 
+	        }
+	        else
+	        {
+	            //printf("RGB is R2R flow \n");
+		        #if ENABLE_HDR
+		        if ((GetInputCombColorFormat().ucColorRange == COMBO_COLOR_RANGE_LIMIT) || (msGetHDRStatus(MAIN_WINDOW) != HDR_OFF))//RGB Limit
+		        #else
+		        if (GetInputCombColorFormat().ucColorRange == COMBO_COLOR_RANGE_LIMIT)//RGB Limit
+		        #endif
+	            {
+		            msACESetRGBColorRange(MAIN_WINDOW,FALSE,TRUE);
+		            msACESetRGBColorRange(SUB_WINDOW,FALSE,TRUE);
+	            }
+	            else
+	            {
+		            msACESetRGBColorRange(MAIN_WINDOW,FALSE,FALSE);
+		            msACESetRGBColorRange(SUB_WINDOW,FALSE,FALSE);                
+	            }
+	            msSetPCColorMatrix(MAIN_WINDOW);
+	            msSetPCColorMatrix(SUB_WINDOW); 
+        	}
         }
         else    //for YUV input, disable CSC2_Y2R
         {
+        	//printf("YUV flow \n");
 			msWriteByteMask(SC07_40, FALSE, BIT4|BIT0); //disable CSC2_Y2R
+            msWriteByteMask(SC0F_30, 0, BIT3);  //B-16, FOR RGB domain
+            msWriteByteMask(SC0F_31, 0, BIT1);  //R-16, FOR RGB domain
 			msWriteByteMask(SC0F_AE, BIT6|BIT7, BIT6|BIT7); //sub 16
         }
 

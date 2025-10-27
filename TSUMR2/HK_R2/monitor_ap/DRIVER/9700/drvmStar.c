@@ -220,7 +220,6 @@ code RegUnitType2 tblInitMODVby1Ch2Bit10[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x2000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -298,7 +297,6 @@ code RegUnitType2 tblInitMODVby1Ch4Bit10[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x2000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -375,7 +373,6 @@ code RegUnitType2 tblInitMODVby1Ch8Bit10[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x2000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -453,7 +450,6 @@ code RegUnitType2 tblInitMODVby1Ch2Bit8[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x3000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -531,7 +527,6 @@ code RegUnitType2 tblInitMODVby1Ch4Bit8[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x3000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -609,7 +604,6 @@ code RegUnitType2 tblInitMODVby1Ch8Bit8[]=
     {REG_MOD1_C2 ,0x8F3F},
     {REG_MOD1_D0 ,0x0080},
     {REG_MOD1_C4 ,0x3000},
-    {REG_MOD1_C0 ,0x0AAE},
     //------- VBY1 DIG setting, ed --------// ,},
     //------- Output channel setting, st --------// ,},
     {REG_MOD2_80 ,0x00FF},
@@ -1390,11 +1384,13 @@ void Init_FRORefTrim(void)
     }
     else
     {
+#if MS_PM
         if (!msPM_StartRCOSCCal())
         {
             drvmStar_printData("CALIBARYION RCOSC_12M FAIL!",0);
         }
         else
+#endif
         {
             drvmStar_printData("CALIBARYION RCOSC_12M Success!",0);
         }
@@ -3331,7 +3327,7 @@ BYTE msDrvMapInputToCombo(BYTE u8Input)
     else if( (u8Input == Input_DVI2) || (u8Input == Input_HDMI2) || (u8Input == Input_Displayport2))
         Result =  1;
     else if( (u8Input == Input_DVI3) || (u8Input == Input_HDMI3) || (u8Input == Input_Displayport3) || (u8Input == Input_UsbTypeC3))
-        Result =  0;
+        Result =  2;
     else if( (u8Input == Input_DVI4) || (u8Input == Input_HDMI4) || (u8Input == Input_Displayport4) || (u8Input == Input_UsbTypeC4))
         Result =  3;
     else

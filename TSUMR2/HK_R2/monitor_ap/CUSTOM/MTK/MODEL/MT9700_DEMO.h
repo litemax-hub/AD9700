@@ -223,7 +223,7 @@
 #define ENABLE_TYPEC_SAR_DET            1       // default: 0, 1: enable only related SAR pins are reserved
 #define DRAM_TYPE                       DRAM_NOUSE
 #elif (MainBoardType == BD_MT9700_LITEMAX)
-#define INPUT_TYPE                      (INPUT_1A|INPUT_3C)
+#define INPUT_TYPE                      (INPUT_1A|INPUT_2C)
 #define ENABLE_VGA_INPUT                (INPUT_TYPE&INPUT_1A)
 #define ENABLE_HDMI                     1       //((Input_HDMI_C1 != Input_Nothing)||(Input_HDMI_C2 != Input_Nothing)||(Input_HDMI_C3 != Input_Nothing))
 #define ENABLE_HDMI_1_4                 0
@@ -238,7 +238,7 @@
 #define _NEW_SOG_WAKEUP_DET_            (_NEW_SOG_DET_)
 #define ENABLE_TYPEC_SAR_DET            0       // default: 0, 1: enable only related SAR pins are reserved
 #define DRAM_TYPE                       DRAM_NOUSE
-#define ENABLE_DVI_HDMI_SWITCH          1
+#define ENABLE_DVI_HDMI_SWITCH          0
 #else
 #message "please define new board type"
 #endif
@@ -501,7 +501,7 @@
             ((msRegs(REG_DPRX_AUX_74_H+0x600) & (BIT3|BIT2|BIT1|BIT0)) == 0))==FALSE)))
 
 #define DISABLE_DP_FAKESLEEP    0
-#define DISABLE_DPMS            1
+#define DISABLE_DPMS            0
 
 #endif
 

@@ -47,7 +47,7 @@
 
 #define CTEMP_6500K CTEMP_Normal//CTEMP_Warm1
 #define CTEMP_9300K CTEMP_Cool1
-#define UserPrefRedColor6500K UserPrefGreenColorNormal//UserPrefRedColorWarm1
+#define UserPrefRedColor6500K UserPrefRedColorNormal//UserPrefRedColorWarm1
 #define UserPrefGreenColor6500K UserPrefGreenColorNormal//UserPrefGreenColorWarm1
 #define UserPrefBlueColor6500K UserPrefBlueColorNormal//UserPrefBlueColorWarm1
 #define UserPrefRedColor9300K UserPrefRedColorCool1
@@ -606,13 +606,15 @@ BYTE AlignControl( void )
         WordAddr = (( WORD )DDCBuffer[2] << 8 ) | (( WORD )DDCBuffer[3] );
         #if INPUT_TYPE!=INPUT_1A
         if( CURRENT_INPUT_IS_TMDS()
-#if 0//ENABLE_DP_INPUT
+#if ENABLE_DP_INPUT
         || CURRENT_INPUT_IS_DISPLAYPORT()
 #endif
             )
             WordValue = sizeof( DVI_CAP_VCP );
+#if 0
         else if(CURRENT_INPUT_IS_DISPLAYPORT())
             WordValue = sizeof( DP_CAP_VCP );
+#endif
         #endif
             WordValue = sizeof( CAP_VCP );
         if( WordAddr >= WordValue )
@@ -631,13 +633,15 @@ BYTE AlignControl( void )
         {
             #if INPUT_TYPE!=INPUT_1A
             if( CURRENT_INPUT_IS_TMDS()
-        #if 0//ENABLE_DP_INPUT
+        #if ENABLE_DP_INPUT
         || CURRENT_INPUT_IS_DISPLAYPORT()
         #endif
         )
                 DDCBuffer[ValueL] = DVI_CAP_VCP[WordAddr + ValueL - 4];
+#if 0
             else if(CURRENT_INPUT_IS_DISPLAYPORT())
                 DDCBuffer[ValueL] = DP_CAP_VCP[WordAddr + ValueL - 4];
+#endif
             else
             #endif
                 DDCBuffer[ValueL] = CAP_VCP[WordAddr + ValueL - 4];
@@ -927,9 +931,23 @@ BYTE AlignControl( void )
             else if(CURRENT_INPUT_IS_HDMI())
                 RetValueL = 0x11;
             else
-                RetValueH = 0x0F; // DP
+                RetValueL = 0x0F; // DP
             TPValue = 0x00;
         }
+    	else if( CPCode == PowerMode)
+    	{
+    		ValueH = 0x00;
+    		ValueL = PowerMode_Off;
+    		if (!PowerOnFlag)
+    		RetValueL = PowerMode_Off;
+    		else
+    		{
+    		if (PowerSavingFlag)
+    			RetValueL=PowerMode_Off;
+    		else
+    			RetValueL=PowerMode_On;
+    		}
+    	}        
 #if AudioFunc
         else if( CPCode == ADJ_SpeakerVolume && PageValue == 0 )
         {
@@ -1338,22 +1356,22 @@ BYTE AlignControl( void )
             }
             else if( RetValueL == 0x03)
             {
-                #if INPUT_TYPE!=INPUT_1A
-				UserPrefInputType=Input_Digital;
+                #if INPUT_TYPE!=INPUT_1A && Input_DVI_C1 != Input_Nothing
+				UserPrefInputType=Input_DVI_C1;
 				DDC_ChangeSource();
 				#endif
             }
             else if( RetValueL == 0x11)
             {
                 #if INPUT_TYPE!=INPUT_1A
-				UserPrefInputType=Input_Digital2;
+				UserPrefInputType=Input_HDMI_C1;
 				DDC_ChangeSource();
 				#endif
             }
             else if( RetValueL == 0x0F)
             {
                 #if INPUT_TYPE!=INPUT_1A
-				UserPrefInputType=Input_Digital3;
+				UserPrefInputType=Input_Displayport_C2;
 				DDC_ChangeSource();
 				#endif
             }
@@ -1411,6 +1429,10 @@ BYTE AlignControl( void )
             printf("[MCCS] Set PowerMode : %d\n", RetValueL);
             if(RetValueL == PowerMode_On)
             {
+        #if !MS_PM
+                Clr_ForceMCCSWakeUpFlag();
+                PowerOnSystem();
+        #endif
             }
             else if(RetValueL == PowerMode_Standby)
             {
