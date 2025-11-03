@@ -3,6 +3,9 @@
 
 //OSD_WIN0 for PG
 #define OSD_MAIN_WND        OSD_WIN1
+#if LiteMAX_OSD_TEST
+#define MAIN_GD_WIN         OSD_WIN2
+#endif
 #define OSD_BUTTON_WND      OSD_WIN2
 #define OSD_CURSOR_WND      OSD_WIN3
 #define OSD_CURSOR_WIN_BIT  OSD_GD_WIN3_EN_BIT

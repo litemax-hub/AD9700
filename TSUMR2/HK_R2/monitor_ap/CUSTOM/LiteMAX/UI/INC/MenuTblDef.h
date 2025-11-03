@@ -2,8 +2,18 @@
 #include "menudef.h"
 #include "MenuStr.h"
 
+#if LiteMAX_OSD_TEST
+#if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+#define MAIN_MENU_H_SIZE     		33
+#define MAIN_MENU_V_SIZE             8
+#else //(LiteMAX_OSDtype == LiteMAX_OSD_Standard)
+#define MAIN_MENU_H_SIZE            31
+#define MAIN_MENU_V_SIZE            16
+#endif
+#else //#if LiteMAX_OSD_TEST
 #define MAIN_MENU_H_SIZE			58
 #define MAIN_MENU_V_SIZE       		27//24
+#endif //#if LiteMAX_OSD_TEST
 
 #define MessageMenuHSize			31
 #define MessageMenuVSize       		10

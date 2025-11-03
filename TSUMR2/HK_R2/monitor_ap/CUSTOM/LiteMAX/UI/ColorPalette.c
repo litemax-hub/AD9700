@@ -50,18 +50,17 @@ ColorPaletteType code tOSDColorPalette0[] =
 };
 ColorPaletteType code tOSDColorPalette256[]=
 {
-    // 0
+  // 0
   {0x00, 0x00, 0x00,    CP_COLORKEY_F},           // 0
   {0xF0, 0xF0, 0xF0,    CP_COLORKEY_F},           // 1
   {0xF0, 0x00, 0x00,    CP_COLORKEY_F},           // 2
   {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 3
-
+  // 1
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // P // Mediatek Gold
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // 5
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // 6
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // 7
-
-    // 1
+  // 2
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // 8
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // 9
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // A
@@ -71,11 +70,58 @@ ColorPaletteType code tOSDColorPalette256[]=
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // D
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // E
   {0x00, 0x00, 0x00,    CP_COLORKEY_F},           // F
-// 0x10
+  // 4 0x10
   {0x00, 0x00, 0x00,    CP_COLORKEY_F},           // 0
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // 1
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // 2
   {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},           // 3
+#if LiteMAX_OSD_TEST
+  // 5 0x10 Frame // Cursor Palette Hightlight (Brightness and Contrast First Line)
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
+  {0x60, 0x60, 0x60,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
+  {0x40, 0x40, 0x40,    CP_COLORKEY_F}, //{RGB_BK_COLOR_H,      CP_COLORKEY_F},
+  // 6 0x14 Icon Normal // Cursor Palette Hightlight (AutoAdjust First Line)
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
+  {0x00, 0xFF, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  // 7 0x18 Audio Icon Normal // Cursor Palette Hightlight (Common Second Line) && <<gauge 4 color 1>>
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
+  // 8 0x1C Color Icon Normal // Cursor Palette Hightlight (Common Third Line)
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
+  {0x00, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
+  {0x00, 0x00, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  // 9 0x20 Sharpness Icon Normal // Cursor Palette Hightlight (L1 First Line)
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  // 10 0x24 Icon Select // Cursor Palette Hightlight (L1 Common Third Line)
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
+  {0x00, 0xFF, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  // 11 0x28 Audio Icon Select // Cursor Palette Hightlight (L1 /L2 Common Third Line buttom)
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{RGB_BK_COLOR_H,      CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  // 12 0x2C Color Icon Select // 3rd Line of MM ICON(4color) highlight
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_BLACK,           CP_COLORKEY_F},
+  {0x00, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
+  {0x00, 0x00, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  // 13 0x30 Sharpness Icon Select // for Menu Logo
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{0xFF, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},
+#endif
 };
 
 

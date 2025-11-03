@@ -7279,6 +7279,18 @@ MenuPageType code tblMenus[] =
         NULL, // Fonts
         mpbInvisible | mpbStay //   Flags;
     },
+    #if LiteMAX_OSD_TEST
+	// MainMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        RootMenu,// PrevMenuPage;
+        MainMenuItems, // MenuItems;
+        sizeof( MainMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, //LoadMainMenuFont, // Fonts
+        mpbStay | mpbRedraw //   Flags;
+    },
+	#else
     // MainMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -7289,6 +7301,7 @@ MenuPageType code tblMenus[] =
         MenuPage0, // Fonts
         mpbStay | mpbRedraw //   Flags;
     },
+    #endif
     // BriteContMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;

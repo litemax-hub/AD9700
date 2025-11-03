@@ -503,5 +503,8 @@
 #define DISABLE_DP_FAKESLEEP    0
 #define DISABLE_DPMS            0
 
+#define LiteMAX_OSD_TEST		1
+
+
 #endif
 

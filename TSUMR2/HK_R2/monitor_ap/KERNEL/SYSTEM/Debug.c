@@ -127,6 +127,11 @@ extern Bool TPL_ReadSurface(void);
 extern Bool USB_SPI_WriteRegister(BYTE addr, BYTE val);
 extern Bool USB_SPI_ReadRegister(BYTE addr, BYTE *val, BYTE count);
 #endif
+#if LiteMAX_OSD_TEST
+extern void LoadCommonFont( void );
+extern void DrawOsdBackGround(void);
+#endif
+
 #endif
 
 #if ENABLE_DP_INPUT
@@ -3052,7 +3057,18 @@ BOOL ExecTestCommand( void )
             break;
         }
 #endif
-
+		#if LiteMAX_OSD_TEST
+		case 0x71: // Keypad_PIP
+            //for TEST
+            Osd_Hide();
+			Delay1ms(300);
+			MenuPageIndex = MainMenu;
+            LoadCommonFont();
+			DrawOsdBackGround();
+			Osd_Show();
+        break;
+		#endif
+		
         case 0x72: // Keypad_LEFT
             KeyDebug = KEY_MINUS;
         break;

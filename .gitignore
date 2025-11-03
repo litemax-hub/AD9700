@@ -60,6 +60,7 @@ TSUMR2/HK_R2/Bin_R2_MT9700_MTK/MERGE.bin
 # under git add -f files
 TSUMR2/HK_R2/boot/R2_MT9700_MTK/BOOT.bin
 TSUMR2/HK_R2/boot/R2_MT9701_MTK/BOOT.bin
+TSUMR2/HK_R2/boot/R2_MT9700_LiteMAX/BOOT.bin
 
 # Keil C51
 # User-specific uVision files

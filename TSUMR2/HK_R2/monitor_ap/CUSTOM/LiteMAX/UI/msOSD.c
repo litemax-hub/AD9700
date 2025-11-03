@@ -564,6 +564,20 @@ void Osd_DrawHex( BYTE xPos, BYTE yPos, WORD value )
 {
     DrawHex( xPos, yPos, value );
 }
+
+#if LiteMAX_OSD_TEST
+void Osd_DynamicLoadFont(BYTE u8Addr, BYTE *pu8FontPtr, WORD u16Num)
+{
+    #if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+    pstPropFontSet1218=tPropFontSetArialNarrow13;
+    #else
+    pstPropFontSet1218=tPropFontSetArialNarrow13Bold;
+    #endif
+    g_u8PropFontFlags=SPACE1PIXEL;
+    g_u8AlignResetIndex=0xFF;
+    LoadPropFonts1218(u8Addr, pu8FontPtr, u16Num, NULL, 0, 0, 0);
+}
+#else
 void Osd_DynamicLoadFont( BYTE addr, BYTE *fontPtr, WORD num )
 {
 
@@ -591,6 +605,7 @@ void Osd_DynamicLoadFont( BYTE addr, BYTE *fontPtr, WORD num )
     LoadPropFonts1218(addr, fontPtr, num, NULL, 0, 0, 0);
 
 }
+#endif
 
 /*
 BYTE Osd_DoubleBuffer(Bool u8Enable)

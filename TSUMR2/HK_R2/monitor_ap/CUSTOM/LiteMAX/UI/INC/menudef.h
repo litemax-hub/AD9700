@@ -572,7 +572,8 @@ typedef struct
 
 typedef struct
 {
-    BYTE Flags;
+    //BYTE Flags;
+    WORD Flags;
     BYTE XPos, YPos;
     fpGetValue GetValue;
 } NumberType;
@@ -595,7 +596,8 @@ typedef struct
 #if Multi_Gauge // multi-gauge
 typedef struct
 {
-    BYTE Flags;
+    //BYTE Flags;
+	WORD Flags;
     BYTE XPos, YPos;
     fpGetValue GetValue;
 } GaugeType;

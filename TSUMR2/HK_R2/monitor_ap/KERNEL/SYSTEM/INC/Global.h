@@ -258,14 +258,100 @@ extern xdata BYTE OsdFontColor;
 
 #define PropFontAddr1       0x20
 #define PropFontAddr2       0x80
+#if LiteMAX_OSD_TEST
+///////////////////////////////////////////////////////////////////////////////////////
+//
+//Memory Mapping Common Use - mono
+//
+///////////////////////////////////////////////////////////////////////////////////////
+#define COMMON_FONT_START               0 //9 fonts   //static
+#define PROP_NUM_START                  0x09//0x0B    // at least 5 number position needed
+#define PROP_NUM_LEN                    4 //09+(4*5)=0x1D //3 //09+(3*5)=0x18
 
+#define COMMON_GAUGE_2CFONT_START       0x06 //In Common Area
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+//Memory Mapping under 0x100 - mono
+///////////////////////////////////////////////////////////////////////////////////////
+//Mono
+#define PROP_FONT_START                 0x20
+#define S0_PROP_FONT_START              PROP_FONT_START //for factory menu compatiable wit dual OSD engine
+
+//Static
+#define SM_CHECK_2C_FONT_START          0xFC // 2fonts // 0XFC~0xFD: Tick icon, 0xFE~0xFF: Return icon
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+//Memory Mapping between 0x100 ~ 0x200 - mono
+///////////////////////////////////////////////////////////////////////////////////////
+#define MM_PROP_RESOLUTION_INFO_START   0x00    //Current timing
+#define MM_PROP_PIXELCLOCK_INFO_START   0x10    //Pixel clock
+#define MM_PROP_FONT_START              0x20    //L0 prop font end=8Dh
+
+///////////////////////////////////////////////////////////////////////////////////////
+//Memory Mapping between 0x200 ~ 0x300 - 4Color Icon
+///////////////////////////////////////////////////////////////////////////////////////
+#define _4ColorFontStart    0x200
+#define SmallLogo_4C        _4ColorFontStart
+// Frame                                   
+#define Space4C                            _4ColorFontStart
+#define Frame4C_LT                         (_4ColorFontStart+(1*2))
+#define Frame4C_Top                        (_4ColorFontStart+(2*2))
+#define Frame4C_RT                         (_4ColorFontStart+(3*2))
+#define Frame4C_Left                       (_4ColorFontStart+(4*2))
+#define Frame4C_Right                      (_4ColorFontStart+(5*2))
+#define Frame4C_LB                         (_4ColorFontStart+(6*2))
+#define Frame4C_Buttom                     (_4ColorFontStart+(7*2))
+#define Frame4C_RB                         (_4ColorFontStart+(8*2))
+#define Frame_Size                         9
+// FrameNew                                
+#define FrameNew4CFontStart                (Space4C+(Frame_Size*2))
+#define FrameNew4C_LT                      (_4ColorFontStart+(9*2))
+#define FrameNew4C_LT2                     (_4ColorFontStart+(10*2))
+#define FrameNew4C_RT                      (_4ColorFontStart+(11*2))
+#define FrameNew4C_Top                     (_4ColorFontStart+(12*2))
+#define FrameNew4C_Top2                    (_4ColorFontStart+(13*2))
+#define FrameNew_Size                      5
+// Main Icon
+#define MainIcon4C                         (Space4C+((Frame_Size+FrameNew_Size)*2))
+#define MainIcon4C_0_MainMenuIcon          MainIcon4C
+#define MainIcon4C_0_MainMenuIcon_Size     7*6
+#define MainIcon4C_1_PictureSub            (MainIcon4C_0_MainMenuIcon+(MainIcon4C_0_MainMenuIcon_Size*2))
+#define MainIcon4C_1_PictureSub_Size       6*6
+#define MainIcon4C_2_AudioSub              (MainIcon4C_1_PictureSub+(MainIcon4C_1_PictureSub_Size*2))
+#define MainIcon4C_2_AudioSub_Size         2*6
+#define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
+#define MainIcon4C_3_ColorSub_Size         4*6
+
+///////////////////////////////////////////////////////////////////////////////////////
+//Memory Mapping between 0x300 ~ 0xxx - 4Color Icon
+///////////////////////////////////////////////////////////////////////////////////////
+#if 0 // NOUSED
+#define MainIcon4C_4_ImageSub              _4ColorFontStart //(MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
+#define MainIcon4C_4_ImageSub_Size         3*6
+#endif
+#define MainIcon4C_4_ImageRotate           (MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
+#define MainIcon4C_4_ImageRotate_Size      4*6
+#define MainIcon4C_5_OtherSub              (MainIcon4C_4_ImageRotate+(MainIcon4C_4_ImageRotate_Size*2))
+#define MainIcon4C_5_OtherSub_Size         6*6
+#if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+#define MainIcon4C_PowerKeyLock            (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
+#define MainIcon4C_PowerKeyLock_Size       2*6
+#define MainIcon4C_LoadDefaultSub          (MainIcon4C_PowerKeyLock+(MainIcon4C_PowerKeyLock_Size*2))
+#define MainIcon4C_LoadDefaultSub_Size     2*6
+#endif
+#define MainIcon4C_PPMode                  (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
+#define MainIcon4C_PPMode_Size             9*6
+
+#else
 #define _4ColorFontStart    0x180
 #define SmallLogo_4C        _4ColorFontStart
+#endif
 #define SmallLogo_Size      39
 
 #define Logo_4C         0x02
 #define Logo_Size       120
-
 //------Eson End--------------------------------
 
 #define xfr_regs ((BYTE xdata*)0xC000)

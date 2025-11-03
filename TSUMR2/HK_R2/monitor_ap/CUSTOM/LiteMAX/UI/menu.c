@@ -1319,6 +1319,14 @@ void DynamicLoadFont( const MenuFontType *menuFonts, BYTE addr )
     }
 }
 
+#if LiteMAX_OSD_TEST
+void LoadMainMenuPropFont(void)
+{
+    OSD_FONT_HI_ADDR_SET_BITS(1); //enable bit 8 0x100~
+    Osd_DynamicLoadFont(MM_PROP_FONT_START, (BYTE*)((MenuPage0+UserPrefLanguage)->Fonts), (MenuPage0+UserPrefLanguage)->FontCount);
+    OSD_FONT_HI_ADDR_CLR_TO_0();
+}
+#endif
 
 #if ENABLE_DEBUG
 extern BYTE FlashReadSR( void );
@@ -2423,8 +2431,153 @@ BYTE code strSmallLogoWindow[39]=
 };
       
 
-void DrawOsdBackGround()
+void DrawOsdBackGround(void)
 {
+#if LiteMAX_OSD_TEST
+	#if 0
+    if ((IS_WARNING_MENU(MenuPageIndex) || IS_MSG_STATUS(MenuPageIndex))
+    {
+    	#if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+    	if (g_u8MenuPageIndex == MENU_HOT_BRIGHTNESS)
+    	{
+            BYTE i;
+            OsdFontColor=FOUR_COLOR(4);
+            
+            for (i=0; i<OsdWindowHeight; i++)
+                Osd_DrawContinuousCharDirect( 0, i, Space4C, OsdWindowWidth );
+            
+            Osd_DrawRealCharDirect( 1, 0, Frame4C_LT);
+            Osd_DrawContinuousCharDirect( 2, 0, Frame4C_Top, OsdWindowWidth-4 );
+            Osd_DrawRealCharDirect( OsdWindowWidth-2, 0, Frame4C_RT);
+    	    
+            for (i=1; i<OsdWindowHeight-1; i++)
+                Osd_DrawRealCharDirect( 1, i, Frame4C_Left);
+            for (i=1; i<OsdWindowHeight-1; i++)
+                Osd_DrawRealCharDirect( OsdWindowWidth-2, i, Frame4C_Right);
+            
+            Osd_DrawRealCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
+            Osd_DrawContinuousCharDirect( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
+            Osd_DrawRealCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
+    	}
+    	else
+    	#endif
+    	{
+    		/*
+            if (IS_WARNING_MENU(8MenuPageIndex)
+                #if ENABLE_MULTI_INPUT
+                || MenuPageIndex==MENU_HOT_INPUT
+                #endif
+                || MenuPageIndex==MENU_HOT_BRIGHTNESS
+                #if OSD_MENU_BACKLIGHT_MODE
+		    	|| MenuPageIndex==MENU_HOT_LS_OFFSET
+		    	#endif
+		    	#if ENABLE_AUDIO_SETTINGS_MENU
+		    	|| MenuPageIndex==MENU_HOT_VOLUME
+		    	#endif
+                )
+                OsdFontColor=MONO_COLOR(CP_MSG_BK,CP_MSG_BK);
+            else
+				*/
+                OsdFontColor=MONO_COLOR(CP_BK_COLOR_L0,CP_BK_COLOR_L0);
+            Osd_DrawBlankPlane(0,0,GET_MENU_XSIZE(CurrentMenu),GET_MENU_YSIZE(CurrentMenu));
+            
+            #if 0//ENABLE_MULTI_INPUT && (LiteMAX_OSDtype == LiteMAX_OSD_Baron) //240726
+            if (g_u8MenuPageIndex==MENU_HOT_INPUT)
+            {
+            	if (!g_stMenuFlag.bPressSrcInputKey)
+            	{
+            		DrawResolutionRealText(1, 4);
+                    DrawPixelClockRealText(16, 4);
+            	}
+            }
+            #endif
+        }
+    }
+    else
+	#endif
+	if (MenuPageIndex==MainMenu)
+    {
+        #if 0 //(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+        BYTE i;
+        OsdFontColor=FOUR_COLOR(4);
+
+        for (i=0; i<OsdWindowHeight; i++)
+            Osd_DrawContinuousCharDirect( 0, i, Space4C, OsdWindowWidth );
+
+        Osd_DrawRealCharDirect( 1, 0, Frame4C_LT);
+        Osd_DrawContinuousCharDirect( 2, 0, Frame4C_Top, OsdWindowWidth-4 );
+        Osd_DrawRealCharDirect( OsdWindowWidth-2, 0, Frame4C_RT);
+    	
+        for (i=1; i<OsdWindowHeight-1; i++)
+            Osd_DrawRealCharDirect( 1, i, Frame4C_Left);
+        for (i=1; i<OsdWindowHeight-1; i++)
+            Osd_DrawRealCharDirect( OsdWindowWidth-2, i, Frame4C_Right);
+
+        Osd_DrawRealCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
+        Osd_DrawContinuousCharDirect( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
+        Osd_DrawRealCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
+        
+        #if 1 //240726
+        DrawResolutionRealText(10, 1);
+        DrawPixelClockRealText(10, 2);
+        #endif
+                
+        #else
+        BYTE i;
+		
+        //OsdFontColor=FOUR_COLOR(4);
+		OsdFontColor=FOUR_COLOR(5);
+        for (i=0; i<OsdWindowHeight; i++)
+            Osd_DrawContinuesChar( 0, i, Space4C, OsdWindowWidth );
+
+        Osd_DrawCharDirect( 1, 4, Frame4C_LT);
+        for(i=0;i<7;i++)
+        {
+            if(i>0)
+            {
+                Osd_DrawCharDirect( 4*i+1, 4, FrameNew4C_LT2);
+            }
+            Osd_DrawCharDirect( 4*i+2, 4, Frame4C_Top);
+            Osd_DrawCharDirect( 4*i+3, 4, Frame4C_Top);
+            Osd_DrawCharDirect( 4*i+4, 4, Frame4C_Top);
+            Osd_DrawCharDirect( 4*i+1, 5, Frame4C_Left);
+            Osd_DrawCharDirect( 4*i+1, 6, Frame4C_Left);
+        }
+        Osd_DrawCharDirect( 29, 4, Frame4C_RT);
+        Osd_DrawCharDirect( 29, 5, Frame4C_Right);
+        Osd_DrawCharDirect( 29, 6, Frame4C_Right);
+
+        Osd_DrawCharDirect( 1, 7, FrameNew4C_LT);
+        Osd_DrawContinuesChar( 2, 7, FrameNew4C_Top, OsdWindowWidth-4 );
+        Osd_DrawCharDirect( OsdWindowWidth-2, 7, FrameNew4C_RT);
+        for(i=1;i<7;i++)
+            Osd_DrawCharDirect( 4*i+1, 7, FrameNew4C_Top2);
+        
+        for (i=8; i<OsdWindowHeight-1; i++)
+            Osd_DrawCharDirect( 1, i, Frame4C_Left);
+        for (i=8; i<OsdWindowHeight-1; i++)
+            Osd_DrawCharDirect( OsdWindowWidth-2, i, Frame4C_Right);
+
+        Osd_DrawCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
+        Osd_DrawContinuesChar( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
+        Osd_DrawCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
+        #endif
+
+        //-- End  --
+    }
+	/*
+    else if (IS_MAIN_L1(g_u8MenuPageIndex))   //SubMenu
+    {
+    }
+    else if(!IS_MAIN_L1(g_u8MenuPageIndex))    //Message Menu
+    {
+        OsdFontColor=MONO_COLOR(CP_BK_COLOR_L0,CP_BK_COLOR_L0);
+        Osd_DrawBlankPlane(0,0,OsdWindowWidth,OsdWindowHeight);
+    }
+	*/
+
+#else //#if LiteMAX_OSD_TEST
+	
     BYTE i;
 
     OsdFontColor = (CPC_Black<<4|CPC_Black);
@@ -2472,7 +2625,7 @@ void DrawOsdBackGround()
         //Osd_DrawPropStr( OsdWindowWidth-0x0D, OsdWindowHeight - 3, NetAddrText() );
 
     }
-
+#endif //#if LiteMAX_OSD_TEST
 }
 //======================================================================================
 #if DisplayLogo!=NoBrand

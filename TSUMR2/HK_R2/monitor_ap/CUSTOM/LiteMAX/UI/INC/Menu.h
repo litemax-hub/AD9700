@@ -3,3 +3,8 @@ extern void Menu_InitAction( void );
 extern void Menu_OsdHandler( void );
 
 extern Bool ExecuteKeyEvent(MenuItemActionType enMenuAction);
+
+#if LiteMAX_OSD_TEST
+extern void LoadMainMenuPropFont(void);
+#endif
+
