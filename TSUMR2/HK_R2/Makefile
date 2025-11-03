@@ -35,7 +35,12 @@ endif
 AP_NAME = AP
 BL_NAME = BL
 AP_COMPRESS_NAME = AP_C
-MERGE_NAME = MERGE
+ifeq ($(ENABLE_MSTV_UART_DEBUG), 1)
+    DBG_NAME ?= DebugON
+else
+    DBG_NAME ?= DebugOFF
+endif
+MERGE_NAME = MERGE__$(BOARD_TYPE_SEL)__$(DBG_NAME)
 RES_NAME = RES
 BL_BIN = $(ROOT)/boot/$(PROJ)/BOOT.bin
 ifeq ($(BUILD_TARGET),BLOADER_SYSTEM)
@@ -266,7 +271,7 @@ else
         endif
     else
         ifeq ($(BIN_FORMAT),COMPRESS)
-		BinIDPackFiles = python scripts/BinIDPackFiles_Compress_TSUM.py
+		BinIDPackFiles = python2.7 scripts/BinIDPackFiles_Compress_TSUM.py
         else
             ifeq ($(BIN_FORMAT),COMPRESS7)
 		BinIDPackFiles = python scripts/BinIDPackFilesForNewMerge_Compress.py
