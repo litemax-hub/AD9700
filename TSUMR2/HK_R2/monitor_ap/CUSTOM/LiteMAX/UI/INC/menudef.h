@@ -164,10 +164,7 @@ typedef enum
     HotKeySourceVolMenu,        //111024 Rick add - A055
 #endif
 #endif
-
-
-
-
+	
     OsdLockMenu,//58
 
     AutoColorMenu,    //59
@@ -177,7 +174,31 @@ typedef enum
     FactoryMenu,//    61
 
     LogoMenu,     //62
-
+	
+#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+	LuminanceMenu,
+	SignalMenu,
+	SoundMenu,
+	ColorMenu,
+	ImageMenu,
+	ToolMenu,
+  #if 0// jason 20200113  BrightnessLightSensorVR
+	BrightnessTypeMenu,
+  #endif
+	//ContrastMenu,
+	SoundAdjustMenu,
+	ImageClockMenu,
+	ImagePhaseMenu,
+	ImageHPosMenu,
+	ImageVPosMenu,
+	OSDControlMenu,
+	OSDTimeMenu,
+	OSDHPosMenu,
+	OSDVPosMenu,
+  #if ENABLE_OSD_ROTATION
+	OSDRotationMenu,
+  #endif
+#endif
     //  OsdLockMenu,
     // user definition end
     MaxMenu

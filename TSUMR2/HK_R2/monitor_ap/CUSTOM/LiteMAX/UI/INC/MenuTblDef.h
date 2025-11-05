@@ -18,6 +18,17 @@
 #define MessageMenuHSize			31
 #define MessageMenuVSize       		10
 
+#if LiteMAX_OSD_TEST
+#define MainMenuIcon_X_Start        2
+#define MainMenuIcon_Y_Start        5
+#define SubMenuItem_Y_Start         10
+#define SubMenuValue_Y_Start        11
+#define SubMenuBar_Y_Start          13
+#define UserRed_Y_Start             9
+#define UserGreen_Y_Start           11
+#define UserBlue_Y_Start            13
+#define Source_Y_Start              11
+#endif
 //=====================================================================================
 // Key function definition
 MenuItemActionType code InformationEvent[BTN_EndBTN] =

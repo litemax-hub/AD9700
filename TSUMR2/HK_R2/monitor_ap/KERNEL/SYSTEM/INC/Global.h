@@ -324,6 +324,13 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
 #define MainIcon4C_3_ColorSub_Size         4*6
 
+#define LuminanceIconStar  				   (MainIcon4C_0_MainMenuIcon)
+#define SignalIconStar  				   (MainIcon4C_0_MainMenuIcon+0x0C)
+#define SoundIconStar  					   (MainIcon4C_0_MainMenuIcon+0x18)
+#define ColorIconStar  					   (MainIcon4C_0_MainMenuIcon+0x24)
+#define PPModeIconStar  				   (MainIcon4C_0_MainMenuIcon+0x30)
+#define OtherIconStar  				       (MainIcon4C_0_MainMenuIcon+0x3C)
+#define ExitIconStar  				       (MainIcon4C_0_MainMenuIcon+0x48)
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping between 0x300 ~ 0xxx - 4Color Icon
 ///////////////////////////////////////////////////////////////////////////////////////

@@ -1548,14 +1548,60 @@ void DrawOsdMenuItem( BYTE itemIndex, const MenuItemType *menuItem )
 }
 
 //=========================================================================
+// draw Icon
+void DrawOsdIcon( BYTE xPos, BYTE yPos, WORD charStart )
+{
+    Osd_DrawCharDirect(xPos, yPos, charStart);
+    Osd_DrawCharDirect(xPos+1, yPos, charStart + 2);
+    Osd_DrawCharDirect(xPos+2, yPos, charStart + 4);
+    Osd_DrawCharDirect(xPos, yPos+1, charStart + 6);
+    Osd_DrawCharDirect(xPos+1, yPos+1, charStart + 8);
+    Osd_DrawCharDirect(xPos+2, yPos+1, charStart + 10);
+}
+
+//=========================================================================
 // draw menu item display text
 void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 {
+	if( menuItem->DisplayText == NULL && menuItem->DrawItemMethod != DWI_Icon)
+    {
+        return ;
+    }
+	/*
     if( menuItem->DisplayText == NULL )
     {
         return ;
     }
-
+	*/
+#if	1
+	if( menuItem->DrawItemMethod == DWI_Icon )
+	{
+		printf("\r\n DWI_Icon");
+		printData("MainIcon4C_0_MainMenuIcon = %x", MainIcon4C_0_MainMenuIcon);
+		//Luminance Icon
+		OsdFontColor=FOUR_COLOR(6);
+		DrawOsdIcon( MainMenuIcon_X_Start, MainMenuIcon_Y_Start, LuminanceIconStar);
+		//Signal Icon
+		OsdFontColor=FOUR_COLOR(6);
+		DrawOsdIcon( (MainMenuIcon_X_Start+(1*4)), MainMenuIcon_Y_Start, SignalIconStar); 
+		//Sound Icon
+		OsdFontColor=FOUR_COLOR(7);
+		DrawOsdIcon( (MainMenuIcon_X_Start+(2*4)), MainMenuIcon_Y_Start, SoundIconStar);
+		//Color Icon
+		OsdFontColor=FOUR_COLOR(8);
+		DrawOsdIcon( (MainMenuIcon_X_Start+(3*4)), MainMenuIcon_Y_Start, ColorIconStar);
+		//PPMode Icon
+		OsdFontColor=FOUR_COLOR(6);
+		DrawOsdIcon( (MainMenuIcon_X_Start+(4*4)), MainMenuIcon_Y_Start, PPModeIconStar);
+		//Other Icon
+		OsdFontColor=FOUR_COLOR(6);
+		DrawOsdIcon( (MainMenuIcon_X_Start+(5*4)), MainMenuIcon_Y_Start, OtherIconStar);
+		//Exit Icon
+		OsdFontColor=FOUR_COLOR(6);
+		DrawOsdIcon( (MainMenuIcon_X_Start+(6*4)), MainMenuIcon_Y_Start, ExitIconStar);
+	}
+	else
+#endif
     if( menuItem->DrawItemMethod == DWI_Text )
     {
         if( MenuPageIndex == FactoryMenu )
