@@ -317,9 +317,9 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C                         (Space4C+((Frame_Size+FrameNew_Size)*2))
 #define MainIcon4C_0_MainMenuIcon          MainIcon4C
 #define MainIcon4C_0_MainMenuIcon_Size     7*6
-#define MainIcon4C_1_PictureSub            (MainIcon4C_0_MainMenuIcon+(MainIcon4C_0_MainMenuIcon_Size*2))
-#define MainIcon4C_1_PictureSub_Size       6*6
-#define MainIcon4C_2_AudioSub              (MainIcon4C_1_PictureSub+(MainIcon4C_1_PictureSub_Size*2))
+#define MainIcon4C_1_BrightnessSub         (MainIcon4C_0_MainMenuIcon+(MainIcon4C_0_MainMenuIcon_Size*2))
+#define MainIcon4C_1_BrightnessSub_Size    6*6
+#define MainIcon4C_2_AudioSub              (MainIcon4C_1_BrightnessSub+(MainIcon4C_1_BrightnessSub_Size*2))
 #define MainIcon4C_2_AudioSub_Size         2*6
 #define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
 #define MainIcon4C_3_ColorSub_Size         4*6

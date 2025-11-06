@@ -145,6 +145,7 @@ void LoadFfont( void )
     mStar_LoadCompressedFont( FfontStart, tFontF, 0 ); // load osd fonts
 }
 
+#if 0 //LiteMAX_OSD_TEST
 void InitGradualColor(void)
 {
 	//init MAIN_GD_WIN
@@ -171,6 +172,7 @@ void InitGradualColor(void)
     drvOSD_SetWndFixAlpha(MAIN_GD_WIN,OSD_ALPHA_OUT,0x3F); //OSD
     drvOSD_SetWndCABaseAddr(MAIN_GD_WIN,OSD_MAIN_WND_CA_BASE);
 }
+#endif
 
 void LoadCommonFont( void )
 {
@@ -178,7 +180,7 @@ void LoadCommonFont( void )
 	#if ENABLE_DEBUG
 	printData( "LoadCommonFont", 0);
 	#endif
-    InitGradualColor();
+    //InitGradualColor();
 
 	Osd_Write4ColorFontStartAddr( _4ColorFontStart );
 	Osd_Write8ColorFontStartAddr( 0x0FFF );
@@ -200,7 +202,7 @@ void LoadCommonFont( void )
 	Osd_LoadCompressColorFont( FrameNew4CFontStart, t4ColorFrameNew, NULL, FrameNew_Size);
 	// Main Icon
 	Osd_LoadCompressColorFont( MainIcon4C_0_MainMenuIcon, t4ColorMainIcon, NULL, MainIcon4C_0_MainMenuIcon_Size);
-	Osd_LoadCompressColorFont( MainIcon4C_1_PictureSub, t4ColorPictureSub, NULL, MainIcon4C_1_PictureSub_Size);
+	Osd_LoadCompressColorFont( MainIcon4C_1_BrightnessSub, t4ColorBrightnessSub, NULL, MainIcon4C_1_BrightnessSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_2_AudioSub, t4ColorAudioSub, NULL, MainIcon4C_2_AudioSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_3_ColorSub, t4ColorColorSub, NULL, MainIcon4C_3_ColorSub_Size);
 

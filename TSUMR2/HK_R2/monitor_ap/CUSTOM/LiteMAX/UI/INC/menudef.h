@@ -204,6 +204,19 @@ typedef enum
     MaxMenu
 } MenuPageIndexType;
 
+#if 1
+typedef enum
+{
+  MAIN_LUMINANCE_ITEM = 0,
+  MAIN_SIGNAL_ITEM,
+  MAIN_SOUND_ITEM,
+  MAIN_COLOR_ITEM,
+  MAIN_PPMODE_ITEM,
+  MAIN_OTHER_ITEM,
+  MAIN_EXIT_ITEM,
+  MAIN_MAX_ITEM
+}MainMenuItemsType;
+#else
 typedef enum
 {
   MAIN_LUMINANCE_ITEM,
@@ -217,6 +230,7 @@ typedef enum
   MAIN_EXTRA_ITEM,
   MAIN_MAX_ITEM,
 }MainMenuItemsType;
+#endif
 
 typedef enum
 {
