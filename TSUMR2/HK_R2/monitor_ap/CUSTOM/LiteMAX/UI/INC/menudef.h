@@ -24,6 +24,14 @@ typedef enum
 
     // user definition from here
     MainMenu,
+    #if 1 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+	LuminanceMenu,
+	SignalMenu,
+	SoundMenu,
+	ColorMenu,
+	ImageMenu,
+	ToolMenu,
+	#endif
     BriteContMenu,
     ColorSettingsMenu,
     ExtColorSettingsMenu,
@@ -176,12 +184,6 @@ typedef enum
     LogoMenu,     //62
 	
 #if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
-	LuminanceMenu,
-	SignalMenu,
-	SoundMenu,
-	ColorMenu,
-	ImageMenu,
-	ToolMenu,
   #if 0// jason 20200113  BrightnessLightSensorVR
 	BrightnessTypeMenu,
   #endif

@@ -3,7 +3,7 @@
 
 //OSD_WIN0 for PG
 #define OSD_MAIN_WND        OSD_WIN1
-#if 0 //LiteMAX_OSD_TEST
+#if LiteMAX_OSD_TEST
 #define MAIN_GD_WIN         OSD_WIN2
 #endif
 #define OSD_BUTTON_WND      OSD_WIN2
@@ -47,6 +47,8 @@ extern xdata BYTE OsdWindowWidth;
 extern xdata BYTE OsdWindowHeight;
 //extern BYTE mStar_ReadOSDByte( BYTE address );
 //extern void mStar_WriteOSDByte( BYTE address, BYTE value );
+extern void DrawNum_R( BYTE xPos, BYTE yPos, char len, int value);
+extern void DrawNum( BYTE xPos, BYTE yPos, char len, int value);
 extern void Osd_DrawNum( BYTE xPos, BYTE yPos, int value);//WORD value );
 extern void Osd_DrawFactoryNum( BYTE xPos, BYTE yPos, int value);//WORD value );
 extern void Osd_Draw4Num( BYTE xPos, BYTE yPos, int value);//WORD value );

@@ -761,49 +761,36 @@ Bool Check_Disable_ItemRadioGroup_Status( WORD Flags )
 
 void DrawInformation( void )
 {
+	XDATA DWORD colck;
     WORD freq;
+	BYTE Y_PosStart = 1;
+	
     OsdFontColor = (CPC_White<<4|CPC_Black);
 
     //=================================================
-    Osd_DrawPropStr( Layer2XPos, (LayerYPos+2*0), ResolutionText() );
-    Osd_Draw4Num( Layer2XPos+8, (LayerYPos+2*0), SC0_READ_IMAGE_WIDTH() );
+    Osd_DrawPropStr( 3, Y_PosStart, ResolutionText() );
+    Osd_Draw4Num( 10, Y_PosStart, SC0_READ_IMAGE_WIDTH() );
 #if DECREASE_V_SCALING
-    Osd_Draw4Num( Layer2XPos+8 + 6, (LayerYPos+2*0), SC0_READ_IMAGE_HEIGHT()-DecVScaleValue );
+    Osd_Draw4Num( 15, Y_PosStart, SC0_READ_IMAGE_HEIGHT()-DecVScaleValue );
 #else
-    Osd_Draw4Num( Layer2XPos+8 + 6, (LayerYPos+2*0), SC0_READ_IMAGE_HEIGHT() );
+    Osd_Draw4Num( 15, Y_PosStart, SC0_READ_IMAGE_HEIGHT() );
 #endif
-    Osd_DrawPropStr( Layer2XPos+8 + 5, (LayerYPos+2*0), xText() );
+    Osd_DrawPropStr( 14, Y_PosStart, xText() );
+
+	freq = MenuFunc_GetVfreq();
+
+    Osd_DrawNum( 20, Y_PosStart, freq);
+
+    Osd_DrawPropStr( 22, Y_PosStart, HzText() );
     //=================================================
-    Osd_DrawPropStr( Layer2XPos, (LayerYPos+2*1), HFreqText() );
-    freq = HFreq( SrcHPeriod );
-    if( CURRENT_SOURCE_IS_INTERLACE_MODE() )
-        freq *= 2;
-    if(( freq % 10 ) >= 5 )
-    {
-        Osd_DrawNum( Layer2XPos+6, (LayerYPos+2*1), ( freq + 10 ) / 10 );
-    }
-    else
-    {
-        Osd_DrawNum( Layer2XPos+6, (LayerYPos+2*1), freq / 10 );
-    }
-    Osd_DrawPropStr( Layer2XPos+6 + 3, (LayerYPos+2*1), KHzText() );
-
-    //=================================================
-    Osd_DrawPropStr( Layer2XPos, (LayerYPos+2*2), VFreqText() );
-    freq = MenuFunc_GetVfreq();
-
-    Osd_DrawNum( Layer2XPos+6, (LayerYPos+2*2), freq);
-
-    Osd_DrawPropStr( Layer2XPos+6 + 3, (LayerYPos+2*2), HzText() );
-
-    //=================================================
-    Osd_DrawPropStr( Layer2XPos, (LayerYPos+2*3), VTotalText() );
-    Osd_Draw4Num( Layer2XPos+6, (LayerYPos+2*3), SC0_READ_VTOTAL() );
-    Osd_DrawPropStr( Layer2XPos+6 + 5, (LayerYPos+2*3), LineText() );
-
-    //=================================================
-    Osd_DrawPropStr( Layer2XPos, (LayerYPos+2*4), ColorFormatDisplayText() );
-    Osd_DrawPropStr( Layer2XPos+9, (LayerYPos+2*4), ColorFormatDisplayStatusText() );
+    Osd_DrawPropStr( 3, Y_PosStart+1, PixelClockText());
+    colck = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
+    //printData("colck=%d",colck);
+    DrawNum_R(10,Y_PosStart+1,3,colck/100);
+	Osd_DrawPropStr( 13, Y_PosStart+1, DotText());
+    DrawNum(14,Y_PosStart+1,2,colck%100);
+    Osd_DrawPropStr( 16, Y_PosStart+1, MHzText());
+	//=================================================
 }
 
 #if ENABLE_3DLUT
@@ -879,27 +866,48 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 }
                 if( tempValue != MenuItemIndex )
                 {
+					#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+					if( MenuPageIndex == MainMenu )
+					{
+                    	#if 0 
+						if((MenuItemIndex==4)&&(!CURRENT_INPUT_IS_VGA()))
+						{
+							if( menuAction == MIA_NextItem )
+								MenuItemIndex++;
+							else
+								MenuItemIndex--;
+						}
+                    	#endif
+						OsdFontColor=FOUR_COLOR(6);						
+						Osd_DrawContinuesChar( SubMenuIcon_X_Start, SubMenuIcon_Y_Start, Space4C, 26 );
+						Osd_DrawContinuesChar( SubMenuIcon_X_Start, SubMenuIcon_Y_Start+1, Space4C, 26 );
+					}
+					#endif
+                	#if 0
                     if (Layer1_MenuPage)
                     {
                         ClrItemText(Layer2XPos);
                         ClrItemText(Layer3XPos);
                     }
-
+					#endif
                     if( CurrentMenuItem.Fonts )
                     {
                         DynamicLoadFont( CurrentMenuItem.Fonts, PropFontAddr2 );
                     }
-
+					#if 0
                     DrawItemSelect(tempValue);
+					#endif
                     DrawOsdMenuItem( tempValue, &CurrentMenuItems[tempValue] );
-
+					#if 0
                     DrawItemSelect(MenuItemIndex);
+					#endif
                     DrawOsdMenuItem( MenuItemIndex, &CurrentMenuItem );
+					#if 0
                     if (MenuPageIndex == MainMenu && MenuItemIndex == MainMenuItems_Information)
                     {
                         DrawInformation();
                     }
-
+					#endif
 #if 0//ENABLE_3DLUT
                     if( MenuPageIndex == GammaMenu )
                         Adjust3DLUTMode(0);
@@ -1319,7 +1327,7 @@ void DynamicLoadFont( const MenuFontType *menuFonts, BYTE addr )
     }
 }
 
-#if LiteMAX_OSD_TEST
+#if 0 //LiteMAX_OSD_TEST
 void LoadMainMenuPropFont(void)
 {
     OSD_FONT_HI_ADDR_SET_BITS(1); //enable bit 8 0x100~
@@ -1471,22 +1479,43 @@ void DrawOsdMenu( void )
                 //old_msWriteByte( BLENDC, 0x00 );
                 DrawOsdBackGround();
             }
-
+			#if 0
             DrawItemSelect(MenuItemIndex);
+			#endif
             for ( i = 0; i < MenuItemCount; i++ )
             {
                 DrawOsdMenuItem( i, &CurrentMenu.MenuItems[i] );
             }
-
+			#if 0
             if (MenuPageIndex == MainMenu && MenuItemIndex == MainMenuItems_Information)
             {
                 DrawInformation();
+            }
+			#endif
+			if (MenuPageIndex == MainMenu)
+            {
+                DrawInformation();
+            }
+			#if 0
+            else if (MenuPageIndex == InputInfoMenu || MenuPageIndex == UnsupportedModeMenu)
+            {
+                DrawInputInfo();
+            }
+			#endif
+            else if (MenuPageIndex == StandbyMenu || MenuPageIndex == CableNotConnectedMenu)
+            {
+#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard) // jason 20190611
+                ;
+#else
+                DrawNosignalInfo();
+#endif
             }
 
             Osd_Show();
         } // end redraw
         else
         {
+        	#if 0
             //printData("ucClrItem 2[%d]", ucClrItem);
             if (Layer3_PrevMenuPage && (PrevMenu.Flags & mpbAdjust))
                 ClearItemSelect(ucClrItem);
@@ -1502,12 +1531,16 @@ void DrawOsdMenu( void )
                 ClrItemText(Layer3XPos);
             else if (Layer3_PrevMenuPage && !(PrevMenu.Flags & mpbAdjust))
                 ClrItemText(Layer3XPos);
-
+			#endif
             for ( i = 0; i < MenuItemCount; i++ )
             {
                 DrawOsdMenuItem( i, &CurrentMenu.MenuItems[i] );
             }
             //DrawOsdMenuItem(MenuItemIndex, &CurrentMenu.MenuItems[MenuItemIndex]);
+            if (Layer2_PrevMenuPage && Layer1_MenuPage)
+            {
+                DrawInformation();
+            }
         }
 
     }
@@ -2529,6 +2562,8 @@ BYTE code strSmallLogoWindow[39]=
 void DrawOsdBackGround(void)
 {
 #if LiteMAX_OSD_TEST
+	BYTE i;
+
 	#if 0
     if ((IS_WARNING_MENU(MenuPageIndex) || IS_MSG_STATUS(MenuPageIndex))
     {
@@ -2590,6 +2625,17 @@ void DrawOsdBackGround(void)
     }
     else
 	#endif
+	if( MenuPageIndex==InputInfoMenu )
+    {
+    	OsdFontColor=FOUR_COLOR(5);
+    	for (i=0; i<OsdWindowHeight; i++)
+        	Osd_DrawContinuesChar( 0, i, Space4C, OsdWindowWidth );
+	
+        OsdFontColor=FOUR_COLOR(5);
+        Osd_DrawContinuesChar( 0, 1, Space4C, OsdWindowWidth );
+        Osd_DrawContinuesChar( 0, 2, Space4C, OsdWindowWidth );
+    }
+	
 	if (MenuPageIndex==MainMenu)
     {
         #if 0 //(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
@@ -2618,7 +2664,6 @@ void DrawOsdBackGround(void)
         #endif
                 
         #else
-        BYTE i;
 		
 		OsdFontColor=FOUR_COLOR(5);
         for (i=0; i<OsdWindowHeight; i++)

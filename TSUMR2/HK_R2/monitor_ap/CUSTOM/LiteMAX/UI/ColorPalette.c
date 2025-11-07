@@ -69,7 +69,11 @@ ColorPaletteType code tOSDColorPalette256[]=
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // C
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // D
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // E
+  #if LiteMAX_OSD_TEST
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},  		  // F
+  #else
   {0x00, 0x00, 0x00,    CP_COLORKEY_F},           // F
+  #endif
   // 4 0x10
   {0x00, 0x00, 0x00,    CP_COLORKEY_F},           // 0
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // 1

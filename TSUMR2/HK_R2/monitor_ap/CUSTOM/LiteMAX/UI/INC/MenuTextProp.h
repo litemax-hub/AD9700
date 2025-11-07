@@ -4949,7 +4949,116 @@ BYTE code strGama3M7[][2]=
 
 
 //--Eson Start----------------------------------
-
+#if LiteMAX_OSD_TEST
+BYTE code strResolutionM0[1][2]=
+{ { 0x20 , 0x06 }
+};
+BYTE code strPixelClockM0[1][2]=
+{ { 0x26 , 0x06 }
+};
+BYTE code strVersionM0[1][2]=
+{ { 0x2C , 0x05 }
+};
+BYTE code strAD8891PM0[1][2]=
+{ { 0x31 , 0x0A }
+};
+BYTE code strHzM0[1][2]=
+{ { 0x3B , 0x02 }
+};
+BYTE code strMHzM0[1][2]=
+{ { 0x3D , 0x03 }
+};
+BYTE code strBrightnessM0[1][2]=
+{ { 0x40 , 0x06 }
+};
+BYTE code strSharpnessM0[1][2]=
+{ { 0x46 , 0x06 }
+};
+BYTE code strColorM0[1][2]=
+{ { 0x4C , 0x03 }
+};
+BYTE code strDefaultM0[1][2]=
+{ { 0x4F , 0x04 }
+};
+BYTE code strExitM0[1][2]=
+{ { 0x53 , 0x03 }
+};
+BYTE code str6500KM0[1][2]=
+{ { 0x56 , 0x04 }
+};
+BYTE code strUserOptionM0[1][2]=
+{ { 0x5A , 0x07 }
+};
+BYTE code strReturnM0[1][2]=
+{ { 0x61 , 0x04 }
+};
+BYTE code strRM0[1][2]=
+{ { 0x65 , 0x01 }
+};
+BYTE code strGM0[1][2]=
+{ { 0x66 , 0x01 }
+};
+BYTE code strBM0[1][2]=
+{ { 0x67 , 0x01 }
+};
+BYTE code strLoadDefaultM0[1][2]=
+{ { 0x68 , 0x0C }
+};
+BYTE code strDPM0[1][2]=
+{ { 0x74 , 0x02 }
+};
+BYTE code strNoSignalM0[1][2]=
+{ { 0x76 , 0x05 }
+};
+BYTE code strOORM0[1][2]=
+{ { 0x7B , 0x08 }
+};
+BYTE code strNoCableM0[1][2]=
+{ { 0x83 , 0x0B }
+};
+BYTE code strKeypadLockM0[1][2]=
+{ { 0x8E , 0x08 }
+};
+BYTE code strKeypadUnlockM0[1][2]=
+{ { 0x96 , 0x09 }
+};
+BYTE code str9300KM0[1][2]=
+{ { 0x9F , 0x04 }
+};
+BYTE code strEnableM0[1][2]=
+{ { 0xA3 , 0x08 }
+};
+BYTE code strDisableM0[1][2]=
+{ { 0xAB , 0x08 }
+};
+BYTE code strPowerM0[1][2]=
+{ { 0xB3 , 0x04 }
+};
+BYTE code strUM0[1][2]=
+{ { 0xB7 , 0x01 }
+};
+BYTE code strAM0[1][2]=
+{ { 0xB8 , 0x01 }
+};
+BYTE code strInputM0[1][2]=
+{ { 0xB9 , 0x03 }
+};
+BYTE code strDVIM0[1][2]=
+{ { 0xBC , 0x02 }
+};
+BYTE code strDisplayPortM0[1][2]=
+{ { 0xBE , 0x02 }
+};
+BYTE code strAD8891DPM0[1][2]=
+{ { 0xC0 , 0x0B }
+};
+BYTE code strDotM0[1][2]=
+{ { 0xCB , 0x01 }
+};
+BYTE code strXM0[1][2]=
+{ { 0xCC , 0x01 }
+};
+#else
 BYTE code strBriteContM0[1][2]=
 { { 0x20 , 0x0C }
 };
@@ -4983,6 +5092,7 @@ BYTE code strExitM0[1][2]=
 BYTE code strReturnM0[1][2]=
 { { 0x72 , 0x04 }
 };
+#endif
 
 BYTE code strNoSignalM2[1][2]=
 { { 0x20, 0x05},

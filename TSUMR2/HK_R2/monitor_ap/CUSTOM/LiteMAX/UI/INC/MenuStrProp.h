@@ -279,4 +279,9 @@ extern BYTE *sRGBText( void );
 extern BYTE *NORMALText( void );
 extern BYTE *EnterBurninText( void );
 extern BYTE *ExitBurninText( void );
+#if LiteMAX_OSD_TEST
+extern BYTE *PixelClockText( void );
+extern BYTE *MHzText( void );
+extern BYTE *DotText( void );
+#endif
 //====================================

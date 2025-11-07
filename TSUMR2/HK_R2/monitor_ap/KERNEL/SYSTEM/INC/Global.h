@@ -254,7 +254,9 @@ extern xdata BYTE OsdFontColor;
 #define CursorDown_2C   (CursorFontStart+0x06)
 #define CursorRD_2C     (CursorFontStart+0x07)
 
+#if !LiteMAX_OSD_TEST
 #define NumberFontStart (CursorRD_2C+0x01)
+#endif
 
 #define PropFontAddr1       0x20
 #define PropFontAddr2       0x80
@@ -264,12 +266,9 @@ extern xdata BYTE OsdFontColor;
 //Memory Mapping Common Use - mono
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-#define COMMON_FONT_START               0 //9 fonts   //static
-#define PROP_NUM_START                  0x09//0x0B    // at least 5 number position needed
-#define PROP_NUM_LEN                    4 //09+(4*5)=0x1D //3 //09+(3*5)=0x18
-
-#define COMMON_GAUGE_2CFONT_START       0x06 //In Common Area
-
+#define COMMON_FONT_START               0x00
+#define NumberFontStart					(COMMON_FONT_START+0x02) // 0 ~ 9
+#define	GaugeFontStart					(COMMON_FONT_START+0x17) // 0x17 ~ 0x1F
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping under 0x100 - mono

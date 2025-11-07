@@ -20,7 +20,7 @@
 
 #define _JUNO_OSD_
 
-#if LiteMAX_OSD_TEST
+#if 0 //LiteMAX_OSD_TEST
 extern void LoadMainMenuPropFont(void);
 #endif
 
@@ -145,7 +145,7 @@ void LoadFfont( void )
     mStar_LoadCompressedFont( FfontStart, tFontF, 0 ); // load osd fonts
 }
 
-#if 0 //LiteMAX_OSD_TEST
+#if LiteMAX_OSD_TEST
 void InitGradualColor(void)
 {
 	//init MAIN_GD_WIN
@@ -180,7 +180,7 @@ void LoadCommonFont( void )
 	#if ENABLE_DEBUG
 	printData( "LoadCommonFont", 0);
 	#endif
-    //InitGradualColor();
+    InitGradualColor();
 
 	Osd_Write4ColorFontStartAddr( _4ColorFontStart );
 	Osd_Write8ColorFontStartAddr( 0x0FFF );
@@ -193,7 +193,7 @@ void LoadCommonFont( void )
     #endif
     mStar_LoadCompressedFont(SM_CHECK_2C_FONT_START, tCheckMark2ColorIconFont, 0);
 
-    LoadMainMenuPropFont();
+    //LoadMainMenuPropFont();
 
 	//Load 4 COLOR Font
 	// Frame

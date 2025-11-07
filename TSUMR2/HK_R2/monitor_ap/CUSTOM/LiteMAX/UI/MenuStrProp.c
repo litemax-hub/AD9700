@@ -16,6 +16,78 @@ const BYTE *NetAddrText( void )
 {
     return 0;
 }
+#if LiteMAX_OSD_TEST
+const BYTE *ResolutionText( void )
+{
+    return strResolutionM0[UserPrefLanguage];
+}
+
+const BYTE *PixelClockText( void )
+{
+    return strPixelClockM0[UserPrefLanguage];
+}
+
+const BYTE *xText( void )
+{
+    return strXM0[UserPrefLanguage];
+}
+
+const BYTE *HzText( void )
+{
+    return strHzM0[UserPrefLanguage];
+}
+
+const BYTE *MHzText( void )
+{
+    return strMHzM0[UserPrefLanguage];
+}
+
+const BYTE *DotText( void )
+{
+    return strDotM0[UserPrefLanguage];
+}
+
+const BYTE *BriteContText( void )
+{
+    return 0;
+}
+const BYTE *InputSourceText( void )
+{
+    return 0;
+}
+const BYTE *ColorSettingsText( void )
+{
+    return 0;
+}
+const BYTE *DisplaySettingsText( void )
+{
+    return 0;
+}
+const BYTE *OtherSettingsText( void )
+{
+    return 0;
+}
+const BYTE *PowerManagerText( void )
+{
+    return 0;
+}
+const BYTE *InformationText( void )
+{
+    return 0;
+}
+const BYTE *ExtColorSettingsText( void )
+{
+    return 0;
+}
+const BYTE *ExitText( void )
+{
+    return 0;
+}
+const BYTE *ReturnText( void )
+{
+    return 0;
+}
+#else
 const BYTE *BriteContText( void )
 {
     return strBriteContM0[UserPrefLanguage];
@@ -56,7 +128,7 @@ const BYTE *ReturnText( void )
 {
     return strReturnM0[UserPrefLanguage];
 }
-
+#endif
 
 const BYTE *NoSignalText( void )
 {
@@ -820,10 +892,12 @@ const BYTE *OtherSettingONText( void )
 {
     return strOtherSettingOnM106[UserPrefLanguage];
 }
+#if !LiteMAX_OSD_TEST
 const BYTE *ResolutionText( void )
 {
     return strResolutionM107[UserPrefLanguage];
 }
+#endif
 const BYTE *HFreqText( void )
 {
     return strHFreqM107[UserPrefLanguage];
@@ -894,6 +968,7 @@ const BYTE *ColorFormatDisplayStatusText( void )
             return strRGBM107[UserPrefLanguage];
     }
 }
+#if !LiteMAX_OSD_TEST
 const BYTE *xText( void )
 {
     return strxM107[UserPrefLanguage];
@@ -902,6 +977,7 @@ const BYTE *HzText( void )
 {
     return strHzM107[UserPrefLanguage];
 }
+#endif
 const BYTE *KHzText( void )
 {
     return strKHzM107[UserPrefLanguage];
