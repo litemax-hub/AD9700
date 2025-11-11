@@ -307,7 +307,7 @@
 #define ENABLE_DCR                      0
 #define ENABLE_SUPER_RESOLUTION         1
 #define ENABLE_COLORMODE_DEMO           0
-#define ENABLE_SHARPNESS                0
+#define ENABLE_SHARPNESS                1 // 0
 #define ENABLE_LOCALDIMMING             0
 #define ENABLE_HDR                      0
 #define ENABLE_HDR_AUTODETECT 			(1 && ENABLE_HDR)

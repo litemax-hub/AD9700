@@ -390,7 +390,7 @@ MenuItemType code MainMenuItems[] =
             NULL, // DrawGuageType
             NULL, // DrawRadioGroupType
         },
-        NULL, // Font
+        MenuPage103, //NULL, // Font
         mibSelectable // Flags
     },
 
@@ -619,19 +619,19 @@ MenuItemType code LuminanceMenuItems[] =
 };
 MenuItemType code SignalMenuItems[] =
 {
-#if 0 // remove signal "AUTO"
+#if 1 // remove signal "AUTO"
     // 0 Auto
     {
         4,10,//6, 5, // XPos, YPos;
-        CPC_Yellow, CPC_Background, // ForeColor, BackColor;
+        CPC_Yellow, CPC_Black, // ForeColor, BackColor;
         CPC_Yellow, CPC_Blue, // SelForeColor, SelBackColor;
         RootMenu, // NextMenuPage;
         DWI_Text, // DrawMenuItemType;
-        AutoText, // DisplayText;
+        AutoSelectText, //AutoText, // DisplayText;
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
-            SwitchSignal, // ExecFunction
+            ChangeSource, //SwitchSignal, // ExecFunction
         },
         {
             NULL, // DrawNumberType
@@ -644,14 +644,9 @@ MenuItemType code SignalMenuItems[] =
 #endif
     // 1 VGA
     {
-        4,10,//8,10,//6, 5, // XPos, YPos;
-        #if 1 //Temp
-		CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-		#else
-        CPC_Yellow, CPC_Background, // ForeColor, BackColor;
+        9,10,//8,10,//6, 5, // XPos, YPos;
+        CPC_Yellow, CPC_Black, // ForeColor, BackColor;
         CPC_Yellow, CPC_Blue, // SelForeColor, SelBackColor;
-        #endif
         RootMenu, // NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         VGAText,//DefaultText, // DisplayText;
@@ -668,19 +663,15 @@ MenuItemType code SignalMenuItems[] =
         NULL, //Font
         mibSelectable // Flags
     },
+    #if 0
     // 2 DVI
     {
         9,10,//12,10,//14, 5, // XPos, YPos;
-        #if 1 //Temp
-		CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-		#else
-        CPC_Yellow, CPC_Background, // ForeColor, BackColor;
+        CPC_Yellow, CPC_Black, // ForeColor, BackColor;
         CPC_Yellow, CPC_Blue, // SelForeColor, SelBackColor;
-        #endif
         RootMenu, // NextMenuPage;
         DWI_Text, // DrawMenuItemType;
-        DigitalPort1Text, // DisplayText;
+        DigitalPort0Text, // DisplayText;
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
@@ -694,19 +685,15 @@ MenuItemType code SignalMenuItems[] =
         NULL, //Font
         mibSelectable // Flags
     },
+    #endif
     // 3 HDMI
     {
         14,10,//16,10,//24, 5, // XPos, YPos;
-        #if 1 //Temp
-		CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-		#else
-        CPC_Yellow, CPC_Background, // ForeColor, BackColor;
+        CPC_Yellow, CPC_Black, // ForeColor, BackColor;
         CPC_Yellow, CPC_Blue, // SelForeColor, SelBackColor;
-        #endif
         RootMenu, // NextMenuPage;
         DWI_Text, // DrawMenuItemType;
-        DigitalPort1Text, //HDMIText, // DisplayText;
+        DigitalPort0Text, //HDMIText, // DisplayText;
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
@@ -723,16 +710,11 @@ MenuItemType code SignalMenuItems[] =
     // 4 DP
     {
         19,10,//20,10,//14, 5, // XPos, YPos;
-        #if 1 //Temp
-		CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-		#else
-        CPC_Yellow, CPC_Background, // ForeColor, BackColor;
+        CPC_Yellow, CPC_Black, // ForeColor, BackColor;
         CPC_Yellow, CPC_Blue, // SelForeColor, SelBackColor;
-        #endif
         RootMenu, // NextMenuPage;
         DWI_Text, // DrawMenuItemType;
-        DP1_1Text, // DisplayText;
+        DigitalPort1Text, // DisplayText;
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
@@ -749,13 +731,8 @@ MenuItemType code SignalMenuItems[] =
     // 5 Exit
     {
         24,10,//24, 5, // XPos, YPos;
-        #if 1 //Temp
-		CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-		#else
-        CPC_Yellow, CPC_Background, // ForeColor, BackColor;
+        CPC_Yellow, CPC_Black, // ForeColor, BackColor;
         CPC_Yellow, CPC_Blue, // SelForeColor, SelBackColor;
-        #endif
         MainMenu, // NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         ExitText, // DisplayText;
@@ -6865,7 +6842,7 @@ MenuItemType code ADCAutoColorMenuItems[] =
 MenuItemType code InputInfoMenuItems[] =
 {
     {
-        0, 5, // XPos, YPos;
+        0, 2, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;

@@ -5253,7 +5253,44 @@ BYTE code strAutoM102[1][2]=
 { { 0xE3 , 0x03 }
 };
 
-
+#if LiteMAX_OSD_TEST
+BYTE code strAutoSelectM103[1][2]=
+{ { 0x80 , 0x03 }
+};
+BYTE code strVGAM103[1][2]=
+{ { 0x83 , 0x03 }
+};
+BYTE code strDVIM103[1][2]=
+{ { 0x86 , 0x02 }
+};
+BYTE code strHDMIM103[1][2]=
+{ { 0x88 , 0x03 }
+};
+BYTE code strDisplayPortM103[1][2]=
+{ { 0x8B , 0x02 }
+};
+BYTE code strSourceSelectM103[1][2]=
+{ { 0x8D , 0x08 }
+};
+BYTE code strDPVersionM103[1][2]=
+{ { 0x95 , 0x06 }
+};
+BYTE code strDP1_1M103[1][2]=
+{ { 0x9B , 0x03 }
+};
+BYTE code strDP1_2M103[1][2]=
+{ { 0x9E , 0x03 }
+};
+BYTE code strDP1_4M103[1][2]=
+{ { 0xA1 , 0x03 }
+};
+BYTE code strUSB_CM103[1][2]=
+{ { 0xA4 , 0x04 }
+};
+BYTE code strExitM103[1][2]=
+{ { 0xA8 , 0x03 }
+};
+#else
 BYTE code strAutoSelectM103[1][2]=
 { { 0x80, 0x07},
 };
@@ -5287,7 +5324,7 @@ BYTE code strDP1_4M103[1][2]=
 BYTE code strUSB_CM103[1][2]=
 { { 0xAD, 0x04},
 };
-
+#endif
 
 BYTE code str3DFormatM104[1][2]=
 { { 0x80, 0x06},

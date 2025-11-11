@@ -10,8 +10,8 @@
 #define MAIN_MENU_H_SIZE            31
 #define MAIN_MENU_V_SIZE            16
 
-#define MessageMenuHSize			31 //20
-#define MessageMenuVSize       		10 // 4
+#define MessageMenuHSize			20
+#define MessageMenuVSize       		5
 #endif
 #else //#if LiteMAX_OSD_TEST
 #define MAIN_MENU_H_SIZE			58
@@ -481,7 +481,7 @@ MenuItemType code PowerOffMenuItems[] =
 MenuItemType code StandbyMenuItems[] =
 {
     {
-        0, 5, // XPos, YPos;
+        0, 2, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;
@@ -506,7 +506,7 @@ MenuItemType code StandbyMenuItems[] =
 MenuItemType code CableNotConnectedMenuItems[] =
 {
     {
-        0, 5, // XPos, YPos;
+        0, 2, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;
@@ -530,7 +530,7 @@ MenuItemType code CableNotConnectedMenuItems[] =
 MenuItemType code UnsupportedModeMenuItems[] =
 {
     {
-        0, 5, // XPos, YPos;
+        0, 2, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;

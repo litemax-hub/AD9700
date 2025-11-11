@@ -206,9 +206,9 @@ void LoadCommonFont( void )
 	Osd_LoadCompressColorFont( MainIcon4C_2_AudioSub, t4ColorAudioSub, NULL, MainIcon4C_2_AudioSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_3_ColorSub, t4ColorColorSub, NULL, MainIcon4C_3_ColorSub_Size);
 
-	Osd_LoadCompressColorFont( MainIcon4C_4_ImageRotate, t4ColorImageRotate, NULL, MainIcon4C_4_ImageRotate_Size);
+	Osd_LoadCompressColorFont( MainIcon4C_4_ImageSub, t4ColorImageSub, NULL, MainIcon4C_4_ImageSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_5_OtherSub, t4ColorOtherSub, NULL, MainIcon4C_5_OtherSub_Size);
-	Osd_LoadCompressColorFont( MainIcon4C_PPMode, t4ColorPPMode, NULL, MainIcon4C_PPMode_Size);
+	//Osd_LoadCompressColorFont( MainIcon4C_PPMode, t4ColorPPMode, NULL, MainIcon4C_PPMode_Size);
 
 	Osd_LoadColorPalette256(); // load osd color
 	#else //#if LiteMAX_OSD_TEST

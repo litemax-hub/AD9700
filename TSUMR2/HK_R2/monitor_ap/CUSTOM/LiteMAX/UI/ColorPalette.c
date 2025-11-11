@@ -57,9 +57,9 @@ ColorPaletteType code tOSDColorPalette256[]=
   {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 3
   // 1
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // P // Mediatek Gold
-  {NULL, NULL, NULL,    CP_COLORKEY_F},           // 5
-  {NULL, NULL, NULL,    CP_COLORKEY_F},           // 6
-  {NULL, NULL, NULL,    CP_COLORKEY_F},           // 7
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F},           // 5
+  {0x00, 0xFF, 0x00,	CP_COLORKEY_F}, 		  // 6
+  {0x00, 0x00, 0xFF,	CP_COLORKEY_F}, 		  // 7
   // 2
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // 8
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // 9

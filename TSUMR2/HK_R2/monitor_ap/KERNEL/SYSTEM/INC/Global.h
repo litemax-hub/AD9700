@@ -218,6 +218,10 @@ extern xdata BYTE OsdFontColor;
 #define CPC_Red         0x02
 #define CPC_Gray        0x03
 #define CPC_MTK_Gold    0x04
+#define CPC_Yellow      0x05
+#define CPC_Green       0x06
+#define CPC_Blue        0x07
+
 #define CPC_SmallLogo_4C        0x10
 
 #define LayerXSize      18
@@ -242,7 +246,7 @@ extern xdata BYTE OsdFontColor;
 #define BottomLine_2C       (MonoFontStart+0x05)
 #define GaugeSelect_2C      (MonoFontStart+0x06)
 #define GaugeNormal_2C      (MonoFontStart+0x07)
-#define Mark_2C             (MonoFontStart+0x08)
+//#define Mark_2C             (MonoFontStart+0x08)
 
 #define CursorFontStart     (Mark_2C+0x01)
 #define CursorLT_2C     (CursorFontStart+0x00)
@@ -267,7 +271,8 @@ extern xdata BYTE OsdFontColor;
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 #define COMMON_FONT_START               0x00
-#define NumberFontStart					(COMMON_FONT_START+0x02) // 0 ~ 9
+#define NumberFontStart					(COMMON_FONT_START+0x02) // 0x02 ~ 0x09
+#define Mark_2C             			(COMMON_FONT_START+0x16) // 0x16
 #define	GaugeFontStart					(COMMON_FONT_START+0x17) // 0x17 ~ 0x1F
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -320,26 +325,32 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C_1_BrightnessSub_Size    6*6
 #define MainIcon4C_2_AudioSub              (MainIcon4C_1_BrightnessSub+(MainIcon4C_1_BrightnessSub_Size*2))
 #define MainIcon4C_2_AudioSub_Size         2*6
+#if 1
+#define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
+#define MainIcon4C_3_ColorSub_Size         8*6
+#else
 #define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
 #define MainIcon4C_3_ColorSub_Size         4*6
+#endif
 
 #define LuminanceIconStar  				   (MainIcon4C_0_MainMenuIcon)
 #define SignalIconStar  				   (MainIcon4C_0_MainMenuIcon+0x0C)
 #define SoundIconStar  					   (MainIcon4C_0_MainMenuIcon+0x18)
 #define ColorIconStar  					   (MainIcon4C_0_MainMenuIcon+0x24)
-#define PPModeIconStar  				   (MainIcon4C_0_MainMenuIcon+0x30)
+#define ImageIconStar  				   	   (MainIcon4C_0_MainMenuIcon+0x30)
 #define OtherIconStar  				       (MainIcon4C_0_MainMenuIcon+0x3C)
 #define ExitIconStar  				       (MainIcon4C_0_MainMenuIcon+0x48)
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping between 0x300 ~ 0xxx - 4Color Icon
 ///////////////////////////////////////////////////////////////////////////////////////
-#if 0 // NOUSED
-#define MainIcon4C_4_ImageSub              _4ColorFontStart //(MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
+#if 1
+#define MainIcon4C_4_ImageSub              (MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
 #define MainIcon4C_4_ImageSub_Size         3*6
-#endif
+#else
 #define MainIcon4C_4_ImageRotate           (MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
 #define MainIcon4C_4_ImageRotate_Size      4*6
-#define MainIcon4C_5_OtherSub              (MainIcon4C_4_ImageRotate+(MainIcon4C_4_ImageRotate_Size*2))
+#endif
+#define MainIcon4C_5_OtherSub              (MainIcon4C_4_ImageSub+(MainIcon4C_4_ImageSub_Size*2))
 #define MainIcon4C_5_OtherSub_Size         6*6
 #if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
 #define MainIcon4C_PowerKeyLock            (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
@@ -347,8 +358,8 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C_LoadDefaultSub          (MainIcon4C_PowerKeyLock+(MainIcon4C_PowerKeyLock_Size*2))
 #define MainIcon4C_LoadDefaultSub_Size     2*6
 #endif
-#define MainIcon4C_PPMode                  (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
-#define MainIcon4C_PPMode_Size             9*6
+//#define MainIcon4C_PPMode                  (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
+//#define MainIcon4C_PPMode_Size             9*6
 
 #else
 #define _4ColorFontStart    0x180

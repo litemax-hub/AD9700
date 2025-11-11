@@ -81,7 +81,7 @@ const BYTE *ExtColorSettingsText( void )
 }
 const BYTE *ExitText( void )
 {
-    return 0;
+    return strExitM103[UserPrefLanguage];
 }
 const BYTE *ReturnText( void )
 {
