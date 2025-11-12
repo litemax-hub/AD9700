@@ -234,8 +234,14 @@ extern xdata BYTE OsdFontColor;
 #define HotLayerXPos      2
 #define HotLayerYPos      4
 
-
+#if LiteMAX_OSD_TEST //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+#define GaugeXPos           7
+#define GaugeLens           18
+#define RGBGaugeXPos        5
+#define RGBGaugeLens        20
+#else
 #define GaugeXPos           (Layer3XPos+0)
+#endif
 #define NumberXPos          (GaugeXPos+12)
 
 #define MonoFontStart       0x00
@@ -274,7 +280,15 @@ extern xdata BYTE OsdFontColor;
 #define NumberFontStart					(COMMON_FONT_START+0x02) // 0x02 ~ 0x09
 #define Mark_2C             			(COMMON_FONT_START+0x16) // 0x16
 #define	GaugeFontStart					(COMMON_FONT_START+0x17) // 0x17 ~ 0x1F
-
+	#define GaugeFont_EdgeL					(GaugeFontStart+0x00)
+	#define GaugeFont_EdgeR  				(GaugeFontStart+0x01)
+	#define GaugeFont0_6    				(GaugeFontStart+0x02)
+	#define GaugeFont1_6    				(GaugeFontStart+0x03)
+	#define GaugeFont2_6    				(GaugeFontStart+0x04)
+	#define GaugeFont3_6    				(GaugeFontStart+0x05)
+	#define GaugeFont4_6    				(GaugeFontStart+0x06)
+	#define GaugeFont5_6    				(GaugeFontStart+0x07)
+	#define GaugeFont6_6    				(GaugeFontStart+0x08)
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping under 0x100 - mono
 ///////////////////////////////////////////////////////////////////////////////////////

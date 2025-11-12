@@ -24,13 +24,13 @@
 #include "msOSD.h"
 
 #include "Common.h"
-
+//for Factory
 ColorPaletteType code tOSDColorPalette0[] =
 {
 #if CHIP_ID>=CHIP_TSUMV
     {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},  // Color_Tran
 #endif
-    {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},           //  // Palette 0 // White
+    {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},  // Palette 0 // White
     {0xFF, 0x00, 0x00,    CP_COLORKEY_F},  // Palette 1 // Red
     {0x00, 0x80, 0xff,    CP_COLORKEY_F},  // Palette 2 //lightblue Green
 #if (DisplayLogo==CHEMEILOGO)

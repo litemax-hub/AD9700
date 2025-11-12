@@ -550,6 +550,58 @@ void Osd_Draw4Num( BYTE xPos, BYTE yPos, int value )
     DrawNum( xPos, yPos, 4, value );
 }
 //===================================================================================
+#if LiteMAX_OSD_TEST
+void Osd_DrawGuage( BYTE ucX, BYTE ucY, BYTE ucLength, BYTE ucValue )
+{
+
+    BYTE pLead;
+    BYTE ucLoop;
+
+    Osd_DrawCharDirect( ucX , ucY, GaugeFont_EdgeL );
+    Osd_DrawCharDirect( ucX + ucLength - 1, ucY, GaugeFont_EdgeR );
+    ucLength -= 2;
+
+    // bar length should small than 42 ( ucLength < 43 )
+    if( MenuPageIndex == FactoryMenu )
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 255;   // resver 0.1 // fill bar ucLength 10 times
+    else if( MenuPageIndex == SharpnessMenu)
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 8;   // resver 0.1 // fill bar ucLength 10 times
+#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+  #if 0//BrightnessLightSensorVR
+    else if( MenuPageIndex == BrightnessMenu || MenuPageIndex == HotKeyBrightnessMenu)
+    {
+        if(UserprefLITEMAX_LIGHTSENSOR == LITEMAX_LIGHTSENSOR_OSD)
+            pLead = ( (WORD) ucValue * ucLength * 6 ) / 100;
+        else
+            pLead = ( (WORD) ucValue * ucLength * 6 ) / (LS_Step-1);
+    }
+  #endif
+    else if( MenuPageIndex == OSDTimeMenu)
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 16;
+//#elif(LiteMAX_OSDtype==LiteMAX_OSD2)
+//    else if( MenuPageIndex == BrightnessMenu)
+//        pLead = ( (WORD) ucValue * ucLength * 6 ) / 99;
+#else
+    else if( MenuPageIndex == BrightnessMenu || MenuPageIndex == HotKeyBrightnessMenu)
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 99;
+#endif
+    else
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 100;   // resver 0.1 // fill bar ucLength 10 times
+    if( ucValue != 0 && pLead == 0 )
+        pLead++;
+
+    for(ucLoop=1; ucLoop<=(pLead/6); ucLoop++)
+        Osd_DrawCharDirect(ucX+ucLoop, ucY, GaugeFont6_6);
+
+    if(pLead < ucLength*6)
+        Osd_DrawCharDirect(ucX+ucLoop, ucY, GaugeFont0_6+( pLead%6) );
+
+    for(ucLoop=(pLead/6+2); ucLoop<=ucLength; ucLoop++)
+        Osd_DrawCharDirect(ucX + ucLoop, ucY, GaugeFont0_6);
+}
+
+#else
+
 #if !Multi_Gauge
 #define GuageFontStart  ColorGuageFontStar  //0x56
 #define GuageFont0_4    GuageFontStart
@@ -590,6 +642,9 @@ void Osd_DrawGuage( BYTE ucX, BYTE ucY, BYTE ucLength, BYTE ucValue )
 
 }
 #endif
+
+#endif
+
 void Osd_Show( void )
 {
     mStar_WaitForDataBlanking();
