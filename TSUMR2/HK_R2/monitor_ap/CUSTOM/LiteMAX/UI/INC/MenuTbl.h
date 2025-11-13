@@ -1510,6 +1510,141 @@ MenuItemType code BriteContMenuItems[] =
 
 };
 
+#if LiteMAX_OSD_TEST
+//============ Red MenuItem==============
+NumberType code UserRedNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, RGBGaugeXPos+RGBGaugeLens+1, UserRed_Y_Start, GetRedColorValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawUserRedNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     UserRedNumber}
+};
+GaugeType code UserRedGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, RGBGaugeXPos, UserRed_Y_Start, GetRedColorValue},
+};
+DrawGuageType code DrawUserRedGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Red,  CPC_Black,    RGBGaugeLens,  UserRedGuage}
+};
+//============ Green MenuItem==============
+NumberType code UserGreenNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, RGBGaugeXPos+RGBGaugeLens+1, UserGreen_Y_Start, GetGreenColorValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawUserGreenNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     UserGreenNumber}
+};
+GaugeType code UserGreenGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, RGBGaugeXPos, UserGreen_Y_Start, GetGreenColorValue},
+};
+DrawGuageType code DrawUserGreenGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Green,  CPC_Black,    RGBGaugeLens,  UserGreenGuage}
+};
+//============ Blue MenuItem==============
+NumberType code UserBlueNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, RGBGaugeXPos+RGBGaugeLens+1, UserBlue_Y_Start, GetBlueColorValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrewUserBlueNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     UserBlueNumber}
+};
+GaugeType code UserBlueGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, RGBGaugeXPos, UserBlue_Y_Start, GetBlueColorValue},
+};
+DrawGuageType code DrawUserBlueGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Blue,  CPC_Black,    RGBGaugeLens,  UserBlueGuage}
+};
+
+//============ User Color MenuItem==============
+MenuItemType code ColorSettingsMenuItems[] =
+{
+    // 0 red
+    {
+        8, 2, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        ColorTempMenu,// NextMenuPage;
+        DWI_Text, // DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustRedColor,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawUserRedNumber, // DrawNumberType
+            DrawUserRedGuage, // DrawGuageType
+            NULL,//DrawColorSettingsMenuStatusRatioGroup, // DrawRadioGroupType
+        },
+        NULL, // Font
+        mibSelectable // Flags
+    },
+    // 1 green
+    {
+        8, 4, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        ColorTempMenu,// NextMenuPage;
+        DWI_Text, // DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustGreenColor,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawUserGreenNumber, // DrawNumberType
+            DrawUserGreenGuage, // DrawGuageType
+            NULL,//DrawColorSettingsMenuStatusRatioGroup, // DrawRadioGroupType
+        },
+        NULL, // Font
+        mibSelectable // Flags
+    },
+    // 2 blue
+    {
+        8, 6, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        ColorTempMenu,// NextMenuPage;
+        DWI_Text, // DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustBlueColor,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrewUserBlueNumber, // DrawNumberType
+            DrawUserBlueGuage, // DrawGuageType
+            NULL,//DrawColorSettingsMenuStatusRatioGroup, // DrawRadioGroupType
+        },
+        NULL, // Font
+        mibSelectable // Flags
+    },
+};
+
+#else
+
 //---------------------------------------------------------
 RadioTextType code ColorSettingsMenuStatusRatioText[] =
 {
@@ -1747,7 +1882,7 @@ MenuItemType code ColorSettingsMenuItems[] =
     },
 };
 
-
+#endif
 //---------------------------------------------------------
 RadioTextType code ExtColorSettingsMenuStatusRatioText[] =
 {
@@ -2895,6 +3030,52 @@ MenuItemType code DisplayLogoMenuItems[] =
 
 //---------------------------------------------------------------
 //============ Contrast MenuItem==============
+#if LiteMAX_OSD_TEST 
+NumberType code ContrastNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetContrastValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawContrastNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     ContrastNumber}
+};
+GaugeType code ContrastGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetContrastValue},
+};
+DrawGuageType code DrawContrastGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  ContrastGuage}
+};
+MenuItemType code ContrastMenuItems[] =
+{
+    // 0 Contrast
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        LuminanceMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustContrast,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawContrastNumber,// DrawNumberType
+            DrawContrastGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+#else
 //--------------------ContrastNumber--------------------------
 NumberType code ContrastNumber[] =
 {
@@ -2942,7 +3123,7 @@ MenuItemType code ContrastMenuItems[] =
         mibSelectable // Flags
     },
 };
-
+#endif
 //============ Brightness MenuItem==============
 #if LiteMAX_OSD_TEST
 NumberType code BrightnessNumber[] =
@@ -3052,8 +3233,657 @@ MenuItemType code BrightnessMenuItems[] =
 };
 #endif
 
+#if LiteMAX_OSD_TEST
+//============ Load Default MenuItem==============
+MenuItemType code LoadDefaultMenuItems[] =
+{
+    // 0 YES
+    {
+        13, 3, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        RootMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        LoadDefaultText, // DisplayText;
+        NaviExec2KeyEvent,
+        {
+            NULL, // AdjustFunction
+            ResetAllSetting, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 1 NO
+    {
+        13, 3, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        MainMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        LoadDefaultText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
 
+//============ SoundAdjust MenuItem==============
+#if AudioFunc
+NumberType code SoundAdjustNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetVolumeValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawSoundAdjustNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     SoundAdjustNumber}
+};
+GaugeType code SoundAdjustGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetVolumeValue},
+};
+DrawGuageType code DrawSoundAdjustGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  SoundAdjustGuage}
+};
+#endif
+MenuItemType code SoundAdjustMenuItems[] =
+{
+    // 0 
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        SoundMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+#if AudioFunc // jason 20200507
+        {
+            AdjustVolume,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawSoundAdjustNumber,// DrawNumberType
+            DrawSoundAdjustGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+#else
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+#endif
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
 
+MenuItemType code OSDControlMenuItems[] =
+{
+    // 0 OSD time
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDTimeMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 1 OSD HPos
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDHPosMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 2 OSD VPos
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDVPosMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+#if ENABLE_OSD_ROTATION
+    // 3 OSD Rotation
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDRotationMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+#endif
+    // 4 Exit
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ToolMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+//============ ImageClock MenuItem==============
+NumberType code ImageClockNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetClockValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawImageClockNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     ImageClockNumber}
+};
+GaugeType code ImageClockGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetClockValue},
+};
+DrawGuageType code DrawImageClockGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  ImageClockGuage}
+};
+MenuItemType code ImageClockMenuItems[] =
+{
+    // 0
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ImageMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustClock,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawImageClockNumber,// DrawNumberType
+            DrawImageClockGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+//============ ImagePhase MenuItem==============
+NumberType code ImagePhaseNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetFocusValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawImagePhaseNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     ImagePhaseNumber}
+};
+GaugeType code ImagePhaseGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetFocusValue},
+};
+DrawGuageType code DrawImagePhaseGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  ImagePhaseGuage}
+};
+MenuItemType code ImagePhaseMenuItems[] =
+{
+    // 0
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ImageMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustFocus,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawImagePhaseNumber,// DrawNumberType
+            DrawImagePhaseGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+//============ ImageHPos MenuItem==============
+NumberType code ImageHPosNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetHPositionValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawImageHPosNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     ImageHPosNumber}
+};
+GaugeType code ImageHPosGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetHPositionValue},
+};
+DrawGuageType code DrawImageHPosGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  ImageHPosGuage}
+};
+MenuItemType code ImageHPosMenuItems[] =
+{
+    // 0
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ImageMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustHPosition,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawImageHPosNumber,// DrawNumberType
+            DrawImageHPosGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+//============ ImageVPos MenuItem==============
+NumberType code ImageVPosNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetVPositionValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawImageVPosNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     ImageVPosNumber}
+};
+GaugeType code ImageVPosGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetVPositionValue},
+};
+DrawGuageType code DrawImageVPosGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  ImageVPosGuage}
+};
+MenuItemType code ImageVPosMenuItems[] =
+{
+    // 0
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ImageMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustVPosition,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawImageVPosNumber,// DrawNumberType
+            DrawImageVPosGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+//============ OSDTime MenuItem==============
+NumberType code OSDTimeNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetOSDTime100Value},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawOSDTimeNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     OSDTimeNumber}
+};
+GaugeType code OSDTimeGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetOSDTime100Value},
+};
+DrawGuageType code DrawOSDTimeGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  OSDTimeGuage}
+};
+MenuItemType code OSDTimeMenuItems[] =
+{
+    // 0
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDControlMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustOSDTime,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawOSDTimeNumber,// DrawNumberType
+            DrawOSDTimeGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+//============ OSDHPos MenuItem==============
+NumberType code OSDHPosNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetOSDHPositionValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawOSDHPosNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     OSDHPosNumber}
+};
+GaugeType code OSDHPosGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetOSDHPositionValue},
+};
+DrawGuageType code DrawOSDHPosGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  OSDHPosGuage}
+};
+MenuItemType code OSDHPosMenuItems[] =
+{
+    // 0
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDControlMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustOSDHPosition,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawOSDHPosNumber,// DrawNumberType
+            DrawOSDHPosGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+//============ OSDVPos MenuItem==============
+NumberType code OSDVPosNumber[] =
+{
+    // Flags,   XPos,   YPos,   GetValue
+    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetOSDVPositionValue},
+};//GaugeXPos+GaugeLens-5
+DrawNumberType code DrawOSDVPosNumber[] =
+{
+    // ForeColor, BackColor,  GetValue
+    {CPC_White, CPC_Black,     OSDVPosNumber}
+};
+GaugeType code OSDVPosGuage[] =
+{
+    // Flags, ForeColor,    BackColor,  Length,     GetValue
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetOSDVPositionValue},
+};
+DrawGuageType code DrawOSDVPosGuage[] =
+{
+    //  ForeColor,  BackColor,  Length,,    GetValue
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  OSDVPosGuage}
+};
+MenuItemType code OSDVPosMenuItems[] =
+{
+    // 0
+    {
+        NULL, NULL, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDControlMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
+        AdjusterKeyEvent,
+        {
+            AdjustOSDVPosition,// AdjustFunction
+            NULL,// ExecFunction
+        },
+        {
+            DrawOSDVPosNumber,// DrawNumberType
+            DrawOSDVPosGuage,// DrawGuageType
+            NULL,// DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+#if ENABLE_OSD_ROTATION
+MenuItemType code OSDRotationMenuItems[] =
+{
+    // 0 OSD 0
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDRotationMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviExecKeyEvent,
+        {
+            NULL, // AdjustFunction
+            SetOSDRotateMode, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 1 OSD 90
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDRotationMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviExecKeyEvent,
+        {
+            NULL, // AdjustFunction
+            SetOSDRotateMode, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 2 OSD 180
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDRotationMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviExecKeyEvent,
+        {
+            NULL, // AdjustFunction
+            SetOSDRotateMode, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 3 OSD 270
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDRotationMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviExecKeyEvent,
+        {
+            NULL, // AdjustFunction
+            SetOSDRotateMode, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 4 Exit
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        OSDControlMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//C6500KText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+#endif
+#endif
 
 MenuItemType code GammaMenuItems[] =
 {
@@ -5785,6 +6615,97 @@ MenuItemType code ColorModeMenuItems[] =
     },
 };
 
+#if LiteMAX_OSD_TEST
+//============ ColorTemp MenuItem==============
+MenuItemType code ColorTempMenuItems[] =
+{
+    // 0 CTEMP_USER
+    {
+        NULL,NULL,//14, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ColorSettingsMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL, // DisplayText;
+        NaviExec2KeyEvent,
+        {
+            NULL, // AdjustFunction
+            OSD_SetColorTemp, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 1 6500K
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ColorTempMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL, // DisplayText;
+        NaviExecKeyEvent,
+        {
+            NULL, // AdjustFunction
+            OSD_SetColorTemp, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 2 9300K
+    {
+        NULL,NULL,//6, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ColorTempMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL,//DefaultText, // DisplayText;
+        NaviExecKeyEvent,
+        {
+            NULL, // AdjustFunction
+            OSD_SetColorTemp, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 3 Return
+    {
+        NULL,NULL,//24, 5, // XPos, YPos;
+        NULL, NULL, // ForeColor, BackColor;
+        NULL, NULL, // SelForeColor, SelBackColor;
+        ColorMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        NULL, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL  // DrawMenuRadioGroup,
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+
+#else
 MenuItemType code ColorTempMenuItems[] =
 {
     // 0 CTEMP_Cool1
@@ -5895,6 +6816,7 @@ MenuItemType code ColorTempMenuItems[] =
     },
 #endif
 };
+#endif
 
 MenuItemType code ColorFormatMenuItems[] =
 {
@@ -8214,6 +9136,18 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay  //   Flags;
     },
+    #if LiteMAX_OSD_TEST
+	// ColorSettingsMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        ColorTempMenu,// PrevMenuPage;
+        ColorSettingsMenuItems, // MenuItems;
+        sizeof( ColorSettingsMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay  //   Flags;
+    },
+	#else
     // ColorSettingsMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -8224,6 +9158,7 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay  //   Flags;
     },
+    #endif
     // ExtColorSettingsMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -8274,9 +9209,6 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay  //   Flags;
     },
-
-
-
     // ContrastMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -8566,6 +9498,18 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay //   Flags;
     },
+    #if LiteMAX_OSD_TEST
+	// ColorTempMenu,
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        ColorMenu,// PrevMenuPage;
+        ColorTempMenuItems, // MenuItems;
+        sizeof( ColorTempMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+	#else
     // ColorTempMenu,
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -8576,6 +9520,7 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay //   Flags;
     },
+    #endif
     #if ENABLE_DLC
     // DLCMenu
     {
@@ -9247,6 +10192,120 @@ MenuPageType code tblMenus[] =
         NULL, // Fonts
         mpbStay | mpbCenter | mpbLogoFrame //   Flags;
     },
+    #if LiteMAX_OSD_TEST
+    // SoundAdjustMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        SoundMenu,// PrevMenuPage;
+        SoundAdjustMenuItems, // MenuItems;
+        sizeof( SoundAdjustMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // ImageClockMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        ImageMenu,// PrevMenuPage;
+        ImageClockMenuItems, // MenuItems;
+        sizeof( ImageClockMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // ImagePhaseMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        ImageMenu,// PrevMenuPage;
+        ImagePhaseMenuItems, // MenuItems;
+        sizeof( ImagePhaseMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // ImageHPosMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        ImageMenu,// PrevMenuPage;
+        ImageHPosMenuItems, // MenuItems;
+        sizeof( ImageHPosMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // ImageVPosMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        ImageMenu,// PrevMenuPage;
+        ImageVPosMenuItems, // MenuItems;
+        sizeof( ImageVPosMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // OSDControlMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        ToolMenu,// PrevMenuPage;
+        OSDControlMenuItems, // MenuItems;
+        sizeof( OSDControlMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // OSDTimeMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        OSDControlMenu,// PrevMenuPage;
+        OSDTimeMenuItems, // MenuItems;
+        sizeof( OSDTimeMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // OSDHPosMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        OSDControlMenu,// PrevMenuPage;
+        OSDHPosMenuItems, // MenuItems;
+        sizeof( OSDHPosMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+    // OSDVPosMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        OSDControlMenu,// PrevMenuPage;
+        OSDVPosMenuItems, // MenuItems;
+        sizeof( OSDVPosMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+#if ENABLE_OSD_ROTATION
+    // OSDRotationMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        OSDControlMenu,// PrevMenuPage;
+        OSDRotationMenuItems, // MenuItems;
+        sizeof( OSDRotationMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay //   Flags;
+    },
+#endif
+	// DefaultMenu
+    {
+        MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
+        MainMenu,// PrevMenuPage;
+        LoadDefaultMenuItems, // MenuItems;
+        sizeof( LoadDefaultMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
+        NULL, // ExecFunction;
+        NULL, // // Fonts
+        mpbStay  //   Flags;
+    },
+    #endif
 };
 
 

@@ -252,20 +252,22 @@ extern xdata BYTE OsdFontColor;
 #define BottomLine_2C       (MonoFontStart+0x05)
 #define GaugeSelect_2C      (MonoFontStart+0x06)
 #define GaugeNormal_2C      (MonoFontStart+0x07)
-//#define Mark_2C             (MonoFontStart+0x08)
+#if MTK_OSD_UI
+#define Mark_2C             (MonoFontStart+0x08)
+#endif
 
 #define CursorFontStart     (Mark_2C+0x01)
-#define CursorLT_2C     (CursorFontStart+0x00)
-#define CursorTop_2C    (CursorFontStart+0x01)
-#define CursorRT_2C     (CursorFontStart+0x02)
-#define CursorLeft_2C   (CursorFontStart+0x03)
-#define CursorRight_2C  (CursorFontStart+0x04)
-#define CursorLD_2C     (CursorFontStart+0x05)
-#define CursorDown_2C   (CursorFontStart+0x06)
-#define CursorRD_2C     (CursorFontStart+0x07)
+#define CursorLT_2C     	(CursorFontStart+0x00)
+#define CursorTop_2C    	(CursorFontStart+0x01)
+#define CursorRT_2C     	(CursorFontStart+0x02)
+#define CursorLeft_2C   	(CursorFontStart+0x03)
+#define CursorRight_2C  	(CursorFontStart+0x04)
+#define CursorLD_2C     	(CursorFontStart+0x05)
+#define CursorDown_2C   	(CursorFontStart+0x06)
+#define CursorRD_2C     	(CursorFontStart+0x07)
 
-#if !LiteMAX_OSD_TEST
-#define NumberFontStart (CursorRD_2C+0x01)
+#if MTK_OSD_UI
+#define NumberFontStart 	(CursorRD_2C+0x01)
 #endif
 
 #define PropFontAddr1       0x20

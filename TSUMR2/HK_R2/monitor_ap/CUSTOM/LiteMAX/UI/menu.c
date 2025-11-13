@@ -964,13 +964,24 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 }
                 Delay1ms( 300 );
                 break;
+			#if LiteMAX_OSD_TEST
+			case MIA_GotoNextExec:
+                if( CurrentMenuItemFunc.ExecFunction )
+                {
+                    processEvent = CurrentMenuItemFunc.ExecFunction();
+                    processEvent = FALSE;
+                }
+			#endif
             case MIA_GotoNext:
             case MIA_GotoPrev:
                 //printMsg(">>>>>>>>>>>>>>>MIA_GotoNext");
                 PrevMenuPageIndex = MenuPageIndex;
                 PrevMenuItemIndex = MenuItemIndex;
-                MenuPageIndex = ( menuAction == MIA_GotoNext ) ? ( NextMenuPage ) : ( PrevMenuPage );
-
+				#if LiteMAX_OSD_TEST
+                MenuPageIndex = ( menuAction == MIA_GotoNext || menuAction == MIA_GotoNextExec) ? ( NextMenuPage ) : ( PrevMenuPage );
+				#else
+				MenuPageIndex = ( menuAction == MIA_GotoNext ) ? ( NextMenuPage ) : ( PrevMenuPage );
+				#endif
                 if( PrevMenuPageIndex == MainMenu && MenuPageIndex == RootMenu )
                 {
                     if( !FactoryModeFlag )
@@ -1699,6 +1710,9 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				else if(itemIndex == MAIN_SIGNAL_ITEM)
 					OsdFontColor=FOUR_COLOR(6);
 				else if(itemIndex == MAIN_IMAGE_ITEM)
+					if (!CURRENT_INPUT_IS_VGA())
+                    OsdFontColor = FOUR_COLOR(15);
+					else
 					OsdFontColor=FOUR_COLOR(6);
 				else if(itemIndex == MAIN_OTHER_ITEM)
 					OsdFontColor=FOUR_COLOR(6);
@@ -1766,12 +1780,18 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
             }
 			else if(MenuItemIndex == COLOR_SUB_ITEM)
             {
-                OsdFontColor=FOUR_COLOR(8);
-                DrawOsdIcon( 5, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+3*(6*2));
-				OsdFontColor=FOUR_COLOR(6);
-				DrawOsdIcon(11, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+6*(6*2));
-				DrawOsdIcon(17, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+7*(6*2));
+            	OsdFontColor=FOUR_COLOR(6);
 				DrawOsdIcon(23, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+MAIN_EXIT_ITEM*(6*2));
+				if (!CURRENT_INPUT_IS_VGA())
+                    OsdFontColor = FOUR_COLOR(15);
+				DrawOsdIcon( 5, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+5*(6*2));
+				OsdFontColor = FOUR_COLOR(8);
+            	#if 0//MaxRGBPanel
+                DrawOsdIcon(11, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+4*(6*2));
+            	#else
+                DrawOsdIcon(11, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+1*(6*2));
+            	#endif
+                DrawOsdIcon(17, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+2*(6*2));
             }
 			else if(MenuItemIndex == IMAGE_SUB_ITEM)
             {
@@ -1870,29 +1890,33 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
         {
             if(MenuItemIndex == itemIndex)
             {
-                if((itemIndex==1)||(itemIndex==2)||(itemIndex==3))
+                if((itemIndex==0)||(itemIndex==3))
                     OsdFontColor = FOUR_COLOR(10);
                 else
                     OsdFontColor = FOUR_COLOR(12);
             }
             else
             {
-                if((itemIndex==1)||(itemIndex==2)||(itemIndex==3))
+                if((itemIndex==0)||(itemIndex==3))
                     OsdFontColor = FOUR_COLOR(6);
                 else
                     OsdFontColor = FOUR_COLOR(8);
             }
-        #if 0//EnableIconDisableColor&&(EnableAutoColorIconDisableColor == 0)
+        #if 1//EnableIconDisableColor&&(EnableAutoColorIconDisableColor == 0)
             if ((itemIndex==0)&&(!CURRENT_INPUT_IS_VGA()))
-                OsdFontColor = 0x38;
+                OsdFontColor = FOUR_COLOR(15);
         #endif
 
-            if(itemIndex == 0)
-                DrawOsdIcon( 5, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+3*(6*2));
+			if(itemIndex == 0)
+                DrawOsdIcon( 5, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+5*(6*2));
             else if(itemIndex == 1)
-                DrawOsdIcon(11, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+6*(6*2));
+        		#if 0//MaxRGBPanel
+                DrawOsdIcon(11, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+4*(6*2));
+        		#else
+                DrawOsdIcon(11, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+1*(6*2));
+        		#endif
             else if(itemIndex == 2)
-                DrawOsdIcon(17, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+7*(6*2));
+                DrawOsdIcon(17, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+2*(6*2));
             else if(itemIndex == 3)
                 DrawOsdIcon(23, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+MAIN_EXIT_ITEM*(6*2));
         }
@@ -1990,7 +2014,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
         }
         else if( MenuPageIndex == SharpnessMenu )
         {
-            OsdFontColor = 0x20;
+            OsdFontColor = FOUR_COLOR(9);
             DrawOsdIcon(14, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+3*(6*2));
         }
         else if( MenuPageIndex == OSDControlMenu )
@@ -2003,17 +2027,17 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
             {
                     OsdFontColor = FOUR_COLOR(6);
             }
-#if 0//ENABLE_OSD_ROTATION
+#if ENABLE_OSD_ROTATION
             if(itemIndex == 0)
-                DrawOsdIcon( 4, SubMenuIcon_Y_Start, MainIcon4C_5_ToolSub+2*(6*2));
+                DrawOsdIcon( 4, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+2*(6*2));
             else if(itemIndex == 1)
-                DrawOsdIcon( 9, SubMenuIcon_Y_Start, MainIcon4C_5_ToolSub+3*(6*2));
+                DrawOsdIcon( 9, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+3*(6*2));
             else if(itemIndex == 2)
-                DrawOsdIcon(14, SubMenuIcon_Y_Start, MainIcon4C_5_ToolSub+4*(6*2));
+                DrawOsdIcon(14, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+4*(6*2));
             else if(itemIndex == 3)
-                DrawOsdIcon(19, SubMenuIcon_Y_Start, MainIcon4C_5_ToolSub+5*(6*2));
+                DrawOsdIcon(19, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+5*(6*2));
             else if(itemIndex == 4)
-                DrawOsdIcon(24, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenu6Icon+5*(6*2));
+                DrawOsdIcon(24, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+MAIN_EXIT_ITEM*(6*2));
 #else
             if(itemIndex == 0)
                 DrawOsdIcon( 5, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+3*(6*2));
@@ -2025,7 +2049,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
                 DrawOsdIcon(23, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+MAIN_EXIT_ITEM*(6*2));
 #endif
         }
-#if 0//ENABLE_OSD_ROTATION
+#if ENABLE_OSD_ROTATION
         else if( MenuPageIndex == OSDRotationMenu )
         {
             if(MenuItemIndex == itemIndex)
@@ -2045,7 +2069,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
             else if(itemIndex == 3)
                 DrawOsdIcon(19, SubMenuIcon_Y_Start, MainIcon4C_OSDRotate+3*(6*2));
             else if(itemIndex == 4)
-                DrawOsdIcon(24, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenu6Icon+5*(6*2));
+                DrawOsdIcon(24, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+MAIN_EXIT_ITEM*(6*2));
         }
 #endif
         else if( MenuPageIndex == OSDTimeMenu )

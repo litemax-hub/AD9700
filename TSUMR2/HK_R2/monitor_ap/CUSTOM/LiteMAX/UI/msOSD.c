@@ -284,8 +284,8 @@ void Osd_SetPosition( BYTE xPos, BYTE yPos )
         DB_W2B ( ( OSD_WIN1 << 5 ) + OSD2_08, posValue + ( WORD ) ((OsdWindowWidth) * 12) );
     }
 
+	u16Hight = g_sPnlInfo.sPnlTiming.u16Height ;
 #if (ENABLE_OSD_ROTATION)
-    u16Hight = g_sPnlInfo.sPnlTiming.u16Height ;
     if ( bInvertPosition )
     {
         posValue = ( ( DWORD ) u8yPos * ( u16Hight - ( WORD ) (((OsdWindowWidth)) * 12) ) / 100 );
@@ -692,7 +692,7 @@ void Osd_DrawHex( BYTE xPos, BYTE yPos, WORD value )
 }
 
 #if LiteMAX_OSD_TEST
-void Osd_DynamicLoadFont(BYTE u8Addr, BYTE *pu8FontPtr, WORD u16Num)
+void Osd_DynamicLoadFont( BYTE addr, BYTE *fontPtr, WORD num )
 {
     #if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
     pstPropFontSet1218=tPropFontSetArialNarrow13;
@@ -701,7 +701,7 @@ void Osd_DynamicLoadFont(BYTE u8Addr, BYTE *pu8FontPtr, WORD u16Num)
     #endif
     g_u8PropFontFlags=SPACE1PIXEL;
     g_u8AlignResetIndex=0xFF;
-    LoadPropFonts1218(u8Addr, pu8FontPtr, u16Num, NULL, 0, 0, 0);
+    LoadPropFonts1218(addr, fontPtr, num, NULL, 0, 0, 0);
 }
 #else
 void Osd_DynamicLoadFont( BYTE addr, BYTE *fontPtr, WORD num )

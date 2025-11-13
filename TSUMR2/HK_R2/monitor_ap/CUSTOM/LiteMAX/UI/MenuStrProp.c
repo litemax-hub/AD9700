@@ -47,6 +47,11 @@ const BYTE *DotText( void )
     return strDotM0[UserPrefLanguage];
 }
 
+const BYTE *LoadDefaultText( void )
+{
+    return strLoadDefaultM0[UserPrefLanguage];
+}
+
 const BYTE *BriteContText( void )
 {
     return 0;
@@ -892,7 +897,7 @@ const BYTE *OtherSettingONText( void )
 {
     return strOtherSettingOnM106[UserPrefLanguage];
 }
-#if !LiteMAX_OSD_TEST
+#if MTK_OSD_UI
 const BYTE *ResolutionText( void )
 {
     return strResolutionM107[UserPrefLanguage];
@@ -968,7 +973,7 @@ const BYTE *ColorFormatDisplayStatusText( void )
             return strRGBM107[UserPrefLanguage];
     }
 }
-#if !LiteMAX_OSD_TEST
+#if MTK_OSD_UI
 const BYTE *xText( void )
 {
     return strxM107[UserPrefLanguage];

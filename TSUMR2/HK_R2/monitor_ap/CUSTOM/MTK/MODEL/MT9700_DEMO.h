@@ -505,6 +505,7 @@
 #ifndef	LiteMAX_OSD_TEST
 #define LiteMAX_OSD_TEST		0
 #endif
+#define MTK_OSD_UI				1
 
 #endif
 
