@@ -145,7 +145,7 @@ void LoadFfont( void )
     mStar_LoadCompressedFont( FfontStart, tFontF, 0 ); // load osd fonts
 }
 
-#if LiteMAX_OSD_TEST
+#if 0 //LiteMAX_OSD_TEST
 void InitGradualColor(void)
 {
 	//init MAIN_GD_WIN
@@ -178,9 +178,9 @@ void LoadCommonFont( void )
 {
 	#if LiteMAX_OSD_TEST
 	#if ENABLE_DEBUG
-	printData( "LoadCommonFont", 0);
+	printData( "LoadCommonFont \r\n", 0);
 	#endif
-    InitGradualColor();
+    //InitGradualColor();
 
 	Osd_Write4ColorFontStartAddr( _4ColorFontStart );
 	Osd_Write8ColorFontStartAddr( 0x0FFF );

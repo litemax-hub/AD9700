@@ -283,5 +283,6 @@ extern BYTE *ExitBurninText( void );
 extern BYTE *PixelClockText( void );
 extern BYTE *MHzText( void );
 extern BYTE *DotText( void );
+extern BYTE *LoadDefaultText( void );
 #endif
 //====================================

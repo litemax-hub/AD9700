@@ -84,6 +84,17 @@ MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
     MIA_Power,    // BTN_Power
     MIA_SourceSel, //2006-02-22
 };
+#if LiteMAX_OSD_TEST
+MenuItemActionType code NaviExec2KeyEvent[BTN_EndBTN] =
+{
+    MIA_NextItem,     // BTN_Plus
+    MIA_PrevItem,     // BTN_Minus
+    MIA_GotoNextExec,     // BTN_Menu
+    MIA_GotoPrev,//MIA_Nothing,   // BTN_Exit // 070117
+    MIA_Power,    // BTN_Power
+    MIA_GotoPrev,
+};
+#endif
 #endif
 MenuItemActionType code NaviExecFuncGotoPrevKeyEvent[BTN_EndBTN]=
 { 

@@ -200,6 +200,7 @@ typedef enum
   #if ENABLE_OSD_ROTATION
 	OSDRotationMenu,
   #endif
+  	DefaultMenu,
 #endif
     //  OsdLockMenu,
     // user definition end
@@ -520,6 +521,9 @@ typedef enum
     MIA_DecValue, // decrease value
     MIA_ExecFunc,
     MIA_ExecFunc_And_GotoPrev,   // goto Prev Page
+    #if LiteMAX_OSD_TEST
+    MIA_GotoNextExec, // goto next
+    #endif
     MIA_Auto,
     MIA_Brite,
     MIA_Cont,
