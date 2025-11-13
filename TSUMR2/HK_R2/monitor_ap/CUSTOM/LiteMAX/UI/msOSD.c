@@ -375,12 +375,13 @@ void Osd_DrawPropStr(BYTE u8XPos, BYTE u8YPos, BYTE *pu8Str)
         return;
     if (u8YPos & BIT7)
         IsDrawCode = FALSE;
-
+	#if 0
+	//Center
     if( u8YPos == 2 || u8XPos == 0 )
     {
         u8XPos=( OsdWindowWidth - (*(pu8Str + 1)) ) / 2 + 1;
     }
-
+	#endif
     u8YPos &= 0x7F; //~(BIT7|BIT6);
 #define DISP_CHAR   u8XPos
 #define DISP_PTR    u8YPos
@@ -410,6 +411,75 @@ void Osd_DrawPropStr(BYTE u8XPos, BYTE u8YPos, BYTE *pu8Str)
 #undef DISP_PTR
 
 }
+
+void DrawNum_R( BYTE xPos, BYTE yPos, char len, int value)// R
+{
+ XDATA BYTE cnt=len;
+
+    while( cnt-- )
+        Osd_DrawCharDirect( xPos + cnt, yPos, ( BYTE )0x01 );
+
+    //printData("value=%d",value);
+    if( value == 0 )
+    {
+        Osd_DrawCharDirect( xPos + len - 1, yPos, ( BYTE )( value + NumberFontStart ) );
+    }
+    else
+    {
+        while( value && len )
+        {
+            //printData("num=%d",( value % 10 ) );
+            //printData("xPos=%d",xPos + len -1 );
+            Osd_DrawCharDirect( xPos + ( len-- )-1 , yPos, ( BYTE )(( value % 10 ) + NumberFontStart ) );
+            value /= 10;
+        }
+    }
+}
+
+#if LiteMAX_OSD_TEST
+void DrawNum( BYTE xPos, BYTE yPos, char len, int value)
+{
+    char _minus = 0;
+    XDATA BYTE ucshift = 0;
+    XDATA int ucValue = value;
+    //XDATA BYTE cnt=len;
+    
+    while(ucValue)
+    {
+        ucshift += 1;
+        ucValue /= 10;
+    }
+
+    if( value < 0 )
+    {
+        value = 0 - value;
+        _minus = 1;
+    }
+
+    //printData("xPos=%d",xPos);
+
+    while( len-- )
+        Osd_DrawCharDirect( xPos + len, yPos, ( BYTE )0x01 );
+
+    //printData("value=%d",value);
+    //printData("ucshift=%d",ucshift);
+    if( value == 0 )
+    {
+        Osd_DrawCharDirect( xPos, yPos, ( BYTE )( value + NumberFontStart ) );
+    }
+    else
+    {
+        while( value && ucshift )            // translate integer to string
+        {
+            //printData("num=%d",( value % 10 ) );
+            //printData("xPos=%d",xPos + ucshift);
+            Osd_DrawCharDirect( xPos + (ucshift--) - 1, yPos, ( BYTE )(( value % 10 ) + NumberFontStart ) );
+            value /= 10;
+        }
+    }
+}
+#else
+
 #define Num2ASCII(Num) (Num+3)
 void DrawNum( BYTE xPos, BYTE yPos, char len, int value)
 {
@@ -465,6 +535,7 @@ void DrawNum( BYTE xPos, BYTE yPos, char len, int value)
         Osd_DrawCharDirect( xPos + _minus-ucshift, yPos, ( BYTE )0x01 );
     }
 }
+#endif
 void Osd_DrawNum( BYTE xPos, BYTE yPos, int value )
 {
     DrawNum( xPos, yPos, 3, value );
@@ -479,6 +550,58 @@ void Osd_Draw4Num( BYTE xPos, BYTE yPos, int value )
     DrawNum( xPos, yPos, 4, value );
 }
 //===================================================================================
+#if LiteMAX_OSD_TEST
+void Osd_DrawGuage( BYTE ucX, BYTE ucY, BYTE ucLength, BYTE ucValue )
+{
+
+    BYTE pLead;
+    BYTE ucLoop;
+
+    Osd_DrawCharDirect( ucX , ucY, GaugeFont_EdgeL );
+    Osd_DrawCharDirect( ucX + ucLength - 1, ucY, GaugeFont_EdgeR );
+    ucLength -= 2;
+
+    // bar length should small than 42 ( ucLength < 43 )
+    if( MenuPageIndex == FactoryMenu )
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 255;   // resver 0.1 // fill bar ucLength 10 times
+    else if( MenuPageIndex == SharpnessMenu)
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 8;   // resver 0.1 // fill bar ucLength 10 times
+#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+  #if 0//BrightnessLightSensorVR
+    else if( MenuPageIndex == BrightnessMenu || MenuPageIndex == HotKeyBrightnessMenu)
+    {
+        if(UserprefLITEMAX_LIGHTSENSOR == LITEMAX_LIGHTSENSOR_OSD)
+            pLead = ( (WORD) ucValue * ucLength * 6 ) / 100;
+        else
+            pLead = ( (WORD) ucValue * ucLength * 6 ) / (LS_Step-1);
+    }
+  #endif
+    else if( MenuPageIndex == OSDTimeMenu)
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 16;
+//#elif(LiteMAX_OSDtype==LiteMAX_OSD2)
+//    else if( MenuPageIndex == BrightnessMenu)
+//        pLead = ( (WORD) ucValue * ucLength * 6 ) / 99;
+#else
+    else if( MenuPageIndex == BrightnessMenu || MenuPageIndex == HotKeyBrightnessMenu)
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 99;
+#endif
+    else
+        pLead = ( (WORD) ucValue * ucLength * 6 ) / 100;   // resver 0.1 // fill bar ucLength 10 times
+    if( ucValue != 0 && pLead == 0 )
+        pLead++;
+
+    for(ucLoop=1; ucLoop<=(pLead/6); ucLoop++)
+        Osd_DrawCharDirect(ucX+ucLoop, ucY, GaugeFont6_6);
+
+    if(pLead < ucLength*6)
+        Osd_DrawCharDirect(ucX+ucLoop, ucY, GaugeFont0_6+( pLead%6) );
+
+    for(ucLoop=(pLead/6+2); ucLoop<=ucLength; ucLoop++)
+        Osd_DrawCharDirect(ucX + ucLoop, ucY, GaugeFont0_6);
+}
+
+#else
+
 #if !Multi_Gauge
 #define GuageFontStart  ColorGuageFontStar  //0x56
 #define GuageFont0_4    GuageFontStart
@@ -519,6 +642,9 @@ void Osd_DrawGuage( BYTE ucX, BYTE ucY, BYTE ucLength, BYTE ucValue )
 
 }
 #endif
+
+#endif
+
 void Osd_Show( void )
 {
     mStar_WaitForDataBlanking();

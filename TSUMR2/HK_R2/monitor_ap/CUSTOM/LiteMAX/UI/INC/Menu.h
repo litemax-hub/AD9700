@@ -4,7 +4,7 @@ extern void Menu_OsdHandler( void );
 
 extern Bool ExecuteKeyEvent(MenuItemActionType enMenuAction);
 
-#if LiteMAX_OSD_TEST
+#if 0 //LiteMAX_OSD_TEST
 extern void LoadMainMenuPropFont(void);
 #endif
 

@@ -253,7 +253,11 @@
 
 #define HotExpansion        Enable_Expansion&&!AudioFunc
 
+#if LiteMAX_OSD_TEST
+#define PropFontUseCommonArea           0 // 1
+#else
 #define PropFontUseCommonArea           1
+#endif
 
 #define HDMI_PRETEST                    0
 

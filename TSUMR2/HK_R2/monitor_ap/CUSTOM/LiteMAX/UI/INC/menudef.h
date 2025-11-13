@@ -24,6 +24,14 @@ typedef enum
 
     // user definition from here
     MainMenu,
+    #if 1 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+	LuminanceMenu,
+	SignalMenu,
+	SoundMenu,
+	ColorMenu,
+	ImageMenu,
+	ToolMenu,
+	#endif
     BriteContMenu,
     ColorSettingsMenu,
     ExtColorSettingsMenu,
@@ -164,10 +172,7 @@ typedef enum
     HotKeySourceVolMenu,        //111024 Rick add - A055
 #endif
 #endif
-
-
-
-
+	
     OsdLockMenu,//58
 
     AutoColorMenu,    //59
@@ -177,12 +182,55 @@ typedef enum
     FactoryMenu,//    61
 
     LogoMenu,     //62
-
+	
+#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+  #if 0// jason 20200113  BrightnessLightSensorVR
+	BrightnessTypeMenu,
+  #endif
+	//ContrastMenu,
+	SoundAdjustMenu,
+	ImageClockMenu,
+	ImagePhaseMenu,
+	ImageHPosMenu,
+	ImageVPosMenu,
+	OSDControlMenu,
+	OSDTimeMenu,
+	OSDHPosMenu,
+	OSDVPosMenu,
+  #if ENABLE_OSD_ROTATION
+	OSDRotationMenu,
+  #endif
+#endif
     //  OsdLockMenu,
     // user definition end
     MaxMenu
 } MenuPageIndexType;
 
+#if LiteMAX_OSD_TEST
+typedef enum
+{
+  MAIN_LUMINANCE_ITEM = 0,
+  MAIN_SIGNAL_ITEM,
+  MAIN_SOUND_ITEM,
+  MAIN_COLOR_ITEM,
+  MAIN_IMAGE_ITEM,
+  MAIN_OTHER_ITEM,
+  MAIN_EXIT_ITEM,
+  MAIN_MAX_ITEM
+}MainMenuItemsType;
+typedef enum
+{
+  LUMINANCE_SUB_ITEM = 0,
+  SIGNAL_SUB_ITEM,
+  SOUND_SUB_ITEM,
+  COLOR_SUB_ITEM,
+  IMAGE_SUB_ITEM,
+  OTHER_SUB_ITEM,
+  EXIT_SUB_ITEM,
+  MAX_SUB_ITEM
+}MenuItemSubType;
+
+#else
 typedef enum
 {
   MAIN_LUMINANCE_ITEM,
@@ -196,6 +244,7 @@ typedef enum
   MAIN_EXTRA_ITEM,
   MAIN_MAX_ITEM,
 }MainMenuItemsType;
+#endif
 
 typedef enum
 {

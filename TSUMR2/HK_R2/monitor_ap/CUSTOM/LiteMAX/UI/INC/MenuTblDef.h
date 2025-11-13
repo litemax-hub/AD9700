@@ -9,15 +9,31 @@
 #else //(LiteMAX_OSDtype == LiteMAX_OSD_Standard)
 #define MAIN_MENU_H_SIZE            31
 #define MAIN_MENU_V_SIZE            16
+
+#define MessageMenuHSize			20
+#define MessageMenuVSize       		5
 #endif
 #else //#if LiteMAX_OSD_TEST
 #define MAIN_MENU_H_SIZE			58
 #define MAIN_MENU_V_SIZE       		27//24
-#endif //#if LiteMAX_OSD_TEST
 
 #define MessageMenuHSize			31
 #define MessageMenuVSize       		10
+#endif //#if LiteMAX_OSD_TEST
 
+#if LiteMAX_OSD_TEST
+#define MainMenuIcon_X_Start        2
+#define MainMenuIcon_Y_Start        5
+#define SubMenuIcon_X_Start         2
+#define SubMenuIcon_Y_Start         10
+
+#define SubMenuValue_Y_Start        11
+#define SubMenuBar_Y_Start          13
+#define UserRed_Y_Start             9
+#define UserGreen_Y_Start           11
+#define UserBlue_Y_Start            13
+#define Source_Y_Start              11
+#endif
 //=====================================================================================
 // Key function definition
 MenuItemActionType code InformationEvent[BTN_EndBTN] =
@@ -465,7 +481,7 @@ MenuItemType code PowerOffMenuItems[] =
 MenuItemType code StandbyMenuItems[] =
 {
     {
-        0, 5, // XPos, YPos;
+        0, 2, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;
@@ -490,7 +506,7 @@ MenuItemType code StandbyMenuItems[] =
 MenuItemType code CableNotConnectedMenuItems[] =
 {
     {
-        0, 5, // XPos, YPos;
+        0, 2, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;
@@ -514,7 +530,7 @@ MenuItemType code CableNotConnectedMenuItems[] =
 MenuItemType code UnsupportedModeMenuItems[] =
 {
     {
-        0, 5, // XPos, YPos;
+        0, 2, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;

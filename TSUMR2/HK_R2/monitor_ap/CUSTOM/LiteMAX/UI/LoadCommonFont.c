@@ -20,7 +20,7 @@
 
 #define _JUNO_OSD_
 
-#if LiteMAX_OSD_TEST
+#if 0 //LiteMAX_OSD_TEST
 extern void LoadMainMenuPropFont(void);
 #endif
 
@@ -145,6 +145,7 @@ void LoadFfont( void )
     mStar_LoadCompressedFont( FfontStart, tFontF, 0 ); // load osd fonts
 }
 
+#if LiteMAX_OSD_TEST
 void InitGradualColor(void)
 {
 	//init MAIN_GD_WIN
@@ -171,6 +172,7 @@ void InitGradualColor(void)
     drvOSD_SetWndFixAlpha(MAIN_GD_WIN,OSD_ALPHA_OUT,0x3F); //OSD
     drvOSD_SetWndCABaseAddr(MAIN_GD_WIN,OSD_MAIN_WND_CA_BASE);
 }
+#endif
 
 void LoadCommonFont( void )
 {
@@ -191,7 +193,7 @@ void LoadCommonFont( void )
     #endif
     mStar_LoadCompressedFont(SM_CHECK_2C_FONT_START, tCheckMark2ColorIconFont, 0);
 
-    LoadMainMenuPropFont();
+    //LoadMainMenuPropFont();
 
 	//Load 4 COLOR Font
 	// Frame
@@ -200,13 +202,13 @@ void LoadCommonFont( void )
 	Osd_LoadCompressColorFont( FrameNew4CFontStart, t4ColorFrameNew, NULL, FrameNew_Size);
 	// Main Icon
 	Osd_LoadCompressColorFont( MainIcon4C_0_MainMenuIcon, t4ColorMainIcon, NULL, MainIcon4C_0_MainMenuIcon_Size);
-	Osd_LoadCompressColorFont( MainIcon4C_1_PictureSub, t4ColorPictureSub, NULL, MainIcon4C_1_PictureSub_Size);
+	Osd_LoadCompressColorFont( MainIcon4C_1_BrightnessSub, t4ColorBrightnessSub, NULL, MainIcon4C_1_BrightnessSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_2_AudioSub, t4ColorAudioSub, NULL, MainIcon4C_2_AudioSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_3_ColorSub, t4ColorColorSub, NULL, MainIcon4C_3_ColorSub_Size);
 
-	Osd_LoadCompressColorFont( MainIcon4C_4_ImageRotate, t4ColorImageRotate, NULL, MainIcon4C_4_ImageRotate_Size);
+	Osd_LoadCompressColorFont( MainIcon4C_4_ImageSub, t4ColorImageSub, NULL, MainIcon4C_4_ImageSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_5_OtherSub, t4ColorOtherSub, NULL, MainIcon4C_5_OtherSub_Size);
-	Osd_LoadCompressColorFont( MainIcon4C_PPMode, t4ColorPPMode, NULL, MainIcon4C_PPMode_Size);
+	//Osd_LoadCompressColorFont( MainIcon4C_PPMode, t4ColorPPMode, NULL, MainIcon4C_PPMode_Size);
 
 	Osd_LoadColorPalette256(); // load osd color
 	#else //#if LiteMAX_OSD_TEST

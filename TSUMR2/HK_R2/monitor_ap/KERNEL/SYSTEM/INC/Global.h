@@ -218,6 +218,10 @@ extern xdata BYTE OsdFontColor;
 #define CPC_Red         0x02
 #define CPC_Gray        0x03
 #define CPC_MTK_Gold    0x04
+#define CPC_Yellow      0x05
+#define CPC_Green       0x06
+#define CPC_Blue        0x07
+
 #define CPC_SmallLogo_4C        0x10
 
 #define LayerXSize      18
@@ -230,8 +234,14 @@ extern xdata BYTE OsdFontColor;
 #define HotLayerXPos      2
 #define HotLayerYPos      4
 
-
+#if LiteMAX_OSD_TEST //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+#define GaugeXPos           7
+#define GaugeLens           18
+#define RGBGaugeXPos        5
+#define RGBGaugeLens        20
+#else
 #define GaugeXPos           (Layer3XPos+0)
+#endif
 #define NumberXPos          (GaugeXPos+12)
 
 #define MonoFontStart       0x00
@@ -242,7 +252,7 @@ extern xdata BYTE OsdFontColor;
 #define BottomLine_2C       (MonoFontStart+0x05)
 #define GaugeSelect_2C      (MonoFontStart+0x06)
 #define GaugeNormal_2C      (MonoFontStart+0x07)
-#define Mark_2C             (MonoFontStart+0x08)
+//#define Mark_2C             (MonoFontStart+0x08)
 
 #define CursorFontStart     (Mark_2C+0x01)
 #define CursorLT_2C     (CursorFontStart+0x00)
@@ -254,7 +264,9 @@ extern xdata BYTE OsdFontColor;
 #define CursorDown_2C   (CursorFontStart+0x06)
 #define CursorRD_2C     (CursorFontStart+0x07)
 
+#if !LiteMAX_OSD_TEST
 #define NumberFontStart (CursorRD_2C+0x01)
+#endif
 
 #define PropFontAddr1       0x20
 #define PropFontAddr2       0x80
@@ -264,13 +276,19 @@ extern xdata BYTE OsdFontColor;
 //Memory Mapping Common Use - mono
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-#define COMMON_FONT_START               0 //9 fonts   //static
-#define PROP_NUM_START                  0x09//0x0B    // at least 5 number position needed
-#define PROP_NUM_LEN                    4 //09+(4*5)=0x1D //3 //09+(3*5)=0x18
-
-#define COMMON_GAUGE_2CFONT_START       0x06 //In Common Area
-
-
+#define COMMON_FONT_START               0x00
+#define NumberFontStart					(COMMON_FONT_START+0x02) // 0x02 ~ 0x09
+#define Mark_2C             			(COMMON_FONT_START+0x16) // 0x16
+#define	GaugeFontStart					(COMMON_FONT_START+0x17) // 0x17 ~ 0x1F
+	#define GaugeFont_EdgeL					(GaugeFontStart+0x00)
+	#define GaugeFont_EdgeR  				(GaugeFontStart+0x01)
+	#define GaugeFont0_6    				(GaugeFontStart+0x02)
+	#define GaugeFont1_6    				(GaugeFontStart+0x03)
+	#define GaugeFont2_6    				(GaugeFontStart+0x04)
+	#define GaugeFont3_6    				(GaugeFontStart+0x05)
+	#define GaugeFont4_6    				(GaugeFontStart+0x06)
+	#define GaugeFont5_6    				(GaugeFontStart+0x07)
+	#define GaugeFont6_6    				(GaugeFontStart+0x08)
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping under 0x100 - mono
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -317,23 +335,36 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C                         (Space4C+((Frame_Size+FrameNew_Size)*2))
 #define MainIcon4C_0_MainMenuIcon          MainIcon4C
 #define MainIcon4C_0_MainMenuIcon_Size     7*6
-#define MainIcon4C_1_PictureSub            (MainIcon4C_0_MainMenuIcon+(MainIcon4C_0_MainMenuIcon_Size*2))
-#define MainIcon4C_1_PictureSub_Size       6*6
-#define MainIcon4C_2_AudioSub              (MainIcon4C_1_PictureSub+(MainIcon4C_1_PictureSub_Size*2))
+#define MainIcon4C_1_BrightnessSub         (MainIcon4C_0_MainMenuIcon+(MainIcon4C_0_MainMenuIcon_Size*2))
+#define MainIcon4C_1_BrightnessSub_Size    6*6
+#define MainIcon4C_2_AudioSub              (MainIcon4C_1_BrightnessSub+(MainIcon4C_1_BrightnessSub_Size*2))
 #define MainIcon4C_2_AudioSub_Size         2*6
+#if 1
+#define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
+#define MainIcon4C_3_ColorSub_Size         8*6
+#else
 #define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
 #define MainIcon4C_3_ColorSub_Size         4*6
+#endif
 
+#define LuminanceIconStar  				   (MainIcon4C_0_MainMenuIcon)
+#define SignalIconStar  				   (MainIcon4C_0_MainMenuIcon+0x0C)
+#define SoundIconStar  					   (MainIcon4C_0_MainMenuIcon+0x18)
+#define ColorIconStar  					   (MainIcon4C_0_MainMenuIcon+0x24)
+#define ImageIconStar  				   	   (MainIcon4C_0_MainMenuIcon+0x30)
+#define OtherIconStar  				       (MainIcon4C_0_MainMenuIcon+0x3C)
+#define ExitIconStar  				       (MainIcon4C_0_MainMenuIcon+0x48)
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping between 0x300 ~ 0xxx - 4Color Icon
 ///////////////////////////////////////////////////////////////////////////////////////
-#if 0 // NOUSED
-#define MainIcon4C_4_ImageSub              _4ColorFontStart //(MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
+#if 1
+#define MainIcon4C_4_ImageSub              (MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
 #define MainIcon4C_4_ImageSub_Size         3*6
-#endif
+#else
 #define MainIcon4C_4_ImageRotate           (MainIcon4C_3_ColorSub+(MainIcon4C_3_ColorSub_Size*2))
 #define MainIcon4C_4_ImageRotate_Size      4*6
-#define MainIcon4C_5_OtherSub              (MainIcon4C_4_ImageRotate+(MainIcon4C_4_ImageRotate_Size*2))
+#endif
+#define MainIcon4C_5_OtherSub              (MainIcon4C_4_ImageSub+(MainIcon4C_4_ImageSub_Size*2))
 #define MainIcon4C_5_OtherSub_Size         6*6
 #if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
 #define MainIcon4C_PowerKeyLock            (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
@@ -341,8 +372,8 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C_LoadDefaultSub          (MainIcon4C_PowerKeyLock+(MainIcon4C_PowerKeyLock_Size*2))
 #define MainIcon4C_LoadDefaultSub_Size     2*6
 #endif
-#define MainIcon4C_PPMode                  (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
-#define MainIcon4C_PPMode_Size             9*6
+//#define MainIcon4C_PPMode                  (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
+//#define MainIcon4C_PPMode_Size             9*6
 
 #else
 #define _4ColorFontStart    0x180
