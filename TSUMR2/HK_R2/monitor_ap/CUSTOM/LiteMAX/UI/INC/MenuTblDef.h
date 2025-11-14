@@ -68,8 +68,8 @@ MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
 #else
 MenuItemActionType code NaviKeyEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,   // BTN_Plus
-    MIA_NextItem,   // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_GotoNext,   // BTN_Menu
     MIA_GotoPrev,   // BTN_Exit
     MIA_Power,  // BTN_Power
@@ -77,8 +77,8 @@ MenuItemActionType code NaviKeyEvent[BTN_EndBTN] =
 };
 MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,     // BTN_Plus
-    MIA_NextItem,     // BTN_Minus
+    MIA_NextItem,     // BTN_Plus
+    MIA_PrevItem,     // BTN_Minus
     MIA_ExecFunc,     // BTN_Menu
     MIA_GotoPrev,     // BTN_Exit
     MIA_Power,    // BTN_Power
@@ -98,8 +98,8 @@ MenuItemActionType code NaviExec2KeyEvent[BTN_EndBTN] =
 #endif
 MenuItemActionType code NaviExecFuncGotoPrevKeyEvent[BTN_EndBTN]=
 { 
-    MIA_PrevItem,               // BTN_Plus
-    MIA_NextItem,               // BTN_Minus
+    MIA_NextItem,               // BTN_Plus
+    MIA_PrevItem,               // BTN_Minus
     MIA_ExecFunc_And_GotoPrev,  // BTN_Menu
     MIA_GotoPrev,               // BTN_Exit
     MIA_Power,                   // BTN_Power
