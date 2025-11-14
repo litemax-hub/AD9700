@@ -981,9 +981,14 @@ extern volatile WORD xdata TimeOutCounter;
 #define UserPrefGamaMode            MonitorSetting.GamaMode
 #define UserPrefGamaOnOff           MonitorSetting.GamaOnOff
 #endif
+
 #if (AudioFunc )
 #define UserPrefAudioSource         MonitorSetting.AudioSource
+#if LiteMAX_OSD_TEST
+#define UserPrefOSDSoundMute        MonitorSetting.OSDSoundMute
 #endif
+#endif
+
 #define UserPrefVolume              MonitorSetting.Volume
 #define UserPrefECOMode             MonitorSetting.ECOMode
 #define UserPrefLanguage            MonitorSetting.Language

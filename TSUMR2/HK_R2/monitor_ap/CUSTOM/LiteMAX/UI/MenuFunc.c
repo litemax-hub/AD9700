@@ -1772,6 +1772,21 @@ Bool SetAudioSource(void)
     return TRUE;
 }
 
+Bool SetSoundMute( void )
+{
+    if(UserPrefOSDSoundMute)
+    {
+        UserPrefOSDSoundMute=0;
+        msAPI_AdjustVolume( UserPrefVolume );
+    }
+    else
+    {
+        UserPrefOSDSoundMute=1;
+        msAPI_AdjustVolume( 0 );
+    }
+    Set_SaveMonitorSettingFlag();
+    return TRUE;
+}
 #endif
 //=====================================================
 Bool AdjustOSDHPosition( MenuItemActionType action )

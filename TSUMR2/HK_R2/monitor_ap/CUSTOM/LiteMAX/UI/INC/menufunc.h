@@ -13,6 +13,7 @@ extern WORD GetContrastValue( void );
 extern Bool AdjustVolume( MenuItemActionType action );
 extern WORD GetVolumeValue( void );
 extern Bool SetAudioSource(void);
+extern Bool SetSoundMute( void );
 #endif
 extern Bool AdjustBrightness( MenuItemActionType action );
 extern WORD GetBrightnessValue( void );

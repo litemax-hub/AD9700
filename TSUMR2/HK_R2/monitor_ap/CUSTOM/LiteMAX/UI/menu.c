@@ -1178,7 +1178,13 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                     }
                     #endif
                 }
-
+    #if AudioFunc
+                    if( CurrentMenuItemFunc.ExecFunction == SetSoundMute )
+                    {
+                        menuAction = MIA_RedrawMenu;
+                        processEvent = TRUE;
+                    }
+    #endif
 				#if ENABLE_OSD_ROTATION
                 if( CurrentMenuItemFunc.ExecFunction == SetOSDRotateMode )
                 {
@@ -1761,7 +1767,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
             {
                 OsdFontColor=FOUR_COLOR(6);
                 DrawOsdIcon( 8, SubMenuIcon_Y_Start, MainIcon4C_2_AudioSub+0*(6*2));
-                if(1) //(UserPrefOSDSoundMute)
+                if (UserPrefOSDSoundMute)
                 {
 					#if 0//BrightnessLightSensorVR
                     DrawOsdIcon(14, SubMenuIcon_Y_Start, MainIcon4C_2_AudioSub+1*(6*2));
@@ -1874,7 +1880,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
                 DrawOsdIcon( 8, SubMenuIcon_Y_Start, MainIcon4C_2_AudioSub+0*(6*2));
             else if(itemIndex == 1)
             {
-                if (1)//(UserPrefOSDSoundMute)
+                if (UserPrefOSDSoundMute)
 					#if 0//BrightnessLightSensorVR
                     DrawOsdIcon(14, SubMenuIcon_Y_Start, MainIcon4C_2_SoundSub+1*(6*2));
 					#else

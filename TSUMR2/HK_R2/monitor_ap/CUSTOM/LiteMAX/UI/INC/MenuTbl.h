@@ -785,7 +785,7 @@ MenuItemType code SoundMenuItems[] =
         {
             NULL, // AdjustFunction
     #if AudioFunc // jason 20200507
-            NULL, //Temp SetSoundMute, // ExecFunction
+            SetSoundMute, // ExecFunction
     #else
             NULL, // ExecFunction
     #endif
