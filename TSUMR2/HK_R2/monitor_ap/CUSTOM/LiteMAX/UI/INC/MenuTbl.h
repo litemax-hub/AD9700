@@ -1,5 +1,6 @@
 #include "MenuFontTbl.h"
 #include "MenuTblDef.h"
+#include "AutoFunc.h"
 
 #define SUB_TEXT_XPOS           12
 #define SUB_TEXT_YPOS           6
@@ -833,7 +834,7 @@ MenuItemType code ColorMenuItems[] =
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
-            NULL, //Temp mStar_AutoColor, // ExecFunction
+            mStar_AutoColor, // ExecFunction
         },
         {
             NULL, // DrawNumberType

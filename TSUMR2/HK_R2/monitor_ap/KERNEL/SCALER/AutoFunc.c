@@ -648,5 +648,10 @@ Bool mStar_AutoColor( void )
     if( InputTimingChangeFlag )
         return FALSE;
 
+#if LiteMAX_OSD_TEST
+    if(result)
+        SaveFactorySetting();
+#endif
+
     return result;
 }

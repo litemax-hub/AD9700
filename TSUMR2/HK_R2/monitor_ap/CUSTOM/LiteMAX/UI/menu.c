@@ -2564,6 +2564,9 @@ BYTE GetPrevItem( const MenuItemType *menuItem )
 
             if( menuItem[i].Flags & mibSelectable && !( menuItem[i].Flags & mibDrawValue ) )
             {
+                if((i==0)&&((MenuPageIndex == ColorMenu)&&(!CURRENT_INPUT_IS_VGA())))
+                    continue;
+
                 return i;
             }
         }
@@ -2612,6 +2615,9 @@ BYTE GetNextItem( const MenuItemType *menuItem )
 
         if( menuItem[i].Flags & mibSelectable && !( menuItem[i].Flags & mibDrawValue ) )
         {
+                if((i==0)&&((MenuPageIndex == ColorMenu)&&(!CURRENT_INPUT_IS_VGA())))
+                    continue;
+
             return i;
         }
     }
