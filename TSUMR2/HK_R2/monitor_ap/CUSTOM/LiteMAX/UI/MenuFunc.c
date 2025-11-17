@@ -1947,6 +1947,20 @@ Bool SetColorTemp( void )
     }
     return TRUE;
 }
+
+Bool OSD_ResetColorTemp(void)
+{
+    UserPrefColorTemp = CTEMP_SRGB;
+
+    UserPrefRedColorUser = DefColorUser;
+    UserPrefGreenColorUser = DefColorUser;
+    UserPrefBlueColorUser = DefColorUser;
+
+	SetColorTemp();
+    Set_SaveMonitorSettingFlag();
+    return TRUE;
+}
+
 Bool AdjustColorTempMode( MenuItemActionType action )
 {
     BYTE temp;

@@ -213,6 +213,7 @@ extern WORD GetRegValue( void );
 extern Bool WriteRegValue( void );
 //extern WORD GetOSDTime100Value(void);
 extern Bool SetColorTemp( void );
+extern Bool ResetColorTemp( void );
 extern void ReadColorTempSetting( void );
 extern void SaveFactorySettingByItem( BYTE itemIndex );
 extern void SaveFactorySetting( void );
@@ -237,6 +238,8 @@ extern Bool AdjustDDCCI( MenuItemActionType action );
 //    extern Bool ExecDDC2Bi(void);
 extern Bool ResetGeometry( void );
 extern Bool ResetColorTemp( void );
+Bool OSD_ResetColorTemp(void);
+
 extern void AdjustTempColorTemp( BYTE ctemp );
 #endif
 #if Enable_Expansion

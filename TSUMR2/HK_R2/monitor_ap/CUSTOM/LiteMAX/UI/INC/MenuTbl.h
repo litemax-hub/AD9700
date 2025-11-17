@@ -855,7 +855,7 @@ MenuItemType code ColorMenuItems[] =
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
-            NULL, //Temp OSD_ResetColorTemp, // ExecFunction
+            OSD_ResetColorTemp, // ExecFunction
         },
         {
             NULL, // DrawNumberType
