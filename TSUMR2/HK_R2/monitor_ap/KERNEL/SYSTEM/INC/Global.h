@@ -852,8 +852,13 @@ extern volatile WORD xdata TimeOutCounter;
 #endif
 
 // 090721
+#if 0//LiteMAX_UI//make會有警告：由於資料類型範圍限制，比較結果永遠為假
+#define MaxColorValue           (0xff)
+#define MinColorValue           (0)
+#else
 #define MaxColorValue           (0xff-28)//((UserPrefColorTemp == CTEMP_USER)?(0xFF):(DefColorUser+100))
 #define MinColorValue           (0+28)//((UserPrefColorTemp == CTEMP_USER)?(0x10):(DefColorUser-100))
+#endif
 
 #define ClockAdjRange   100
 #define DefRGBgainBase  20
@@ -1802,12 +1807,19 @@ typedef enum
 #define Layer1_MenuPage         ( MenuPageIndex == MainMenu )
 #define Layer1_PrevMenuPage     ( PrevMenuPageIndex == MainMenu )
 
+#if LiteMAX_UI
+#define Layer2_MenuPage         ( MenuPageIndex >= BrightnessMenu && MenuPageIndex <= DefaultMenu)
+#define Layer2_PrevMenuPage     ( PrevMenuPageIndex >= BrightnessMenu && PrevMenuPageIndex <= DefaultMenu)
+
+#define Layer3_MenuPage         ( MenuPageIndex >= ColorSettingsMenu && MenuPageIndex <= ColorSettingsMenu )
+#define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ColorSettingsMenu && PrevMenuPageIndex <= ColorSettingsMenu )
+#else
 #define Layer2_MenuPage         ( MenuPageIndex >= BriteContMenu && MenuPageIndex <= PowerManagerMenu)
 #define Layer2_PrevMenuPage     ( PrevMenuPageIndex >= BriteContMenu && PrevMenuPageIndex <= PowerManagerMenu)
 
 #define Layer3_MenuPage         ( MenuPageIndex >= ContrastMenu && MenuPageIndex <= PowerSavingMenu )
 #define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ContrastMenu && PrevMenuPageIndex <= PowerSavingMenu )
-
+#endif
 
 #define IndependentColor_MenuPage ( MenuPageIndex >= IndependentHueRMenu && MenuPageIndex <= IndependentBrightnessYMenu )
 

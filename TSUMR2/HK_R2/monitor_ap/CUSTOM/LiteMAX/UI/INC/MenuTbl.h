@@ -1587,7 +1587,7 @@ MenuItemType code ColorSettingsMenuItems[] =
         ColorTempMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         NULL, // DisplayText;
-        AdjusterKeyEvent,
+        AdjusterItemKeyEvent,
         {
             AdjustRedColor,// AdjustFunction
             NULL,// ExecFunction
@@ -1608,7 +1608,7 @@ MenuItemType code ColorSettingsMenuItems[] =
         ColorTempMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         NULL, // DisplayText;
-        AdjusterKeyEvent,
+        AdjusterItemKeyEvent,
         {
             AdjustGreenColor,// AdjustFunction
             NULL,// ExecFunction
@@ -1629,7 +1629,7 @@ MenuItemType code ColorSettingsMenuItems[] =
         ColorTempMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         NULL, // DisplayText;
-        AdjusterKeyEvent,
+        AdjusterItemKeyEvent,
         {
             AdjustBlueColor,// AdjustFunction
             NULL,// ExecFunction
@@ -9503,7 +9503,7 @@ MenuPageType code tblMenus[] =
 	// ColorTempMenu,
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
-        ColorMenu,// PrevMenuPage;
+        ColorTempMenu,// PrevMenuPage;
         ColorTempMenuItems, // MenuItems;
         sizeof( ColorTempMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL, // ExecFunction;

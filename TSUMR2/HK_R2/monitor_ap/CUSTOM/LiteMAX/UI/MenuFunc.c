@@ -1873,7 +1873,8 @@ Bool AdjustBlueColor( MenuItemActionType action )
 #if 0//UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+//    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+    mStar_AdjustBlueColor( UserPrefBlueColorUser, UserPrefContrast );
 #endif
     return TRUE;
 }
@@ -1896,7 +1897,8 @@ Bool AdjustGreenColor( MenuItemActionType action )
 #if 0//UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+//    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+    mStar_AdjustGreenColor( UserPrefGreenColorUser, UserPrefContrast );
 #endif
     return TRUE;
 }
@@ -1918,7 +1920,8 @@ Bool AdjustRedColor( MenuItemActionType action )
 #if 0//UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+//    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+    mStar_AdjustRedColor( UserPrefRedColorUser, UserPrefContrast );
 #endif
     return TRUE;
 }

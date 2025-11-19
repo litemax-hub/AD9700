@@ -146,6 +146,16 @@ MenuItemActionType code AdjusterKey1Event[BTN_EndBTN] =
     MIA_SourceSel, //2006-02-22
 };
 
+MenuItemActionType code AdjusterItemKeyEvent[BTN_EndBTN] =
+{
+    MIA_IncValue,     // BTN_Plus
+    MIA_DecValue,     // BTN_Minus
+    MIA_NextItem,     // BTN_Menu
+    MIA_PrevItem, // MIA_Exit,    // BTN_Exit
+    MIA_Power,    // BTN_Power
+    MIA_SourceSel, //2006-02-22
+};
+
 #if INPUT_TYPE==INPUT_1A
 MenuItemActionType code AdjustExecKeyEvent[BTN_EndBTN] =
 {
