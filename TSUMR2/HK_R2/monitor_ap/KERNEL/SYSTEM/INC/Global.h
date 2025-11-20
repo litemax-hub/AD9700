@@ -846,9 +846,15 @@ extern volatile WORD xdata TimeOutCounter;
 #define DefContrast         ((MaxContrastValue-MinContrastValue)/2+MinContrastValue)//106 //96 // 92 // 0x5c // 0x60 //32~96~160 171(0xAB)
 
 #if ENABLE_SHARPNESS
+#if LiteMAX_UI
+#define MaxSharpness    0x08   //user sharpness adjust gain: 0x10~0x1F==>1.0~ 1.9
+#define MinSharpness    0x00     //user sharpness adjust gain  0x00~0x0F==>0.0~ 0.9
+#define DefSharpness         ((MaxSharpness-MinSharpness)/2+MinSharpness)
+#else
 #define MaxSharpness    0x1F   //user sharpness adjust gain: 0x10~0x1F==>1.0~ 1.9
 #define MinSharpness    0x00     //user sharpness adjust gain  0x00~0x0F==>0.0~ 0.9
 #define DefSharpness         ((MaxSharpness-MinSharpness)/2+MinSharpness)
+#endif
 #endif
 
 // 090721

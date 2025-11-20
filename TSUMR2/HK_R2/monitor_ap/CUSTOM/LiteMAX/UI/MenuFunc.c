@@ -124,11 +124,11 @@ void ReadUserSetting( void );
 //void Save6500KSetting(void);
 BYTE* code ColorTempPtr[5][5] =
 {
-    {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},
-    {&UserPrefBrightnessNormal, &UserPrefContrastNormal, &UserPrefRedColorNormal, &UserPrefGreenColorNormal, &UserPrefBlueColorNormal},
-    {&FUserPrefBrightnessSRGB, &FUserPrefContrastSRGB, &UserPrefRedColorSRGB, &UserPrefGreenColorSRGB, &UserPrefBlueColorSRGB},
     {&UserPrefBrightnessUser, &UserPrefContrastUser, &UserPrefRedColorUser, &UserPrefGreenColorUser, &UserPrefBlueColorUser},
     {&UserPrefBrightnessWarm1, &UserPrefContrastWarm1, &UserPrefRedColorWarm1, &UserPrefGreenColorWarm1, &UserPrefBlueColorWarm1},
+    {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},    
+    {&UserPrefBrightnessNormal, &UserPrefContrastNormal, &UserPrefRedColorNormal, &UserPrefGreenColorNormal, &UserPrefBlueColorNormal},
+    {&FUserPrefBrightnessSRGB, &FUserPrefContrastSRGB, &UserPrefRedColorSRGB, &UserPrefGreenColorSRGB, &UserPrefBlueColorSRGB},
 };
 //////////////////////////////////////////////////////////////////////////
 // Matrix for convert to sRGB space
@@ -2511,6 +2511,7 @@ Bool ResetAllSetting( void )
     {
         msAdjustHSC(MAIN_WINDOW, UserPrefHue, UserPrefSaturation, UserPrefContrast);
     }
+/*
     UserPrefIndependentHueR = DefIndependentH;
     UserPrefIndependentHueG = DefIndependentH;
     UserPrefIndependentHueB = DefIndependentH;
@@ -2533,7 +2534,7 @@ Bool ResetAllSetting( void )
     UserPrefIndependentBrightnessY = DefIndependentY;
 
     AdjustAllIndependentHSYValue();
-
+*/
 #if MWEFunction
     UserPrefColorFlags = 0;
     UserPrefSubContrast = DefSubContrast;
@@ -2548,6 +2549,14 @@ Bool ResetAllSetting( void )
     UserprefALha = 50;
     UserprefBata = 50;
     UserPrefPowerSavingEn = PowerSavingMenuItems_On;
+
+#if 0//LiteMAX_OSD_TEST
+    Set_InputTimingChangeFlag();
+    Power_TurnOffPanel();
+
+    SrcInputType = DEF_INPUT_TYPE;
+    mStar_SetupInputPort();
+#endif
 
     if(CURRENT_INPUT_IS_VGA())//(( SrcInputType < Input_Digital ) )
     {
@@ -4441,8 +4450,8 @@ void msInitDeBlocking( void )
 #endif
 #if ENABLE_SHARPNESS
 //=============================================================================
-#define MaxSharpness    0x1F   //user sharpness adjust gain: 0x10~0x1F==>1.0~ 1.9
-#define MinSharpness    0x00     //user sharpness adjust gain  0x00~0x0F==>0.0~ 0.9
+//#define MaxSharpness    0x1F   //user sharpness adjust gain: 0x10~0x1F==>1.0~ 1.9
+//#define MinSharpness    0x00     //user sharpness adjust gain  0x00~0x0F==>0.0~ 0.9
 
 Bool AdjustSharpness( MenuItemActionType action )
 {
@@ -4464,7 +4473,8 @@ Bool AdjustSharpness( MenuItemActionType action )
 }
 WORD GetSharpnessValue( void )
 {
-    return GetScale100Value( UserPrefSharpness, MinSharpness, MaxSharpness );
+ //   return GetScale100Value( UserPrefSharpness, MinSharpness, MaxSharpness );
+    return UserPrefSharpness;
 }
 #endif
 

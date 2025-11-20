@@ -451,6 +451,9 @@ typedef struct
 #if (AudioFunc )
         BYTE AudioSource;
 #endif
+#if LiteMAX_OSD_TEST
+    BYTE OSDSoundMute;
+#endif
     BYTE Volume;
     BYTE ECOMode;
     BYTE Language; //14

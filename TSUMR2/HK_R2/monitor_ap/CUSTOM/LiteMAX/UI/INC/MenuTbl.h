@@ -1072,7 +1072,7 @@ MenuItemType code ToolMenuItems[] =
         RootMenu, // NextMenuPage;
         DWI_Icon, // DrawMenuItemType;
         NULL,//C9300KText,//DefaultText, // DisplayText;
-        NaviKeyEvent, //Temp NaviExec2KeyEvent,
+        NaviExec2KeyEvent,
         {
             NULL, // AdjustFunction
             ResetAllSetting, // ExecFunction
@@ -1090,7 +1090,7 @@ MenuItemType code ToolMenuItems[] =
         NULL,NULL,//14, 5, // XPos, YPos;
         NULL, NULL, // ForeColor, BackColor;
         NULL, NULL, // SelForeColor, SelBackColor;
-        RootMenu, //Temp SharpnessMenu, // NextMenuPage;
+        SharpnessMenu, //Temp SharpnessMenu, // NextMenuPage;
         DWI_Icon, // DrawMenuItemType;
         NULL,//CUserText, // DisplayText;
         NaviKeyEvent,
@@ -6085,35 +6085,35 @@ MenuItemType code VPositionMenuItems[] =
 NumberType code SharpnessNumber[] =
 {
     // Flags,   XPos,   YPos,   GetValue
-    {dwiEnd, NumberXPos, (LayerYPos+2*DisplaySettingsMenuItems_Sharpness), GetSharpnessValue},
+    {dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetSharpnessValue},
 };
 DrawNumberType code DrawSharpnessNumber[] =
 {
     // F ForeColor, BackColor,  GetValue
-    {14, Color_2,     SharpnessNumber}
+    {CPC_White, CPC_Black,     SharpnessNumber}
 };
 
 GaugeType code SharpnessGuage[] =
 {
     // Flags, ForeColor,    BackColor,  Length,     GetValue
-    {dwiEnd, GaugeXPos, (LayerYPos+2*DisplaySettingsMenuItems_Sharpness), GetSharpnessValue},
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetSharpnessValue},
 };
 DrawGuageType code DrawSharpnessGuage[] =
 {
     //  ForeColor,  BackColor,  Length,,    GetValue
-    {6,  Color_4,    9,  SharpnessGuage}
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  SharpnessGuage}
 };
 
 MenuItemType code SharpnessMenuItems[] =
 {
     // 0 Sharpness
     {
-        Layer2XPos, (LayerYPos+2*DisplaySettingsMenuItems_Sharpness), // XPos, YPos;
-        CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_Red, CPC_Black, // SelForeColor, SelBackColor;
-        DisplaySettingsMenu, // NextMenuPage;
-        DWI_Text,// DrawMenuItemType;
-        SharpnessText, // DisplayText;
+            NULL, NULL, // XPos, YPos;
+            NULL, NULL, // ForeColor, BackColor;
+            NULL, NULL, // SelForeColor, SelBackColor;
+            ToolMenu, // NextMenuPage;
+            DWI_Icon,// DrawMenuItemType;
+            NULL, // DisplayText;
         AdjusterKeyEvent,
         {
             AdjustSharpness,// AdjustFunction
