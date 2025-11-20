@@ -279,6 +279,9 @@ extern xdata BYTE OsdFontColor;
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 #define COMMON_FONT_START               0x00
+#if LiteMAX_Baron_OSD_TEST
+#define COMMON_FONT_2ND_START           0xC0
+#endif
 #define NumberFontStart					(COMMON_FONT_START+0x02) // 0x02 ~ 0x09
 #define Mark_2C             			(COMMON_FONT_START+0x16) // 0x16
 #define	GaugeFontStart					(COMMON_FONT_START+0x17) // 0x17 ~ 0x1F
@@ -301,6 +304,7 @@ extern xdata BYTE OsdFontColor;
 //Static
 #define SM_CHECK_2C_FONT_START          0xFC // 2fonts // 0XFC~0xFD: Tick icon, 0xFE~0xFF: Return icon
 
+#define MM_MW1_INPUT_SOURCE_TEXT_START  0xCC
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping between 0x100 ~ 0x200 - mono
@@ -368,7 +372,7 @@ extern xdata BYTE OsdFontColor;
 #endif
 #define MainIcon4C_5_OtherSub              (MainIcon4C_4_ImageSub+(MainIcon4C_4_ImageSub_Size*2))
 #define MainIcon4C_5_OtherSub_Size         6*6
-#if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+#if LiteMAX_Baron_OSD_TEST
 #define MainIcon4C_PowerKeyLock            (MainIcon4C_5_OtherSub+(MainIcon4C_5_OtherSub_Size*2))
 #define MainIcon4C_PowerKeyLock_Size       2*6
 #define MainIcon4C_LoadDefaultSub          (MainIcon4C_PowerKeyLock+(MainIcon4C_PowerKeyLock_Size*2))

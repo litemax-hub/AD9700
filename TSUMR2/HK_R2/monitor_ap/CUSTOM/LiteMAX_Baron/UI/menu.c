@@ -791,6 +791,9 @@ void DrawInformation( void )
     DrawNum(14,Y_PosStart+1,2,colck%100);
     Osd_DrawPropStr( 16, Y_PosStart+1, MHzText());
 	//=================================================
+	Osd_DrawPropStr( 3, Y_PosStart+2, VersionText());
+	Osd_DrawStr(10, Y_PosStart+2, ModelNameInfoText());
+	//=================================================
 }
 
 #if ENABLE_3DLUT
@@ -1007,7 +1010,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                     MenuItemIndex = GetMenuItemIndex( PrevMenuPageIndex );
                     //printData("22222 MenuItemIndex==%d",MenuItemIndex);
                 }
-				#if 1 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+				#if 0 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
                 if(((PrevMenuPageIndex==LuminanceMenu) && (MenuPageIndex==BrightnessMenu||MenuPageIndex==ContrastMenu))||
 #if 0// jason 20200113 //BrightnessLightSensorVR
                    ((PrevMenuPageIndex==LuminanceMenu) && (MenuPageIndex==BrightnessTypeMenu))||
@@ -1677,6 +1680,8 @@ WORD DrawOsdBrightnessOffset(void)
 // draw menu item display text
 void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 {
+	BYTE redrawIcon = 0;
+	
 	if( menuItem->DisplayText == NULL && menuItem->DrawItemMethod != DWI_Icon)
     {
         return ;
@@ -1686,10 +1691,287 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 	{
 		printf("\r\n DWI_Icon");
 		printData("MainIcon4C_0_MainMenuIcon = %x", MainIcon4C_0_MainMenuIcon);
+		printData("MainIcon4C_PowerKeyLock = %x", MainIcon4C_PowerKeyLock);
 		printData("MenuPageIndex = %d", MenuPageIndex);
 		printData("itemIndex = %d", itemIndex);
 		printData("MenuItemIndex = %d", MenuItemIndex);
 
+		#if	LiteMAX_Baron_OSD_TEST
+		if (MenuPageIndex == MainMenu)
+		{
+			if(MenuItemIndex == itemIndex)
+            {
+				if(itemIndex == MAIN_COLOR_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(12);
+					redrawIcon = MAIN_COLOR_ICON;
+				}
+				else if(itemIndex == MAIN_BRIGHTNESS_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(10);
+					redrawIcon = MAIN_LUMINANCE_ICON;
+				}
+				else if(itemIndex == MAIN_DEFAULT_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(10);
+					redrawIcon = MAIN_OTHER_ICON;
+				}
+				else if(itemIndex == MAIN_POWER_ENABLE_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(17);
+					if (1)
+						redrawIcon = MAIN_POWER_DISBLE_ICON;
+					else
+						redrawIcon = MAIN_POWER_ENABLE_ICON;
+				}
+				else if(itemIndex == MAIN_EXIT_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(10);
+					redrawIcon = MAIN_EXIT_ICON;
+				}
+            }
+			else
+			{
+				if(itemIndex == MAIN_COLOR_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(8);
+					redrawIcon = MAIN_COLOR_ICON;
+				}
+				else if(itemIndex == MAIN_BRIGHTNESS_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(6);
+					redrawIcon = MAIN_LUMINANCE_ICON;
+				}
+				else if(itemIndex == MAIN_DEFAULT_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(6);
+					redrawIcon = MAIN_OTHER_ICON;
+				}
+				else if(itemIndex == MAIN_POWER_ENABLE_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(16);
+					if (1)
+						redrawIcon = MAIN_POWER_DISBLE_ICON;
+					else
+						redrawIcon = MAIN_POWER_ENABLE_ICON;
+				}
+				else if(itemIndex == MAIN_EXIT_ITEM)
+				{
+					OsdFontColor=FOUR_COLOR(6);
+					redrawIcon = MAIN_EXIT_ICON;
+				}
+			}
+			printData("redrawIcon = %d", redrawIcon);
+			if(itemIndex == MAIN_POWER_ENABLE_ITEM)
+				DrawOsdIcon( (MainMenuIcon_X_Start+(itemIndex*6)), MainMenuIcon_Y_Start, MainIcon4C_PowerKeyLock+(redrawIcon *(6*2)));
+			else
+				DrawOsdIcon( (MainMenuIcon_X_Start+(itemIndex*6)), MainMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
+		}
+	#if 0// Sub
+  		#if 0//(LiteMAX_OSDtype==LiteMAX_OSD2)
+		else if( MenuPageIndex == BrightnessMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+2, menuItem->DisplayText() );
+		
+			OsdFontColor = 0x14;
+			DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_Brightness);
+		}
+		else if( MenuPageIndex == SharpnessMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+2, menuItem->DisplayText() );
+		
+			OsdFontColor = 0x18;
+			DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIcon4C_Sharpness);
+		}
+		else if( MenuPageIndex == ColorTempMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+2, menuItem->DisplayText() );
+		
+			if(itemIndex == 0)
+			{
+				Osd_DrawPropStr(OSD2_X_left,OSD2_Y_IconText,ColorText());
+				OsdFontColor = CPC_MainIcon+8;
+				DrawOsdIcon(OSD2_X_left,OSD2_Y,MainIcon4C_Color);
+										
+				OsdFontColor = 0x3C + (MenuItemIndex == itemIndex ? 4 : 0);
+				DrawOsdIcon(menuItem->XPos,menuItem->YPos,OSD2_Icon4C_6500K);
+			}
+				else if(itemIndex == 1)
+				{
+					OsdFontColor = 0x1C + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_UserOpt);
+				}
+			}
+			else if( MenuPageIndex == DefaultMenu )
+			{
+				if(itemIndex == 0)
+				{
+					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+		
+					Osd_DrawPropStr(OSD2_X_left,OSD2_Y_IconText,DefaultText());
+					OsdFontColor = 0x20;
+					DrawOsdIcon(OSD2_X_left,OSD2_Y,MainIconSub4C_Reset);
+						
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(menuItem->XPos,menuItem->YPos+1,MainIconSub4C_YES);
+				}
+				else if(itemIndex == 1)
+				{
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(menuItem->XPos,menuItem->YPos+1,MainIconSub4C_NO);
+				}
+			}
+			else if( MenuPageIndex == ColorSettingsMenu )
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+2, menuItem->DisplayText() );
+				OsdFontColor = 0x1C;
+				DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_RGB);
+			}
+			else if( MenuPageIndex == Setting6500KMenu )
+			{
+		
+				if(itemIndex == 0)
+				{
+					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+		
+					Osd_DrawPropStr(OSD2_X_left,OSD2_Y_IconText,DefaultText());
+					OsdFontColor = 0x3C;
+					DrawOsdIcon(OSD2_X_left,OSD2_Y,OSD2_Icon4C_6500K);
+						
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(menuItem->XPos,menuItem->YPos+1,MainIconSub4C_YES);
+				}
+				else if(itemIndex == 1)
+				{
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(menuItem->XPos,menuItem->YPos+1,MainIconSub4C_NO);
+				}
+			}
+			else if( MenuPageIndex == InfoMenu )
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+2, menuItem->DisplayText() );
+				OsdFontColor = 0x44;
+				DrawOsdIcon(menuItem->XPos,menuItem->YPos,OSD2_Icon4C_Info);
+				OSD2_DrawInformation();
+			}
+  		#else
+			else if( MenuPageIndex == BrightnessMenu )
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+		
+				OsdFontColor = 0x14;
+				DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIconSub4C_Brightness);
+			}
+			#if 0//ARISTOCRAT_OSD_DVIDP//David add at 20250115
+			else if( MenuPageIndex == SignalMenu )
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+		
+		//			  OsdFontColor = 0x18;
+		//			  DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIcon4C_Sharpness);
+		
+				if(itemIndex == 0)
+				{
+					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 3,MainIconSub_Y,MainIconSub4C_DVI);
+				}
+				else if(itemIndex == 1)
+				{				
+					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 12,MainIconSub_Y,MainIconSub4C_DP);
+				}
+				else
+				{
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 21,MainIconSub_Y,MainIcon4C_Exit);
+				}
+			}
+		#endif
+			else if( MenuPageIndex == SharpnessMenu )
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+		
+				OsdFontColor = 0x18;
+				DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIcon4C_Sharpness);
+			}
+			else if( MenuPageIndex == ColorTempMenu )
+    		#if 0//OSD_ColorTemp_9300K
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+		
+				if(itemIndex == 0)
+				{
+					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 1,MainIconSub_Y,MainIconSub4C_6500K);
+				}
+				else if(itemIndex == 1)
+				{				
+					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 8,MainIconSub_Y,ColorIcon4C_9300K);
+				}
+				else if(itemIndex == 2)
+				{
+					OsdFontColor = 0x1C + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 15,MainIconSub_Y,MainIconSub4C_UserOpt);
+				}
+				else
+				{
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 22,MainIconSub_Y,MainIcon4C_Exit);
+				}
+			}
+    		#else
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+		
+				if(itemIndex == 0)
+				{
+					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
+					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 3,MainIconSub_Y,MainIconSub4C_6500K);
+				}
+				else if(itemIndex == 1)
+				{
+					OsdFontColor = 0x1C + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 12,MainIconSub_Y,MainIconSub4C_UserOpt);
+				}
+				else
+				{
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 21,MainIconSub_Y,MainIcon4C_Exit);
+				}
+			}
+    		#endif
+			else if( MenuPageIndex == DefaultMenu )
+			{
+				if(itemIndex == 0)
+				{
+					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+					OsdFontColor = 0x20;
+					DrawOsdIcon(MainIcon_X+ 3,MainIconSub_Y,MainIconSub4C_Reset);
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 11,4,MainIconSub4C_YES);
+				}
+				else if(itemIndex == 1)
+				{
+					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
+					DrawOsdIcon(MainIcon_X+ 15,4,MainIconSub4C_NO);
+				}
+			}
+			else if( MenuPageIndex == ColorSettingsMenu )
+			{
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+				OsdFontColor = 0x1C;
+				DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIconSub4C_RGB);
+			}
+			else if( MenuPageIndex == HotKeyBrightnessMenu )
+			{
+				OsdFontColor = 0x14;
+				DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_Brightness);
+			}
+  		#endif
+	#endif
+		#else
 		if (MenuPageIndex == MainMenu)
 		{
 			if(MenuItemIndex == itemIndex)
@@ -2116,6 +2398,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
             DrawOsdIcon( 9, 1,MainIcon4C_1_BrightnessSub+1*(6*2));
           #endif
         }
+		#endif
 	}
 	else
 #endif
@@ -2615,7 +2898,7 @@ BYTE GetNextItem( const MenuItemType *menuItem )
 // MenuPageIndex => current page index
 BYTE GetMenuItemIndex( BYTE menuPageIndex )
 {
-#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+#if 0//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
 	{
 		if( MenuPageIndex == MainMenu )
 		{
@@ -2711,414 +2994,56 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
 	
 #else
 
-    if( MenuPageIndex == MainMenu )
+	if( MenuPageIndex == MainMenu )
     {
-        if( menuPageIndex == BriteContMenu )
+        if( menuPageIndex == LuminanceMenu )
         {
-            return MainMenuItems_BriteCont;
+            return MAIN_BRIGHTNESS_ITEM;
         }
-        else if( menuPageIndex == ColorSettingsMenu )
+		#if ENABLE_SHARPNESS
+        else if( menuPageIndex == SharpnessMenu )
         {
-            return MainMenuItems_ColorSettings;
+            return MAIN_SHARPNESS_ITEM;
         }
-        else if( menuPageIndex == ExtColorSettingsMenu )
+		#endif
+#if 0//ARISTOCRAT_OSD_DVIDP//David add at 20250116
+        else if( menuPageIndex == SignalMenu )
         {
-            return MainMenuItems_ExtColorSettings;
+            return MAIN_SIGNAL_ITEM;
         }
-        else if( menuPageIndex == InputSourceMenu)
+#endif
+        else if( menuPageIndex == ColorMenu )
         {
-            return MainMenuItems_InputSource;
+            return MAIN_COLOR_ITEM;
         }
-        else if( menuPageIndex == DisplaySettingsMenu )
+        else if( menuPageIndex == ToolMenu )
         {
-            return MainMenuItems_DisplaySettings;
+            return MAIN_DEFAULT_ITEM;
         }
-        else if( menuPageIndex == OtherSettingsMenu )
+		else if( menuPageIndex == PowerLockMenu )
         {
-            return MainMenuItems_OtherSettings;
+            return MAIN_POWER_ENABLE_ITEM;
         }
-        else if( menuPageIndex == PowerManagerMenu )
-        {
-            return MainMenuItems_PowerManager;
-        }
+    }
+#if 0 //ARISTOCRAT_OSD_DVIDP//David add at 20250120
+    else if( MenuPageIndex == SignalMenu )
+    {
+	if(CURRENT_INPUT_IS_DVI())
+		return 0;
+	else if(CURRENT_INPUT_IS_DISPLAYPORT())
+		return 1;
+	else
+		return 0;
 
     }
-    else if( MenuPageIndex == BriteContMenu )
-    {
-        if ( menuPageIndex == BrightnessMenu )
-        {
-            return BriteContMenuItems_Brightness;
-        }
-        else if ( menuPageIndex == ContrastMenu )
-        {
-            return BriteContMenuItems_Contrast;
-        }
-	#if ENABLE_DLC
-        else if( menuPageIndex == DLCMenu )
-        {
-            return BriteContMenuItems_DLC;
-        }
-	#endif
-    #if ENABLE_DPS
-        else if( menuPageIndex == DPSMenu )
-        {
-            return BriteContMenuItems_DPS;
-        }
-    #endif
-    #if ENABLE_DCR
-        else if( menuPageIndex == DCRMenu )
-        {
-            return BriteContMenuItems_DCR;
-        }
-    #endif
-    }
-    else if( MenuPageIndex == DCRMenu )
-    {
-        if( UserPrefDcrMode )
-        {
-            return Items_On;
-        }
-    }
-	#if ENABLE_DLC
-    else if( MenuPageIndex == DLCMenu )
-    {
-        return UserprefDLCMode;
-    }
-	#endif
-    #if ENABLE_DPS
-    else if( MenuPageIndex == DPSMenu )
-    {
-        return UserprefDPSMode;
-    }
-    #endif
-    else if( MenuPageIndex == ColorSettingsMenu )
-    {
-        if( menuPageIndex == ColorTempMenu )
-        {
-            return ColorSettingsMenuItems_ColorTemp;
-        }
-        else if( menuPageIndex == RedMenu )
-        {
-            return ColorSettingsMenuItems_Red;
-        }
-        else if( menuPageIndex == GreenMenu )
-        {
-            return ColorSettingsMenuItems_Green;
-        }
-        else if( menuPageIndex == BlueMenu )
-        {
-            return ColorSettingsMenuItems_Blue;
-        }
-        else if( menuPageIndex == HueMenu )
-        {
-            return ColorSettingsMenuItems_Hue;
-        }
-        else if( menuPageIndex == SaturationMenu )
-        {
-            return ColorSettingsMenuItems_Saturation;
-        }
-    #if ENABLE_SUPER_RESOLUTION
-        else if( menuPageIndex == SuperResolutionMenu )
-        {
-            return ColorSettingsMenuItems_SuperResolution;
-        }
-    #endif
-    #if ENABLE_COLORMODE_DEMO
-        else if( menuPageIndex == ColorModeMenu )
-        {
-            return ColorSettingsMenuItems_ColorMode;
-        }
-    #endif
-        else if( menuPageIndex == ColorFormatMenu )
-        {
-            return ColorSettingsMenuItems_ColorFormat;
-        }
-    }
-    else if( MenuPageIndex == ColorTempMenu )
+#endif
+    else if( MenuPageIndex == ColorMenu )
     {
         return UserPrefColorTemp;
     }
-    else if( MenuPageIndex == ColorModeMenu )
+    else if( MenuPageIndex == DefaultMenu )
     {
-        return UserPrefColorMode;
-    }
-    else if( MenuPageIndex == ColorFormatMenu )
-    {
-        return UserPrefInputColorFormat;
-    }
-
-#if ENABLE_SUPER_RESOLUTION
-    else if( MenuPageIndex == SuperResolutionMenu )
-    {
-        return UserPrefSuperResolutionMode;
-    }
-#endif
-    else if( MenuPageIndex == ExtColorSettingsMenu )
-    {
-        if( menuPageIndex == ColorRangeMenu )
-        {
-            return ExtColorSettingsMenuItems_ColorRange;
-        }
-        else if( menuPageIndex == IndependentHueMenu)
-        {
-            return ExtColorSettingsMenuItems_IndependentHue;
-        }
-        else if( menuPageIndex == IndependentSaturationMenu)
-        {
-            return ExtColorSettingsMenuItems_IndependentSaturation;
-        }
-        else if( menuPageIndex == IndependentBrightnessMenu)
-        {
-            return ExtColorSettingsMenuItems_IndependentBrightness;
-        }
-    }
-    else if( MenuPageIndex == ColorRangeMenu )
-    {
-        return UserPrefInputColorRange;
-    }
-    else if( MenuPageIndex == IndependentHueMenu )
-    {
-        if( menuPageIndex == IndependentHueRMenu )
-        {
-            return IndependentHueMenuItems_R;
-        }
-        else if( menuPageIndex == IndependentHueGMenu)
-        {
-            return IndependentHueMenuItems_G;
-        }
-        else if( menuPageIndex == IndependentHueBMenu)
-        {
-            return IndependentHueMenuItems_B;
-        }
-        else if( menuPageIndex == IndependentHueCMenu)
-        {
-            return IndependentHueMenuItems_C;
-        }
-        else if( menuPageIndex == IndependentHueMMenu)
-        {
-            return IndependentHueMenuItems_M;
-        }
-        else if( menuPageIndex == IndependentHueYMenu)
-        {
-            return IndependentHueMenuItems_Y;
-        }
-    }
-    else if( MenuPageIndex == IndependentSaturationMenu)
-    {
-        if( menuPageIndex == IndependentSaturationRMenu )
-        {
-            return IndependentSaturationMenuItems_R;
-        }
-        else if( menuPageIndex == IndependentSaturationGMenu)
-        {
-            return IndependentSaturationMenuItems_G;
-        }
-        else if( menuPageIndex == IndependentSaturationBMenu)
-        {
-            return IndependentSaturationMenuItems_B;
-        }
-        else if( menuPageIndex == IndependentSaturationCMenu)
-        {
-            return IndependentSaturationMenuItems_C;
-        }
-        else if( menuPageIndex == IndependentSaturationMMenu)
-        {
-            return IndependentSaturationMenuItems_M;
-        }
-        else if( menuPageIndex == IndependentSaturationYMenu)
-        {
-            return IndependentSaturationMenuItems_Y;
-        }
-    }
-    else if( MenuPageIndex == IndependentBrightnessMenu)
-    {
-        if( menuPageIndex == IndependentBrightnessRMenu )
-        {
-            return IndependentBrightnessMenuItems_R;
-        }
-        else if( menuPageIndex == IndependentBrightnessGMenu)
-        {
-            return IndependentBrightnessMenuItems_G;
-        }
-        else if( menuPageIndex == IndependentBrightnessBMenu)
-        {
-            return IndependentBrightnessMenuItems_B;
-        }
-        else if( menuPageIndex == IndependentBrightnessCMenu)
-        {
-            return IndependentBrightnessMenuItems_C;
-        }
-        else if( menuPageIndex == IndependentBrightnessMMenu)
-        {
-            return IndependentBrightnessMenuItems_M;
-        }
-        else if( menuPageIndex == IndependentBrightnessYMenu)
-        {
-            return IndependentBrightnessMenuItems_Y;
-        }
-    }
-    else if( MenuPageIndex == InputSelectMenu)
-    {
-        if( menuPageIndex == SourceSelectMenu)
-        {
-            return InputSourceMenuItems_SourceSelect;
-        }
-#if ENABLE_DP_INPUT
-        else if( menuPageIndex == DPVersionMenu)
-        {
-            return InputSourceMenuItems_DPVersion;
-        }
-#endif
-    }
-    else if( MenuPageIndex == SourceSelectMenu || MenuPageIndex == HotInputSelectMenu )
-    {
-        return UserPrefInputPriorityType;
-    }
-#if ENABLE_DP_INPUT
-    else if( MenuPageIndex == DPVersionMenu)
-    {
-        return UserPrefDPVersion;
-    }
-#endif
-    else if( MenuPageIndex == DisplaySettingsMenu )
-    {
-        if( menuPageIndex == GammaMenu )
-        {
-            return DisplaySettingsMenuItems_Gamma;
-        }
-#if (ENABLE_VGA_INPUT)
-        else if( menuPageIndex == HPositionMenu )
-        {
-            return DisplaySettingsMenuItems_HPos;
-        }
-        else if( menuPageIndex == VPositionMenu )
-        {
-            return DisplaySettingsMenuItems_VPos;
-        }
-#endif
-#if ENABLE_SHARPNESS
-        else if( menuPageIndex == SharpnessMenu )
-        {
-            return DisplaySettingsMenuItems_Sharpness;
-        }
-#endif
-#if (ENABLE_VGA_INPUT)
-        else if( menuPageIndex == ClockMenu )
-        {
-            return DisplaySettingsMenuItems_Clock;
-        }
-        else if( menuPageIndex == FocusMenu )
-        {
-            return DisplaySettingsMenuItems_Phase;
-        }
-#endif
-	#if Enable_Expansion
-        else if( menuPageIndex == AspectRatioMenu )
-        {
-            return DisplaySettingsMenuItems_Aspect;
-        }
-	#endif
-	#if ENABLE_RTE
-        else if( menuPageIndex == ODMenu )
-        {
-            return DisplaySettingsMenuItems_OD;
-        }
-	#endif
-#if (ENABLE_VGA_INPUT)
-        else if( menuPageIndex == AutoMenu )
-        {
-            return DisplaySettingsMenuItems_AutoAdjust;
-        }
-#endif
-    }
-    else if( MenuPageIndex == OtherSettingsMenu )
-    {
-    #if AudioFunc
-        if( menuPageIndex == VolumeMenu )
-        {
-            return OtherSettingsMenuItems_Volume;
-        }
-        else if( menuPageIndex == AudioSourceSelMenu )
-        {
-            return OtherSettingsMenuItems_AudioSource;
-        }
-        else
-    #endif
-        if( menuPageIndex == OSDTransMenu )
-        {
-            return OtherSettingsMenuItems_OSDTrans;
-        }
-        else if( menuPageIndex == OSDHPositionMenu )
-        {
-            return OtherSettingsMenuItems_OSDHPos;
-        }
-        else if( menuPageIndex == OSDVPositionMenu )
-        {
-            return OtherSettingsMenuItems_OSDVPos;
-        }
-        else if( menuPageIndex == OSDTimeoutMenu )
-        {
-            return OtherSettingsMenuItems_OSDTimeout;
-        }
-		#if ENABLE_OSD_ROTATION
-        else if( menuPageIndex == OSDRotateMenu )
-        {
-            return OtherSettingsMenuItems_OSDRotate;
-        }
-		#endif
-        else if( menuPageIndex == DisplayLogoMenu )
-        {
-            return OtherSettingsMenuItems_DisplayLogo;
-        }
-    }
-#if Enable_Gamma
-    else if( MenuPageIndex == GammaMenu )
-    {
-            return UserPrefGamaOnOff;
-    }
-#endif
-#if ENABLE_RTE
-    else if( MenuPageIndex == ODMenu )
-    {
-    		return UserprefOverDriveSwitch;
-    }
-#endif
-#if ENABLE_FREESYNC
-    else if( MenuPageIndex == FreeSyncMenu )
-    {
-    		return UserprefFreeSyncMode;
-    }
-#endif
-    else if(MenuPageIndex == DisplayLogoMenu)
-    {
-        return UserPrefDisplayLogoEn;
-    }
-    else if(MenuPageIndex == PowerManagerMenu)
-    {
-#if ENABLE_DCOFF_CHARGE
-        if( menuPageIndex == DCOffDischargeMenu )
-        {
-            return PowerManagerMenuItems_DCOffDischarge;
-        }
-        else if(menuPageIndex == PowerSavingMenu)
-        {
-            return PowerManagerMenuItems_PowerSaving;
-        }
-        else
-        {
-            return PowerManagerMenuItems_DCOffDischarge;
-        }
-#else
-        return PowerManagerMenuItems_PowerSaving;
-#endif
-    }
-    else if(MenuPageIndex == DCOffDischargeMenu)
-    {
-        return UserPrefDCOffDischarge;
-    }
-    else if(MenuPageIndex == PowerSavingMenu)
-    {
-        return UserPrefPowerSavingEn;
+        return 1; // No
     }
     return 0;
 
@@ -3209,27 +3134,26 @@ void DrawOsdBackGround(void)
 	if (MenuPageIndex == MainMenu)
 	#endif
     {
-        #if 0 //(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
-        BYTE i;
-        OsdFontColor=FOUR_COLOR(4);
-
+        #if LiteMAX_Baron_OSD_TEST
+		
+        OsdFontColor=FOUR_COLOR(5);
         for (i=0; i<OsdWindowHeight; i++)
-            Osd_DrawContinuousCharDirect( 0, i, Space4C, OsdWindowWidth );
+            Osd_DrawContinuesChar( 0, i, Space4C, OsdWindowWidth );
 
-        Osd_DrawRealCharDirect( 1, 0, Frame4C_LT);
-        Osd_DrawContinuousCharDirect( 2, 0, Frame4C_Top, OsdWindowWidth-4 );
-        Osd_DrawRealCharDirect( OsdWindowWidth-2, 0, Frame4C_RT);
+        Osd_DrawCharDirect( 1, 0, Frame4C_LT);
+        Osd_DrawContinuesChar( 2, 0, Frame4C_Top, OsdWindowWidth-4 );
+        Osd_DrawCharDirect( OsdWindowWidth-2, 0, Frame4C_RT);
     	
         for (i=1; i<OsdWindowHeight-1; i++)
-            Osd_DrawRealCharDirect( 1, i, Frame4C_Left);
+            Osd_DrawCharDirect( 1, i, Frame4C_Left);
         for (i=1; i<OsdWindowHeight-1; i++)
-            Osd_DrawRealCharDirect( OsdWindowWidth-2, i, Frame4C_Right);
+            Osd_DrawCharDirect( OsdWindowWidth-2, i, Frame4C_Right);
 
-        Osd_DrawRealCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
-        Osd_DrawContinuousCharDirect( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
-        Osd_DrawRealCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
+        Osd_DrawCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
+        Osd_DrawContinuesChar( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
+        Osd_DrawCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
         
-        #if 1 //240726
+        #if 0 //240726
         DrawResolutionRealText(10, 1);
         DrawPixelClockRealText(10, 2);
         #endif
@@ -3291,56 +3215,6 @@ void DrawOsdBackGround(void)
         Osd_DrawBlankPlane(0,0,OsdWindowWidth,OsdWindowHeight);
     }
 	*/
-
-#else //#if LiteMAX_OSD_TEST
-	
-    BYTE i;
-
-    OsdFontColor = (CPC_Black<<4|CPC_Black);
-    for (i=0; i<OsdWindowHeight; i++)
-        Osd_DrawContinuesChar( 0, i, SpaceFont, OsdWindowWidth );
-
-    OsdFontColor = (CPC_White<<4|CPC_MTK_Gold);
-    Osd_DrawContinuesChar( 0, 0, TopLine_2C, OsdWindowWidth );
-
-    if( HotMenuPage )
-    {
-        OsdFontColor = (CPC_MTK_Gold<<4|CPC_MTK_Gold);
-        Osd_DrawContinuesChar( 0, 1, SpaceFont, OsdWindowWidth );
-        Osd_DrawContinuesChar( 0, 2, SpaceFont, OsdWindowWidth );
-    }
-    else
-    {
-        OsdFontColor = (CPC_Black<<4|CPC_MTK_Gold);
-        Osd_DrawContinuesChar( 0, 1, TopBottom_2C, OsdWindowWidth );
-    }
-
-    OsdFontColor = (CPC_White<<4|CPC_Black);
-    Osd_DrawContinuesChar( 0, OsdWindowHeight - 1, BottomLine_2C, OsdWindowWidth );
-
-
-    if( MenuPageIndex == MainMenu )
-    {
-        OsdFontColor = (CPC_White<<4|CPC_Black);
-        for (i=0; i<9; i++)
-        {
-            Osd_DrawContinuesChar( Layer1XPos, SaperationYPos+(i*2), Saperation_2C, LayerXSize );
-            Osd_DrawContinuesChar( Layer2XPos, SaperationYPos+(i*2), Saperation_2C, LayerXSize );
-            Osd_DrawContinuesChar( Layer3XPos, SaperationYPos+(i*2), Saperation_2C, LayerXSize );
-        }
-
-        OsdFontColor = CPC_SmallLogo_4C;
-        for (i=0; i<13; i++)
-        {
-            Osd_DrawCharDirect(1+i, OsdWindowHeight - 4, SmallLogo_4C+strSmallLogoWindow[i+13*0]*2);
-            Osd_DrawCharDirect(1+i, OsdWindowHeight - 3, SmallLogo_4C+strSmallLogoWindow[i+13*1]*2);
-            Osd_DrawCharDirect(1+i, OsdWindowHeight - 2, SmallLogo_4C+strSmallLogoWindow[i+13*2]*2);
-        }
-
-        //OsdFontColor = (CPC_White<<4|CPC_Black);
-        //Osd_DrawPropStr( OsdWindowWidth-0x0D, OsdWindowHeight - 3, NetAddrText() );
-
-    }
 #endif //#if LiteMAX_OSD_TEST
 }
 //======================================================================================

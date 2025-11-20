@@ -51,7 +51,56 @@ const BYTE *LoadDefaultText( void )
 {
     return strLoadDefaultM0[UserPrefLanguage];
 }
+#if LiteMAX_Baron_OSD_TEST
+const BYTE *BrightnessText( void )
+{
+    return strBrightnessM0[UserPrefLanguage];
+}
 
+#if ENABLE_SHARPNESS
+const BYTE *SharpnessText( void )
+{
+    return strSharpnessM0[UserPrefLanguage];
+}
+#endif
+const BYTE *ColorText( void )
+{
+    return strColorM0[UserPrefLanguage];
+}
+
+const BYTE *DefaultText( void )
+{
+    return strDefaultM0[UserPrefLanguage];
+}
+const BYTE *PowerKeyEnableText( void )
+{
+	if(1)
+    	return strDisableM0[UserPrefLanguage];
+	else
+		return strEnableM0[UserPrefLanguage];
+}
+const BYTE *VersionText( void )
+{
+    return strVersionM0[UserPrefLanguage];
+}
+
+const BYTE code strModelNameInfo[] =
+{
+	ModelNameInfo
+};
+const BYTE *ModelNameInfoText( void )
+{
+	#if 0
+	tPropText[1][0]=MM_MW1_INPUT_SOURCE_TEXT_START;
+	pstPropFontSet1218=tPropFontSetArialNarrow13_Baron;
+    g_u8PropFontFlags=SPACE2PIXEL;
+	tPropText[1][1]=LoadPropFontText(tPropText[1][0],strModelNameInfo);
+	return tPropText[1];
+	#endif
+	return strModelNameInfo;
+};
+
+#endif
 const BYTE *BriteContText( void )
 {
     return 0;
@@ -84,10 +133,17 @@ const BYTE *ExtColorSettingsText( void )
 {
     return 0;
 }
+#if LiteMAX_Baron_OSD_TEST
+const BYTE *ExitText( void )
+{
+    return strExitM0[UserPrefLanguage];
+}
+#else
 const BYTE *ExitText( void )
 {
     return strExitM103[UserPrefLanguage];
 }
+#endif
 const BYTE *ReturnText( void )
 {
     return 0;
@@ -133,6 +189,17 @@ const BYTE *ReturnText( void )
 {
     return strReturnM0[UserPrefLanguage];
 }
+const BYTE *BrightnessText( void )
+{
+    return strBrightnessM101[UserPrefLanguage];
+}
+#if ENABLE_SHARPNESS
+const BYTE *SharpnessText( void )
+{
+    return strSharpnessM105[UserPrefLanguage];
+}
+#endif
+
 #endif
 
 const BYTE *NoSignalText( void )
@@ -217,10 +284,6 @@ const BYTE *AutoColorProcessText( void )
 }
 #endif
 
-const BYTE *BrightnessText( void )
-{
-    return strBrightnessM101[UserPrefLanguage];
-}
 const BYTE *ContrastText( void )
 {
     return strContrastM101[UserPrefLanguage];
@@ -619,12 +682,6 @@ const BYTE *HPositionText( void )
 const BYTE *VPositionText( void )
 {
     return strVPositionM105[UserPrefLanguage];
-}
-#endif
-#if ENABLE_SHARPNESS
-const BYTE *SharpnessText( void )
-{
-    return strSharpnessM105[UserPrefLanguage];
 }
 #endif
 #if (ENABLE_VGA_INPUT)

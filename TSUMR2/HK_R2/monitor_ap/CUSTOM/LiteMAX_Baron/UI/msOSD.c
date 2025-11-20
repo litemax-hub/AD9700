@@ -564,9 +564,11 @@ void Osd_DrawGuage( BYTE ucX, BYTE ucY, BYTE ucLength, BYTE ucValue )
     // bar length should small than 42 ( ucLength < 43 )
     if( MenuPageIndex == FactoryMenu )
         pLead = ( (WORD) ucValue * ucLength * 6 ) / 255;   // resver 0.1 // fill bar ucLength 10 times
+    #if 0 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
     else if( MenuPageIndex == SharpnessMenu)
         pLead = ( (WORD) ucValue * ucLength * 6 ) / 8;   // resver 0.1 // fill bar ucLength 10 times
-#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+    #endif
+#if 0//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
   #if 0//BrightnessLightSensorVR
     else if( MenuPageIndex == BrightnessMenu || MenuPageIndex == HotKeyBrightnessMenu)
     {
@@ -694,8 +696,8 @@ void Osd_DrawHex( BYTE xPos, BYTE yPos, WORD value )
 #if LiteMAX_OSD_TEST
 void Osd_DynamicLoadFont( BYTE addr, BYTE *fontPtr, WORD num )
 {
-    #if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
-    pstPropFontSet1218=tPropFontSetArialNarrow13;
+    #if 1//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+    pstPropFontSet1218=tPropFontSetArialNarrow13_Baron;
     #else
     pstPropFontSet1218=tPropFontSetArialNarrow13Bold;
     #endif
@@ -740,6 +742,73 @@ BYTE Osd_DoubleBuffer(Bool u8Enable)
     return u8Enable;
 }
 */
+
+#if 0//LiteMAX_Baron_OSD_TEST
+
+#define AF_BLANK_CHAR           0x0F
+#define AF_ZERO_CHAR            0x01    ///'0'
+#define AF_A_UPERCASE_CHAR      0x20    ///'A'
+#define AF_A_LOWERCASE_CHAR     0x3A   ///'a'
+#define AF_I_LOWERCASE_CHAR     ('i'-'a'+AF_A_LOWERCASE_CHAR)
+#define AF_P_LOWERCASE_CHAR     ('p'-'a'+AF_A_LOWERCASE_CHAR)
+#define AF_X_LOWERCASE_CHAR     ('x'-'a'+AF_A_LOWERCASE_CHAR)
+#define AF_Z_LOWERCASE_CHAR     ('z'-'a'+AF_A_LOWERCASE_CHAR)
+#define AF_S_LOWERCASE_CHAR     ('s'-'a'+AF_A_LOWERCASE_CHAR)
+#define AF_H_UPERCASE_CHAR      ('H'-'A'+AF_A_UPERCASE_CHAR)
+#define AF_M_UPERCASE_CHAR      ('M'-'A'+AF_A_UPERCASE_CHAR)
+
+#define AF_AT_CHAR              0x0B
+#define AF_DOT_CHAR             0x10    // SimonY add for TVI version
+#define AF_COLON_CHAR           0x13
+#define AF_PERCENT_CHAR         0x7E
+#define AF_ULINE_CHAR           0xB9
+#define AF_PARENS_L_CHAR        0x18
+#define AF_PARENS_R_CHAR        0x19
+
+static BYTE GetRealFontIndex(BYTE u8Ascii)
+{
+    if (u8Ascii=='.')   // SimonY add for TVI version
+        return AF_DOT_CHAR;
+    if (u8Ascii==':')   // SimonY add for TVI version
+        return AF_COLON_CHAR;
+    if (u8Ascii=='_')
+        return AF_ULINE_CHAR;
+    if (u8Ascii>='A' && u8Ascii<='Z')
+        return ((u8Ascii-'A')+AF_A_UPERCASE_CHAR);
+    if (u8Ascii>='a' && u8Ascii<='z')
+        return ((u8Ascii-'a')+AF_A_LOWERCASE_CHAR);
+    if (u8Ascii>='0' && u8Ascii<='9')
+        return ((u8Ascii-'0')+AF_ZERO_CHAR);
+    if (u8Ascii&0x80 && u8Ascii<0xB0)
+        return u8Ascii;
+    return AF_BLANK_CHAR;
+}
+
+#define MAX_TEXT_LENGTH     22 //15 //18
+BYTE LoadPropFontText(BYTE u8Addr,BYTE *pu8Text) ///pu8Text must be NULL terminal
+{
+    BYTE tText[MAX_TEXT_LENGTH];
+    WORD i=0;
+
+    while(*pu8Text)
+    {
+        tText[i]=GetRealFontIndex(*pu8Text);
+        i++;
+        pu8Text++;
+        if (i>=(MAX_TEXT_LENGTH-1))
+            break;
+
+        MST_ASSERT(i<MAX_TEXT_LENGTH);
+    }
+
+    MST_ASSERT(i!=0);
+
+    tText[i++]=0;
+
+    g_u8AlignResetIndex=0xFF;
+    return LoadPropFonts1218(u8Addr, tText, i,NULL,0, 0, 0);
+}
+#endif
 
 void msOSDuncall(void)
 {

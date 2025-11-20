@@ -188,13 +188,13 @@ void LoadCommonFont( void )
 	//Load 2 COLOR Font
     //Static Mono Font
     mStar_LoadCompressedFont(COMMON_FONT_START, tCommonArea, 0);/// Load Common font
-    #if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+    #if 1 //LiteMAX_Baron_OSD_TEST
     mStar_LoadCompressedFont(COMMON_FONT_2ND_START, tCommonArea2nd, 0);/// Load Common font
     #endif
     mStar_LoadCompressedFont(SM_CHECK_2C_FONT_START, tCheckMark2ColorIconFont, 0);
-
-    //LoadMainMenuPropFont();
-
+	#if 0
+    LoadMainMenuPropFont();
+	#endif
 	//Load 4 COLOR Font
 	// Frame
 	Osd_LoadCompressColorFont( _4ColorFontStart, t4ColorFrame, NULL, Frame_Size);
@@ -208,6 +208,10 @@ void LoadCommonFont( void )
 
 	Osd_LoadCompressColorFont( MainIcon4C_4_ImageSub, t4ColorImageSub, NULL, MainIcon4C_4_ImageSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_5_OtherSub, t4ColorOtherSub, NULL, MainIcon4C_5_OtherSub_Size);
+	#if LiteMAX_Baron_OSD_TEST
+	Osd_LoadCompressColorFont( MainIcon4C_PowerKeyLock, t4ColorPowerKeyLock, NULL, MainIcon4C_PowerKeyLock_Size);
+	Osd_LoadCompressColorFont( MainIcon4C_LoadDefaultSub, t4ColorLoadDefaultSub, NULL, MainIcon4C_LoadDefaultSub_Size);
+	#endif
 	//Osd_LoadCompressColorFont( MainIcon4C_PPMode, t4ColorPPMode, NULL, MainIcon4C_PPMode_Size);
 
 	Osd_LoadColorPalette256(); // load osd color

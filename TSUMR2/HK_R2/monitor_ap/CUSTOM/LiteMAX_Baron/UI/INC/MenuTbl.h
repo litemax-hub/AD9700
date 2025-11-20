@@ -349,6 +349,139 @@ DrawRadioGroupType code DrawPowerManagerMenuRatioGroup[] =
 //=========================================================
 #if LiteMAX_OSD_TEST
 
+#if LiteMAX_Baron_OSD_TEST
+MenuItemType code MainMenuItems[] =
+{
+    // 0 LuminanceMenu
+    {
+        2, 6, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        BrightnessMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        BrightnessText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL // DrawRadioGroupType
+        },
+        NULL, // Font
+        mibSelectable // Flags
+    },
+	#if ENABLE_SHARPNESS
+    // 1 SharpnessMenu
+    {
+        7,6,//8, 6, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        SharpnessMenu, // NextMenuPage;
+        DWI_Nothing,//DWI_Icon, // DrawMenuItemType;//David add at 20241029 for remove sharpness
+        SharpnessText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL, // DrawRadioGroupType
+        },
+        NULL, // Font
+        mibInvisible//mibSelectable // Flags//David add at 20241029 for remove sharpness
+    },
+    #endif
+    // 1 ColorMenu
+    {
+        13-4, 6, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        ColorTempMenu, // NextMenuPage;
+        DWI_Icon, // DrawMenuItemType;
+        ColorText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL, // AdjustFunction
+            NULL, // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL, // DrawRadioGroupType
+        },
+        NULL, // Font
+        mibSelectable // Flags
+    },
+    // 2 ToolMenu
+    {
+        18-3, 6, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        DefaultMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        DefaultText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL,   // AdjustFunction
+            NULL,   // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL, // DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 3 PowerLockMenu
+    {
+        22-2, 6, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        RootMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        PowerKeyEnableText, // DisplayText;
+        NaviExecKeyEvent,
+        {
+            NULL,   // AdjustFunction
+            NULL, //Temp AdjustPowerKey,   // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL, // DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+    // 4 Exit
+    {
+        28-1, 6, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        RootMenu,// NextMenuPage;
+        DWI_Icon,// DrawMenuItemType;
+        ExitText, // DisplayText;
+        NaviKeyEvent,
+        {
+            NULL,   // AdjustFunction
+            NULL,   // ExecFunction
+        },
+        {
+            NULL, // DrawNumberType
+            NULL, // DrawGuageType
+            NULL, // DrawRadioGroupType
+        },
+        NULL, //Font
+        mibSelectable // Flags
+    },
+};
+#else
 MenuItemType code MainMenuItems[] =
 {
     // 0 Luminance
@@ -500,6 +633,7 @@ MenuItemType code MainMenuItems[] =
         mibSelectable // Flags
     },
 };
+#endif
 
 #if 1 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
 MenuItemType code LuminanceMenuItems[] =
@@ -9043,7 +9177,7 @@ MenuPageType code tblMenus[] =
         NULL, // Fonts
         mpbInvisible | mpbStay //   Flags;
     },
-    #if LiteMAX_OSD_TEST
+    #if LiteMAX_OSD_TEST	
 	// MainMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;

@@ -284,5 +284,12 @@ extern BYTE *PixelClockText( void );
 extern BYTE *MHzText( void );
 extern BYTE *DotText( void );
 extern BYTE *LoadDefaultText( void );
+#if LiteMAX_Baron_OSD_TEST
+extern BYTE *ColorText( void );
+extern BYTE *DefaultText( void );
+extern BYTE *PowerKeyEnableText( void );
+extern BYTE *VersionText( void );
+extern BYTE *ModelNameInfoText( void );
+#endif
 #endif
 //====================================

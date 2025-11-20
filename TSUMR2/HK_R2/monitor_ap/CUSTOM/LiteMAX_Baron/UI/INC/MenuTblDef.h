@@ -3,9 +3,12 @@
 #include "MenuStr.h"
 
 #if LiteMAX_OSD_TEST
-#if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+#if 1 //(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
 #define MAIN_MENU_H_SIZE     		33
 #define MAIN_MENU_V_SIZE             8
+
+#define MessageMenuHSize			20
+#define MessageMenuVSize       		5
 #else //(LiteMAX_OSDtype == LiteMAX_OSD_Standard)
 #define MAIN_MENU_H_SIZE            31
 #define MAIN_MENU_V_SIZE            16
@@ -22,6 +25,20 @@
 #endif //#if LiteMAX_OSD_TEST
 
 #if LiteMAX_OSD_TEST
+
+#if LiteMAX_Baron_OSD_TEST
+#define MainMenuIcon_X_Start        3
+#define MainMenuIcon_Y_Start        4
+#define SubMenuIcon_X_Start         2
+#define SubMenuIcon_Y_Start         10
+
+#define SubMenuValue_Y_Start        11
+#define SubMenuBar_Y_Start          13
+#define UserRed_Y_Start             9
+#define UserGreen_Y_Start           11
+#define UserBlue_Y_Start            13
+#define Source_Y_Start              11
+#else
 #define MainMenuIcon_X_Start        2
 #define MainMenuIcon_Y_Start        5
 #define SubMenuIcon_X_Start         2
@@ -33,6 +50,8 @@
 #define UserGreen_Y_Start           11
 #define UserBlue_Y_Start            13
 #define Source_Y_Start              11
+#endif
+
 #endif
 //=====================================================================================
 // Key function definition

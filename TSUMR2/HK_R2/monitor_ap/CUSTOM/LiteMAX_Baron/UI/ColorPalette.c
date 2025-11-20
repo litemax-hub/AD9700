@@ -135,6 +135,18 @@ ColorPaletteType code tOSDColorPalette256[]=
   {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 1
   {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 2
   {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 3
+  #if LiteMAX_Baron_OSD_TEST
+  // 16 0x3C PowerKeyLock Normal
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {  29,   64,   77,    CP_COLORKEY_F}, //{RGB_WHITE,           CP_COLORKEY_F},
+  {  11,   19,   23,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {   4,    1,    1,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  // 17 0x40 PowerKeyLock Select
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
+  {  29,   64,   77,    CP_COLORKEY_F}, //{RGB_BK_COLOR_H,      CP_COLORKEY_F},
+  {  11,   19,   23,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
+  {   4,    1,    1,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  #endif
 #endif
 };
 

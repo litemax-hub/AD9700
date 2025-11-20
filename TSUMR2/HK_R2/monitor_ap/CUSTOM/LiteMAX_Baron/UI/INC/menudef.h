@@ -201,6 +201,7 @@ typedef enum
 	OSDRotationMenu,
   #endif
   	DefaultMenu,
+  	PowerLockMenu,
 #endif
     //  OsdLockMenu,
     // user definition end
@@ -208,6 +209,36 @@ typedef enum
 } MenuPageIndexType;
 
 #if LiteMAX_OSD_TEST
+
+#if LiteMAX_Baron_OSD_TEST
+typedef enum
+{
+  MAIN_BRIGHTNESS_ITEM = 0,
+  MAIN_COLOR_ITEM,
+  MAIN_DEFAULT_ITEM,
+  MAIN_POWER_ENABLE_ITEM,
+  MAIN_EXIT_ITEM,
+  MAIN_MAX_ITEM
+}MainMenuItemsType;
+typedef enum
+{
+  MAIN_LUMINANCE_ICON = 0,
+  MAIN_SIGNAL_ICON,
+  MAIN_SOUND_ICON,
+  MAIN_COLOR_ICON,
+  MAIN_IMAGE_ICON,
+  MAIN_OTHER_ICON,
+  MAIN_EXIT_ICON,
+  MAIN_MAX_ICON
+}MainMenuIconType;
+typedef enum
+{
+  MAIN_POWER_ENABLE_ICON = 0,
+  MAIN_POWER_DISBLE_ICON,
+  MAIN_POWER_MAX_ICON
+}MainMenuPowerIconType;
+
+#else
 typedef enum
 {
   MAIN_LUMINANCE_ITEM = 0,
@@ -230,6 +261,7 @@ typedef enum
   EXIT_SUB_ITEM,
   MAX_SUB_ITEM
 }MenuItemSubType;
+#endif
 
 #else
 typedef enum
