@@ -1090,7 +1090,7 @@ MenuItemType code ToolMenuItems[] =
         NULL,NULL,//14, 5, // XPos, YPos;
         NULL, NULL, // ForeColor, BackColor;
         NULL, NULL, // SelForeColor, SelBackColor;
-        SharpnessMenu, //Temp SharpnessMenu, // NextMenuPage;
+        SharpnessMenu, // NextMenuPage;
         DWI_Icon, // DrawMenuItemType;
         NULL,//CUserText, // DisplayText;
         NaviKeyEvent,

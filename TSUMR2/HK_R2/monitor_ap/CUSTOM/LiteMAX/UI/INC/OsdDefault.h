@@ -27,6 +27,10 @@
 #define VOLUME_REAL_MIN    0
 //-----------------------------------------------------------
 
+#define DEF_OSD_TIME	10
+#define OSD_TIME_MAX	16
+#define OSD_TIME_MIN	2
+
 #define DEF_OSD_TRANSPARENCY   	1
 #define MAX_OSD_TRANSPARENCY    5
 

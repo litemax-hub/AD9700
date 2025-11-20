@@ -175,7 +175,7 @@ void Init_MonitorSetting( void )
     UserPrefVolume = DEF_VOLUME;
     UserPrefOsdHStart = 50;
     UserPrefOsdVStart = 50;
-    UserPrefOsdTime = 10;
+    UserPrefOsdTime = DEF_OSD_TIME;
     UserPrefOsdTransparency = DEF_OSD_TRANSPARENCY;
     UserPrefDcrMode = 0;
 #if ENABLE_OSD_ROTATION

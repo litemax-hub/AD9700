@@ -1792,7 +1792,7 @@ Bool SetSoundMute( void )
 Bool AdjustOSDHPosition( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdHStart, 0, 100, 5 ); //0729 New Spec
+    tempValue = DecIncValue( action, UserPrefOsdHStart, 0, 100, 1 ); //0729 New Spec
     if( tempValue == UserPrefOsdHStart )
     {
         return FALSE;
@@ -1809,7 +1809,7 @@ WORD GetOSDHPositionValue( void )
 Bool AdjustOSDVPosition( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdVStart, 0, 100, 5 ); //0729 New Spec
+    tempValue = DecIncValue( action, UserPrefOsdVStart, 0, 100, 1 ); //0729 New Spec
     if( tempValue == UserPrefOsdVStart )
     {
         return FALSE;
@@ -1826,7 +1826,7 @@ WORD GetOSDVPositionValue( void )
 Bool AdjustOSDTime( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdTime, 5, 100, 5 );
+    tempValue = DecIncValue( action, UserPrefOsdTime, OSD_TIME_MIN, OSD_TIME_MAX, 2 );
     if( tempValue == UserPrefOsdTime )
     {
         return FALSE;
@@ -2429,7 +2429,7 @@ Bool ResetAllSetting( void )
     UserPrefBrightnessUser = DefBrightness;
     UserPrefContrastUser = DefContrast;
     //UserPrefSavedModeIndex = NumberOfMode;
-    UserPrefOsdTime = 10;
+    UserPrefOsdTime = DEF_OSD_TIME;
     UserPrefOsdTransparency = DEF_OSD_TRANSPARENCY;
     Osd_SetTransparency(UserPrefOsdTransparency);
     UserPrefColorTemp = CTEMP_USER;
