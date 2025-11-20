@@ -2689,7 +2689,7 @@ MenuItemType code PowerSavingMenuItems[] =
 NumberType code HotBrightnessNumber[] =
 {
     // Flags,   XPos,   YPos,   GetValue
-    {dwiEnd, NumberXPos, LayerYPos, GetBrightnessValue},
+    {dwiEnd, 14, 2, GetBrightnessValue},
 };
 DrawNumberType code DrawHotBrightnessNumber[] =
 {
@@ -2700,12 +2700,12 @@ DrawNumberType code DrawHotBrightnessNumber[] =
 GaugeType code HotBrightnessGuage[] =
 {
     // Flags, ForeColor,    BackColor,  Length,     GetValue
-    {dwiEnd, GaugeXPos, LayerYPos, GetBrightnessValue},
+    {dwiEnd, 2, 4, GetBrightnessValue},
 };
 DrawGuageType code DrawHotBrightnessGuage[] =
 {
     //  ForeColor,  BackColor,  Length,,    GetValue
-    {CPC_White, CPC_Black,  9,  HotBrightnessGuage}
+    {CPC_Yellow, CPC_Black,  17,  HotBrightnessGuage}
 };
 
 #if AudioFunc
@@ -5841,12 +5841,12 @@ MenuItemType code HotKeyBrightnessMenuItems[] =
 {
     // 0 Brightness
     {
-        1, 4, // XPos, YPos;
+        8, 1, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black,  // SelForeColor, SelBackColor;
         RootMenu,///NextMenuPage;
-        DWI_Text,// DrawMenuItemType;
-        BrightnessText, // DisplayText;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
         AdjusterKeyEvent,
         {
             AdjustBrightness,// AdjustFunction
@@ -5857,7 +5857,7 @@ MenuItemType code HotKeyBrightnessMenuItems[] =
             DrawHotBrightnessGuage,// DrawGuageType
             NULL,//DrawMenuRadioGroup,//DrawAutoSetupRadioGroup // DrawRadioGroupType
         },
-        MenuPage101, //Font
+        NULL, //Font
         mibSelectable // Flags
     },
 };
@@ -10104,13 +10104,13 @@ MenuPageType code tblMenus[] =
 
     // 54 HotKeyBrightnessMenu,
     {
-        29/*29*/, 8, // XSize, YSize;
+        HotMenuHSize, HotMenuVSize, // XSize, YSize;
         RootMenu,// PrevMenuPage;
         HotKeyBrightnessMenuItems ,// MenuItems;
         sizeof( HotKeyBrightnessMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL, // ExecFunction;
         NULL, // Fonts
-        mpbStay | mpbCenter |mpbBrowse //|mpbRedraw //   Flags;
+        mpbStay | mpbRedraw //   Flags;
     },
 #if AudioFunc
     // 54 HotKeyVolMenu,

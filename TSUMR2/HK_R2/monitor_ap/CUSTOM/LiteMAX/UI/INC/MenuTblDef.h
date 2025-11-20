@@ -21,6 +21,9 @@
 #define MessageMenuVSize       		10
 #endif //#if LiteMAX_OSD_TEST
 
+#define HotMenuHSize			21
+#define HotMenuVSize      		7
+
 #if LiteMAX_OSD_TEST
 #define MainMenuIcon_X_Start        2
 #define MainMenuIcon_Y_Start        5
