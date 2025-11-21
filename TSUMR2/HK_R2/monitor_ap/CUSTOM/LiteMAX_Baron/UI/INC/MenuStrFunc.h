@@ -5,6 +5,9 @@
 #endif
 
 _MENUSTRFUNC_C_ void Osd_DrawStr( BYTE xPos, BYTE yPos, const BYTE *str );
+#if LiteMAX_Baron_OSD_TEST
+_MENUSTRFUNC_C_ void Osd_DrawStr_for_Baron( BYTE xPos, BYTE yPos, BYTE *str );
+#endif
 //===================================================================
 _MENUSTRFUNC_C_ BYTE code tTPV_LOGO[];
 _MENUSTRFUNC_C_ BYTE code tTopSelectClearnSpace32[];

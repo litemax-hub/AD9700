@@ -17,26 +17,26 @@ extern BYTE xdata OsdFontColor;
 extern xdata BYTE MenuPageIndex;
 extern xdata BYTE MenuItemIndex;
 
-#if 1
-BYTE code ASCII2FONT[256] =  /* OSD character table */
+#if LiteMAX_Baron_OSD_TEST
+BYTE code ASCII2FONT_Baron[256] =  /* OSD character table */
 {
     /*       0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F   */
     /*00H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     //                     
     /*10H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     //                     
-    /*20H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    //           (Space) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )
-    /*30H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    //             0        1        2       3        4        5        6        7        8       9
+    /*20H*/0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0D, 0x15, 0x00, 0x00, 0x00, 0x0E, 0x11, 0x0F, 0x10, 0x00,
+    //   "Space"              "#"               "&"   "'"                     "+"   ","   "-"   "."   "/"
+    /*30H*/0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x13, 0x14, 0x00, 0x00, 0x00, 0x12,
+    //       0     1     2     3     4     5     6     7     8     9    ":"   ";"                     "?" 
     /*40H*/0x00, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF,
-    //                      A        B        C       D        E        F        G       H        I        J        K        L        M       N        O
-    /*50H*/0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0x00, 0x00, 0x00, 0x00, 0x00,
-    //             P        Q       R        S       T        U        V       W       X        Y       Z
+    //             A     B     C     D     E     F     G     H     I     J     K     L     M     N     O
+    /*50H*/0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0x00, 0x00, 0x00, 0x00, 0x0C,
+    //       P     Q     R     S     T     U     V     W     X     Y     Z                            "_"
     /*60H*/0x00, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
-    //                      a        b        c        d        e       f         g        h        i         j        k        l         m       n        o
-    /*70H*/0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    //            p       q         r        s        t         u       v        w       x        y        z
+    //             a     b     c     d     e     f     g     h     i     j     k     l     m     n     o
+    /*70H*/0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0x00, 0x00, 0x00, 0x00, 0x00,
+    //       p     q     r     s     t     u     v     w     x     y     z
     /*80H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     //
     /*90H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -54,7 +54,7 @@ BYTE code ASCII2FONT[256] =  /* OSD character table */
     /*F0H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     //
 };
-#else
+#endif
 BYTE code ASCII2FONT[256] =  /* OSD character table */
 {
     /*       0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F   */
@@ -91,7 +91,6 @@ BYTE code ASCII2FONT[256] =  /* OSD character table */
     /*F0H*/0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     //
 };
-#endif
 
 BYTE code tSpace7[] =
 {
@@ -171,5 +170,77 @@ void Osd_DrawStr( BYTE xPos, BYTE yPos, BYTE *str )
 
 }
 
+#if LiteMAX_Baron_OSD_TEST
+void Osd_DrawStr_for_Baron( BYTE xPos, BYTE yPos, BYTE *str )
+{
+#if CHIP_ID>=CHIP_TSUMV
+    WORD u16TempValue;
+    BYTE u8DrawCode = (!(yPos & BIT7));
 
+    yPos &= 0x7F;
+    u16TempValue=GET_TXT_CASTART(g_u8OsdWndNo,xPos,yPos); // get real address
+
+#define dispChar    xPos
+#define dispPtr     yPos
+    dispPtr = 0;
+    WRITE_CAFSRAM_ADDR();
+    //old_msWrite2Byte(PORT_ATTR_ADDR, u16TempValue); // display font attribute
+    msWrite2Byte ( PORT_ATTR_ADDR, u16TempValue );
+	WRITE_ATTRIBUTE();
+    while( *( str + dispPtr ) )        // display string font index
+    {
+        //old_msWriteByte(PORT_ATTR_DATA, OsdFontColor);
+        msWriteByte(PORT_ATTR_DATA, OsdFontColor);
+		dispPtr++;
+    }
+    if( u8DrawCode )
+    {
+        dispPtr = 0;
+	 WRITE_CAFSRAM_ADDR();
+        //old_msWrite2Byte(PORT_CODE_ADDR, u16TempValue); // dispaly font code
+		msWrite2Byte ( PORT_CODE_ADDR, u16TempValue );
+		WRITE_CODE();
+        while( (dispChar = *( str + dispPtr )) )            // display string font index
+        {
+            //old_msWriteByte(PORT_CODE_DATA, ASCII2FONT[dispChar]);
+            msWriteByte ( PORT_CODE_DATA, ASCII2FONT_Baron[dispChar] );
+            dispPtr++;
+        }
+    }
+#undef dispChar
+#undef dispPtr
+#else
+
+    WORD tempValue;
+    BYTE drawCode = (!(yPos & BIT7));
+
+    yPos &= 0x7F; //~(BIT7|BIT6);
+#define dispChar    xPos
+#define dispPtr     yPos
+    tempValue = ( WORD )yPos * OsdWindowWidth + xPos; // get real address
+    dispPtr = 0;
+    old_msWrite2Byte( OSD2_A8, tempValue );
+    while( dispChar = *( str + dispPtr ) )
+        // display string font index
+    {
+        old_msWriteByte( OSD2_AA, OsdFontColor );
+        dispPtr++;
+    }
+    if( drawCode )
+    {
+        dispPtr = 0;
+        old_msWrite2Byte( OSD2_A5, tempValue );
+        while( dispChar = *( str + dispPtr ) )            // display string font index
+        {
+            old_msWriteByte( OSD2_A7, ASCII2FONT[dispChar] );
+            dispPtr++;
+        }
+    }
+#undef dispChar
+#undef dispPtr
+
+#endif
+
+}
+#endif
 

@@ -42,9 +42,14 @@ const BYTE *MHzText( void )
     return strMHzM0[UserPrefLanguage];
 }
 
+const BYTE code strDot[] =
+{
+	"."
+};
+
 const BYTE *DotText( void )
 {
-    return strDotM0[UserPrefLanguage];
+    return strDot;
 }
 
 const BYTE *LoadDefaultText( void )
@@ -82,6 +87,11 @@ const BYTE *PowerKeyEnableText( void )
 const BYTE *VersionText( void )
 {
     return strVersionM0[UserPrefLanguage];
+}
+
+const BYTE *AD9700PText( void )
+{
+    return strAD9700PM0[UserPrefLanguage];
 }
 
 const BYTE code strModelNameInfo[] =

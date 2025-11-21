@@ -29,8 +29,9 @@
 #if LiteMAX_Baron_OSD_TEST
 #define MainMenuIcon_X_Start        3
 #define MainMenuIcon_Y_Start        4
-#define SubMenuIcon_X_Start         2
-#define SubMenuIcon_Y_Start         10
+#define MainMenusStr_Y_Start        6
+#define SubMenuIcon_X_Start         3
+#define SubMenuIcon_Y_Start         3
 
 #define SubMenuValue_Y_Start        11
 #define SubMenuBar_Y_Start          13

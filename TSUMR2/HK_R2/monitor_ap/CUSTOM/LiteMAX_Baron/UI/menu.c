@@ -787,12 +787,13 @@ void DrawInformation( void )
     colck = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
     //printData("colck=%d",colck);
     DrawNum_R(10,Y_PosStart+1,3,colck/100);
-	Osd_DrawPropStr( 13, Y_PosStart+1, DotText());
+	Osd_DrawStr_for_Baron( 13, Y_PosStart+1, DotText());
     DrawNum(14,Y_PosStart+1,2,colck%100);
     Osd_DrawPropStr( 16, Y_PosStart+1, MHzText());
 	//=================================================
 	Osd_DrawPropStr( 3, Y_PosStart+2, VersionText());
-	Osd_DrawStr(10, Y_PosStart+2, ModelNameInfoText());
+	Osd_DrawPropStr( 10, Y_PosStart+2, AD9700PText());
+	Osd_DrawStr_for_Baron(17, Y_PosStart+2, ModelNameInfoText());
 	//=================================================
 }
 
@@ -1061,7 +1062,14 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                     Osd_DrawContinuesChar( 2, 13, Space4C, 27 );
     #endif
                 }
-#else				
+#else
+				#if LiteMAX_Baron_OSD_TEST 
+				OsdFontColor = FOUR_COLOR(5);
+				for (tempValue = 1; tempValue <= 6; tempValue++)
+				{
+    				Osd_DrawContinuesChar( 2, tempValue, Space4C, 29 );
+				}
+				#endif
                 if (Layer2_PrevMenuPage && Layer3_MenuPage)
                 {
                     ucClrItem = PrevMenuItemIndex;
@@ -1695,10 +1703,12 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 		printData("MenuPageIndex = %d", MenuPageIndex);
 		printData("itemIndex = %d", itemIndex);
 		printData("MenuItemIndex = %d", MenuItemIndex);
-
+		
 		#if	LiteMAX_Baron_OSD_TEST
 		if (MenuPageIndex == MainMenu)
 		{
+			DrawInformation();
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
 			if(MenuItemIndex == itemIndex)
             {
 				if(itemIndex == MAIN_COLOR_ITEM)
@@ -1767,7 +1777,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 			else
 				DrawOsdIcon( (MainMenuIcon_X_Start+(itemIndex*6)), MainMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
 		}
-	#if 0// Sub
+	#if 1 // Sub
   		#if 0//(LiteMAX_OSDtype==LiteMAX_OSD2)
 		else if( MenuPageIndex == BrightnessMenu )
 		{
@@ -1858,35 +1868,11 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 			else if( MenuPageIndex == BrightnessMenu )
 			{
 				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-		
-				OsdFontColor = 0x14;
-				DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIconSub4C_Brightness);
+				OsdFontColor=FOUR_COLOR(6);
+				redrawIcon = MAIN_LUMINANCE_ICON;
+				DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
 			}
-			#if 0//ARISTOCRAT_OSD_DVIDP//David add at 20250115
-			else if( MenuPageIndex == SignalMenu )
-			{
-				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-		
-		//			  OsdFontColor = 0x18;
-		//			  DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIcon4C_Sharpness);
-		
-				if(itemIndex == 0)
-				{
-					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 3,MainIconSub_Y,MainIconSub4C_DVI);
-				}
-				else if(itemIndex == 1)
-				{				
-					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 12,MainIconSub_Y,MainIconSub4C_DP);
-				}
-				else
-				{
-					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 21,MainIconSub_Y,MainIcon4C_Exit);
-				}
-			}
-		#endif
+			#if 0
 			else if( MenuPageIndex == SharpnessMenu )
 			{
 				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
@@ -1969,6 +1955,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				OsdFontColor = 0x14;
 				DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_Brightness);
 			}
+			#endif
   		#endif
 	#endif
 		#else
@@ -3152,11 +3139,6 @@ void DrawOsdBackGround(void)
         Osd_DrawCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
         Osd_DrawContinuesChar( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
         Osd_DrawCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
-        
-        #if 0 //240726
-        DrawResolutionRealText(10, 1);
-        DrawPixelClockRealText(10, 2);
-        #endif
                 
         #else
 		

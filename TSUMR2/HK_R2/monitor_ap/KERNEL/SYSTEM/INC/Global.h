@@ -235,10 +235,19 @@ extern xdata BYTE OsdFontColor;
 #define HotLayerYPos      4
 
 #if LiteMAX_OSD_TEST //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
+#if LiteMAX_Baron_OSD_TEST
+#define GaugeXPos           8
+#define GaugeLens           20
+#define NumberXPos          (GaugeXPos+12)
+#define RGBGaugeXPos        9
+#define RGBGaugeLens        17
+#else
 #define GaugeXPos           7
 #define GaugeLens           18
 #define RGBGaugeXPos        5
 #define RGBGaugeLens        20
+#endif
+
 #else
 #define GaugeXPos           (Layer3XPos+0)
 #endif
@@ -387,7 +396,11 @@ extern xdata BYTE OsdFontColor;
 #endif
 #define SmallLogo_Size      39
 
+#if LiteMAX_Baron_OSD_TEST
+#define Logo_4C         0x102
+#else
 #define Logo_4C         0x02
+#endif
 #define Logo_Size       120
 //------Eson End--------------------------------
 

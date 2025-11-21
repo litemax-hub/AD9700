@@ -188,7 +188,7 @@ void LoadCommonFont( void )
 	//Load 2 COLOR Font
     //Static Mono Font
     mStar_LoadCompressedFont(COMMON_FONT_START, tCommonArea, 0);/// Load Common font
-    #if 1 //LiteMAX_Baron_OSD_TEST
+    #if LiteMAX_Baron_OSD_TEST
     mStar_LoadCompressedFont(COMMON_FONT_2ND_START, tCommonArea2nd, 0);/// Load Common font
     #endif
     mStar_LoadCompressedFont(SM_CHECK_2C_FONT_START, tCheckMark2ColorIconFont, 0);

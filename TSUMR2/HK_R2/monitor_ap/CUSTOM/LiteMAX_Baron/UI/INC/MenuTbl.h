@@ -354,7 +354,7 @@ MenuItemType code MainMenuItems[] =
 {
     // 0 LuminanceMenu
     {
-        2, 6, // XPos, YPos;
+        2, MainMenusStr_Y_Start, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // SelForeColor, SelBackColor;
         BrightnessMenu, // NextMenuPage;
@@ -376,7 +376,7 @@ MenuItemType code MainMenuItems[] =
 	#if ENABLE_SHARPNESS
     // 1 SharpnessMenu
     {
-        7,6,//8, 6, // XPos, YPos;
+        7, MainMenusStr_Y_Start,//8, 6, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // SelForeColor, SelBackColor;
         SharpnessMenu, // NextMenuPage;
@@ -398,7 +398,7 @@ MenuItemType code MainMenuItems[] =
     #endif
     // 1 ColorMenu
     {
-        13-4, 6, // XPos, YPos;
+        9, MainMenusStr_Y_Start, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // SelForeColor, SelBackColor;
         ColorTempMenu, // NextMenuPage;
@@ -419,7 +419,7 @@ MenuItemType code MainMenuItems[] =
     },
     // 2 ToolMenu
     {
-        18-3, 6, // XPos, YPos;
+        15, MainMenusStr_Y_Start, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // SelForeColor, SelBackColor;
         DefaultMenu,// NextMenuPage;
@@ -440,7 +440,7 @@ MenuItemType code MainMenuItems[] =
     },
     // 3 PowerLockMenu
     {
-        22-2, 6, // XPos, YPos;
+        20, MainMenusStr_Y_Start, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // SelForeColor, SelBackColor;
         RootMenu,// NextMenuPage;
@@ -461,7 +461,7 @@ MenuItemType code MainMenuItems[] =
     },
     // 4 Exit
     {
-        28-1, 6, // XPos, YPos;
+        27, MainMenusStr_Y_Start, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // SelForeColor, SelBackColor;
         RootMenu,// NextMenuPage;
@@ -638,105 +638,14 @@ MenuItemType code MainMenuItems[] =
 #if 1 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
 MenuItemType code LuminanceMenuItems[] =
 {
-    // 0 BrightnessType
-    {
-        NULL,NULL,//6, 5, // XPos, YPos;
-        CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-#if 0//BrightnessLightSensorVR
-    #if 1 // jason 20190611
-        LuminanceMenu, // NextMenuPage;
-    #else
-// jason 20200113        BrightnessTypeMenu, // NextMenuPage;
-    #endif
-#else
-        LuminanceMenu, // NextMenuPage;
-#endif
-        DWI_Icon, // DrawMenuItemType;
-        NULL,//C6500KText, // DisplayText;
-#if 0 // jason 20190611
-    #if BrightnessLightSensorVR
-        NaviExecKeyEvent,
-    #else
-        NaviKeyEvent,
-    #endif
-#else
-        NaviKeyEvent,
-#endif
-        {
-            NULL, // AdjustFunction
-#if 0 // jason 20190611
-    #if BrightnessLightSensorVR
-            OSD_SetLitemaxBrightnessMode, // ExecFunction
-    #else
-            NULL, // ExecFunction
-    #endif
-#else
-            NULL, // ExecFunction
-#endif
-        },
-        {
-            NULL, // DrawNumberType
-            NULL, // DrawGuageType
-            NULL  // DrawMenuRadioGroup,
-        },
-        NULL, //Font
-        mibSelectable // Flags
-    },
-    // 1 Brightness
+    // 0 Brightness
     {
         11,5,//6, 5, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // SelForeColor, SelBackColor;
         BrightnessMenu, // NextMenuPage;
         DWI_Icon, // DrawMenuItemType;
-        NULL,//C9300KText,//DefaultText, // DisplayText;
-        NaviKeyEvent,
-        {
-            NULL, // AdjustFunction
-            NULL, // ExecFunction
-        },
-        {
-            NULL, // DrawNumberType
-            NULL, // DrawGuageType
-            NULL  // DrawMenuRadioGroup,
-        },
-        NULL, //Font
-#if 0//BrightnessLightSensorVR
-        mibSelectable|mibVRDisableBrightness // Flags
-#else
-        mibSelectable // Flags
-#endif
-    },
-    // 2 Contrast
-    {
-        18,5,//14, 5, // XPos, YPos;
-        CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-        ContrastMenu, // NextMenuPage;
-        DWI_Icon, // DrawMenuItemType;
-        NULL,//CUserText, // DisplayText;
-        NaviKeyEvent,
-        {
-            NULL, // AdjustFunction
-            NULL, // ExecFunction
-        },
-        {
-            NULL, // DrawNumberType
-            NULL, // DrawGuageType
-            NULL  // DrawMenuRadioGroup,
-        },
-        NULL, //Font
-        mibSelectable // Flags
-    },
-    // 3 Exit
-    {
-        25,5,//24, 5, // XPos, YPos;
-        CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
-        MainMenu, // NextMenuPage;
-        DWI_Icon, // DrawMenuItemType;
-        NULL,//ReturnText, // DisplayText;
+        BrightnessText, // DisplayText;
         NaviKeyEvent,
         {
             NULL, // AdjustFunction
@@ -3262,49 +3171,37 @@ MenuItemType code ContrastMenuItems[] =
 #if LiteMAX_OSD_TEST
 NumberType code BrightnessNumber[] =
 {
-     // Flags,   XPos,   YPos,   GetValue
-#if 0//BrightnessLightSensorVR
-    {  dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetBrightnessValueSwitch},
-#else
-    {  dwiEnd, GaugeXPos+GaugeLens-5, 11, GetBrightnessValue},
-#endif
-};//GaugeXPos+GaugeLens-5
+	// Flags,	XPos,	YPos,	GetValue
+	{  dwiEnd, GaugeXPos+GaugeLens-5, 3, GetBrightnessValue},
+};
 DrawNumberType code DrawBrightnessNumber[] =
 {
-    // ForeColor, BackColor,  GetValue
-    {CPC_White, CPC_Black,     BrightnessNumber}
+	// ForeColor, BackColor,  GetValue
+	{ CPC_White, CPC_Black,	   BrightnessNumber},
 };
 GaugeType code BrightnessGuage[] =
 {
-     // Flags, XPos,    YPos,     GetValue
-#if 0 //BrightnessLightSensorVR
-    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetBrightnessValueSwitch},
-#else
-    {dwiEnd, GaugeXPos, 13, GetBrightnessValue},
-#endif
+	// Flags, ForeColor,	BackColor,	Length, 	GetValue
+	{ dwiEnd, GaugeXPos, 4, GetBrightnessValue},
 };
 DrawGuageType code DrawBrightnessGuage[] =
 {
-    //  ForeColor,  BackColor,  Length,,    GetValue
-    {CPC_Yellow,  CPC_Black,    GaugeLens,  BrightnessGuage}
+	//	ForeColor,	BackColor,	Length,,	GetValue
+	{ CPC_Yellow,  CPC_Black,	GaugeLens,	BrightnessGuage},
 };
 MenuItemType code BrightnessMenuItems[] =
 {
     // 0 Brightness
     {
-        NULL, NULL, // XPos, YPos;
-        NULL, NULL, // ForeColor, BackColor;
-        NULL, NULL, // SelForeColor, SelBackColor;
-        LuminanceMenu,// NextMenuPage;
+        3, 5, // XPos, YPos;
+        CPC_White, CPC_Black, // ForeColor, BackColor;
+        CPC_White, CPC_Black, // SelForeColor, SelBackColor;
+        MainMenu,// NextMenuPage;
         DWI_Icon,// DrawMenuItemType;
-        NULL, // DisplayText;
+        BrightnessText, // DisplayText;
         AdjusterKeyEvent,
         {
-#if 0 //BrightnessLightSensorVR
-           AdjustBrightnessSwitch,// AdjustFunction
-#else
            AdjustBrightness,// AdjustFunction
-#endif
            NULL,// ExecFunction
         },
         {
