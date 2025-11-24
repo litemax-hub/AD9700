@@ -2400,7 +2400,11 @@ Bool ResetAllSetting( void )
     UserPrefOsdTime = 10;
     UserPrefOsdTransparency = DEF_OSD_TRANSPARENCY;
     Osd_SetTransparency(UserPrefOsdTransparency);
+	#if LiteMAX_Baron_OSD_TEST
+	UserPrefColorTemp = CTEMP_Warm1;
+	#else
     UserPrefColorTemp = CTEMP_USER;
+	#endif
     SetColorTemp(); //9300K()
     UserPrefECOMode = ECO_Standard;
 #if ENABLE_OSD_ROTATION

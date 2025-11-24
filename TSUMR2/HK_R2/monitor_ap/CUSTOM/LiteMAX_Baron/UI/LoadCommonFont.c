@@ -145,42 +145,12 @@ void LoadFfont( void )
     mStar_LoadCompressedFont( FfontStart, tFontF, 0 ); // load osd fonts
 }
 
-#if 0 //LiteMAX_OSD_TEST
-void InitGradualColor(void)
-{
-	//init MAIN_GD_WIN
-    drvOSD_SetWndCtrl(MAIN_GD_WIN, OSD_WND_CTRL0,
-                      (OWC0_FP_MODE|
-                       OWC0_GROUP_SEL0|
-                       OWC0_LV1_ALPHA_SRC(OSD_A_FIX)|
-                       OWC0_LV2_ALPHA_SRC(OSD_A_FIX)|
-                       OWC0_OUT_ALPHA_SRC(OSD_A_FIX)),
-                       OWC0MASK_ALL);
-    drvOSD_SetWndCtrl(MAIN_GD_WIN, OSD_WND_CTRL1,
-                     (OWC1_1BP_44MODE_EN|
-                      OWC1_44MODE_TRS_EN|
-                      OWC1_FONT_HEIGHT(18)),
-                      OWC1MASK_ALL);
-    drvOSD_SetWndCtrl(MAIN_GD_WIN, OSD_WND_CTRL2,
-                     (OWC2_GD_COLOR_R(OSD_COLOR_FIX)|
-                      OWC2_GD_COLOR_G(OSD_COLOR_FIX)|
-                      OWC2_GD_COLOR_B(OSD_COLOR_FIX)),
-                      OWC2MASK_ALL);
-
-    drvOSD_SetWndFixAlpha(MAIN_GD_WIN,OSD_ALPHA_LV2,0x00); //PG   //(1-a)*low_lvl+a*top_lvl
-    drvOSD_SetWndFixAlpha(MAIN_GD_WIN,OSD_ALPHA_LV1,0x3F); //FG
-    drvOSD_SetWndFixAlpha(MAIN_GD_WIN,OSD_ALPHA_OUT,0x3F); //OSD
-    drvOSD_SetWndCABaseAddr(MAIN_GD_WIN,OSD_MAIN_WND_CA_BASE);
-}
-#endif
-
 void LoadCommonFont( void )
 {
-	#if LiteMAX_OSD_TEST
+	#if LiteMAX_Baron_OSD_TEST
 	#if ENABLE_DEBUG
 	printData( "LoadCommonFont \r\n", 0);
 	#endif
-    //InitGradualColor();
 
 	Osd_Write4ColorFontStartAddr( _4ColorFontStart );
 	Osd_Write8ColorFontStartAddr( 0x0FFF );
@@ -188,9 +158,7 @@ void LoadCommonFont( void )
 	//Load 2 COLOR Font
     //Static Mono Font
     mStar_LoadCompressedFont(COMMON_FONT_START, tCommonArea, 0);/// Load Common font
-    #if LiteMAX_Baron_OSD_TEST
     mStar_LoadCompressedFont(COMMON_FONT_2ND_START, tCommonArea2nd, 0);/// Load Common font
-    #endif
     mStar_LoadCompressedFont(SM_CHECK_2C_FONT_START, tCheckMark2ColorIconFont, 0);
 	#if 0
     LoadMainMenuPropFont();
@@ -205,17 +173,13 @@ void LoadCommonFont( void )
 	Osd_LoadCompressColorFont( MainIcon4C_1_BrightnessSub, t4ColorBrightnessSub, NULL, MainIcon4C_1_BrightnessSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_2_AudioSub, t4ColorAudioSub, NULL, MainIcon4C_2_AudioSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_3_ColorSub, t4ColorColorSub, NULL, MainIcon4C_3_ColorSub_Size);
-
 	Osd_LoadCompressColorFont( MainIcon4C_4_ImageSub, t4ColorImageSub, NULL, MainIcon4C_4_ImageSub_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_5_OtherSub, t4ColorOtherSub, NULL, MainIcon4C_5_OtherSub_Size);
-	#if LiteMAX_Baron_OSD_TEST
 	Osd_LoadCompressColorFont( MainIcon4C_PowerKeyLock, t4ColorPowerKeyLock, NULL, MainIcon4C_PowerKeyLock_Size);
 	Osd_LoadCompressColorFont( MainIcon4C_LoadDefaultSub, t4ColorLoadDefaultSub, NULL, MainIcon4C_LoadDefaultSub_Size);
-	#endif
-	//Osd_LoadCompressColorFont( MainIcon4C_PPMode, t4ColorPPMode, NULL, MainIcon4C_PPMode_Size);
 
 	Osd_LoadColorPalette256(); // load osd color
-	#else //#if LiteMAX_OSD_TEST
+	#else
 #if 0 // fix coverity error-deadcode
     BYTE i = 0;
     if(i)
@@ -243,7 +207,7 @@ void LoadCommonFont( void )
 	Osd_LoadCompressColorFont( SmallLogo_4C, tSmallLogo_4C, NULL, SmallLogo_Size);
 
     Osd_LoadColorPalette256(); // load osd color
-    #endif //#if LiteMAX_OSD_TEST
+    #endif
 
 }
 

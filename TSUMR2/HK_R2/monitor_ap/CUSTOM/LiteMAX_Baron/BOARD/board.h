@@ -253,7 +253,7 @@
 
 #define HotExpansion        Enable_Expansion&&!AudioFunc
 
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 #define PropFontUseCommonArea           0 // 1
 #else
 #define PropFontUseCommonArea           1

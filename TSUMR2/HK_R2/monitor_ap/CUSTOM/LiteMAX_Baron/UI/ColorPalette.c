@@ -69,7 +69,7 @@ ColorPaletteType code tOSDColorPalette256[]=
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // C
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // D
   {NULL, NULL, NULL,    CP_COLORKEY_F},           // E
-  #if LiteMAX_OSD_TEST
+  #if LiteMAX_Baron_OSD_TEST
   {0x38, 0x80, 0x98,    CP_COLORKEY_F},  		  // F
   #else
   {0x00, 0x00, 0x00,    CP_COLORKEY_F},           // F
@@ -79,7 +79,7 @@ ColorPaletteType code tOSDColorPalette256[]=
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // 1
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // 2
   {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},           // 3
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
   // 5 0x10 Frame // Cursor Palette Hightlight (Brightness and Contrast First Line)
   {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
   {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},

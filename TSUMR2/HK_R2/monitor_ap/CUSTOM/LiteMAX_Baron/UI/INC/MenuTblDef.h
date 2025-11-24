@@ -2,31 +2,13 @@
 #include "menudef.h"
 #include "MenuStr.h"
 
-#if LiteMAX_OSD_TEST
-#if 1 //(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
+#if LiteMAX_Baron_OSD_TEST
 #define MAIN_MENU_H_SIZE     		33
 #define MAIN_MENU_V_SIZE             8
 
 #define MessageMenuHSize			20
 #define MessageMenuVSize       		5
-#else //(LiteMAX_OSDtype == LiteMAX_OSD_Standard)
-#define MAIN_MENU_H_SIZE            31
-#define MAIN_MENU_V_SIZE            16
 
-#define MessageMenuHSize			20
-#define MessageMenuVSize       		5
-#endif
-#else //#if LiteMAX_OSD_TEST
-#define MAIN_MENU_H_SIZE			58
-#define MAIN_MENU_V_SIZE       		27//24
-
-#define MessageMenuHSize			31
-#define MessageMenuVSize       		10
-#endif //#if LiteMAX_OSD_TEST
-
-#if LiteMAX_OSD_TEST
-
-#if LiteMAX_Baron_OSD_TEST
 #define MainMenuIcon_X_Start        3
 #define MainMenuIcon_Y_Start        4
 #define MainMenusStr_Y_Start        6
@@ -40,20 +22,13 @@
 #define UserBlue_Y_Start            13
 #define Source_Y_Start              11
 #else
-#define MainMenuIcon_X_Start        2
-#define MainMenuIcon_Y_Start        5
-#define SubMenuIcon_X_Start         2
-#define SubMenuIcon_Y_Start         10
+#define MAIN_MENU_H_SIZE			58
+#define MAIN_MENU_V_SIZE       		27//24
 
-#define SubMenuValue_Y_Start        11
-#define SubMenuBar_Y_Start          13
-#define UserRed_Y_Start             9
-#define UserGreen_Y_Start           11
-#define UserBlue_Y_Start            13
-#define Source_Y_Start              11
+#define MessageMenuHSize			31
+#define MessageMenuVSize       		10
 #endif
 
-#endif
 //=====================================================================================
 // Key function definition
 MenuItemActionType code InformationEvent[BTN_EndBTN] =
@@ -104,7 +79,7 @@ MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
     MIA_Power,    // BTN_Power
     MIA_SourceSel, //2006-02-22
 };
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 MenuItemActionType code NaviExec2KeyEvent[BTN_EndBTN] =
 {
     MIA_PrevItem,     // BTN_Plus

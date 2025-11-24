@@ -279,12 +279,11 @@ extern BYTE *sRGBText( void );
 extern BYTE *NORMALText( void );
 extern BYTE *EnterBurninText( void );
 extern BYTE *ExitBurninText( void );
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 extern BYTE *PixelClockText( void );
 extern BYTE *MHzText( void );
 extern BYTE *DotText( void );
 extern BYTE *LoadDefaultText( void );
-#if LiteMAX_Baron_OSD_TEST
 extern BYTE *ColorText( void );
 extern BYTE *DefaultText( void );
 extern BYTE *PowerKeyEnableText( void );
@@ -292,6 +291,5 @@ extern BYTE *VersionText( void );
 extern BYTE *AD9700PText( void );
 extern BYTE *ModelNameInfoText( void );
 extern BYTE *CUserText( void );
-#endif
 #endif
 //====================================

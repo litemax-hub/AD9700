@@ -1,7 +1,7 @@
 
 #include "LoadPropFont1218.h"
 
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 PropFontNonCompressType code tPropFontSetArialNarrow13Bold[]=
 {
   // 0x000(0) :
@@ -779,7 +779,7 @@ PropFontNonCompressType code tPropFontSetArialNarrow13_Baron[]=
 };
 #endif
 
-#endif //#if LiteMAX_OSD_TEST
+#endif
 
 #if 1//CHIP_ID>=CHIP_TSUMV
 PropFontNonCompressType code tPropFontSet[]=

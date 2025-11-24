@@ -16,7 +16,7 @@ const BYTE *NetAddrText( void )
 {
     return 0;
 }
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 const BYTE *ResolutionText( void )
 {
     return strResolutionM0[UserPrefLanguage];
@@ -56,7 +56,6 @@ const BYTE *LoadDefaultText( void )
 {
     return strLoadDefaultM0[UserPrefLanguage];
 }
-#if LiteMAX_Baron_OSD_TEST
 const BYTE *BrightnessText( void )
 {
     return strBrightnessM0[UserPrefLanguage];
@@ -121,7 +120,6 @@ const BYTE *ReturnText( void )
 {
     return strReturnM0[UserPrefLanguage];
 }
-#endif
 const BYTE *BriteContText( void )
 {
     return 0;

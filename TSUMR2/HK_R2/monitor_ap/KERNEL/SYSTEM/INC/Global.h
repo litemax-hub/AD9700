@@ -234,7 +234,6 @@ extern xdata BYTE OsdFontColor;
 #define HotLayerXPos      2
 #define HotLayerYPos      4
 
-#if LiteMAX_OSD_TEST //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
 #if LiteMAX_Baron_OSD_TEST
 #define GaugeXPos           8
 #define GaugeLens           20
@@ -242,16 +241,9 @@ extern xdata BYTE OsdFontColor;
 #define RGBGaugeXPos        9
 #define RGBGaugeLens        17
 #else
-#define GaugeXPos           7
-#define GaugeLens           18
-#define RGBGaugeXPos        5
-#define RGBGaugeLens        20
-#endif
-
-#else
 #define GaugeXPos           (Layer3XPos+0)
-#endif
 #define NumberXPos          (GaugeXPos+12)
+#endif
 
 #define MonoFontStart       0x00
 #define SpaceFont           (MonoFontStart+0x01)
@@ -281,16 +273,15 @@ extern xdata BYTE OsdFontColor;
 
 #define PropFontAddr1       0x20
 #define PropFontAddr2       0x80
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 ///////////////////////////////////////////////////////////////////////////////////////
 //
 //Memory Mapping Common Use - mono
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 #define COMMON_FONT_START               0x00
-#if LiteMAX_Baron_OSD_TEST
 #define COMMON_FONT_2ND_START           0xC0
-#endif
+
 #define NumberFontStart					(COMMON_FONT_START+0x02) // 0x02 ~ 0x09
 #define Mark_2C             			(COMMON_FONT_START+0x16) // 0x16
 #define	GaugeFontStart					(COMMON_FONT_START+0x17) // 0x17 ~ 0x1F
@@ -354,13 +345,8 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C_1_BrightnessSub_Size    6*6
 #define MainIcon4C_2_AudioSub              (MainIcon4C_1_BrightnessSub+(MainIcon4C_1_BrightnessSub_Size*2))
 #define MainIcon4C_2_AudioSub_Size         2*6
-#if 1
 #define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
 #define MainIcon4C_3_ColorSub_Size         8*6
-#else
-#define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
-#define MainIcon4C_3_ColorSub_Size         4*6
-#endif
 
 #define LuminanceIconStar  				   (MainIcon4C_0_MainMenuIcon)
 #define SignalIconStar  				   (MainIcon4C_0_MainMenuIcon+0x0C)

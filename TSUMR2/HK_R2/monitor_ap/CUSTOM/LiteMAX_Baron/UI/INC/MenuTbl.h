@@ -347,8 +347,6 @@ DrawRadioGroupType code DrawPowerManagerMenuRatioGroup[] =
 };
 
 //=========================================================
-#if LiteMAX_OSD_TEST
-
 #if LiteMAX_Baron_OSD_TEST
 MenuItemType code MainMenuItems[] =
 {
@@ -481,9 +479,7 @@ MenuItemType code MainMenuItems[] =
         mibSelectable // Flags
     },
 };
-#endif
 
-#if 1 //(LiteMAX_OSDtype==LiteMAX_OSD_standard)
 MenuItemType code LuminanceMenuItems[] =
 {
     // 0 Brightness
@@ -998,7 +994,6 @@ MenuItemType code ToolMenuItems[] =
     },
 };
 #endif
-#endif
 //=========================================================
 RadioTextType code BriteContMenuStatusRatioText[] =
 {
@@ -1181,7 +1176,7 @@ MenuItemType code BriteContMenuItems[] =
 
 };
 
-#if 1 //LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 //============ Red MenuItem==============
 NumberType code UserRedNumber[] =
 {
@@ -2482,7 +2477,7 @@ MenuItemType code DisplayLogoMenuItems[] =
 
 //---------------------------------------------------------------
 //============ Contrast MenuItem==============
-#if LiteMAX_OSD_TEST 
+#if LiteMAX_Baron_OSD_TEST 
 NumberType code ContrastNumber[] =
 {
     // Flags,   XPos,   YPos,   GetValue
@@ -2527,57 +2522,9 @@ MenuItemType code ContrastMenuItems[] =
         mibSelectable // Flags
     },
 };
-#else
-//--------------------ContrastNumber--------------------------
-NumberType code ContrastNumber[] =
-{
-    // Flags,   XPos,   YPos,   GetValue
-    {  dwiEnd, NumberXPos, (LayerYPos+2*BriteContMenuItems_Contrast), GetContrastValue},
-};
-DrawNumberType code DrawContrastNumber[] =
-{
-    // ForeColor, BackColor,  GetValue
-    {CPC_MTK_Gold, CPC_Black,     ContrastNumber}
-};
-//--------------------ContrastIconGuge--------------------------
-GaugeType code ContrastGuage[] =
-{
-    // Flags, ForeColor,    BackColor,  Length,     GetValue
-    {dwiEnd, GaugeXPos, (LayerYPos+2*BriteContMenuItems_Contrast), GetContrastValue},
-};
-DrawGuageType code DrawContrastGuage[] =
-{
-    //  ForeColor,  BackColor,  Length,,    GetValue
-    {6,  Color_4,    9,  ContrastGuage}
-};
-
-MenuItemType code ContrastMenuItems[] =
-{
-    // 0 Contrast
-    {
-        Layer2XPos, (LayerYPos+2*BriteContMenuItems_Contrast), // XPos, YPos;
-        CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_MTK_Gold, CPC_Black, // SelForeColor, SelBackColor;
-        BriteContMenu,// NextMenuPage;
-        DWI_Text,// DrawMenuItemType;
-        ContrastText, // DisplayText;
-        AdjusterKeyEvent,
-        {
-            AdjustContrast,// AdjustFunction
-            NULL,//AutoConfig// ExecFunction
-        },
-        {
-            DrawContrastNumber,// DrawNumberType
-            DrawContrastGuage,// DrawGuageType
-            NULL,// DrawRadioGroupType
-        },
-        NULL, //Font
-        mibSelectable // Flags
-    },
-};
 #endif
 //============ Brightness MenuItem==============
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 NumberType code BrightnessNumber[] =
 {
 	// Flags,	XPos,	YPos,	GetValue
@@ -2622,58 +2569,9 @@ MenuItemType code BrightnessMenuItems[] =
         mibSelectable // Flags
     },
 };
-#else
-//--------------------BrightnessNumber--------------------------
-NumberType code BrightnessNumber[] =
-{
-    // Flags,   XPos,   YPos,   GetValue
-    {  dwiEnd, NumberXPos, (LayerYPos+2*BriteContMenuItems_Brightness), GetBrightnessValue},
-};
-DrawNumberType code DrawBrightnessNumber[] =
-{
-    // ForeColor, BackColor,  GetValue
-    {CPC_MTK_Gold, CPC_Black,     BrightnessNumber}
-};
-
-//--------------------BrightnessIconGuge--------------------------
-GaugeType code BrightnessGuage[] =
-{
-    // Flags, ForeColor,    BackColor,  Length,     GetValue
-    {dwiEnd, GaugeXPos, (LayerYPos+2*BriteContMenuItems_Brightness), GetBrightnessValue},
-};
-DrawGuageType code DrawBrightnessGuage[] =
-{
-    //  ForeColor,  BackColor,  Length,,    GetValue
-    {6,  Color_4,    9,  BrightnessGuage}
-};
-
-MenuItemType code BrightnessMenuItems[] =
-{
-    // 0 Brightness
-    {
-        Layer2XPos, (LayerYPos+2*BriteContMenuItems_Brightness), // XPos, YPos;
-        CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_MTK_Gold, CPC_Black, // SelForeColor, SelBackColor;
-        BriteContMenu,// NextMenuPage;
-        DWI_Text,// DrawMenuItemType;
-        BrightnessText, // DisplayText;
-        AdjusterKeyEvent,
-        {
-            AdjustBrightness,// AdjustFunction
-            NULL,//AutoConfig// ExecFunction
-        },
-        {
-            DrawBrightnessNumber,// DrawNumberType
-            DrawBrightnessGuage,// DrawGuageType
-            NULL,// DrawRadioGroupType
-        },
-        NULL, //Font
-        mibSelectable // Flags
-    },
-};
 #endif
 
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 //============ Load Default MenuItem==============
 MenuItemType code LoadDefaultMenuItems[] =
 {
@@ -6055,7 +5953,7 @@ MenuItemType code ColorModeMenuItems[] =
     },
 };
 
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 //============ ColorTemp MenuItem==============
 MenuItemType code ColorTempMenuItems[] =
 {
@@ -8350,7 +8248,7 @@ MenuPageType code tblMenus[] =
         NULL, // Fonts
         mpbInvisible | mpbStay //   Flags;
     },
-    #if LiteMAX_OSD_TEST	
+    #if LiteMAX_Baron_OSD_TEST	
 	// MainMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -8432,7 +8330,7 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay  //   Flags;
     },
-    #if LiteMAX_OSD_TEST
+    #if LiteMAX_Baron_OSD_TEST
 	// ColorSettingsMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -8783,7 +8681,7 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay //   Flags;
     },
-    #if LiteMAX_OSD_TEST
+    #if LiteMAX_Baron_OSD_TEST
 	// ColorTempMenu,
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -9466,7 +9364,7 @@ MenuPageType code tblMenus[] =
         NULL, // Fonts
         mpbStay | mpbCenter | mpbLogoFrame //   Flags;
     },
-    #if LiteMAX_OSD_TEST
+    #if LiteMAX_Baron_OSD_TEST
     // SoundAdjustMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -9569,6 +9467,7 @@ MenuPageType code tblMenus[] =
         mpbStay //   Flags;
     },
 #endif
+	#if LiteMAX_Baron_OSD_TEST
 	// DefaultMenu
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
@@ -9579,6 +9478,8 @@ MenuPageType code tblMenus[] =
         NULL, // // Fonts
         mpbStay  //   Flags;
     },
+    #endif
+	
     #endif
 };
 

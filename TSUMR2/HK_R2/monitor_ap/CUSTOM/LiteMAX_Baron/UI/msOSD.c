@@ -436,7 +436,7 @@ void DrawNum_R( BYTE xPos, BYTE yPos, char len, int value)// R
     }
 }
 
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 void DrawNum( BYTE xPos, BYTE yPos, char len, int value)
 {
     char _minus = 0;
@@ -550,7 +550,7 @@ void Osd_Draw4Num( BYTE xPos, BYTE yPos, int value )
     DrawNum( xPos, yPos, 4, value );
 }
 //===================================================================================
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 void Osd_DrawGuage( BYTE ucX, BYTE ucY, BYTE ucLength, BYTE ucValue )
 {
 
@@ -693,14 +693,11 @@ void Osd_DrawHex( BYTE xPos, BYTE yPos, WORD value )
     DrawHex( xPos, yPos, value );
 }
 
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 void Osd_DynamicLoadFont( BYTE addr, BYTE *fontPtr, WORD num )
 {
-    #if 1//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
     pstPropFontSet1218=tPropFontSetArialNarrow13_Baron;
-    #else
-    pstPropFontSet1218=tPropFontSetArialNarrow13Bold;
-    #endif
+
     g_u8PropFontFlags=SPACE1PIXEL;
     g_u8AlignResetIndex=0xFF;
     LoadPropFonts1218(addr, fontPtr, num, NULL, 0, 0, 0);

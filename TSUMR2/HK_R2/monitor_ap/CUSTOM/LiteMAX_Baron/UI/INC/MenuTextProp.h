@@ -4949,7 +4949,7 @@ BYTE code strGama3M7[][2]=
 
 
 //--Eson Start----------------------------------
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 BYTE code strResolutionM0[1][2]=
 { { 0x20 , 0x05 }
 };
@@ -5253,7 +5253,7 @@ BYTE code strAutoM102[1][2]=
 { { 0xE3 , 0x03 }
 };
 
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 BYTE code strAutoSelectM103[1][2]=
 { { 0x80 , 0x02 }
 };

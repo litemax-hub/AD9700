@@ -951,7 +951,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 }
                 Delay1ms( 300 );
                 break;
-			#if LiteMAX_OSD_TEST
+			#if LiteMAX_Baron_OSD_TEST
 			case MIA_GotoNextExec:
                 if( CurrentMenuItemFunc.ExecFunction )
                 {
@@ -964,7 +964,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 //printMsg(">>>>>>>>>>>>>>>MIA_GotoNext");
                 PrevMenuPageIndex = MenuPageIndex;
                 PrevMenuItemIndex = MenuItemIndex;
-				#if LiteMAX_OSD_TEST
+				#if LiteMAX_Baron_OSD_TEST
                 MenuPageIndex = ( menuAction == MIA_GotoNext || menuAction == MIA_GotoNextExec) ? ( NextMenuPage ) : ( PrevMenuPage );
 				#else
 				MenuPageIndex = ( menuAction == MIA_GotoNext ) ? ( NextMenuPage ) : ( PrevMenuPage );
@@ -1623,7 +1623,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
     {
         return ;
     }
-#if	LiteMAX_OSD_TEST
+#if	LiteMAX_Baron_OSD_TEST
 	if( menuItem->DrawItemMethod == DWI_Icon )
 	{
 		printf("\r\n DWI_Icon");
@@ -1633,72 +1633,53 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 		printData("itemIndex = %d", itemIndex);
 		printData("MenuItemIndex = %d", MenuItemIndex);
 		
-		#if	1 //LiteMAX_Baron_OSD_TEST
 		if (MenuPageIndex == MainMenu)
 		{
 			DrawInformation();
 			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-			if(MenuItemIndex == itemIndex)
-            {
-				if(itemIndex == MAIN_COLOR_ITEM)
-				{
-					OsdFontColor=FOUR_COLOR(12);
-					redrawIcon = MAIN_COLOR_ICON;
-				}
-				else if(itemIndex == MAIN_BRIGHTNESS_ITEM)
-				{
-					OsdFontColor=FOUR_COLOR(10);
-					redrawIcon = MAIN_LUMINANCE_ICON;
-				}
-				else if(itemIndex == MAIN_DEFAULT_ITEM)
-				{
-					OsdFontColor=FOUR_COLOR(10);
-					redrawIcon = MAIN_OTHER_ICON;
-				}
-				else if(itemIndex == MAIN_POWER_ENABLE_ITEM)
-				{
-					OsdFontColor=FOUR_COLOR(17);
-					if (1)
-						redrawIcon = MAIN_POWER_DISBLE_ICON;
-					else
-						redrawIcon = MAIN_POWER_ENABLE_ICON;
-				}
-				else if(itemIndex == MAIN_EXIT_ITEM)
-				{
-					OsdFontColor=FOUR_COLOR(10);
-					redrawIcon = MAIN_EXIT_ICON;
-				}
-            }
-			else
+			if(itemIndex == MAIN_COLOR_ITEM)
 			{
-				if(itemIndex == MAIN_COLOR_ITEM)
-				{
+				if (MenuItemIndex == itemIndex)
+					OsdFontColor=FOUR_COLOR(12);
+				else
 					OsdFontColor=FOUR_COLOR(8);
-					redrawIcon = MAIN_COLOR_ICON;
-				}
-				else if(itemIndex == MAIN_BRIGHTNESS_ITEM)
-				{
+				redrawIcon = MAIN_COLOR_ICON;
+			}
+			else if(itemIndex == MAIN_BRIGHTNESS_ITEM)
+			{
+				if (MenuItemIndex == itemIndex)
+					OsdFontColor=FOUR_COLOR(10);
+				else
 					OsdFontColor=FOUR_COLOR(6);
-					redrawIcon = MAIN_LUMINANCE_ICON;
-				}
-				else if(itemIndex == MAIN_DEFAULT_ITEM)
-				{
+				redrawIcon = MAIN_LUMINANCE_ICON;
+			}
+			else if(itemIndex == MAIN_DEFAULT_ITEM)
+			{
+				if (MenuItemIndex == itemIndex)
+					OsdFontColor=FOUR_COLOR(10);
+				else
 					OsdFontColor=FOUR_COLOR(6);
-					redrawIcon = MAIN_OTHER_ICON;
-				}
-				else if(itemIndex == MAIN_POWER_ENABLE_ITEM)
-				{
+				redrawIcon = MAIN_OTHER_ICON;
+			}
+			else if(itemIndex == MAIN_POWER_ENABLE_ITEM)
+			{
+				if (MenuItemIndex == itemIndex)
+					OsdFontColor=FOUR_COLOR(17);
+				else
 					OsdFontColor=FOUR_COLOR(16);
-					if (1)
-						redrawIcon = MAIN_POWER_DISBLE_ICON;
-					else
-						redrawIcon = MAIN_POWER_ENABLE_ICON;
-				}
-				else if(itemIndex == MAIN_EXIT_ITEM)
-				{
+					
+				if (1)
+					redrawIcon = MAIN_POWER_DISBLE_ICON;
+				else
+					redrawIcon = MAIN_POWER_ENABLE_ICON;
+			}
+			else if(itemIndex == MAIN_EXIT_ITEM)
+			{
+				if (MenuItemIndex == itemIndex)
+					OsdFontColor=FOUR_COLOR(10);
+				else
 					OsdFontColor=FOUR_COLOR(6);
-					redrawIcon = MAIN_EXIT_ICON;
-				}
+				redrawIcon = MAIN_EXIT_ICON;
 			}
 			printData("redrawIcon = %d", redrawIcon);
 			if(itemIndex == MAIN_POWER_ENABLE_ITEM)
@@ -1706,129 +1687,147 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 			else
 				DrawOsdIcon( (MainMenuIcon_X_Start+(itemIndex*6)), MainMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
 		}
-	#if 1 // Sub
-			else if( MenuPageIndex == BrightnessMenu )
-			{
-				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-				OsdFontColor=FOUR_COLOR(6);
-				redrawIcon = MAIN_LUMINANCE_ICON;
-				DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
-			}
-			#if ENABLE_SHARPNESS
-			else if( MenuPageIndex == SharpnessMenu )
-			{
-				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+	    // Sub
+		else if( MenuPageIndex == BrightnessMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+			OsdFontColor=FOUR_COLOR(6);
+			redrawIcon = MAIN_LUMINANCE_ICON;
+			DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
+		}
+		#if ENABLE_SHARPNESS
+		else if( MenuPageIndex == SharpnessMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
 		
-				OsdFontColor = 0x18;
-				DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIcon4C_Sharpness);
-			}
-			#endif
-			else if( MenuPageIndex == ColorTempMenu )
-    		#if 0//OSD_ColorTemp_9300K
-			{
-				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-		
-				if(itemIndex == 0)
-				{
-					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 1,MainIconSub_Y,MainIconSub4C_6500K);
-				}
-				else if(itemIndex == 1)
-				{				
-					OsdFontColor = 0x14 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 8,MainIconSub_Y,ColorIcon4C_9300K);
-				}
-				else if(itemIndex == 2)
-				{
-					OsdFontColor = 0x1C + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 15,MainIconSub_Y,MainIconSub4C_UserOpt);
-				}
-				else
-				{
-					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 22,MainIconSub_Y,MainIcon4C_Exit);
-				}
-			}
-    		#else
-			{
-				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+			OsdFontColor = 0x18;
+			DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIcon4C_Sharpness);
+		}
+		#endif
+		#if 1
+		else if( MenuPageIndex == ColorTempMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+			if(itemIndex == ColorTempMenuSub6500K_Item)
+            {
+				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
 				if(MenuItemIndex == itemIndex)
-            	{
-                	if(itemIndex == ColorTempMenuSub6500K_Item)
-                	{
-						Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
-                    	OsdFontColor = FOUR_COLOR(10);
-						redrawIcon = ColorSub6500K_Icon;
-						DrawOsdIcon(SubMenuIcon_X_Start+3, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                	}
-                	else if(itemIndex == ColorTempMenuSubUserOption_Item)
-                	{
-                    	OsdFontColor = FOUR_COLOR(12);
-						redrawIcon = ColorSubUser_Icon;
-						DrawOsdIcon(SubMenuIcon_X_Start+12, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                	}
-					else if(itemIndex == ColorTempMenuSubReturn_Item)
-					{
-						OsdFontColor = FOUR_COLOR(10);
-						redrawIcon = MAIN_EXIT_ICON;
-						DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
-					}
-            	}
-            	else
-            	{
-                	if(itemIndex == ColorTempMenuSub6500K_Item)
-                	{
-						Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
-                    	OsdFontColor = FOUR_COLOR(6);
-						redrawIcon = ColorSub6500K_Icon;
-						DrawOsdIcon(SubMenuIcon_X_Start+3, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                	}
-                	else if(itemIndex == ColorTempMenuSubUserOption_Item)
-                	{
-                    	OsdFontColor = FOUR_COLOR(8);
-						redrawIcon = ColorSubUser_Icon;
-						DrawOsdIcon(SubMenuIcon_X_Start+12, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                	}
-					else if(itemIndex == ColorTempMenuSubReturn_Item)
-					{
-						OsdFontColor = FOUR_COLOR(6);
-						redrawIcon = MAIN_EXIT_ICON;
-						DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
-					}
-            	}
-			}
-			else if( MenuPageIndex == ColorSettingsMenu )
+                	OsdFontColor = FOUR_COLOR(10);
+				else
+					OsdFontColor = FOUR_COLOR(6);
+				
+				redrawIcon = ColorSub6500K_Icon;
+				DrawOsdIcon(SubMenuIcon_X_Start+3, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+            }
+            else if(itemIndex == ColorTempMenuSubUserOption_Item)
+            {
+            	if(MenuItemIndex == itemIndex)
+                	OsdFontColor = FOUR_COLOR(12);
+				else
+					OsdFontColor = FOUR_COLOR(8);
+				
+				redrawIcon = ColorSubUser_Icon;
+				DrawOsdIcon(SubMenuIcon_X_Start+12, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+            }
+			else if(itemIndex == ColorTempMenuSubReturn_Item)
+			{
+				if(MenuItemIndex == itemIndex)
+					OsdFontColor = FOUR_COLOR(10);
+				else
+					OsdFontColor = FOUR_COLOR(6);
+				
+				redrawIcon = MAIN_EXIT_ICON;
+				DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
+			}			
+		}
+		#else
+		else if( MenuPageIndex == ColorTempMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+			if(MenuItemIndex == itemIndex)
+            {
+                if(itemIndex == ColorTempMenuSub6500K_Item)
+                {
+					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
+                    OsdFontColor = FOUR_COLOR(10);
+					redrawIcon = ColorSub6500K_Icon;
+					DrawOsdIcon(SubMenuIcon_X_Start+3, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+                }
+                else if(itemIndex == ColorTempMenuSubUserOption_Item)
+                {
+                    OsdFontColor = FOUR_COLOR(12);
+					redrawIcon = ColorSubUser_Icon;
+					DrawOsdIcon(SubMenuIcon_X_Start+12, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+                }
+				else if(itemIndex == ColorTempMenuSubReturn_Item)
+				{
+					OsdFontColor = FOUR_COLOR(10);
+					redrawIcon = MAIN_EXIT_ICON;
+					DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
+				}
+            }
+            else
+            {
+                if(itemIndex == ColorTempMenuSub6500K_Item)
+                {
+					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
+                    OsdFontColor = FOUR_COLOR(6);
+					redrawIcon = ColorSub6500K_Icon;
+					DrawOsdIcon(SubMenuIcon_X_Start+3, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+                }
+                else if(itemIndex == ColorTempMenuSubUserOption_Item)
+                {
+                    OsdFontColor = FOUR_COLOR(8);
+					redrawIcon = ColorSubUser_Icon;
+					DrawOsdIcon(SubMenuIcon_X_Start+12, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+                }
+				else if(itemIndex == ColorTempMenuSubReturn_Item)
+				{
+					OsdFontColor = FOUR_COLOR(6);
+					redrawIcon = MAIN_EXIT_ICON;
+					DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
+				}
+            }
+		}
+		#endif
+		else if( MenuPageIndex == ColorSettingsMenu )
+		{
+			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
+			OsdFontColor = FOUR_COLOR(8);
+			redrawIcon = ColorSubRGB_Icon;
+			DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+		}
+		else if( MenuPageIndex == DefaultMenu )
+		{
+			if(itemIndex == DefaultMenuSubYes_Item)
 			{
 				Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-				OsdFontColor = FOUR_COLOR(8);
-				redrawIcon = ColorSubRGB_Icon;
-				DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
+				OsdFontColor = FOUR_COLOR(6);
+				redrawIcon = OtherSubOSDReset_Icon;
+				DrawOsdIcon(SubMenuIcon_X_Start+ 3, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+(redrawIcon *(6*2)));
+				if (MenuItemIndex == itemIndex)
+					OsdFontColor = FOUR_COLOR(10);
+				else
+					OsdFontColor = FOUR_COLOR(15);
+				redrawIcon = LoadDefaultSubYes_Icon;
+				DrawOsdIcon(SubMenuIcon_X_Start+ 11, SubMenuIcon_Y_Start+1, MainIcon4C_LoadDefaultSub+(redrawIcon *(6*2)));
 			}
-    		#endif
-			#if 0
-			else if( MenuPageIndex == DefaultMenu )
+			else if(itemIndex == DefaultMenuSubNo_Item)
 			{
-				if(itemIndex == 0)
-				{
-					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-					OsdFontColor = 0x20;
-					DrawOsdIcon(MainIcon_X+ 3,MainIconSub_Y,MainIconSub4C_Reset);
-					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 11,4,MainIconSub4C_YES);
-				}
-				else if(itemIndex == 1)
-				{
-					OsdFontColor = 0x24 + (MenuItemIndex == itemIndex ? 20 : 0);
-					DrawOsdIcon(MainIcon_X+ 15,4,MainIconSub4C_NO);
-				}
+				if (MenuItemIndex == itemIndex)
+					OsdFontColor = FOUR_COLOR(10);
+				else
+					OsdFontColor = FOUR_COLOR(15);
+				redrawIcon = LoadDefaultSubNo_Icon;
+				DrawOsdIcon(SubMenuIcon_X_Start+ 15, SubMenuIcon_Y_Start+1, MainIcon4C_LoadDefaultSub+(redrawIcon *(6*2)));
 			}
-			else if( MenuPageIndex == HotKeyBrightnessMenu )
-			{
-				OsdFontColor = 0x14;
-				DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_Brightness);
-			}
-			#endif
-	#endif
+		}
+		#if 0
+		else if( MenuPageIndex == HotKeyBrightnessMenu )
+		{
+			OsdFontColor = 0x14;
+			DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_Brightness);
+		}
 		#endif
 	}
 	else
@@ -1991,7 +1990,7 @@ void DrawOsdMenuItemGuage( BYTE itemIndex, const DrawGuageType *gaugeItem )
     //BYTE yPos;
     //itemIndex = 0;
 #if Multi_Gauge
-	#if LiteMAX_OSD_TEST
+	#if LiteMAX_Baron_OSD_TEST
 	{
         BYTE i;
         const GaugeType *gauge;
@@ -2397,78 +2396,15 @@ BYTE code strSmallLogoWindow[39]=
 
 void DrawOsdBackGround(void)
 {
-#if LiteMAX_OSD_TEST
+#if LiteMAX_Baron_OSD_TEST
 	BYTE i;
 
-	#if 0
-    if ((IS_WARNING_MENU(MenuPageIndex) || IS_MSG_STATUS(MenuPageIndex))
-    {
-    	#if 0//(LiteMAX_OSDtype == LiteMAX_OSD_Baron)
-    	if (g_u8MenuPageIndex == MENU_HOT_BRIGHTNESS)
-    	{
-            BYTE i;
-            OsdFontColor=FOUR_COLOR(4);
-            
-            for (i=0; i<OsdWindowHeight; i++)
-                Osd_DrawContinuousCharDirect( 0, i, Space4C, OsdWindowWidth );
-            
-            Osd_DrawRealCharDirect( 1, 0, Frame4C_LT);
-            Osd_DrawContinuousCharDirect( 2, 0, Frame4C_Top, OsdWindowWidth-4 );
-            Osd_DrawRealCharDirect( OsdWindowWidth-2, 0, Frame4C_RT);
-    	    
-            for (i=1; i<OsdWindowHeight-1; i++)
-                Osd_DrawRealCharDirect( 1, i, Frame4C_Left);
-            for (i=1; i<OsdWindowHeight-1; i++)
-                Osd_DrawRealCharDirect( OsdWindowWidth-2, i, Frame4C_Right);
-            
-            Osd_DrawRealCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
-            Osd_DrawContinuousCharDirect( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
-            Osd_DrawRealCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
-    	}
-    	else
-    	#endif
-    	{
-    		/*
-            if (IS_WARNING_MENU(8MenuPageIndex)
-                #if ENABLE_MULTI_INPUT
-                || MenuPageIndex==MENU_HOT_INPUT
-                #endif
-                || MenuPageIndex==MENU_HOT_BRIGHTNESS
-                #if OSD_MENU_BACKLIGHT_MODE
-		    	|| MenuPageIndex==MENU_HOT_LS_OFFSET
-		    	#endif
-		    	#if ENABLE_AUDIO_SETTINGS_MENU
-		    	|| MenuPageIndex==MENU_HOT_VOLUME
-		    	#endif
-                )
-                OsdFontColor=MONO_COLOR(CP_MSG_BK,CP_MSG_BK);
-            else
-				*/
-                OsdFontColor=MONO_COLOR(CP_BK_COLOR_L0,CP_BK_COLOR_L0);
-            Osd_DrawBlankPlane(0,0,GET_MENU_XSIZE(CurrentMenu),GET_MENU_YSIZE(CurrentMenu));
-            
-            #if 0//ENABLE_MULTI_INPUT && (LiteMAX_OSDtype == LiteMAX_OSD_Baron) //240726
-            if (g_u8MenuPageIndex==MENU_HOT_INPUT)
-            {
-            	if (!g_stMenuFlag.bPressSrcInputKey)
-            	{
-            		DrawResolutionRealText(1, 4);
-                    DrawPixelClockRealText(16, 4);
-            	}
-            }
-            #endif
-        }
-    }
-    else
-	#endif
 	#if ENABLE_OSD_ROTATION
     if((MenuPageIndex == MainMenu)||(MenuPageIndex == OSDRotationMenu))
     #else
 	if (MenuPageIndex == MainMenu)
 	#endif
     {
-        #if LiteMAX_Baron_OSD_TEST
-		
         OsdFontColor=FOUR_COLOR(5);
         for (i=0; i<OsdWindowHeight; i++)
             Osd_DrawContinuesChar( 0, i, Space4C, OsdWindowWidth );
@@ -2485,46 +2421,6 @@ void DrawOsdBackGround(void)
         Osd_DrawCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
         Osd_DrawContinuesChar( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
         Osd_DrawCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
-                
-        #else
-		
-		OsdFontColor=FOUR_COLOR(5);
-        for (i=0; i<OsdWindowHeight; i++)
-            Osd_DrawContinuesChar( 0, i, Space4C, OsdWindowWidth );
-
-        Osd_DrawCharDirect( 1, 4, Frame4C_LT);
-        for(i=0;i<7;i++)
-        {
-            if(i>0)
-            {
-                Osd_DrawCharDirect( 4*i+1, 4, FrameNew4C_LT2);
-            }
-            Osd_DrawCharDirect( 4*i+2, 4, Frame4C_Top);
-            Osd_DrawCharDirect( 4*i+3, 4, Frame4C_Top);
-            Osd_DrawCharDirect( 4*i+4, 4, Frame4C_Top);
-            Osd_DrawCharDirect( 4*i+1, 5, Frame4C_Left);
-            Osd_DrawCharDirect( 4*i+1, 6, Frame4C_Left);
-        }
-        Osd_DrawCharDirect( 29, 4, Frame4C_RT);
-        Osd_DrawCharDirect( 29, 5, Frame4C_Right);
-        Osd_DrawCharDirect( 29, 6, Frame4C_Right);
-
-        Osd_DrawCharDirect( 1, 7, FrameNew4C_LT);
-        Osd_DrawContinuesChar( 2, 7, FrameNew4C_Top, OsdWindowWidth-4 );
-        Osd_DrawCharDirect( OsdWindowWidth-2, 7, FrameNew4C_RT);
-        for(i=1;i<7;i++)
-            Osd_DrawCharDirect( 4*i+1, 7, FrameNew4C_Top2);
-        
-        for (i=8; i<OsdWindowHeight-1; i++)
-            Osd_DrawCharDirect( 1, i, Frame4C_Left);
-        for (i=8; i<OsdWindowHeight-1; i++)
-            Osd_DrawCharDirect( OsdWindowWidth-2, i, Frame4C_Right);
-
-        Osd_DrawCharDirect( 1, OsdWindowHeight-1, Frame4C_LB);
-        Osd_DrawContinuesChar( 2, OsdWindowHeight-1, Frame4C_Buttom, OsdWindowWidth-4 );
-        Osd_DrawCharDirect( OsdWindowWidth-2, OsdWindowHeight-1, Frame4C_RB);
-        #endif
-
         //-- End  --
     }
 	else
@@ -2543,7 +2439,7 @@ void DrawOsdBackGround(void)
         Osd_DrawBlankPlane(0,0,OsdWindowWidth,OsdWindowHeight);
     }
 	*/
-#endif //#if LiteMAX_OSD_TEST
+#endif
 }
 //======================================================================================
 #if DisplayLogo!=NoBrand

@@ -208,8 +208,6 @@ typedef enum
     MaxMenu
 } MenuPageIndexType;
 
-#if LiteMAX_OSD_TEST
-
 #if LiteMAX_Baron_OSD_TEST
 typedef enum
 {
@@ -260,45 +258,30 @@ typedef enum
   ColorSubMax_Icon
 }ColorSubIconType;
 
-#else
 typedef enum
 {
-  MAIN_LUMINANCE_ITEM = 0,
-  MAIN_SIGNAL_ITEM,
-  MAIN_SOUND_ITEM,
-  MAIN_COLOR_ITEM,
-  MAIN_IMAGE_ITEM,
-  MAIN_OTHER_ITEM,
-  MAIN_EXIT_ITEM,
-  MAIN_MAX_ITEM
-}MainMenuItemsType;
-typedef enum
-{
-  LUMINANCE_SUB_ITEM = 0,
-  SIGNAL_SUB_ITEM,
-  SOUND_SUB_ITEM,
-  COLOR_SUB_ITEM,
-  IMAGE_SUB_ITEM,
-  OTHER_SUB_ITEM,
-  EXIT_SUB_ITEM,
-  MAX_SUB_ITEM
-}MenuItemSubType;
-#endif
+  DefaultMenuSubYes_Item = 0,
+  DefaultMenuSubNo_Item,
+  DefaultMenuSubMax_Item
+}DefaultMenuSubItemsType;
 
-#else
 typedef enum
 {
-  MAIN_LUMINANCE_ITEM,
-  MAIN_IMAGESETUP_ITEM,
-  MAIN_COLORTEMP_ITEM,
-  #if MWEFunction
-  MAIN_COLORBOOST_ITEM,
-  MAIN_BRIGHTFRAME_ITEM,
-  #endif
-  MAIN_OSDSETUP_ITEM,
-  MAIN_EXTRA_ITEM,
-  MAIN_MAX_ITEM,
-}MainMenuItemsType;
+  LoadDefaultSubYes_Icon = 0,
+  LoadDefaultSubNo_Icon,
+  LoadDefaultSubMax_Icon
+}LoadDefaultSubIconType;
+
+typedef enum
+{
+  OtherSubOSDControl_Icon = 0,
+  OtherSubOSDReset_Icon,
+  OtherSubSharpness_Icon,
+  OtherSubOSDTime_Icon,
+  OtherSubOSDHpos_Icon,
+  OtherSubOSDVpos_Icon,
+  OtherSubMax_Icon
+}OtherSubIconType;
 #endif
 
 typedef enum
@@ -575,7 +558,7 @@ typedef enum
     MIA_DecValue, // decrease value
     MIA_ExecFunc,
     MIA_ExecFunc_And_GotoPrev,   // goto Prev Page
-    #if LiteMAX_OSD_TEST
+    #if LiteMAX_Baron_OSD_TEST
     MIA_GotoNextExec, // goto next
     #endif
     MIA_Auto,
