@@ -107,8 +107,8 @@ MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
 #if LiteMAX_OSD_TEST
 MenuItemActionType code NaviExec2KeyEvent[BTN_EndBTN] =
 {
-    MIA_NextItem,     // BTN_Plus
-    MIA_PrevItem,     // BTN_Minus
+    MIA_PrevItem,     // BTN_Plus
+    MIA_NextItem,     // BTN_Minus
     MIA_GotoNextExec,     // BTN_Menu
     MIA_GotoPrev,//MIA_Nothing,   // BTN_Exit // 070117
     MIA_Power,    // BTN_Power
@@ -162,6 +162,16 @@ MenuItemActionType code AdjusterKey1Event[BTN_EndBTN] =
     MIA_IncValue,     // BTN_Minus
     MIA_GotoNext,     // BTN_Menu
     MIA_GotoPrev, // MIA_Exit,    // BTN_Exit
+    MIA_Power,    // BTN_Power
+    MIA_SourceSel, //2006-02-22
+};
+
+MenuItemActionType code AdjusterItemKeyEvent[BTN_EndBTN] =
+{
+    MIA_IncValue,     // BTN_Plus
+    MIA_DecValue,     // BTN_Minus
+    MIA_NextItem,     // BTN_Menu
+    MIA_PrevItem, // MIA_Exit,    // BTN_Exit
     MIA_Power,    // BTN_Power
     MIA_SourceSel, //2006-02-22
 };

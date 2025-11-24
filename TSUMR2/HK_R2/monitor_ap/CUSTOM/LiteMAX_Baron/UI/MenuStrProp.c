@@ -109,7 +109,18 @@ const BYTE *ModelNameInfoText( void )
 	#endif
 	return strModelNameInfo;
 };
-
+const BYTE *CUserText( void )
+{
+	return strUserOptionM0[UserPrefLanguage];
+};
+const BYTE *C6500KText( void )
+{
+    return str6500KM0[UserPrefLanguage];
+}
+const BYTE *ReturnText( void )
+{
+    return strReturnM0[UserPrefLanguage];
+}
 #endif
 const BYTE *BriteContText( void )
 {
@@ -154,10 +165,7 @@ const BYTE *ExitText( void )
     return strExitM103[UserPrefLanguage];
 }
 #endif
-const BYTE *ReturnText( void )
-{
-    return 0;
-}
+
 #else
 const BYTE *BriteContText( void )
 {
@@ -367,10 +375,6 @@ const BYTE *CsRGBText( void )
 const BYTE *C5700KText( void )
 {
     return str5700KM102[UserPrefLanguage];
-}
-const BYTE *C6500KText( void )
-{
-    return str6500KM102[UserPrefLanguage];
 }
 const BYTE *C9300KText( void )
 {

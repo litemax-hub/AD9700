@@ -291,6 +291,7 @@ extern BYTE *PowerKeyEnableText( void );
 extern BYTE *VersionText( void );
 extern BYTE *AD9700PText( void );
 extern BYTE *ModelNameInfoText( void );
+extern BYTE *CUserText( void );
 #endif
 #endif
 //====================================

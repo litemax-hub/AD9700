@@ -238,6 +238,28 @@ typedef enum
   MAIN_POWER_MAX_ICON
 }MainMenuPowerIconType;
 
+//MAIN_COLOR_ITEM
+typedef enum
+{
+  ColorTempMenuSub6500K_Item = 0,
+  ColorTempMenuSubUserOption_Item,
+  ColorTempMenuSubReturn_Item,
+  ColorTempMenuSubMax_Item
+}ColorTempMenuSubItemsType;
+
+typedef enum
+{
+  ColorSub_Icon = 0,
+  ColorSubsRGB_Icon,
+  ColorSubUser_Icon,
+  ColorSubRGB_Icon,
+  ColorSubMaxRGB_Icon,
+  ColorSubAuto_Icon,
+  ColorSub6500K_Icon,
+  ColorSub9300K_Icon,
+  ColorSubMax_Icon
+}ColorSubIconType;
+
 #else
 typedef enum
 {
