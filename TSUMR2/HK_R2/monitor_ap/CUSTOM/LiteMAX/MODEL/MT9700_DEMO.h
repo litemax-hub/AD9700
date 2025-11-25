@@ -551,9 +551,6 @@
 
 #define LiteMAX_OSD_TEST		1
 #define ENABLE_OSD_ROTATION		0
-#ifndef	MTK_OSD_UI
-#define MTK_OSD_UI				0
-#endif
 
 #endif
 

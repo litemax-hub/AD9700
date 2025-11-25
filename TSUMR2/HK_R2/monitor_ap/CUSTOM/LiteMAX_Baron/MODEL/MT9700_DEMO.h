@@ -503,12 +503,9 @@
 #define DISABLE_DP_FAKESLEEP    0
 #define DISABLE_DPMS            0
 
-#define LiteMAX_OSD_TEST		1
 #define LiteMAX_Baron_OSD_TEST	1
 #define ENABLE_OSD_ROTATION		0
-#ifndef	MTK_OSD_UI
-#define MTK_OSD_UI				0
-#endif
+
 #define ModelNameInfo           "LEI.B195.101"
 
 #endif

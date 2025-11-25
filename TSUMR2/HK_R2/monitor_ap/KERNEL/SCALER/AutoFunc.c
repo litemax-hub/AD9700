@@ -648,7 +648,7 @@ Bool mStar_AutoColor( void )
     if( InputTimingChangeFlag )
         return FALSE;
 
-#if LiteMAX_OSD_TEST
+#if (LiteMAX_UI == 1)
     if(result)
         SaveFactorySetting();
 #endif
