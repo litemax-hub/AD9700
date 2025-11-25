@@ -59,6 +59,10 @@
 #define PanelBM230WF3_SJC2                  51
 #define PanelAUOM240UW01                    52
 #define PanelCMIM236HGJ_L21_FPGA            53 // 1920*1080, FPGA use
+
+// LiteMAX
+#define PanelBOEDV195FBB_N10                54 // LVDS 1920x536
+
 //Normal Panel
 #define PanelCMO190                         100
 #define HSD190MEN3_A00                      101

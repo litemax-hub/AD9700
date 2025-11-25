@@ -2646,7 +2646,7 @@ void msDrvPowerModCtrl(BYTE ucSwitch)
         if( g_sPnlInfo.ePnlTypeLvds == EN_PNL_LVDS_CH_1 )
         {
             //PANEL_LVDS_1CH
-            #if 1
+            #if 0//Holy modify at 20251121 for BOEDV195FBB_N10 LVDS  1 Channel
             msWrite2Byte(REG_MOD1_20, LVDS_2CH_B_OUT); //demo board use B port
             #else
             msWrite2Byte(REG_MOD1_20, (LVDS_2CH_A_OUT&0x0F)<<12);

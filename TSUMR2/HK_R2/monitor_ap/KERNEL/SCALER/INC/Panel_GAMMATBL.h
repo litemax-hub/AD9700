@@ -9,6 +9,8 @@
 #include  "Gama_PanelLM230WF5TLD1.h"
 #elif (PanelType==PanelTPM215HW01_HGE)// ||(PanelType==PanelTPM215HW01_HGJ)      //110828 Rick add
 #include "Gama_PanelTPM215HW01_HGE.h"
+#elif (PanelType==PanelBOEDV195FBB_N10)
+#include "Gama_PanelBOEDV195FBB_N10.h"
 #else
 //Leo-temp
 #warning "Please Panel Gamma Table!"

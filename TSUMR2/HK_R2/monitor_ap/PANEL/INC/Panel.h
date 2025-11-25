@@ -119,6 +119,9 @@
 #elif (PanelType==PanelM270HAN03_0_eDP)
 #include "PanelM270HAN03_0_eDP.h"
 
+#elif (PanelType==PanelBOEDV195FBB_N10)
+#include "PanelBOEDV195FBB_N10.h"
+
 #endif
 
 
