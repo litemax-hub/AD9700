@@ -124,11 +124,11 @@ void ReadUserSetting( void );
 //void Save6500KSetting(void);
 BYTE* code ColorTempPtr[5][5] =
 {
-    {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},
-    {&UserPrefBrightnessNormal, &UserPrefContrastNormal, &UserPrefRedColorNormal, &UserPrefGreenColorNormal, &UserPrefBlueColorNormal},
-    {&FUserPrefBrightnessSRGB, &FUserPrefContrastSRGB, &UserPrefRedColorSRGB, &UserPrefGreenColorSRGB, &UserPrefBlueColorSRGB},
     {&UserPrefBrightnessUser, &UserPrefContrastUser, &UserPrefRedColorUser, &UserPrefGreenColorUser, &UserPrefBlueColorUser},
     {&UserPrefBrightnessWarm1, &UserPrefContrastWarm1, &UserPrefRedColorWarm1, &UserPrefGreenColorWarm1, &UserPrefBlueColorWarm1},
+    {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},    
+    {&UserPrefBrightnessNormal, &UserPrefContrastNormal, &UserPrefRedColorNormal, &UserPrefGreenColorNormal, &UserPrefBlueColorNormal},
+    {&FUserPrefBrightnessSRGB, &FUserPrefContrastSRGB, &UserPrefRedColorSRGB, &UserPrefGreenColorSRGB, &UserPrefBlueColorSRGB},
 };
 //////////////////////////////////////////////////////////////////////////
 // Matrix for convert to sRGB space
@@ -1772,12 +1772,27 @@ Bool SetAudioSource(void)
     return TRUE;
 }
 
+Bool SetSoundMute( void )
+{
+    if(UserPrefOSDSoundMute)
+    {
+        UserPrefOSDSoundMute=0;
+        msAPI_AdjustVolume( UserPrefVolume );
+    }
+    else
+    {
+        UserPrefOSDSoundMute=1;
+        msAPI_AdjustVolume( 0 );
+    }
+    Set_SaveMonitorSettingFlag();
+    return TRUE;
+}
 #endif
 //=====================================================
 Bool AdjustOSDHPosition( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdHStart, 0, 100, 5 ); //0729 New Spec
+    tempValue = DecIncValue( action, UserPrefOsdHStart, 0, 100, 1 ); //0729 New Spec
     if( tempValue == UserPrefOsdHStart )
     {
         return FALSE;
@@ -1794,7 +1809,7 @@ WORD GetOSDHPositionValue( void )
 Bool AdjustOSDVPosition( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdVStart, 0, 100, 5 ); //0729 New Spec
+    tempValue = DecIncValue( action, UserPrefOsdVStart, 0, 100, 1 ); //0729 New Spec
     if( tempValue == UserPrefOsdVStart )
     {
         return FALSE;
@@ -1811,7 +1826,7 @@ WORD GetOSDVPositionValue( void )
 Bool AdjustOSDTime( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdTime, 5, 100, 5 );
+    tempValue = DecIncValue( action, UserPrefOsdTime, OSD_TIME_MIN, OSD_TIME_MAX, 2 );
     if( tempValue == UserPrefOsdTime )
     {
         return FALSE;
@@ -1858,7 +1873,8 @@ Bool AdjustBlueColor( MenuItemActionType action )
 #if 0//UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+//    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+    mStar_AdjustBlueColor( UserPrefBlueColorUser, UserPrefContrast );
 #endif
     return TRUE;
 }
@@ -1881,7 +1897,8 @@ Bool AdjustGreenColor( MenuItemActionType action )
 #if 0//UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+//    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+    mStar_AdjustGreenColor( UserPrefGreenColorUser, UserPrefContrast );
 #endif
     return TRUE;
 }
@@ -1903,7 +1920,8 @@ Bool AdjustRedColor( MenuItemActionType action )
 #if 0//UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+//    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+    mStar_AdjustRedColor( UserPrefRedColorUser, UserPrefContrast );
 #endif
     return TRUE;
 }
@@ -1932,6 +1950,20 @@ Bool SetColorTemp( void )
     }
     return TRUE;
 }
+
+Bool OSD_ResetColorTemp(void)
+{
+    UserPrefColorTemp = CTEMP_SRGB;
+
+    UserPrefRedColorUser = DefColorUser;
+    UserPrefGreenColorUser = DefColorUser;
+    UserPrefBlueColorUser = DefColorUser;
+
+	SetColorTemp();
+    Set_SaveMonitorSettingFlag();
+    return TRUE;
+}
+
 Bool AdjustColorTempMode( MenuItemActionType action )
 {
     BYTE temp;
@@ -2397,7 +2429,7 @@ Bool ResetAllSetting( void )
     UserPrefBrightnessUser = DefBrightness;
     UserPrefContrastUser = DefContrast;
     //UserPrefSavedModeIndex = NumberOfMode;
-    UserPrefOsdTime = 10;
+    UserPrefOsdTime = DEF_OSD_TIME;
     UserPrefOsdTransparency = DEF_OSD_TRANSPARENCY;
     Osd_SetTransparency(UserPrefOsdTransparency);
     UserPrefColorTemp = CTEMP_USER;
@@ -2479,6 +2511,7 @@ Bool ResetAllSetting( void )
     {
         msAdjustHSC(MAIN_WINDOW, UserPrefHue, UserPrefSaturation, UserPrefContrast);
     }
+/*
     UserPrefIndependentHueR = DefIndependentH;
     UserPrefIndependentHueG = DefIndependentH;
     UserPrefIndependentHueB = DefIndependentH;
@@ -2501,7 +2534,7 @@ Bool ResetAllSetting( void )
     UserPrefIndependentBrightnessY = DefIndependentY;
 
     AdjustAllIndependentHSYValue();
-
+*/
 #if MWEFunction
     UserPrefColorFlags = 0;
     UserPrefSubContrast = DefSubContrast;
@@ -2516,6 +2549,14 @@ Bool ResetAllSetting( void )
     UserprefALha = 50;
     UserprefBata = 50;
     UserPrefPowerSavingEn = PowerSavingMenuItems_On;
+
+#if 0//LiteMAX_OSD_TEST
+    Set_InputTimingChangeFlag();
+    Power_TurnOffPanel();
+
+    SrcInputType = DEF_INPUT_TYPE;
+    mStar_SetupInputPort();
+#endif
 
     if(CURRENT_INPUT_IS_VGA())//(( SrcInputType < Input_Digital ) )
     {
@@ -4409,8 +4450,8 @@ void msInitDeBlocking( void )
 #endif
 #if ENABLE_SHARPNESS
 //=============================================================================
-#define MaxSharpness    0x1F   //user sharpness adjust gain: 0x10~0x1F==>1.0~ 1.9
-#define MinSharpness    0x00     //user sharpness adjust gain  0x00~0x0F==>0.0~ 0.9
+//#define MaxSharpness    0x1F   //user sharpness adjust gain: 0x10~0x1F==>1.0~ 1.9
+//#define MinSharpness    0x00     //user sharpness adjust gain  0x00~0x0F==>0.0~ 0.9
 
 Bool AdjustSharpness( MenuItemActionType action )
 {
@@ -4432,7 +4473,8 @@ Bool AdjustSharpness( MenuItemActionType action )
 }
 WORD GetSharpnessValue( void )
 {
-    return GetScale100Value( UserPrefSharpness, MinSharpness, MaxSharpness );
+ //   return GetScale100Value( UserPrefSharpness, MinSharpness, MaxSharpness );
+    return UserPrefSharpness;
 }
 #endif
 

@@ -1,5 +1,6 @@
 #include "MenuFontTbl.h"
 #include "MenuTblDef.h"
+#include "AutoFunc.h"
 
 #define SUB_TEXT_XPOS           12
 #define SUB_TEXT_YPOS           6
@@ -785,7 +786,7 @@ MenuItemType code SoundMenuItems[] =
         {
             NULL, // AdjustFunction
     #if AudioFunc // jason 20200507
-            NULL, //Temp SetSoundMute, // ExecFunction
+            SetSoundMute, // ExecFunction
     #else
             NULL, // ExecFunction
     #endif
@@ -833,7 +834,7 @@ MenuItemType code ColorMenuItems[] =
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
-            NULL, //Temp mStar_AutoColor, // ExecFunction
+            mStar_AutoColor, // ExecFunction
         },
         {
             NULL, // DrawNumberType
@@ -854,7 +855,7 @@ MenuItemType code ColorMenuItems[] =
         NaviExecKeyEvent,
         {
             NULL, // AdjustFunction
-            NULL, //Temp OSD_ResetColorTemp, // ExecFunction
+            OSD_ResetColorTemp, // ExecFunction
         },
         {
             NULL, // DrawNumberType
@@ -1071,7 +1072,7 @@ MenuItemType code ToolMenuItems[] =
         RootMenu, // NextMenuPage;
         DWI_Icon, // DrawMenuItemType;
         NULL,//C9300KText,//DefaultText, // DisplayText;
-        NaviKeyEvent, //Temp NaviExec2KeyEvent,
+        NaviExec2KeyEvent,
         {
             NULL, // AdjustFunction
             ResetAllSetting, // ExecFunction
@@ -1089,7 +1090,7 @@ MenuItemType code ToolMenuItems[] =
         NULL,NULL,//14, 5, // XPos, YPos;
         NULL, NULL, // ForeColor, BackColor;
         NULL, NULL, // SelForeColor, SelBackColor;
-        RootMenu, //Temp SharpnessMenu, // NextMenuPage;
+        SharpnessMenu, // NextMenuPage;
         DWI_Icon, // DrawMenuItemType;
         NULL,//CUserText, // DisplayText;
         NaviKeyEvent,
@@ -1586,7 +1587,7 @@ MenuItemType code ColorSettingsMenuItems[] =
         ColorTempMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         NULL, // DisplayText;
-        AdjusterKeyEvent,
+        AdjusterItemKeyEvent,
         {
             AdjustRedColor,// AdjustFunction
             NULL,// ExecFunction
@@ -1607,7 +1608,7 @@ MenuItemType code ColorSettingsMenuItems[] =
         ColorTempMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         NULL, // DisplayText;
-        AdjusterKeyEvent,
+        AdjusterItemKeyEvent,
         {
             AdjustGreenColor,// AdjustFunction
             NULL,// ExecFunction
@@ -1628,7 +1629,7 @@ MenuItemType code ColorSettingsMenuItems[] =
         ColorTempMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         NULL, // DisplayText;
-        AdjusterKeyEvent,
+        AdjusterItemKeyEvent,
         {
             AdjustBlueColor,// AdjustFunction
             NULL,// ExecFunction
@@ -2688,7 +2689,7 @@ MenuItemType code PowerSavingMenuItems[] =
 NumberType code HotBrightnessNumber[] =
 {
     // Flags,   XPos,   YPos,   GetValue
-    {dwiEnd, NumberXPos, LayerYPos, GetBrightnessValue},
+    {dwiEnd, 14, 2, GetBrightnessValue},
 };
 DrawNumberType code DrawHotBrightnessNumber[] =
 {
@@ -2699,12 +2700,12 @@ DrawNumberType code DrawHotBrightnessNumber[] =
 GaugeType code HotBrightnessGuage[] =
 {
     // Flags, ForeColor,    BackColor,  Length,     GetValue
-    {dwiEnd, GaugeXPos, LayerYPos, GetBrightnessValue},
+    {dwiEnd, 2, 4, GetBrightnessValue},
 };
 DrawGuageType code DrawHotBrightnessGuage[] =
 {
     //  ForeColor,  BackColor,  Length,,    GetValue
-    {CPC_White, CPC_Black,  9,  HotBrightnessGuage}
+    {CPC_Yellow, CPC_Black,  17,  HotBrightnessGuage}
 };
 
 #if AudioFunc
@@ -5840,12 +5841,12 @@ MenuItemType code HotKeyBrightnessMenuItems[] =
 {
     // 0 Brightness
     {
-        1, 4, // XPos, YPos;
+        8, 1, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black,  // SelForeColor, SelBackColor;
         RootMenu,///NextMenuPage;
-        DWI_Text,// DrawMenuItemType;
-        BrightnessText, // DisplayText;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
         AdjusterKeyEvent,
         {
             AdjustBrightness,// AdjustFunction
@@ -5856,7 +5857,7 @@ MenuItemType code HotKeyBrightnessMenuItems[] =
             DrawHotBrightnessGuage,// DrawGuageType
             NULL,//DrawMenuRadioGroup,//DrawAutoSetupRadioGroup // DrawRadioGroupType
         },
-        MenuPage101, //Font
+        NULL, //Font
         mibSelectable // Flags
     },
 };
@@ -6084,35 +6085,35 @@ MenuItemType code VPositionMenuItems[] =
 NumberType code SharpnessNumber[] =
 {
     // Flags,   XPos,   YPos,   GetValue
-    {dwiEnd, NumberXPos, (LayerYPos+2*DisplaySettingsMenuItems_Sharpness), GetSharpnessValue},
+    {dwiEnd, GaugeXPos+GaugeLens-5, SubMenuValue_Y_Start, GetSharpnessValue},
 };
 DrawNumberType code DrawSharpnessNumber[] =
 {
     // F ForeColor, BackColor,  GetValue
-    {14, Color_2,     SharpnessNumber}
+    {CPC_White, CPC_Black,     SharpnessNumber}
 };
 
 GaugeType code SharpnessGuage[] =
 {
     // Flags, ForeColor,    BackColor,  Length,     GetValue
-    {dwiEnd, GaugeXPos, (LayerYPos+2*DisplaySettingsMenuItems_Sharpness), GetSharpnessValue},
+    {dwiEnd, GaugeXPos, SubMenuBar_Y_Start, GetSharpnessValue},
 };
 DrawGuageType code DrawSharpnessGuage[] =
 {
     //  ForeColor,  BackColor,  Length,,    GetValue
-    {6,  Color_4,    9,  SharpnessGuage}
+    {CPC_Yellow,  CPC_Black,    GaugeLens,  SharpnessGuage}
 };
 
 MenuItemType code SharpnessMenuItems[] =
 {
     // 0 Sharpness
     {
-        Layer2XPos, (LayerYPos+2*DisplaySettingsMenuItems_Sharpness), // XPos, YPos;
-        CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_Red, CPC_Black, // SelForeColor, SelBackColor;
-        DisplaySettingsMenu, // NextMenuPage;
-        DWI_Text,// DrawMenuItemType;
-        SharpnessText, // DisplayText;
+            NULL, NULL, // XPos, YPos;
+            NULL, NULL, // ForeColor, BackColor;
+            NULL, NULL, // SelForeColor, SelBackColor;
+            ToolMenu, // NextMenuPage;
+            DWI_Icon,// DrawMenuItemType;
+            NULL, // DisplayText;
         AdjusterKeyEvent,
         {
             AdjustSharpness,// AdjustFunction
@@ -9502,7 +9503,7 @@ MenuPageType code tblMenus[] =
 	// ColorTempMenu,
     {
         MAIN_MENU_H_SIZE/*29*/, MAIN_MENU_V_SIZE, //  XSize, YSize;
-        ColorMenu,// PrevMenuPage;
+        ColorTempMenu,// PrevMenuPage;
         ColorTempMenuItems, // MenuItems;
         sizeof( ColorTempMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL, // ExecFunction;
@@ -10103,13 +10104,13 @@ MenuPageType code tblMenus[] =
 
     // 54 HotKeyBrightnessMenu,
     {
-        29/*29*/, 8, // XSize, YSize;
+        HotMenuHSize, HotMenuVSize, // XSize, YSize;
         RootMenu,// PrevMenuPage;
         HotKeyBrightnessMenuItems ,// MenuItems;
         sizeof( HotKeyBrightnessMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL, // ExecFunction;
         NULL, // Fonts
-        mpbStay | mpbCenter |mpbBrowse //|mpbRedraw //   Flags;
+        mpbStay | mpbRedraw //   Flags;
     },
 #if AudioFunc
     // 54 HotKeyVolMenu,

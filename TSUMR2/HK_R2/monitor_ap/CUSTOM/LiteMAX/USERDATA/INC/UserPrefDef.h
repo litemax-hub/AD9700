@@ -175,6 +175,9 @@ typedef struct
     BYTE BlueColorUser; //f
 #if (AudioFunc )
     BYTE AudioSource;
+#if LiteMAX_OSD_TEST
+    BYTE OSDSoundMute;
+#endif
 #endif
     BYTE Volume;
     BYTE ECOMode;
@@ -447,6 +450,9 @@ typedef struct
     BYTE BlueColorUser; //f
 #if (AudioFunc )
         BYTE AudioSource;
+#endif
+#if LiteMAX_OSD_TEST
+    BYTE OSDSoundMute;
 #endif
     BYTE Volume;
     BYTE ECOMode;

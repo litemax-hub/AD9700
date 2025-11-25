@@ -21,6 +21,9 @@
 #define MessageMenuVSize       		10
 #endif //#if LiteMAX_OSD_TEST
 
+#define HotMenuHSize			21
+#define HotMenuVSize      		7
+
 #if LiteMAX_OSD_TEST
 #define MainMenuIcon_X_Start        2
 #define MainMenuIcon_Y_Start        5
@@ -68,8 +71,8 @@ MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
 #else
 MenuItemActionType code NaviKeyEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,   // BTN_Plus
-    MIA_NextItem,   // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_GotoNext,   // BTN_Menu
     MIA_GotoPrev,   // BTN_Exit
     MIA_Power,  // BTN_Power
@@ -77,8 +80,8 @@ MenuItemActionType code NaviKeyEvent[BTN_EndBTN] =
 };
 MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,     // BTN_Plus
-    MIA_NextItem,     // BTN_Minus
+    MIA_NextItem,     // BTN_Plus
+    MIA_PrevItem,     // BTN_Minus
     MIA_ExecFunc,     // BTN_Menu
     MIA_GotoPrev,     // BTN_Exit
     MIA_Power,    // BTN_Power
@@ -98,8 +101,8 @@ MenuItemActionType code NaviExec2KeyEvent[BTN_EndBTN] =
 #endif
 MenuItemActionType code NaviExecFuncGotoPrevKeyEvent[BTN_EndBTN]=
 { 
-    MIA_PrevItem,               // BTN_Plus
-    MIA_NextItem,               // BTN_Minus
+    MIA_NextItem,               // BTN_Plus
+    MIA_PrevItem,               // BTN_Minus
     MIA_ExecFunc_And_GotoPrev,  // BTN_Menu
     MIA_GotoPrev,               // BTN_Exit
     MIA_Power,                   // BTN_Power
@@ -142,6 +145,16 @@ MenuItemActionType code AdjusterKey1Event[BTN_EndBTN] =
     MIA_IncValue,     // BTN_Minus
     MIA_GotoNext,     // BTN_Menu
     MIA_GotoPrev, // MIA_Exit,    // BTN_Exit
+    MIA_Power,    // BTN_Power
+    MIA_SourceSel, //2006-02-22
+};
+
+MenuItemActionType code AdjusterItemKeyEvent[BTN_EndBTN] =
+{
+    MIA_IncValue,     // BTN_Plus
+    MIA_DecValue,     // BTN_Minus
+    MIA_NextItem,     // BTN_Menu
+    MIA_PrevItem, // MIA_Exit,    // BTN_Exit
     MIA_Power,    // BTN_Power
     MIA_SourceSel, //2006-02-22
 };
