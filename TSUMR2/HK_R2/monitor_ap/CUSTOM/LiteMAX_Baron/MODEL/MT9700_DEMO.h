@@ -507,6 +507,7 @@
 #define ENABLE_OSD_ROTATION		0
 
 #define ModelNameInfo           "LEI.B195.101"
+#define DISABLE_POWERSAVING		1
 
 #endif
 

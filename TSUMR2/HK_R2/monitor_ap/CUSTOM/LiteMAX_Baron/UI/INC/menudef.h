@@ -446,6 +446,18 @@ typedef enum
     CFMT_Nums
 } ColorFormatType;
 
+#if LiteMAX_Baron_OSD_TEST
+typedef enum
+{
+	CTEMP_Warm1,  // 6500k
+	CTEMP_USER, //	USER
+	CTEMP_Nums,
+	CTEMP_Cool1,   //  9300k
+	CTEMP_Normal,  // 7800K
+	CTEMP_SRGB	 //  SRGB
+} ColorTempType;
+
+#else
 typedef enum
 {
     CTEMP_Cool1,   //  8500K
@@ -457,7 +469,7 @@ typedef enum
 
     CTEMP_Nums,
 } ColorTempType;
-
+#endif
 
 #if LANGUAGE_TYPE==ASIA
 typedef enum

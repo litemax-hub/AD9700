@@ -7027,7 +7027,7 @@ MenuItemType code ADCAutoColorMenuItems[] =
 MenuItemType code InputInfoMenuItems[] =
 {
     {
-        0, 2, // XPos, YPos;
+        0, 1, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         RootMenu, // NextMenuPage;
@@ -8210,23 +8210,23 @@ MenuPageType code tblMenus[] =
 //----Eson Start-----------------------------------------------------
     // StandbyMenu
     {
-        MessageMenuHSize, MessageMenuVSize, //  XSize, YSize;
+        MessageMenu2HSize, MessageMenu2VSize, //  XSize, YSize;
         RootMenu,// PrevMenuPage;
         StandbyMenuItems, // MenuItems;
         sizeof( StandbyMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
-        EnablePowerDownCounter, // ExecFunction;
-        MenuPage2, // Fonts
-        mpbStay | mpbRedraw | mpbCenter // Flags;
+        NULL, //EnablePowerDownCounter, // ExecFunction;
+        MenuPage0, //MenuPage2, // Fonts
+        mpbStay | mpbRedraw | mpbCenter | mpbMoving// Flags; //mpbStay | mpbRedraw | mpbCenter // Flags;
     },
     // CableNotConnectMenu
     {
-        MessageMenuHSize, MessageMenuVSize, //  XSize, YSize;
+        MessageMenu2HSize, MessageMenu2VSize, //  XSize, YSize;
         RootMenu,// PrevMenuPage;
         CableNotConnectedMenuItems, // MenuItems;
         sizeof( CableNotConnectedMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL,//OsdTimerCountDown, //EnablePowerDownCounter, //NULL, // ExecFunction;
-        MenuPage4, // Fonts
-        mpbMoving | mpbStay | mpbCenter // Flags;
+        MenuPage0, //MenuPage4, // Fonts
+        mpbStay | mpbRedraw | mpbCenter | mpbMoving// Flags; //mpbMoving | mpbStay | mpbCenter // Flags;
     },
     // UnsupportedModeMenu
     {
@@ -8235,8 +8235,8 @@ MenuPageType code tblMenus[] =
         UnsupportedModeMenuItems, // MenuItems;
         sizeof( UnsupportedModeMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL,//OsdTimerCountDown, //NULL, // ExecFunction;
-        MenuPage5, // Fonts
-        mpbMoving | mpbStay | mpbCenter // Flags;
+        MenuPage0, //MenuPage5, // Fonts
+        mpbStay | mpbRedraw | mpbCenter | mpbMoving// Flags; //mpbMoving | mpbStay | mpbCenter // Flags;
     },
     // RootMenu
     {
@@ -9028,8 +9028,8 @@ MenuPageType code tblMenus[] =
         InputInfoMenuItems, // MenuItems;
         sizeof( InputInfoMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL, // ExecFunction;
-        MenuPage10, // Fonts
-        mpbStay | mpbCenter //   Flags;
+        MenuPage0, //MenuPage10, // Fonts
+        mpbStay | mpbRedraw | mpbCenter// Flags; //mpbStay | mpbCenter //   Flags;
     },
 
 

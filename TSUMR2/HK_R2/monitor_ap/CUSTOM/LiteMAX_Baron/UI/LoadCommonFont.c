@@ -147,7 +147,6 @@ void LoadFfont( void )
 
 void LoadCommonFont( void )
 {
-	#if LiteMAX_Baron_OSD_TEST
 	#if ENABLE_DEBUG
 	printData( "LoadCommonFont \r\n", 0);
 	#endif
@@ -179,36 +178,6 @@ void LoadCommonFont( void )
 	Osd_LoadCompressColorFont( MainIcon4C_LoadDefaultSub, t4ColorLoadDefaultSub, NULL, MainIcon4C_LoadDefaultSub_Size);
 
 	Osd_LoadColorPalette256(); // load osd color
-	#else
-#if 0 // fix coverity error-deadcode
-    BYTE i = 0;
-    if(i)
-    {
-        LoadCommonFontUncall();
-    }
-#endif
-
-    //Load 2 COLOR Font
-#if ENABLE_DEBUG
-    printData( "LoadCommonFont", 0);
-#endif
-
-	Osd_Write4ColorFontStartAddr( _4ColorFontStart );
-	Osd_Write8ColorFontStartAddr( 0x0FFF );
-
-    mStar_LoadCompressedFont( MonoFontStart, tCommonFont_2C, 0 );
-    mStar_LoadCompressedFont( CursorFontStart, tCursorFont_2C, 0 );
-    mStar_LoadCompressedFont( NumberFontStart, tNumberFont_2C, 0 );
-
-    if( FactoryModeFlag )
-        mStar_LoadCompressedFont( (FfontStart), tFontF, 0 ); // load osd fonts
-
-    //Load 4 COLOR Font
-	Osd_LoadCompressColorFont( SmallLogo_4C, tSmallLogo_4C, NULL, SmallLogo_Size);
-
-    Osd_LoadColorPalette256(); // load osd color
-    #endif
-
 }
 
 void LoadCommonFontUncall(void)

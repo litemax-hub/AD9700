@@ -27,7 +27,7 @@
 #define VOLUME_REAL_MIN    0
 //-----------------------------------------------------------
 
-#define DEF_OSD_TRANSPARENCY   	1
+#define DEF_OSD_TRANSPARENCY   	0
 #define MAX_OSD_TRANSPARENCY    5
 
 #define DIGITAL_AUDIO     		(0)

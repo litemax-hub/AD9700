@@ -2,12 +2,14 @@
 #include "menudef.h"
 #include "MenuStr.h"
 
-#if LiteMAX_Baron_OSD_TEST
 #define MAIN_MENU_H_SIZE     		33
 #define MAIN_MENU_V_SIZE             8
 
-#define MessageMenuHSize			20
-#define MessageMenuVSize       		5
+#define MessageMenuHSize			26
+#define MessageMenuVSize       		6
+
+#define MessageMenu2HSize			20
+#define MessageMenu2VSize      		4
 
 #define MainMenuIcon_X_Start        3
 #define MainMenuIcon_Y_Start        4
@@ -21,13 +23,6 @@
 #define UserGreen_Y_Start           11
 #define UserBlue_Y_Start            13
 #define Source_Y_Start              11
-#else
-#define MAIN_MENU_H_SIZE			58
-#define MAIN_MENU_V_SIZE       		27//24
-
-#define MessageMenuHSize			31
-#define MessageMenuVSize       		10
-#endif
 
 //=====================================================================================
 // Key function definition
@@ -503,7 +498,7 @@ MenuItemType code StandbyMenuItems[] =
         RootMenu, // NextMenuPage;
         DWI_CenterText,// DrawMenuItemType;
         NoSignalText, // DisplayText;
-        OORKeyEvent,// KeyEvent
+        NothingKeyEvent, //OORKeyEvent,// KeyEvent
         {
             NULL, // AdjustFunction
             NULL  // ExecFunction
@@ -552,7 +547,7 @@ MenuItemType code UnsupportedModeMenuItems[] =
         RootMenu, // NextMenuPage;
         DWI_CenterText,// DrawMenuItemType;
         OutofRangeText, // DisplayText;
-        OORKeyEvent,//PowerOffKeyEvent, //KeyEvent
+        NothingKeyEvent, //OORKeyEvent,//PowerOffKeyEvent, //KeyEvent
         {
             NULL, // AdjustFunction
             NULL  // ExecFunction
