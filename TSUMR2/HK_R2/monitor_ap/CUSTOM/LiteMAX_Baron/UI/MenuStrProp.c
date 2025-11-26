@@ -16,7 +16,7 @@ const BYTE *NetAddrText( void )
 {
     return 0;
 }
-#if LiteMAX_Baron_OSD_TEST
+
 const BYTE *ResolutionText( void )
 {
     return strResolutionM0[UserPrefLanguage];
@@ -27,9 +27,14 @@ const BYTE *PixelClockText( void )
     return strPixelClockM0[UserPrefLanguage];
 }
 
+const BYTE code strX[] =
+{
+	"X"
+};
+
 const BYTE *xText( void )
 {
-    return strXM0[UserPrefLanguage];
+	return strX;
 }
 
 const BYTE *HzText( void )
@@ -152,85 +157,29 @@ const BYTE *ExtColorSettingsText( void )
 {
     return 0;
 }
-#if LiteMAX_Baron_OSD_TEST
 const BYTE *ExitText( void )
 {
     return strExitM0[UserPrefLanguage];
 }
-#else
-const BYTE *ExitText( void )
-{
-    return strExitM103[UserPrefLanguage];
-}
-#endif
-
-#else
-const BYTE *BriteContText( void )
-{
-    return strBriteContM0[UserPrefLanguage];
-}
-const BYTE *InputSourceText( void )
-{
-    return strInputSourceM0[UserPrefLanguage];
-}
-const BYTE *ColorSettingsText( void )
-{
-    return strColorSettingsM0[UserPrefLanguage];
-}
-const BYTE *DisplaySettingsText( void )
-{
-    return strDisplaySettingsM0[UserPrefLanguage];
-}
-const BYTE *OtherSettingsText( void )
-{
-    return strOtherSettingsM0[UserPrefLanguage];
-}
-const BYTE *PowerManagerText( void )
-{
-    return strPowerManagerM0[UserPrefLanguage];
-}
-const BYTE *InformationText( void )
-{
-    return strInformationM0[UserPrefLanguage];
-}
-const BYTE *ExtColorSettingsText( void )
-{
-    return strExtColorSettingsM0[UserPrefLanguage];
-}
-const BYTE *ExitText( void )
-{
-    return strExitM0[UserPrefLanguage];
-}
-const BYTE *ReturnText( void )
-{
-    return strReturnM0[UserPrefLanguage];
-}
-const BYTE *BrightnessText( void )
-{
-    return strBrightnessM101[UserPrefLanguage];
-}
-#if ENABLE_SHARPNESS
-const BYTE *SharpnessText( void )
-{
-    return strSharpnessM105[UserPrefLanguage];
-}
-#endif
-
-#endif
 
 const BYTE *NoSignalText( void )
 {
-    return strNoSignalM2[UserPrefLanguage];
+    return strNoSignalM0[UserPrefLanguage];
 }
 
 const BYTE *CableNotConnectedText( void )
 {
-    return strCableNotConnectedM4[UserPrefLanguage];
+    return strNoCableM0[UserPrefLanguage];
 }
 
 const BYTE *OutofRangeText( void )
 {
-    return strOutofRangeM5[UserPrefLanguage];
+    return strOORM0[UserPrefLanguage];
+}
+
+const BYTE *InputStatusText( void )
+{
+	return strDPM0[UserPrefLanguage];
 }
 
 const BYTE *ResetProgressText( void )
@@ -244,54 +193,6 @@ const BYTE *AutoAdjustProgressText( void )
     return strAutoAdjustProgessM8[UserPrefLanguage];
 }
 #endif
-
-const BYTE *InputStatusText( void )
-{
-    if (UserPrefInputPriorityType==Input_Priority_Auto)//Autoflag
-    {
-        if(CURRENT_INPUT_IS_VGA())
-            return strAutoAnalogM10[UserPrefLanguage];
-        else if(CURRENT_INPUT_IS_DVI())
-            return strAutoDigitalM10[UserPrefLanguage];
-        else if(CURRENT_INPUT_IS_HDMI())
-            return strAutoHDMIM10[UserPrefLanguage];
-        else if(CURRENT_INPUT_IS_DISPLAYPORT())
-        {
-            if(CURRENT_INPUT_IS_USBTYPEC())
-            {
-                return strAutoUSBCM10[UserPrefLanguage];
-            }
-            else
-            {
-                return strAutoDPM10[UserPrefLanguage];
-            }
-        }
-        else
-            return strAutoMHLM10[UserPrefLanguage];
-    }
-    else
-    {
-        if(CURRENT_INPUT_IS_VGA())
-            return strAnalogInputM10[UserPrefLanguage];
-        else if(CURRENT_INPUT_IS_DVI())
-            return strDigitalInputM10[UserPrefLanguage];
-        else if(CURRENT_INPUT_IS_HDMI())
-            return strHDMIInputM10[UserPrefLanguage];
-        else if(CURRENT_INPUT_IS_DISPLAYPORT())
-        {
-            if(CURRENT_INPUT_IS_USBTYPEC())
-            {
-                return strUSBC_InputM10[UserPrefLanguage];
-            }
-            else
-            {
-                return strDP_InputM10[UserPrefLanguage];
-            }
-        }
-        else
-            return strMHL_InputM10[UserPrefLanguage];
-    }
-}
 
 #if (ENABLE_VGA_INPUT)
 const BYTE *AutoColorProcessText( void )

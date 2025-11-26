@@ -775,7 +775,7 @@ void DrawInformation( void )
 #else
     Osd_Draw4Num( 15, Y_PosStart, SC0_READ_IMAGE_HEIGHT() );
 #endif
-    Osd_DrawPropStr( 14, Y_PosStart, xText() );
+	Osd_DrawStr_for_Baron( 14, Y_PosStart, xText() );
 
 	freq = MenuFunc_GetVfreq();
 
@@ -795,6 +795,62 @@ void DrawInformation( void )
 	Osd_DrawPropStr( 10, Y_PosStart+2, AD9700PText());
 	Osd_DrawStr_for_Baron(17, Y_PosStart+2, ModelNameInfoText());
 	//=================================================
+}
+
+void DrawInputInfo( void )
+{
+    XDATA DWORD colck;
+    XDATA BYTE xPos;
+    OsdFontColor = (CPC_White<<4|CPC_Black);
+
+    //=================================================
+    xPos=(OsdWindowWidth-(*(AD9700PText()+1)+4+1))/2;
+    Osd_DrawPropStr( xPos-3, 3, AD9700PText() );
+
+    xPos += *(AD9700PText()+1) + 1;
+    Osd_DrawStr_for_Baron( xPos-4, 3, ModelNameInfoText() );
+    //=================================================
+    xPos=(OsdWindowWidth-24)/2;
+    if(SC0_READ_IMAGE_HEIGHT()<1000)
+        xPos+=1;
+    DrawNum_R( xPos, 4, 4, SC0_READ_IMAGE_WIDTH() );
+    xPos += 4;
+	Osd_DrawStr_for_Baron(xPos, 4, xText());
+    xPos += 1;
+
+    Osd_Draw4Num( xPos, 4, SC0_READ_IMAGE_HEIGHT() );
+
+    xPos += 5;
+
+    if(SrcVFreq%10>=5)
+        DrawNum(xPos,4,2,SrcVFreq/10+1);
+    else
+        DrawNum(xPos,4,2,SrcVFreq/10);
+
+    xPos += 2;
+    Osd_DrawPropStr( xPos, 4, HzText() );
+    //=================================================
+    xPos += 2;
+    colck = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
+    DrawNum_R(xPos,4,3,colck/100);
+    xPos += 3;
+    Osd_DrawStr_for_Baron(xPos, 4, DotText());
+    xPos += 1;
+    DrawNum(xPos,4,2,colck%100);
+    xPos += 2;
+    Osd_DrawPropStr( xPos, 4, MHzText() );
+}
+
+void DrawNosignalInfo( void )
+{
+    XDATA BYTE xPos;
+    OsdFontColor = (CPC_White<<4|CPC_Black);
+
+    //=================================================
+    xPos=(OsdWindowWidth-(*(AD9700PText()+1)+4+1))/2;
+    Osd_DrawPropStr( xPos-3, 1, AD9700PText() );
+    xPos += *(AD9700PText()+1) + 1;
+    Osd_DrawStr_for_Baron( xPos-4, 1, ModelNameInfoText() );
 }
 
 #if ENABLE_3DLUT
@@ -1498,19 +1554,13 @@ void DrawOsdMenu( void )
             {
                 DrawInformation();
             }
-			#if 0
             else if (MenuPageIndex == InputInfoMenu || MenuPageIndex == UnsupportedModeMenu)
             {
                 DrawInputInfo();
             }
-			#endif
             else if (MenuPageIndex == StandbyMenu || MenuPageIndex == CableNotConnectedMenu)
             {
-#if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard) // jason 20190611
-                ;
-#else
                 DrawNosignalInfo();
-#endif
             }
 
             Osd_Show();
@@ -1700,11 +1750,11 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 		{
 			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
 		
-			OsdFontColor = 0x18;
-			DrawOsdIcon(MainIcon_X,MainIconSub_Y,MainIcon4C_Sharpness);
+			OsdFontColor = FOUR_COLOR(13);
+			redrawIcon = OtherSubSharpness_Icon;
+			DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_5_OtherSub+(redrawIcon *(6*2)));
 		}
 		#endif
-		#if 1
 		else if( MenuPageIndex == ColorTempMenu )
 		{
 			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
@@ -1740,56 +1790,6 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
 			}			
 		}
-		#else
-		else if( MenuPageIndex == ColorTempMenu )
-		{
-			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
-			if(MenuItemIndex == itemIndex)
-            {
-                if(itemIndex == ColorTempMenuSub6500K_Item)
-                {
-					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
-                    OsdFontColor = FOUR_COLOR(10);
-					redrawIcon = ColorSub6500K_Icon;
-					DrawOsdIcon(SubMenuIcon_X_Start+3, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                }
-                else if(itemIndex == ColorTempMenuSubUserOption_Item)
-                {
-                    OsdFontColor = FOUR_COLOR(12);
-					redrawIcon = ColorSubUser_Icon;
-					DrawOsdIcon(SubMenuIcon_X_Start+12, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                }
-				else if(itemIndex == ColorTempMenuSubReturn_Item)
-				{
-					OsdFontColor = FOUR_COLOR(10);
-					redrawIcon = MAIN_EXIT_ICON;
-					DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
-				}
-            }
-            else
-            {
-                if(itemIndex == ColorTempMenuSub6500K_Item)
-                {
-					Osd_DrawPropStr( menuItem->XPos, menuItem->YPos+1, C6500KText() );
-                    OsdFontColor = FOUR_COLOR(6);
-					redrawIcon = ColorSub6500K_Icon;
-					DrawOsdIcon(SubMenuIcon_X_Start+3, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                }
-                else if(itemIndex == ColorTempMenuSubUserOption_Item)
-                {
-                    OsdFontColor = FOUR_COLOR(8);
-					redrawIcon = ColorSubUser_Icon;
-					DrawOsdIcon(SubMenuIcon_X_Start+12, SubMenuIcon_Y_Start, MainIcon4C_3_ColorSub+(redrawIcon *(6*2)));
-                }
-				else if(itemIndex == ColorTempMenuSubReturn_Item)
-				{
-					OsdFontColor = FOUR_COLOR(6);
-					redrawIcon = MAIN_EXIT_ICON;
-					DrawOsdIcon(SubMenuIcon_X_Start+21, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
-				}
-            }
-		}
-		#endif
 		else if( MenuPageIndex == ColorSettingsMenu )
 		{
 			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
@@ -2396,7 +2396,6 @@ BYTE code strSmallLogoWindow[39]=
 
 void DrawOsdBackGround(void)
 {
-#if LiteMAX_Baron_OSD_TEST
 	BYTE i;
 
 	#if ENABLE_OSD_ROTATION
@@ -2439,7 +2438,6 @@ void DrawOsdBackGround(void)
         Osd_DrawBlankPlane(0,0,OsdWindowWidth,OsdWindowHeight);
     }
 	*/
-#endif
 }
 //======================================================================================
 #if DisplayLogo!=NoBrand

@@ -77,9 +77,4 @@ extern void Osd_DrawContinuesChar(BYTE u8XPos, BYTE u8YPos, WORD u8Char, BYTE u8
 
 extern BYTE Osd_DoubleBuffer(Bool u8Enable);
 extern void Osd_SetWindowEnable(BYTE u8Win_Num,Bool u8Enable);
-#if 0//LiteMAX_Baron_OSD_TEST
-#define DYNAMIC_STRING_MAX  22 //15
-extern BYTE xdata  tPropText[DYNAMIC_STRING_MAX][2];
-extern BYTE LoadPropFontText(BYTE u8Addr,BYTE *pu8Text);
-#endif
 
