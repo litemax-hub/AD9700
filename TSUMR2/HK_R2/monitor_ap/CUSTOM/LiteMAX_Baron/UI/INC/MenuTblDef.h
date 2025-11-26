@@ -28,8 +28,8 @@
 // Key function definition
 MenuItemActionType code InformationEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,   // BTN_Plus
-    MIA_NextItem,   // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_Nothing,    // BTN_Menu
     MIA_GotoPrev,   // BTN_Exit
     MIA_Power,      // BTN_Power
@@ -39,8 +39,8 @@ MenuItemActionType code InformationEvent[BTN_EndBTN] =
 #if INPUT_TYPE==INPUT_1A
 MenuItemActionType code NaviKeyEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,   // BTN_Plus
-    MIA_NextItem,   // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_GotoNext,   // BTN_Menu
     MIA_GotoPrev,//MIA_Nothing,     // BTN_Exit // 070117 root page exit-key event
     MIA_Power,  // BTN_Power
@@ -48,8 +48,8 @@ MenuItemActionType code NaviKeyEvent[BTN_EndBTN] =
 };
 MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,     // BTN_Plus
-    MIA_NextItem,     // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_ExecFunc,     // BTN_Menu
     MIA_GotoPrev,//MIA_Nothing,   // BTN_Exit // 070117
     MIA_Power,    // BTN_Power
@@ -77,8 +77,8 @@ MenuItemActionType code NaviExecKeyEvent[BTN_EndBTN] =
 #if LiteMAX_Baron_OSD_TEST
 MenuItemActionType code NaviExec2KeyEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,     // BTN_Plus
-    MIA_NextItem,     // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_GotoNextExec,     // BTN_Menu
     MIA_GotoPrev,//MIA_Nothing,   // BTN_Exit // 070117
     MIA_Power,    // BTN_Power
@@ -88,8 +88,8 @@ MenuItemActionType code NaviExec2KeyEvent[BTN_EndBTN] =
 #endif
 MenuItemActionType code NaviExecFuncGotoPrevKeyEvent[BTN_EndBTN]=
 { 
-    MIA_PrevItem,               // BTN_Plus
-    MIA_NextItem,               // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_ExecFunc_And_GotoPrev,  // BTN_Menu
     MIA_GotoPrev,               // BTN_Exit
     MIA_Power,                   // BTN_Power
@@ -446,8 +446,8 @@ MenuItemActionType code FacExecNvramKeyEvent[BTN_EndBTN] = // 2011.9.13 22:30 CC
 
 MenuItemActionType code ReturnEvent[BTN_EndBTN] =
 {
-    MIA_PrevItem,   // BTN_Plus
-    MIA_NextItem,   // BTN_Minus
+    MIA_NextItem,   // BTN_Plus
+    MIA_PrevItem,   // BTN_Minus
     MIA_GotoPrev,    // BTN_Menu
     MIA_GotoPrev,   // BTN_Exit
     MIA_Power,      // BTN_Power
