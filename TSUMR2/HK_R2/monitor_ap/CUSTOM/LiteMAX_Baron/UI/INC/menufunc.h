@@ -189,7 +189,7 @@ extern WORD GetCColorValue( void );
 extern WORD GetMColorValue( void );
 extern Bool EnableBurninMode( void );
 extern WORD GetBurninValue( void );
-extern Bool AdjustBurnin( MenuItemActionType action );
+extern Bool AdjustBurnin( void );
 
 #if ENABLE_FACTORY_SSCADJ
 extern  Bool AdjustFactorySSCModulation( MenuItemActionType action );//CC 2011.9.13 18:51
@@ -351,3 +351,15 @@ extern Bool MenuFunc_DCOffDischarge_Set(void);
 extern Bool MenuFunc_PowerSavingEn_Set(void);
 extern Bool MenuFunc_DisplayLogoEn_Set(void);
 extern WORD MenuFunc_GetVfreq(void);
+extern Bool AdjustFBrightness_0( MenuItemActionType action );
+extern WORD GetFBrightness_0Value( void );
+extern Bool AdjustFBrightness_25( MenuItemActionType action );
+extern WORD GetFBrightness_25Value( void );
+extern Bool AdjustFBrightness_50( MenuItemActionType action );
+extern WORD GetFBrightness_50Value( void );
+extern Bool AdjustFBrightness_75( MenuItemActionType action );
+extern WORD GetFBrightness_75Value( void );
+extern Bool AdjustFBrightness_100( MenuItemActionType action );
+extern WORD GetFBrightness_100Value( void );
+extern Bool FactoryReset(void);
+

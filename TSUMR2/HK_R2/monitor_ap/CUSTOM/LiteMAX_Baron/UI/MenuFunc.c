@@ -119,6 +119,9 @@ WORD xdata HStartOffset = 0;
 #if MS_PM
 extern XDATA sPM_Info  sPMInfo;
 #endif
+
+extern void Init_FactorySetting( void );
+
 void ReadUserSetting( void );
 //void Save9300KSetting(void);
 //void Save6500KSetting(void);
@@ -3993,9 +3996,8 @@ WORD GetBurninValue( void )
 {
     return ( BurninModeFlag ) ? ( 1 ) : ( 0 );
 }
-Bool AdjustBurnin( MenuItemActionType action )
+Bool AdjustBurnin( void )
 {
-    action = action;
     if( BurninModeFlag )
     {
         Clr_BurninModeFlag();
@@ -5553,4 +5555,86 @@ WORD MenuFunc_GetVfreq(void)
 
     return u16Vfreq;
 }
+
+//======== FACTORY MENU FUNCTION ===============//
+Bool AdjustFBrightness_0( MenuItemActionType action )
+{
+    WORD xdata tempValue;
+
+    tempValue = DecIncValue( action, FUserPrefBrightness_0, 0, FUserPrefBrightness_25, 1 );
+    FUserPrefBrightness_0 = tempValue;
+    mStar_FAdjustBrightness( FUserPrefBrightness_0 );
+
+    return TRUE;
+}
+WORD GetFBrightness_0Value( void )
+{
+    return FUserPrefBrightness_0;
+}
+Bool AdjustFBrightness_25( MenuItemActionType action )
+{
+    WORD xdata tempValue;
+
+    tempValue = DecIncValue( action, FUserPrefBrightness_25, FUserPrefBrightness_0, FUserPrefBrightness_50, 1 );
+
+    FUserPrefBrightness_25 = tempValue;
+    mStar_FAdjustBrightness( FUserPrefBrightness_25 );
+    return TRUE;
+}
+WORD GetFBrightness_25Value( void )
+{
+    return FUserPrefBrightness_25;
+}
+Bool AdjustFBrightness_50( MenuItemActionType action )
+{
+    WORD xdata tempValue;
+
+    tempValue = DecIncValue( action, FUserPrefBrightness_50, FUserPrefBrightness_25, FUserPrefBrightness_75, 1 );
+    FUserPrefBrightness_50 = tempValue;
+    mStar_FAdjustBrightness( FUserPrefBrightness_50 );
+    return TRUE;
+}
+WORD GetFBrightness_50Value( void )
+{
+    return FUserPrefBrightness_50;
+}
+Bool AdjustFBrightness_75( MenuItemActionType action )
+{
+    WORD xdata tempValue;
+
+    tempValue = DecIncValue( action, FUserPrefBrightness_75, FUserPrefBrightness_50, FUserPrefBrightness_100, 1 );
+    FUserPrefBrightness_75 = tempValue;
+    mStar_FAdjustBrightness( FUserPrefBrightness_75 );
+    return TRUE;
+}
+WORD GetFBrightness_75Value( void )
+{
+    return FUserPrefBrightness_75;
+}
+Bool AdjustFBrightness_100( MenuItemActionType action )
+{
+    WORD xdata tempValue;
+
+    tempValue = DecIncValue( action, FUserPrefBrightness_100, FUserPrefBrightness_75, 100, 1 );
+
+    FUserPrefBrightness_100 = tempValue;
+    mStar_FAdjustBrightness( FUserPrefBrightness_100 );
+    return TRUE;
+}
+WORD GetFBrightness_100Value( void )
+{
+    return FUserPrefBrightness_100;
+}
+
+Bool FactoryReset(void)
+{
+	Init_FactorySetting();
+	SaveFactorySetting();
+	Init_MonitorSetting();
+	SaveMonitorSetting();
+
+	return TRUE;
+}
+
+
 

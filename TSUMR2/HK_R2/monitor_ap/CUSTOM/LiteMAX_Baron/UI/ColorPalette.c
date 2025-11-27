@@ -28,26 +28,19 @@
 ColorPaletteType code tOSDColorPalette0[] =
 {
 #if CHIP_ID>=CHIP_TSUMV
-    {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},  // Color_Tran
+	{0xFF, 0xFF, 0xFF,	  CP_COLORKEY_F},  // Color_Tran
 #endif
-    {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},  // Palette 0 // White
-    {0xFF, 0x00, 0x00,    CP_COLORKEY_F},  // Palette 1 // Red
-    {0x00, 0x80, 0xff,    CP_COLORKEY_F},  // Palette 2 //lightblue Green
-#if (DisplayLogo==CHEMEILOGO)
-    {0x00, 0x30, 0x60,    CP_COLORKEY_F},  // Palette 3 // deepBlue   0x00 0x2D 0x64
-#else
-    {0x00, 0x00, 0xFF,    CP_COLORKEY_F},  // Palette 3 // Blue
-#endif
-    //0xFF, 0xFF, 0xFF, // Palette 4 // White 1  AOC
-    {0xF6, 0xB8, 0x00,    CP_COLORKEY_F},  // Palette 4 // Envision PowerOnLogo "O"Color
-    {0xc0, 0xc0, 0xc0,    CP_COLORKEY_F},  // Palette 5 //gray
-#if (DisplayLogo==IMAGICLOGO)
-    {0xFF, 0x66, 0x00,    CP_COLORKEY_F},
-#else
-    {0x49, 0x56, 0x77,    CP_COLORKEY_F},  // Palette 6 //Main Logo Color +AOC power On
-#endif
-    {0x00, 0x00, 0x00,    CP_COLORKEY_F},  // Palette 7
+	{0xFF, 0x00, 0x00,	  CP_COLORKEY_F},  // Palette 0 // Black
+	{0xFF, 0xFF, 0xFF,	  CP_COLORKEY_F},  // Palette 1 // White
+	{0xFF, 0x00, 0x00,	  CP_COLORKEY_F},  // Palette 2 // Red
+	{0x00, 0xFF, 0x00,	  CP_COLORKEY_F},  // Palette 3 // Green
+	{0x00, 0x00, 0xFF,	  CP_COLORKEY_F},  // Palette 4 // Blue
+	{0xFF, 0xFF, 0x00,	  CP_COLORKEY_F},  // Palette 5 // Yellow
+	{0xc0, 0xc0, 0xc0,	  CP_COLORKEY_F},  // Palette 6 // Gray
+	{0x38, 0x80, 0x98,	  CP_COLORKEY_F},  // Palette 7 // Background
+	{0x00, 0x00, 0x80,	  CP_COLORKEY_F},  // Palette 4 // Deep Blue
 };
+
 ColorPaletteType code tOSDColorPalette256[]=
 {
   // 0

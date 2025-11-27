@@ -7,7 +7,7 @@ typedef enum
     KEY_EXIT     = BIT4, //BIT4, // exit/auto
     KEY_SELECT  = BIT6, //2006-02-22  source select
 
-    KEY_FACTORY = KEY_PLUS | KEY_MINUS, 
+    KEY_FACTORY = KEY_POWER | KEY_PLUS | KEY_MINUS, 
     //  KEY_ISP     =KEY_PLUS|KEY_MINUS,//KEY_MENU|KEY_EXIT,
     KEY_PRODUCT = KEY_POWER | KEY_EXIT | KEY_MENU,
 

@@ -46,17 +46,17 @@ typedef enum
 #if CHIP_ID>=CHIP_TSUMV
     CP_Tran,
 #endif
+    CP_BlackColor,
     CP_WhiteColor,
     CP_RedColor,
-    CP_LightBlue,
+    CP_GreenColor,
     CP_BlueColor,
-    CP_WhiteColor1,
+    CP_YellowColor,
     CP_GrayColor,
-    CP_LightColor,
-    CP_BlackColor,
+    CP_Background,
+    CP_DeepBlue,
     CP_MaxColor
 } CP_ColorType;
-
 
 #else
 //For S0

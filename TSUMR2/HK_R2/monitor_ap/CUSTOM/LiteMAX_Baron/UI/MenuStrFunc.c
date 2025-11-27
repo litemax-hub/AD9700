@@ -55,6 +55,7 @@ BYTE code ASCII2FONT_Baron[256] =  /* OSD character table */
     //
 };
 #endif
+
 BYTE code ASCII2FONT[256] =  /* OSD character table */
 {
     /*       0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F   */
@@ -130,7 +131,7 @@ void Osd_DrawStr( BYTE xPos, BYTE yPos, BYTE *str )
         while( (dispChar = *( str + dispPtr )) )            // display string font index
         {
             //old_msWriteByte(PORT_CODE_DATA, ASCII2FONT[dispChar]);
-            msWriteByte ( PORT_CODE_DATA, ASCII2FONT[dispChar] );
+            msWriteByte ( PORT_CODE_DATA, ASCII2FONT_Baron[dispChar] );
             dispPtr++;
         }
     }

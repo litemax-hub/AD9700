@@ -9345,7 +9345,7 @@ MenuPageType code tblMenus[] =
 #if  1
     // 59 FactoryMenu
     {
-        33, 32,//29,     XSize, YSize;  2011.9.13 cc - A022
+        FACTORY_MENU_H_SIZE, FACTORY_MENU_V_SIZE,  // XSize, YSize;
         RootMenu,// PrevMenuPage;
         FactoryMenuItems, // MenuItems;
         sizeof( FactoryMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;

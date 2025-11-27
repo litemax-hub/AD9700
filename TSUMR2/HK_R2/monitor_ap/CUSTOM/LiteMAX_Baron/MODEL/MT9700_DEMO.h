@@ -506,6 +506,7 @@
 #define LiteMAX_Baron_OSD_TEST	1
 #define ENABLE_OSD_ROTATION		0
 
+#define FwPartNo				"990060101900"
 #define ModelNameInfo           "LEI.B195.101"
 #define DISABLE_POWERSAVING		1
 
