@@ -7,6 +7,40 @@
 //#define MainBoardType   ==> Set in .config
 
 #define CHIP_FAMILY_TYPE CHIP_FAMILY_MST9U // for R2 platform driver
+
+////////////////////////////////////////////////////////////
+// LiteMAX PPS List
+////////////////////////////////////////////////////////////
+// PROJ: R2_MT9700_LiteMAX
+#define P0000000			0
+#define P2506168			1
+
+////////////////////////////////////////////////////////////
+// LiteMAX PPS SELECTION
+////////////////////////////////////////////////////////////
+#define StandardBoardPPS			P2506168
+
+////////////////////////////////////////////////////////////
+// PROJECT DEFINE
+////////////////////////////////////////////////////////////
+#if (StandardBoardPPS == P2506168)
+#define FWdevelopVCS                        1
+#define FWVersionCS                         10
+#define FWVersion                           "1.0"
+#define SNNumber                          "990060101900"
+#define PanelType                       PanelBOEDV195FBB_N10
+#define BRIGHTNESS_INVERSE              0
+#define EDID_DP                             E_EDID_TBL_995991142502
+#else
+#define FWdevelopVCS                        1
+#define FWVersionCS                         10
+#define FWVersion                           "1.0"
+#define SNNumber                          "000000000000"
+#define PanelType                       PanelCMIM236HGJ_L21//PanelCMO190
+#endif
+
+#include "Litemax_CommDef.h"
+
 ////////////////////////////////////////////////////////////
 // INPUT_TYPE SELECTION
 ////////////////////////////////////////////////////////////
@@ -248,17 +282,18 @@
 ////////////////////////////////////////////////////////////
 // PANEL SELECTION
 ////////////////////////////////////////////////////////////
+/*
 #ifdef TSUMR2_FPGA
 #define PanelType                   PanelCMIM236HGJ_L21_FPGA  // FPGA
 #else
 #define PanelType                   PanelCMO190//PanelM250HTN01//PanelAUOM185XW01//PanelCMIM236HGJ_L21//PanelCMIM236HGJ_L21
 #endif
-
+*/
 ////////////////////////////////////////////////////////////
 // BRIGHTNESS CONTROL
 ////////////////////////////////////////////////////////////
 #define BrightFreqByVfreq               0   // set brightness freq. by input Vfreq.
-#define BRIGHTNESS_INVERSE              1
+//#define BRIGHTNESS_INVERSE              1
 #define BRIGHTNESS_FREQ                 22000 // unit: Hz
 #define BRIGHTNESS_VSYNC_ALIGN          1
 #define BRIGHTNESS_HSYNC_ALIGN          0
@@ -409,7 +444,7 @@
 ////////////////////////////////////////////////////////////
 #define ChipName                "MT9700"
 #define Model                   "XXXXXXXXX"
-#define FWVersion               "000"
+//#define FWVersion               "000"
 #define ChangeDate              "20191023"
 
 

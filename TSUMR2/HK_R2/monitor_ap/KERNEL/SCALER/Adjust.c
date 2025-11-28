@@ -706,6 +706,7 @@ Bool SetColorModeDemo(void)
     return msDrv_SetColorModeDemo();
 }
 
+#if (LiteMAX_Baron_UI == 1)
 //======== FACTORY MENU FUNCTION ===============//
 void mStar_FAdjustBrightness( BYTE brightness )
 {
@@ -718,4 +719,5 @@ void mStar_FAdjustBrightness( BYTE brightness )
         drvGPIO_SetBacklightDuty(BrightnessPWM, brightness);
     #endif
 }
+#endif
 

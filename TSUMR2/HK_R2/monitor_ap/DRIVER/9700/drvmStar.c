@@ -2648,6 +2648,9 @@ void msDrvPowerModCtrl(BYTE ucSwitch)
             //PANEL_LVDS_1CH
             #if 0//Holy modify at 20251121 for BOEDV195FBB_N10 LVDS  1 Channel
             msWrite2Byte(REG_MOD1_20, LVDS_2CH_B_OUT); //demo board use B port
+	     #elif ((PanelType == PanelBOEDV195FBB_N10) && PANEL_LVDS_1CH) // CH5~CH9
+            msWrite2Byte(REG_MOD1_20, (WORD)(LVDS_CH_OUT_8BIT<<10));
+            msWrite2Byte(REG_MOD1_22, (WORD)(LVDS_CH_OUT_8BIT>>2));
             #else
             msWrite2Byte(REG_MOD1_20, (LVDS_2CH_A_OUT&0x0F)<<12);
             msWrite2Byte(REG_MOD1_22, (LVDS_2CH_A_OUT>>4));

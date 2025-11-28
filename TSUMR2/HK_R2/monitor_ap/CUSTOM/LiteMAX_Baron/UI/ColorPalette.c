@@ -73,70 +73,70 @@ ColorPaletteType code tOSDColorPalette256[]=
   {0xEC, 0x94, 0x30,    CP_COLORKEY_F},           // 2
   {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},           // 3
   // 5 0x10 Frame // Cursor Palette Hightlight (Brightness and Contrast First Line)
-  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
-  {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
-  {0x60, 0x60, 0x60,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
-  {0x40, 0x40, 0x40,    CP_COLORKEY_F}, //{RGB_BK_COLOR_H,      CP_COLORKEY_F},
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},
+  {0x60, 0x60, 0x60,    CP_COLORKEY_F},
+  {0x40, 0x40, 0x40,    CP_COLORKEY_F},
   // 6 0x14 Icon Normal // Cursor Palette Hightlight (AutoAdjust First Line)
-  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
-  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
-  {0x00, 0xFF, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F},
+  {0x00, 0xFF, 0xFF,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
   // 7 0x18 Audio Icon Normal // Cursor Palette Hightlight (Common Second Line) && <<gauge 4 color 1>>
-  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
-  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
-  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
   // 8 0x1C Color Icon Normal // Cursor Palette Hightlight (Common Third Line)
-  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
-  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
-  {0x00, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
-  {0x00, 0x00, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x00, 0xFF, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0xFF,    CP_COLORKEY_F},
   // 9 0x20 Sharpness Icon Normal // Cursor Palette Hightlight (L1 First Line)
-  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
-  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
   // 10 0x24 Icon Select // Cursor Palette Hightlight (L1 Common Third Line)
-  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
-  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
-  {0x00, 0xFF, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F},
+  {0x00, 0xFF, 0xFF,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
   // 11 0x28 Audio Icon Select // Cursor Palette Hightlight (L1 /L2 Common Third Line buttom)
-  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{RGB_BK_COLOR_H,      CP_COLORKEY_F},
-  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_WHITE,    CP_COLORKEY_F},
-  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
   // 12 0x2C Color Icon Select // 3rd Line of MM ICON(4color) highlight
-  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
-  {0xFF, 0x00, 0x00,    CP_COLORKEY_F}, //{RGB_BLACK,           CP_COLORKEY_F},
-  {0x00, 0xFF, 0x00,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
-  {0x00, 0x00, 0xFF,    CP_COLORKEY_F}, //{RGB_CURSOR_BLACK,    CP_COLORKEY_F},
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F},
+  {0xFF, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x00, 0xFF, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0xFF,    CP_COLORKEY_F},
   // 13 0x30 Sharpness Icon Select // for Menu Logo
-  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},
-  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, //{0xFF, 0x00, 0x00,    CP_COLORKEY_F},
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, //{0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F},
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F}, 
+  {0xFF, 0xFF, 0x00,    CP_COLORKEY_F}, 
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
   // 14 0x34 Stealth Logo Color
-  {0x00, 0x00, 0x00,    CP_COLORKEY_F},           // 0
-  {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 1
-  {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},           // 2
-  {0xE4, 0x1E, 0x26,    CP_COLORKEY_F},           // 3
+  {0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x40, 0x40, 0x40,    CP_COLORKEY_F},
+  {0xFF, 0xFF, 0xFF,    CP_COLORKEY_F},
+  {0xE4, 0x1E, 0x26,    CP_COLORKEY_F},
   // 15 0x38 Icon Disable Color
-  {0x38, 0x80, 0x98,    CP_COLORKEY_F},           // 0
-  {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 1
-  {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 2
-  {0x40, 0x40, 0x40,    CP_COLORKEY_F},           // 3
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},
+  {0x40, 0x40, 0x40,    CP_COLORKEY_F}, 
+  {0x40, 0x40, 0x40,    CP_COLORKEY_F},
+  {0x40, 0x40, 0x40,    CP_COLORKEY_F},
   // 16 0x3C PowerKeyLock Normal
-  {0x38, 0x80, 0x98,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
-  {  29,   64,   77,    CP_COLORKEY_F}, //{RGB_WHITE,           CP_COLORKEY_F},
-  {  11,   19,   23,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
-  {   4,    1,    1,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x38, 0x80, 0x98,    CP_COLORKEY_F},
+  {  29,   64,   77,    CP_COLORKEY_F},
+  {  11,   19,   23,    CP_COLORKEY_F},
+  {   4,    1,    1,    CP_COLORKEY_F},
   // 17 0x40 PowerKeyLock Select
-  {0x00, 0x00, 0xC0,    CP_COLORKEY_F}, //{RGB_CURSOR_TOP,      CP_COLORKEY_F},
-  {  29,   64,   77,    CP_COLORKEY_F}, //{RGB_BK_COLOR_H,      CP_COLORKEY_F},
-  {  11,   19,   23,    CP_COLORKEY_F}, //{RGB_CURSOR_DOWN,     CP_COLORKEY_F},
-  {   4,    1,    1,    CP_COLORKEY_F}, //{0x00, 0x00, 0x00,    CP_COLORKEY_F},
+  {0x00, 0x00, 0xC0,    CP_COLORKEY_F},
+  {  29,   64,   77,    CP_COLORKEY_F},
+  {  11,   19,   23,    CP_COLORKEY_F},
+  {   4,    1,    1,    CP_COLORKEY_F},
 };
 
 

@@ -75,5 +75,7 @@ _ADJSUTDEC_ void msSuperResolutionOnOff(BOOL bOn);
 #endif
 _ADJSUTDEC_ void msAPI_VideoHueSaturation(void);
 _ADJSUTDEC_ Bool SetColorModeDemo(void);
+#if (LiteMAX_Baron_UI == 1)
 _ADJSUTDEC_ void mStar_FAdjustBrightness( BYTE brightness );
+#endif
 

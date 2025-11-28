@@ -535,6 +535,14 @@ typedef enum
 #define PANEL_SWAP_PN_LOCKN       0
 #endif
 
+#ifndef LVDS_CH_OUT
+#define LVDS_CH_OUT                 0x555
+#endif
+
+#ifndef LVDS_CH_OUT_8BIT
+#define LVDS_CH_OUT_8BIT            0x155
+#endif
+
 #if(CHIP_ID == CHIP_MT9701)
 #define VBY1_SWING_448 0
 #define VBY1_SWING_436 1
