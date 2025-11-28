@@ -1852,13 +1852,12 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				DrawOsdIcon(SubMenuIcon_X_Start+ 15, SubMenuIcon_Y_Start+1, MainIcon4C_LoadDefaultSub+(redrawIcon *(6*2)));
 			}
 		}
-		#if 0
 		else if( MenuPageIndex == HotKeyBrightnessMenu )
 		{
-			OsdFontColor = 0x14;
-			DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_Brightness);
+			OsdFontColor = FOUR_COLOR(6);
+			redrawIcon = MAIN_BRIGHTNESS_ITEM;
+			DrawOsdIcon(9, 1, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
 		}
-		#endif
 	}
 	else
 #endif
@@ -2431,7 +2430,7 @@ void DrawOsdBackGround(void)
 	#if ENABLE_OSD_ROTATION
     if((MenuPageIndex == MainMenu)||(MenuPageIndex == OSDRotationMenu))
     #else
-	if (MenuPageIndex == MainMenu)
+	if ((MenuPageIndex == MainMenu)||(MenuPageIndex == HotKeyBrightnessMenu))
 	#endif
     {
         OsdFontColor=FOUR_COLOR(5);
@@ -2458,16 +2457,6 @@ void DrawOsdBackGround(void)
     	for (i=0; i<OsdWindowHeight; i++)
         	Osd_DrawContinuesChar( 0, i, Space4C, OsdWindowWidth );
 	}
-	/*
-    else if (IS_MAIN_L1(g_u8MenuPageIndex))   //SubMenu
-    {
-    }
-    else if(!IS_MAIN_L1(g_u8MenuPageIndex))    //Message Menu
-    {
-        OsdFontColor=MONO_COLOR(CP_BK_COLOR_L0,CP_BK_COLOR_L0);
-        Osd_DrawBlankPlane(0,0,OsdWindowWidth,OsdWindowHeight);
-    }
-	*/
 }
 //======================================================================================
 #if DisplayLogo!=NoBrand

@@ -23,6 +23,10 @@
 #define UserGreen_Y_Start           11
 #define UserBlue_Y_Start            13
 #define Source_Y_Start              11
+
+#define HotMenuHSize				21
+#define HotMenuVSize      			7
+
 //===============================================
 #define FACTORY_MENU_H_SIZE     	50
 #define FACTORY_MENU_V_SIZE          8
