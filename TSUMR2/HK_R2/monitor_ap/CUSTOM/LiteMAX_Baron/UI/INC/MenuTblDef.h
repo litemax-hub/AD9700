@@ -341,7 +341,7 @@ MenuItemActionType code FactoryExitKeyEvent[BTN_EndBTN] = // 2011.9.15 Rick modi
 //===========================================================
 MenuItemActionType code RootKeyEvent[BTN_EndBTN] =
 {
-    MIA_SourceSel,   // BTN_Plus
+    MIA_Brite,   // BTN_Plus
     MIA_Brite,  //MIA_VOL,   // BTN_Minus
     MIA_GotoNext,   // BTN_Menu
     MIA_GotoNext,   // BTN_Exit
