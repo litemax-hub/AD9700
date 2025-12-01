@@ -920,12 +920,22 @@ extern BYTE SystemVccDropDownCnt;
 #define DEF_ADC_GREEN_GAIN  0x1000
 #define DEF_ADC_BLUE_GAIN   0x1000
 #define DEF_ADC_OFFSET      0x00
-#if (LiteMAX_Baron_UI == 1) 
+#if (LiteMAX_Baron_UI == 1)
+#ifndef DEF_FAC_BRIGHTNESS_0
 #define DEF_FAC_BRIGHTNESS_0	19
+#endif
+#ifndef DEF_FAC_BRIGHTNESS_25
 #define	DEF_FAC_BRIGHTNESS_25	78
+#endif
+#ifndef DEF_FAC_BRIGHTNESS_50
 #define	DEF_FAC_BRIGHTNESS_50	137
+#endif
+#ifndef DEF_FAC_BRIGHTNESS_75
 #define	DEF_FAC_BRIGHTNESS_75	196
+#endif
+#ifndef DEF_FAC_BRIGHTNESS_100
 #define	DEF_FAC_BRIGHTNESS_100	255
+#endif
 #endif
 
 //#define ADC_GAIN_MAX    0x400*
