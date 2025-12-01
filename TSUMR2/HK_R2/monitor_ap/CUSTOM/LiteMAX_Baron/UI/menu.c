@@ -772,7 +772,7 @@ Bool Check_Disable_ItemRadioGroup_Status( WORD Flags )
 
 void DrawInformation( void )
 {
-	XDATA DWORD colck;
+	XDATA DWORD clock;
     WORD freq;
 	BYTE Y_PosStart = 1;
 	
@@ -795,11 +795,11 @@ void DrawInformation( void )
     Osd_DrawPropStr( 22, Y_PosStart, HzText() );
     //=================================================
     Osd_DrawPropStr( 3, Y_PosStart+1, PixelClockText());
-    colck = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
-    //printData("colck=%d",colck);
-    DrawNum_R(10,Y_PosStart+1,3,colck/100);
+    clock = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
+    printData("clock=%d",clock);
+    DrawNum_R(10,Y_PosStart+1,3,clock/100);
 	Osd_DrawStr( 13, Y_PosStart+1, DotText());
-    DrawNum(14,Y_PosStart+1,2,colck%100);
+    DrawNum(14,Y_PosStart+1,2,clock%100);
     Osd_DrawPropStr( 16, Y_PosStart+1, MHzText());
 	//=================================================
 	Osd_DrawPropStr( 3, Y_PosStart+2, VersionText());
@@ -810,7 +810,7 @@ void DrawInformation( void )
 
 void DrawInputInfo( void )
 {
-    XDATA DWORD colck;
+    XDATA DWORD clock;
     XDATA BYTE xPos;
     OsdFontColor = (CPC_White<<4|CPC_Black);
 
@@ -842,12 +842,12 @@ void DrawInputInfo( void )
     Osd_DrawPropStr( xPos, 4, HzText() );
     //=================================================
     xPos += 2;
-    colck = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
-    DrawNum_R(xPos,4,3,colck/100);
+    clock = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
+    DrawNum_R(xPos,4,3,clock/100);
     xPos += 3;
     Osd_DrawStr(xPos, 4, DotText());
     xPos += 1;
-    DrawNum(xPos,4,2,colck%100);
+    DrawNum(xPos,4,2,clock%100);
     xPos += 2;
     Osd_DrawPropStr( xPos, 4, MHzText() );
 }
@@ -1738,7 +1738,6 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 		
 		if (MenuPageIndex == MainMenu)
 		{
-			DrawInformation();
 			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
 			if(itemIndex == MAIN_COLOR_ITEM)
 			{

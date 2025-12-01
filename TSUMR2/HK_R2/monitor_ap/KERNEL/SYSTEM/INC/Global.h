@@ -1958,6 +1958,12 @@ typedef enum
 
 #define Layer3_MenuPage         ( MenuPageIndex >= ColorSettingsMenu && MenuPageIndex <= ColorSettingsMenu )
 #define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ColorSettingsMenu && PrevMenuPageIndex <= ColorSettingsMenu )
+#elif (LiteMAX_Baron_UI == 1)
+#define Layer2_MenuPage         ( MenuPageIndex >= BrightnessMenu && MenuPageIndex <= DefaultMenu)
+#define Layer2_PrevMenuPage     ( PrevMenuPageIndex >= BrightnessMenu && PrevMenuPageIndex <= DefaultMenu)
+
+#define Layer3_MenuPage         ( MenuPageIndex >= ColorSettingsMenu && MenuPageIndex <= ColorSettingsMenu )
+#define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ColorSettingsMenu && PrevMenuPageIndex <= ColorSettingsMenu )
 #else
 #define Layer2_MenuPage         ( MenuPageIndex >= BriteContMenu && MenuPageIndex <= PowerManagerMenu)
 #define Layer2_PrevMenuPage     ( PrevMenuPageIndex >= BriteContMenu && PrevMenuPageIndex <= PowerManagerMenu)
