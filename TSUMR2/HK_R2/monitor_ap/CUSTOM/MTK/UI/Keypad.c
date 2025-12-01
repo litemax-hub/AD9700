@@ -206,7 +206,7 @@ void Key_ScanKeypad( void )
             return;
         }
         if( KeypadButton == BTN_Repeat && keypadStatus != KEY_LOCK
-#if ENABLE_TOUCH_KEY
+#if 1 //ENABLE_TOUCH_KEY
                 && keypadStatus != KEY_FACTORY // 100524 coding addition for factory key
 #endif
         )        // 0105
@@ -249,15 +249,15 @@ void Key_ScanKeypad( void )
                 SaveMonitorSetting();
                 #endif
             }
-#if ENABLE_TOUCH_KEY
+#if 1 //ENABLE_TOUCH_KEY
             else if( keypadStatus == KEY_FACTORY ) // 100524 coding addition for factory key
             {
-                if( !PowerOnFlag )
+                if( PowerOnFlag && MenuPageIndex <= RootMenu)
                 {
                     Clr_OsdLockModeFlag();
                     Clr_ShowOsdLockFlag();
                     Set_FactoryModeFlag();
-                    MenuPageIndex = PowerOnMenu; // 100908
+                    MenuPageIndex = FactoryMenu; // 100908
                     MenuItemIndex = 0;
                     ExecuteKeyEvent( MIA_RedrawMenu );
                     //            KeypadButton = BTN_Power;

@@ -447,7 +447,7 @@ MenuItemType code MainMenuItems[] =
         NaviExecKeyEvent,
         {
             NULL,   // AdjustFunction
-            NULL, //Temp AdjustPowerKey,   // ExecFunction
+            AdjustPowerKey   // ExecFunction
         },
         {
             NULL, // DrawNumberType

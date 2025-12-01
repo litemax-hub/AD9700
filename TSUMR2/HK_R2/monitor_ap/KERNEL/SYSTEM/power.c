@@ -84,7 +84,7 @@ void Power_PowerHandler( void )
         else
         {
             Clr_FakeSleepFlag();
- 			printMsg("POWER, EXIT FAKE SLEEP\n");
+ 			POWER_printMsg("POWER, EXIT FAKE SLEEP\n");
 
             if(msAPI_FakeSleepTimeOutEn_Get())
             {

@@ -1205,6 +1205,8 @@ extern volatile WORD xdata TimeOutCounter;
 #define UserPref2Dto3DOffset        MonitorSetting.T3DOffset
 
 #if (LiteMAX_Baron_UI == 1)
+#define UserprefPowerKeyEnable      MonitorSetting.PowerKeyEnable
+
 //======== FACTORY MENU FUNCTION ===============//
 #define FUserPrefBrightness_0       FactorySetting.FBrightness_0
 #define FUserPrefBrightness_25      FactorySetting.FBrightness_25
