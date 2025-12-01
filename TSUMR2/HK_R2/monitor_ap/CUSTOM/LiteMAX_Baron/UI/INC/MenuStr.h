@@ -1,4 +1,22 @@
 
+//===================================================
+extern BYTE *F_FactoryDialogText( void );
+extern BYTE *F_PanelTypeText( void );
+extern BYTE *F_PanelText( void );
+extern BYTE *F_FirmwareText( void );
+extern BYTE *F_FwPartNoText( void );
+extern BYTE *VersionDateText( void );
+extern BYTE *ChangeDateText( void );
+extern BYTE *F_BurninText( void );
+extern BYTE *BurninOnOffText( void );
+extern BYTE *F_FactoryResetText( void );
+extern BYTE *F_Curve_0Text( void );
+extern BYTE *F_Curve_25Text( void );
+extern BYTE *F_Curve_50Text( void );
+extern BYTE *F_Curve_75Text( void );
+extern BYTE *F_Curve_100Text( void );
+extern BYTE *F_ExitText( void );
+//===================================================
 extern BYTE *OutOfRange1Text( void );
 extern BYTE *AutoColorText( void );
 extern BYTE *PassText( void );

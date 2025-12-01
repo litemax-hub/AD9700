@@ -67,6 +67,13 @@ void Init_FactorySetting( void )
     UserPrefBlueColorSRGB = DefsRGB_BlueColor;
     FUserPrefBrightnessSRGB = DefBrightness;
     FUserPrefContrastSRGB = DefContrast;
+	#if LiteMAX_Baron_OSD_TEST
+	FUserPrefBrightness_0 = DEF_FAC_BRIGHTNESS_0;
+	FUserPrefBrightness_25 = DEF_FAC_BRIGHTNESS_25;
+	FUserPrefBrightness_50 = DEF_FAC_BRIGHTNESS_50;
+	FUserPrefBrightness_75 = DEF_FAC_BRIGHTNESS_75;
+	FUserPrefBrightness_100 = DEF_FAC_BRIGHTNESS_100;
+	#endif
 
 #if !USEFLASH
     FactoryCheckSum = SEGMENTEND;

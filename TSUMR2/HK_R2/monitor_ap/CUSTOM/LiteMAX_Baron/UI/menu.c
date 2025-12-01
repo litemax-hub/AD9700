@@ -903,12 +903,13 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                         {
                             Delay1ms( 200 );
                         }
-
+						#if 0
                         if( CurrentMenuItemFunc.AdjustFunction == AdjustAddr || CurrentMenuItemFunc.AdjustFunction == AdjustBankNo )
                         {
                             DrawOsdMenuItemNumber( 0, DrawAddrRegValueNumber );
                             TurboKeyCounter = 0;
                         }
+						#endif
                     }
                 }
                 break;
@@ -956,7 +957,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                         Adjust3DLUTMode(0);
 #endif
 
-
+					#if 0
                     if( MenuPageIndex == FactoryMenu )                        // for factory mode
                     {
                         if(( MenuItemIndex == 14 && tempValue < 14 ) || ( MenuItemIndex == 22 && tempValue > 23 ) )
@@ -987,6 +988,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                             Clr_SaveFactorySettingFlag();
                         }
                     }
+					#endif
                     Delay1ms( 300 );
                 }
                 break;
@@ -1005,6 +1007,32 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 DrawOsdMenuItem( tempValue, &CurrentMenuItems[tempValue] );
                 DrawOsdMenuItem( MenuItemIndex, &CurrentMenuItem );
                 }
+				if(MenuPageIndex == FactoryMenu)
+                {
+					if(MenuItemIndex == 8 || MenuItemIndex == 10 || MenuItemIndex == 12 || MenuItemIndex == 14 || MenuItemIndex == 16)
+                        mStar_AdjustBrightness( UserPrefBrightness );
+                    else if(MenuItemIndex == 9)
+                        mStar_FAdjustBrightness( FUserPrefBrightness_0 );
+                    else if(MenuItemIndex == 11)
+                        mStar_FAdjustBrightness( FUserPrefBrightness_25 );
+                    else if(MenuItemIndex == 13)
+                        mStar_FAdjustBrightness( FUserPrefBrightness_50 );
+                    else if(MenuItemIndex == 15)
+                        mStar_FAdjustBrightness( FUserPrefBrightness_75 );
+                    else if(MenuItemIndex == 17)
+                        mStar_FAdjustBrightness( FUserPrefBrightness_100 );
+					
+                    if( SaveFactorySettingFlag )
+                    {
+                        #if USEFLASH
+                        //SaveFactorySetting();
+                        UserPref_EnableFlashSaveBit( bFlashSaveFactoryBit );
+                        #else
+                        SaveFactorySettingByItem( tempValue );
+                        #endif
+                        Clr_SaveFactorySettingFlag();
+                    }
+				}
                 Delay1ms( 300 );
                 break;
 			#if LiteMAX_Baron_OSD_TEST
@@ -1137,30 +1165,26 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                         DrawOsdMenuItemValue( MenuItemIndex, &CurrentMenuItem.DisplayValue );
                     }
 */
-                    if( CurrentMenuItemFunc.ExecFunction == AutoColor )
+                    if( CurrentMenuItemFunc.ExecFunction == AdjustBurnin )
                     {
-                        Osd_SetTextMonoColor( CP_RedColor, CP_BlueColor );
-                        if( processEvent && CURRENT_INPUT_IS_VGA() )//( processEvent && SrcInputType == Input_Analog1 )
-                        {
-                            Osd_DrawStr( 12, 6, PassText() );
-                        }
-                        else
-                        {
-                            Osd_DrawStr( 12, 6, FailText() );
-                        }
-
-                        Flash_ReadFactorySet(( BYTE* )&FactorySetting, FactorySettingSize );
-
-#if 1 //2006-08-03 Andy
-                        DrawOsdMenuItemNumber( 0, DrawGainRNumber );
-                        DrawOsdMenuItemNumber( 0, DrawGainGNumber );
-                        DrawOsdMenuItemNumber( 0, DrawGainBNumber );
-                        DrawOsdMenuItemNumber( 0, DrawOffsetRNumber );
-                        DrawOsdMenuItemNumber( 0, DrawOffsetGNumber );
-                        DrawOsdMenuItemNumber( 0, DrawOffsetBNumber );
-#endif
+                        Osd_DrawContinuesChar( 16, 3, SpaceFont, 3);
+                        DrawOsdMenuItemValue( MenuItemIndex, &CurrentMenuItem.DisplayValue );
                     }
                     processEvent = FALSE;
+					/*
+					if(MenuPageIndex == ColorTempMenu && MenuItemIndex == 1 && processEvent == FALSE )
+                    {
+                        menuAction = MIA_GotoNext;
+                        MenuItemIndex = 0;
+                        processEvent = TRUE;
+                    }
+					*/
+					if(CurrentMenuItemFunc.ExecFunction == FactoryReset)
+                    {
+                        menuAction = MIA_RedrawMenu;
+                        MenuItemIndex = 0;
+                        processEvent = TRUE;
+                    }
                     #if INPUT_TYPE!=INPUT_1A
                     if(( MenuPageIndex == SourceSelectMenu
 #if HotInputSelect
@@ -1523,7 +1547,7 @@ void DrawOsdMenu( void )
             else if( MenuPageIndex == FactoryMenu )
             {
                 //old_msWriteByte( BLENDC, 0x00 );
-                Osd_SetTextMonoColor( CP_BlueColor, CP_BlueColor );
+                Osd_SetTextMonoColor( CP_Background, CP_Background );
                 for( i = 0; i < OsdWindowHeight; i++ )
                 {
                     Osd_DrawContinuesChar( 0 , i , SpaceFont , OsdWindowWidth );
@@ -1678,7 +1702,13 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 	{
 		printf("\r\n DWI_Icon");
 		printData("MainIcon4C_0_MainMenuIcon = %x", MainIcon4C_0_MainMenuIcon);
+		printData("MainIcon4C_1_BrightnessSub = %x", MainIcon4C_1_BrightnessSub);
+		printData("MainIcon4C_2_AudioSub = %x", MainIcon4C_2_AudioSub);
+		printData("MainIcon4C_3_ColorSub = %x", MainIcon4C_3_ColorSub);
+		printData("MainIcon4C_4_ImageSub = %x", MainIcon4C_4_ImageSub);
+		printData("MainIcon4C_5_OtherSub = %x", MainIcon4C_5_OtherSub);
 		printData("MainIcon4C_PowerKeyLock = %x", MainIcon4C_PowerKeyLock);
+		printData("MainIcon4C_LoadDefaultSub = %x", MainIcon4C_LoadDefaultSub);
 		printData("MenuPageIndex = %d", MenuPageIndex);
 		printData("itemIndex = %d", itemIndex);
 		printData("MenuItemIndex = %d", MenuItemIndex);
@@ -1822,13 +1852,12 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				DrawOsdIcon(SubMenuIcon_X_Start+ 15, SubMenuIcon_Y_Start+1, MainIcon4C_LoadDefaultSub+(redrawIcon *(6*2)));
 			}
 		}
-		#if 0
 		else if( MenuPageIndex == HotKeyBrightnessMenu )
 		{
-			OsdFontColor = 0x14;
-			DrawOsdIcon(menuItem->XPos,menuItem->YPos,MainIconSub4C_Brightness);
+			OsdFontColor = FOUR_COLOR(6);
+			redrawIcon = MAIN_BRIGHTNESS_ITEM;
+			DrawOsdIcon(9, 1, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
 		}
-		#endif
 	}
 	else
 #endif
@@ -1961,7 +1990,7 @@ void DrawOsdMenuItemNumber( BYTE itemIndex, const DrawNumberType *numberItem )
     {
         if( CurrentMenuItem.DisplayValue.DrawNumber == numberItem )
         {
-    Osd_SetTextColor( numberItem->ForeColor, numberItem->BackColor );
+    		Osd_SetTextColor( numberItem->ForeColor, numberItem->BackColor );
         }
         else
         {
@@ -2014,9 +2043,9 @@ void DrawOsdMenuItemGuage( BYTE itemIndex, const DrawGuageType *gaugeItem )
                 else if( MenuPageIndex == FactoryMenu && MenuItemIndex == itemIndex)
                 {
                     if( CurrentMenuItem.Flags & mibDrawValue)
-                        OsdFontColor = ( gaugeItem->ForeColor & 0xF ) << 4 | CP_BlackColor;
+                        OsdFontColor = ( gaugeItem->ForeColor & 0xF ) << 4 | CP_DeepBlue;
                     else
-                        OsdFontColor = ( gaugeItem->ForeColor & 0xF ) << 4 | CP_LightColor;
+                        OsdFontColor = ( gaugeItem->ForeColor & 0xF ) << 4 | CP_YellowColor;
                 }
                 else
                     OsdFontColor = ( gaugeItem->ForeColor & 0xF ) << 4 | ( gaugeItem->BackColor & 0xF );
@@ -2401,7 +2430,7 @@ void DrawOsdBackGround(void)
 	#if ENABLE_OSD_ROTATION
     if((MenuPageIndex == MainMenu)||(MenuPageIndex == OSDRotationMenu))
     #else
-	if (MenuPageIndex == MainMenu)
+	if ((MenuPageIndex == MainMenu)||(MenuPageIndex == HotKeyBrightnessMenu))
 	#endif
     {
         OsdFontColor=FOUR_COLOR(5);
@@ -2428,16 +2457,6 @@ void DrawOsdBackGround(void)
     	for (i=0; i<OsdWindowHeight; i++)
         	Osd_DrawContinuesChar( 0, i, Space4C, OsdWindowWidth );
 	}
-	/*
-    else if (IS_MAIN_L1(g_u8MenuPageIndex))   //SubMenu
-    {
-    }
-    else if(!IS_MAIN_L1(g_u8MenuPageIndex))    //Message Menu
-    {
-        OsdFontColor=MONO_COLOR(CP_BK_COLOR_L0,CP_BK_COLOR_L0);
-        Osd_DrawBlankPlane(0,0,OsdWindowWidth,OsdWindowHeight);
-    }
-	*/
 }
 //======================================================================================
 #if DisplayLogo!=NoBrand

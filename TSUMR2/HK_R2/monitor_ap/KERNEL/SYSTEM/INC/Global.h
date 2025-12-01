@@ -381,8 +381,6 @@ extern xdata BYTE OsdFontColor;
 #define CursorDown_2C   	(CursorFontStart+0x06)
 #define CursorRD_2C     	(CursorFontStart+0x07)
 
-#define PropFontAddr1       0x20
-#define PropFontAddr2       0x80
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
@@ -391,6 +389,9 @@ extern xdata BYTE OsdFontColor;
 ///////////////////////////////////////////////////////////////////////////////////////
 #define COMMON_FONT_START               0x00
 #define COMMON_FONT_2ND_START           0xC0
+
+//Static
+#define SM_CHECK_2C_FONT_START          0xFC // 2fonts // 0XFC~0xFD: Tick icon, 0xFE~0xFF: Return icon
 
 #define NumberFontStart					(COMMON_FONT_START+0x02) // 0x02 ~ 0x09
 #define Mark_2C             			(COMMON_FONT_START+0x16) // 0x16
@@ -408,26 +409,22 @@ extern xdata BYTE OsdFontColor;
 //Memory Mapping under 0x100 - mono
 ///////////////////////////////////////////////////////////////////////////////////////
 //Mono
-#define PROP_FONT_START                 0x20
-#define S0_PROP_FONT_START              PROP_FONT_START //for factory menu compatiable wit dual OSD engine
-
-//Static
-#define SM_CHECK_2C_FONT_START          0xFC // 2fonts // 0XFC~0xFD: Tick icon, 0xFE~0xFF: Return icon
-
-#define MM_MW1_INPUT_SOURCE_TEXT_START  0xCC
+#define PropFontAddr1       0x20 //CurrentMenu.Fonts
+#define PropFontAddr2       0x80 //CurrentMenuItem.Fonts
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping between 0x100 ~ 0x200 - mono
 ///////////////////////////////////////////////////////////////////////////////////////
-#define MM_PROP_RESOLUTION_INFO_START   0x00    //Current timing
-#define MM_PROP_PIXELCLOCK_INFO_START   0x10    //Pixel clock
-#define MM_PROP_FONT_START              0x20    //L0 prop font end=8Dh
+#define Logo_4C         	0x101
+#define Logo_Size       	120
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping between 0x200 ~ 0x300 - 4Color Icon
 ///////////////////////////////////////////////////////////////////////////////////////
 #define _4ColorFontStart    0x200
 #define SmallLogo_4C        _4ColorFontStart
+#define SmallLogo_Size      39
+
 // Frame                                   
 #define Space4C                            _4ColorFontStart
 #define Frame4C_LT                         (_4ColorFontStart+(1*2))
@@ -458,13 +455,6 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C_3_ColorSub              (MainIcon4C_2_AudioSub+(MainIcon4C_2_AudioSub_Size*2))
 #define MainIcon4C_3_ColorSub_Size         8*6
 
-#define LuminanceIconStar  				   (MainIcon4C_0_MainMenuIcon)
-#define SignalIconStar  				   (MainIcon4C_0_MainMenuIcon+0x0C)
-#define SoundIconStar  					   (MainIcon4C_0_MainMenuIcon+0x18)
-#define ColorIconStar  					   (MainIcon4C_0_MainMenuIcon+0x24)
-#define ImageIconStar  				   	   (MainIcon4C_0_MainMenuIcon+0x30)
-#define OtherIconStar  				       (MainIcon4C_0_MainMenuIcon+0x3C)
-#define ExitIconStar  				       (MainIcon4C_0_MainMenuIcon+0x48)
 ///////////////////////////////////////////////////////////////////////////////////////
 //Memory Mapping between 0x300 ~ 0xxx - 4Color Icon
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -478,11 +468,6 @@ extern xdata BYTE OsdFontColor;
 #define MainIcon4C_PowerKeyLock_Size       2*6
 #define MainIcon4C_LoadDefaultSub          (MainIcon4C_PowerKeyLock+(MainIcon4C_PowerKeyLock_Size*2))
 #define MainIcon4C_LoadDefaultSub_Size     2*6
-
-#define SmallLogo_Size      39
-
-#define Logo_4C         0x102
-#define Logo_Size       120
 
 #else //(NEW_MTK_UI == 1)
 #define GaugeXPos           (Layer3XPos+0)
@@ -935,6 +920,13 @@ extern BYTE SystemVccDropDownCnt;
 #define DEF_ADC_GREEN_GAIN  0x1000
 #define DEF_ADC_BLUE_GAIN   0x1000
 #define DEF_ADC_OFFSET      0x00
+#if (LiteMAX_Baron_UI == 1) 
+#define DEF_FAC_BRIGHTNESS_0	19
+#define	DEF_FAC_BRIGHTNESS_25	78
+#define	DEF_FAC_BRIGHTNESS_50	137
+#define	DEF_FAC_BRIGHTNESS_75	196
+#define	DEF_FAC_BRIGHTNESS_100	255
+#endif
 
 //#define ADC_GAIN_MAX    0x400*
 
@@ -1211,6 +1203,15 @@ extern volatile WORD xdata TimeOutCounter;
 #define UserPref2Dto3DGameMode      MonitorSetting.T3DGameMode
 #define UserPref2Dto3DGain          MonitorSetting.T3DGain
 #define UserPref2Dto3DOffset        MonitorSetting.T3DOffset
+
+#if (LiteMAX_Baron_UI == 1)
+//======== FACTORY MENU FUNCTION ===============//
+#define FUserPrefBrightness_0       FactorySetting.FBrightness_0
+#define FUserPrefBrightness_25      FactorySetting.FBrightness_25
+#define FUserPrefBrightness_50      FactorySetting.FBrightness_50
+#define FUserPrefBrightness_75      FactorySetting.FBrightness_75
+#define FUserPrefBrightness_100     FactorySetting.FBrightness_100
+#endif
 
 #define UserPrefAdcPgaGain          FactorySetting.AdcPgaGain
 #define UserPrefAdcRedGain          FactorySetting.AdcRedGain

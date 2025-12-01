@@ -2135,7 +2135,7 @@ MenuItemType code PowerSavingMenuItems[] =
 NumberType code HotBrightnessNumber[] =
 {
     // Flags,   XPos,   YPos,   GetValue
-    {dwiEnd, NumberXPos, LayerYPos, GetBrightnessValue},
+    {dwiEnd, 14, 2, GetBrightnessValue},
 };
 DrawNumberType code DrawHotBrightnessNumber[] =
 {
@@ -2146,12 +2146,12 @@ DrawNumberType code DrawHotBrightnessNumber[] =
 GaugeType code HotBrightnessGuage[] =
 {
     // Flags, ForeColor,    BackColor,  Length,     GetValue
-    {dwiEnd, GaugeXPos, LayerYPos, GetBrightnessValue},
+    {dwiEnd, 2, 4, GetBrightnessValue},
 };
 DrawGuageType code DrawHotBrightnessGuage[] =
 {
     //  ForeColor,  BackColor,  Length,,    GetValue
-    {CPC_White, CPC_Black,  9,  HotBrightnessGuage}
+    {CPC_Yellow, CPC_Black,  17,  HotBrightnessGuage}
 };
 
 #if AudioFunc
@@ -5178,12 +5178,12 @@ MenuItemType code HotKeyBrightnessMenuItems[] =
 {
     // 0 Brightness
     {
-        1, 4, // XPos, YPos;
+        8, 1, // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
         CPC_White, CPC_Black,  // SelForeColor, SelBackColor;
         RootMenu,///NextMenuPage;
-        DWI_Text,// DrawMenuItemType;
-        BrightnessText, // DisplayText;
+        DWI_Icon,// DrawMenuItemType;
+        NULL, // DisplayText;
         AdjusterKeyEvent,
         {
             AdjustBrightness,// AdjustFunction
@@ -5194,7 +5194,7 @@ MenuItemType code HotKeyBrightnessMenuItems[] =
             DrawHotBrightnessGuage,// DrawGuageType
             NULL,//DrawMenuRadioGroup,//DrawAutoSetupRadioGroup // DrawRadioGroupType
         },
-        MenuPage101, //Font
+        NULL, //Font
         mibSelectable // Flags
     },
 };
@@ -6792,7 +6792,7 @@ RadioTextType code DrawHotInputSelectText[] =
 DrawRadioGroupType code DrawHotInputSelectRadioGroup[] =
 {
     //ForeColor,    BackColor,  GetValue    RadioText
-    {CPC_White, CPC_MTK_Gold, NULL, DrawHotInputSelectText} // 100831
+    {CPC_White, CPC_Yellow, NULL, DrawHotInputSelectText} // 100831
 };
 MenuItemType code HotInputSelectMenuItems[] =
 {
@@ -6800,7 +6800,7 @@ MenuItemType code HotInputSelectMenuItems[] =
     {
         HotLayerXPos, (HotLayerYPos+SourceSelectMenuItems_Auto), // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_MTK_Gold, CPC_Black, // SelForeColor, SelBackColor;
+        CPC_Yellow, CPC_Black, // SelForeColor, SelBackColor;
         MainMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         AutoSelectText, // DisplayText;
@@ -6822,7 +6822,7 @@ MenuItemType code HotInputSelectMenuItems[] =
     {
         HotLayerXPos, (HotLayerYPos+SourceSelectMenuItems_VGA), // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_Red, CPC_Black, // SelForeColor, SelBackColor;
+        CPC_Yellow, CPC_Black, // SelForeColor, SelBackColor;
         MainMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         VGAText, // DisplayText;
@@ -6845,7 +6845,7 @@ MenuItemType code HotInputSelectMenuItems[] =
     {
         HotLayerXPos, (HotLayerYPos+SourceSelectMenuItems_Digital0), // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_MTK_Gold, CPC_Black, // SelForeColor, SelBackColor;
+        CPC_Yellow, CPC_Black, // SelForeColor, SelBackColor;
         MainMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         DigitalPort0Text, // DisplayText;
@@ -6868,7 +6868,7 @@ MenuItemType code HotInputSelectMenuItems[] =
     {
         HotLayerXPos, (HotLayerYPos+SourceSelectMenuItems_Digital1), // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_MTK_Gold, CPC_Black, // SelForeColor, SelBackColor;
+        CPC_Yellow, CPC_Black, // SelForeColor, SelBackColor;
         MainMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         DigitalPort1Text, // DisplayText;
@@ -6891,7 +6891,7 @@ MenuItemType code HotInputSelectMenuItems[] =
     {
         HotLayerXPos, (HotLayerYPos+SourceSelectMenuItems_Digital2), // XPos, YPos;
         CPC_White, CPC_Black, // ForeColor, BackColor;
-        CPC_MTK_Gold, CPC_Black, // SelForeColor, SelBackColor;
+        CPC_Yellow, CPC_Black, // SelForeColor, SelBackColor;
         MainMenu,// NextMenuPage;
         DWI_Text, // DrawMenuItemType;
         DigitalPort2Text, // DisplayText;
@@ -9275,7 +9275,7 @@ MenuPageType code tblMenus[] =
 
     // 54 HotKeyBrightnessMenu,
     {
-        29/*29*/, 8, // XSize, YSize;
+        HotMenuHSize, HotMenuVSize, // XSize, YSize;
         RootMenu,// PrevMenuPage;
         HotKeyBrightnessMenuItems ,// MenuItems;
         sizeof( HotKeyBrightnessMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
@@ -9345,7 +9345,7 @@ MenuPageType code tblMenus[] =
 #if  1
     // 59 FactoryMenu
     {
-        33, 32,//29,     XSize, YSize;  2011.9.13 cc - A022
+        FACTORY_MENU_H_SIZE, FACTORY_MENU_V_SIZE,  // XSize, YSize;
         RootMenu,// PrevMenuPage;
         FactoryMenuItems, // MenuItems;
         sizeof( FactoryMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;

@@ -1,4 +1,96 @@
 #include "Panel.h"
+
+//======== FACTORY MENU TEXT ===============//
+BYTE code strF_FactoryDialog[] =
+{
+    //123456789012345678901234567890
+    "Factory Dialog"
+};
+BYTE code strF_PanelType[] =  //
+{
+    //123456789012345678901234567890
+    "PanelType:"
+};
+BYTE code strF_Panel[] =  //
+{
+    //123456789012345678901234567890
+    PanelName
+};
+BYTE code strF_Firmware[] =
+{
+    //123456789012345678901234567890
+    "Firmware:"
+};
+BYTE code strF_PartNo[] =
+{
+    //123456789012345678901234567890
+    FwPartNo
+};
+BYTE code strF_VersionDate[] =
+{
+    //123456789012345678901234567890
+	"V"FWVersion
+};
+BYTE code strF_ChangeDate[] =
+{
+    //123456789012345678901234567890
+    ChangeDate
+};
+BYTE code strF_ModelName[] =
+{
+    //123456789012345678901234567890
+    Model
+};
+BYTE code strF_Burnin[] =  //
+{
+    //123456789012345678901234567890
+    "Burnin Mode"
+};
+BYTE code strF_Yes[] =  //
+{
+    //123456789012345678901234567890
+    "Yes"
+};
+BYTE code strF_No[] =  //
+{
+    //123456789012345678901234567890
+    "No "
+};
+BYTE code strF_FactoryReset[] =  //
+{
+    //123456789012345678901234567890
+    "Factory Reset"
+};
+BYTE code strF_Curve_0[] =  //
+{
+    //123456789012345678901234567890
+    "Curve_0 "
+};
+BYTE code strF_Curve_25[] =  //
+{
+    //123456789012345678901234567890
+    "Curve_25"
+};
+BYTE code strF_Curve_50[] =  //
+{
+    //123456789012345678901234567890
+    "Curve_50"
+};
+BYTE code strF_Curve_75[] =  //
+{
+    //123456789012345678901234567890
+    "Curve_75"
+};
+BYTE code strF_Curve_100[] =  //
+{
+    //123456789012345678901234567890
+    "Curve_100"
+};
+BYTE code strF_Exit[] =
+{
+    //123456789012345678901234567890
+    "Exit"
+};
 //======== MAIN MENU ICON ===============//
 #if MWEFunction
 BYTE code strLuminanceIcon[7] =

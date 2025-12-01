@@ -137,7 +137,9 @@ void Osd_LoadLogoFontCP( void )
 void Osd_LoadFacoryFontCP( void )
 {
     MonoColorSetting();
+	#if 0
     mStar_LoadCompressedFont( (1), tFactoryFont0, 0 ); // load osd fonts
+    #endif
 }
 
 void LoadFfont( void )

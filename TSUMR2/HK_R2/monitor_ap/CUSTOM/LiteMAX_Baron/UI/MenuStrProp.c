@@ -104,13 +104,6 @@ const BYTE code strModelNameInfo[] =
 };
 const BYTE *ModelNameInfoText( void )
 {
-	#if 0
-	tPropText[1][0]=MM_MW1_INPUT_SOURCE_TEXT_START;
-	pstPropFontSet1218=tPropFontSetArialNarrow13_Baron;
-    g_u8PropFontFlags=SPACE2PIXEL;
-	tPropText[1][1]=LoadPropFontText(tPropText[1][0],strModelNameInfo);
-	return tPropText[1];
-	#endif
 	return strModelNameInfo;
 };
 const BYTE *CUserText( void )

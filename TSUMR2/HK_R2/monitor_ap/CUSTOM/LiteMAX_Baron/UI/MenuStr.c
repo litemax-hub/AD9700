@@ -4,6 +4,73 @@
 #include "MenuText.h"
 
 //======================================================================
+//for Factory Menu
+//======================================================================
+const BYTE *F_FactoryDialogText( void )
+{
+    return strF_FactoryDialog;
+}
+const BYTE *F_PanelTypeText( void )
+{
+    return strF_PanelType;
+}
+const BYTE *F_PanelText( void )
+{
+    return strF_Panel;
+}
+const BYTE *F_FirmwareText( void )
+{
+    return strF_Firmware;
+}
+const BYTE *F_FwPartNoText( void )
+{
+    return strF_PartNo;
+}
+const BYTE *VersionDateText( void )
+{
+    return strF_VersionDate;
+}
+const BYTE *ChangeDateText( void )
+{
+    return strF_ChangeDate;
+}
+const BYTE *F_BurninText( void )
+{
+    return strF_Burnin;
+}
+const BYTE *BurninOnOffText( void )
+{
+    return ( BurninModeFlag ) ? ( strF_Yes ) : ( strF_No );
+}
+const BYTE *F_FactoryResetText( void )
+{
+    return strF_FactoryReset;
+}
+const BYTE *F_Curve_0Text( void )
+{
+    return strF_Curve_0;
+}
+const BYTE *F_Curve_25Text( void )
+{
+    return strF_Curve_25;
+}
+const BYTE *F_Curve_50Text( void )
+{
+    return strF_Curve_50;
+}
+const BYTE *F_Curve_75Text( void )
+{
+    return strF_Curve_75;
+}
+const BYTE *F_Curve_100Text( void )
+{
+    return strF_Curve_100;
+}
+const BYTE *F_ExitText( void )
+{
+    return strF_Exit;
+}
+//====================================================
 const BYTE *PassText( void )
 {
     return strPass;
@@ -13,16 +80,9 @@ const BYTE *FailText( void )
 {
     return strFail;
 }
+
 #if 1
 //for Factory Alignment
-const BYTE *VersionDateText( void )
-{
-    return strVersionDate;
-}
-const BYTE *ChangeDateText( void )
-{
-    return strChangeDate;
-}
 const BYTE *FactoryBrightnessText( void )
 {
     return strFactoryBrightness;
@@ -162,7 +222,7 @@ const BYTE *ProductionOnOffText( void )
     return ( ProductModeFlag) ? ( strOnOff[1] ) : ( strOnOff[0] );
 }
 
-#if 1
+#if 0
 const BYTE *BurninOnOffText( void )
 {
     return ( BurninModeFlag ) ? ( strOnOff[1] ) : ( strOnOff[0] );

@@ -897,7 +897,7 @@ const BYTE *OtherSettingONText( void )
 {
     return strOtherSettingOnM106[UserPrefLanguage];
 }
-#if MTK_OSD_UI
+#if (NEW_MTK_UI == 1)
 const BYTE *ResolutionText( void )
 {
     return strResolutionM107[UserPrefLanguage];
@@ -973,7 +973,7 @@ const BYTE *ColorFormatDisplayStatusText( void )
             return strRGBM107[UserPrefLanguage];
     }
 }
-#if MTK_OSD_UI
+#if (NEW_MTK_UI == 1)
 const BYTE *xText( void )
 {
     return strxM107[UserPrefLanguage];
