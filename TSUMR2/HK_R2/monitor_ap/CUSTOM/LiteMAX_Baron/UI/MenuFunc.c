@@ -1814,7 +1814,7 @@ WORD GetOSDVPositionValue( void )
 Bool AdjustOSDTime( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdTime, 5, 100, 5 );
+    tempValue = DecIncValue( action, UserPrefOsdTime, OSD_TIME_MIN, OSD_TIME_MAX, 2 );
     if( tempValue == UserPrefOsdTime )
     {
         return FALSE;
@@ -3694,7 +3694,8 @@ Bool AdjustRedColorWarm1( MenuItemActionType action )
 #if UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    mStar_AdjustRedColor( UserPrefRedColorWarm1, UserPrefContrastWarm1 );
+//    mStar_AdjustRedColor( UserPrefRedColorWarm1, UserPrefContrastWarm1 );
+    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorWarm1, UserPrefGreenColorWarm1, UserPrefBlueColorWarm1);
 #endif
     return TRUE;
 }
@@ -3710,7 +3711,8 @@ Bool AdjustGreenColorWarm1( MenuItemActionType action )
 #if UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    mStar_AdjustGreenColor( UserPrefGreenColorWarm1, UserPrefContrastWarm1 );
+//    mStar_AdjustGreenColor( UserPrefGreenColorWarm1, UserPrefContrastWarm1 );
+    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorWarm1, UserPrefGreenColorWarm1, UserPrefBlueColorWarm1);
 #endif
     return TRUE;
 }
@@ -3726,7 +3728,8 @@ Bool AdjustBlueColorWarm1( MenuItemActionType action )
 #if UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    mStar_AdjustBlueColor( UserPrefBlueColorWarm1, UserPrefContrastWarm1 );
+//    mStar_AdjustBlueColor( UserPrefBlueColorWarm1, UserPrefContrastWarm1 );
+    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorWarm1, UserPrefGreenColorWarm1, UserPrefBlueColorWarm1);
 #endif
     return TRUE;
 }
@@ -5632,6 +5635,8 @@ Bool FactoryReset(void)
 	SaveFactorySetting();
 	Init_MonitorSetting();
 	SaveMonitorSetting();
+
+	SetColorTemp();
 
 	return TRUE;
 }

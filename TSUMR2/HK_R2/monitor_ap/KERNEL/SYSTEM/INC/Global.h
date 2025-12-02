@@ -922,19 +922,19 @@ extern BYTE SystemVccDropDownCnt;
 #define DEF_ADC_OFFSET      0x00
 #if (LiteMAX_Baron_UI == 1)
 #ifndef DEF_FAC_BRIGHTNESS_0
-#define DEF_FAC_BRIGHTNESS_0	19
+#define DEF_FAC_BRIGHTNESS_0	20
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_25
-#define	DEF_FAC_BRIGHTNESS_25	78
+#define	DEF_FAC_BRIGHTNESS_25	40
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_50
-#define	DEF_FAC_BRIGHTNESS_50	137
+#define	DEF_FAC_BRIGHTNESS_50	60
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_75
-#define	DEF_FAC_BRIGHTNESS_75	196
+#define	DEF_FAC_BRIGHTNESS_75	80
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_100
-#define	DEF_FAC_BRIGHTNESS_100	255
+#define	DEF_FAC_BRIGHTNESS_100	100
 #endif
 #endif
 
@@ -996,7 +996,7 @@ extern volatile WORD xdata TimeOutCounter;
 #endif
 
 // 090721
-#if 0//(LiteMAX_UI == 1)//make會有警告：由於資料類型範圍限制，比較結果永遠為假
+#if 1//make會有警告：由於資料類型範圍限制，比較結果永遠為假
 #define MaxColorValue           (0xff)
 #define MinColorValue           (0)
 #else
