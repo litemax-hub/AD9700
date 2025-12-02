@@ -796,7 +796,7 @@ void DrawInformation( void )
     //=================================================
     Osd_DrawPropStr( 3, Y_PosStart+1, PixelClockText());
     clock = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
-    printData("clock=%d",clock);
+    MENU_printData("clock=%d",clock);
     DrawNum_R(10,Y_PosStart+1,3,clock/100);
 	Osd_DrawStr( 13, Y_PosStart+1, DotText());
     DrawNum(14,Y_PosStart+1,2,clock%100);
@@ -1056,11 +1056,21 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
 			#endif
             case MIA_GotoNext:
             case MIA_GotoPrev:
-                //printMsg(">>>>>>>>>>>>>>>MIA_GotoNext");
+				MENU_printData(" menuAction == %d \n", menuAction);
                 PrevMenuPageIndex = MenuPageIndex;
                 PrevMenuItemIndex = MenuItemIndex;
 				#if LiteMAX_Baron_OSD_TEST
                 MenuPageIndex = ( menuAction == MIA_GotoNext || menuAction == MIA_GotoNextExec) ? ( NextMenuPage ) : ( PrevMenuPage );
+				
+				if( PrevMenuPageIndex == ColorSettingsMenu && MenuPageIndex == ColorTempMenu )
+				{
+					OsdFontColor = FOUR_COLOR(5);
+					for (tempValue = 1; tempValue <= 6; tempValue++)
+					{
+    					Osd_DrawContinuesChar( 2, tempValue, Space4C, 29 );
+					}
+					Delay1ms(100);
+				}
 				#else
 				MenuPageIndex = ( menuAction == MIA_GotoNext ) ? ( NextMenuPage ) : ( PrevMenuPage );
 				#endif
@@ -2381,7 +2391,7 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
 {
 	if( MenuPageIndex == MainMenu )
     {
-        if( menuPageIndex == LuminanceMenu )
+        if( menuPageIndex == BrightnessMenu )
         {
             return MAIN_BRIGHTNESS_ITEM;
         }
@@ -2397,11 +2407,11 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
             return MAIN_SIGNAL_ITEM;
         }
 #endif
-        else if( menuPageIndex == ColorMenu )
+        else if( menuPageIndex == ColorTempMenu )
         {
             return MAIN_COLOR_ITEM;
         }
-        else if( menuPageIndex == ToolMenu )
+        else if( menuPageIndex == DefaultMenu )
         {
             return MAIN_DEFAULT_ITEM;
         }
