@@ -1111,11 +1111,13 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                     ucClrItem = PrevMenuItemIndex;
                     //printData("ucClrItem 1[%d]", ucClrItem);
                 }
+				#if 0
                 else if (Layer3_PrevMenuPage && IndependentColor_MenuPage)
                 {
                     ucClrItem = PrevMenuItemIndex + 1;
                     //printData("ucClrItem 1[%d]", ucClrItem);
                 }
+				#endif
                 if( menuAction == MIA_GotoPrev && BackToUnsupportFlag )
                 {
                     MenuPageIndex = UnsupportedModeMenu;
@@ -2414,10 +2416,6 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
         else if( menuPageIndex == DefaultMenu )
         {
             return MAIN_DEFAULT_ITEM;
-        }
-		else if( menuPageIndex == PowerLockMenu )
-        {
-            return MAIN_POWER_ENABLE_ITEM;
         }
     }
 #if 0 //ARISTOCRAT_OSD_DVIDP//David add at 20250120

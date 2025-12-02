@@ -1982,7 +1982,9 @@ typedef enum
 #define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ContrastMenu && PrevMenuPageIndex <= PowerSavingMenu )
 #endif
 
+#if 0
 #define IndependentColor_MenuPage ( MenuPageIndex >= IndependentHueRMenu && MenuPageIndex <= IndependentBrightnessYMenu )
+#endif
 
 #if HotExpansion
 #define HotMenuPage             ( MenuPageIndex >= HotExpansionMenu && MenuPageIndex <= HotInputSelectMenu)

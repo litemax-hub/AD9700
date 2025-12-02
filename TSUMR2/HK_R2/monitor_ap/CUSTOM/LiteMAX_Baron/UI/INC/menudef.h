@@ -32,20 +32,11 @@ typedef enum
 	ImageMenu,
 	ToolMenu,
 	#endif
-    BriteContMenu,
     ColorSettingsMenu,
-    ExtColorSettingsMenu,
     InputSourceMenu,
-    DisplaySettingsMenu,
-    OtherSettingsMenu,
-    PowerManagerMenu,
-
-    ContrastMenu,
+	
+	ContrastMenu,
     BrightnessMenu,
-    RedMenu,
-    GreenMenu,
-    BlueMenu,
-    HueMenu,
     SaturationMenu,
 #if (ENABLE_VGA_INPUT)
     HPositionMenu,
@@ -59,110 +50,24 @@ typedef enum
     FocusMenu,
 #endif
     OSDTransMenu,
-    OSDHPositionMenu,
-    OSDVPositionMenu,
-    OSDTimeoutMenu,
-    #if AudioFunc
-    VolumeMenu,
-    AudioSourceSelMenu,
-    #endif
-#if ENABLE_OSD_ROTATION
-    OSDRotateMenu,
-#endif
-#if ENABLE_FREESYNC
-    FreeSyncMenu, //Scar
-#endif
-    DisplayLogoMenu,
-    GammaMenu,
-#if Enable_Expansion
-    AspectRatioMenu,
-#endif
-    #if ENABLE_RTE
-    ODMenu,
-    #endif
-    ColorModeMenu,
-#if ENABLE_SUPER_RESOLUTION
-    SuperResolutionMenu,
-#endif
-    ColorFormatMenu,
+    
     ColorTempMenu,
-#if ENABLE_DLC
-    DLCMenu,
-#endif
-#if ENABLE_DPS
-    DPSMenu,
-#endif
-
-    DCRMenu,
-
-    ColorRangeMenu,
-    IndependentHueMenu,
-    IndependentSaturationMenu,
-    IndependentBrightnessMenu,
-
-    IndependentHueRMenu,
-    IndependentHueGMenu,
-    IndependentHueBMenu,
-    IndependentHueCMenu,
-    IndependentHueMMenu,
-    IndependentHueYMenu,
-    IndependentSaturationRMenu,
-    IndependentSaturationGMenu,
-    IndependentSaturationBMenu,
-    IndependentSaturationCMenu,
-    IndependentSaturationMMenu,
-    IndependentSaturationYMenu,
-    IndependentBrightnessRMenu,
-    IndependentBrightnessGMenu,
-    IndependentBrightnessBMenu,
-    IndependentBrightnessCMenu,
-    IndependentBrightnessMMenu,
-    IndependentBrightnessYMenu,
-
     SourceSelectMenu,
-#if ENABLE_DP_INPUT
-    DPVersionMenu,
-#endif
-
-    DCOffDischargeMenu,
-    PowerSavingMenu,
-
-    ResetWaitMenu,
 #if (ENABLE_VGA_INPUT)
     ADCAutoColorMenu,
     AutoMenu,
 #endif
     InputInfoMenu,
-
-#if HotExpansion
-    HotExpansionMenu,
-#endif
-#if HotInputSelect
+    #if HotInputSelect
     HotInputSelectMenu,
-#endif
-
-//---Eson End----------------------
-
-#if ENABLE_DeBlocking
-    DeBlockingMenu,
-#endif
-    ColorTempSelectMenu,
-#if MWEFunction
-    ColorBoostMenu,                                                           //27
-    FullMenu, SkinProtectMenu, GreenEnhanceMenu, BlueEnhanceMenu, AutoDetectMenu, DemoMenu,// 28,29,30,31,32,33
-
-    BrightFrameMenu,  //34
-    BFFrameSizeMenu, BF_BrightnessMenu, BF_ContrastMenu, BFHPositionMenu, BFVPositionMenu, BFSwitchMenu,// 35,36,37,38,39,40
-#endif
-
-
+	#endif
+	ColorTempSelectMenu,
     #if INPUT_TYPE!=INPUT_1A
     InputSelectMenu,
     #endif
 #if DDCCI_ENABLE
     DDCCIMenu,
 #endif
-    ResetMenu,
 
     HotKeyECOMenu, // 54
     HotKeyBrightnessMenu, // 55
@@ -184,10 +89,6 @@ typedef enum
     LogoMenu,     //62
 	
 #if 1//(LiteMAX_OSDtype==LiteMAX_OSD_standard)
-  #if 0// jason 20200113  BrightnessLightSensorVR
-	BrightnessTypeMenu,
-  #endif
-	//ContrastMenu,
 	SoundAdjustMenu,
 	ImageClockMenu,
 	ImagePhaseMenu,
@@ -201,9 +102,7 @@ typedef enum
 	OSDRotationMenu,
   #endif
   	DefaultMenu,
-  	PowerLockMenu,
 #endif
-    //  OsdLockMenu,
     // user definition end
     MaxMenu
 } MenuPageIndexType;
