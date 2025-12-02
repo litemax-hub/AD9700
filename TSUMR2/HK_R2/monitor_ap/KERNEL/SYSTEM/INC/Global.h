@@ -1215,6 +1215,8 @@ extern volatile WORD xdata TimeOutCounter;
 #define UserPref2Dto3DOffset        MonitorSetting.T3DOffset
 
 #if (LiteMAX_Baron_UI == 1)
+#define UserprefPowerKeyEnable      MonitorSetting.PowerKeyEnable
+
 //======== FACTORY MENU FUNCTION ===============//
 #define FUserPrefBrightness_0       FactorySetting.FBrightness_0
 #define FUserPrefBrightness_25      FactorySetting.FBrightness_25
@@ -1961,6 +1963,12 @@ typedef enum
 #define Layer1_PrevMenuPage     ( PrevMenuPageIndex == MainMenu )
 
 #if (LiteMAX_UI == 1)
+#define Layer2_MenuPage         ( MenuPageIndex >= BrightnessMenu && MenuPageIndex <= DefaultMenu)
+#define Layer2_PrevMenuPage     ( PrevMenuPageIndex >= BrightnessMenu && PrevMenuPageIndex <= DefaultMenu)
+
+#define Layer3_MenuPage         ( MenuPageIndex >= ColorSettingsMenu && MenuPageIndex <= ColorSettingsMenu )
+#define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ColorSettingsMenu && PrevMenuPageIndex <= ColorSettingsMenu )
+#elif (LiteMAX_Baron_UI == 1)
 #define Layer2_MenuPage         ( MenuPageIndex >= BrightnessMenu && MenuPageIndex <= DefaultMenu)
 #define Layer2_PrevMenuPage     ( PrevMenuPageIndex >= BrightnessMenu && PrevMenuPageIndex <= DefaultMenu)
 

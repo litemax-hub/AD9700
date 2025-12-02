@@ -280,6 +280,8 @@ typedef struct
 #endif
     BYTE DCOffDischarge;
     BYTE PowerSaving;
+	BYTE PowerKeyEnable;
+	
     DWORD CheckSum; //1c
 } MonitorSettingType;
 
@@ -559,6 +561,7 @@ typedef struct
 #endif
     BYTE DCOffDischarge;
     BYTE PowerSaving;
+	
     DWORD CheckSum; //1c
 } MonitorSettingType;
 

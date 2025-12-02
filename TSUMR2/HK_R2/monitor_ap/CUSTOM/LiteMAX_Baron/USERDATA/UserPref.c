@@ -243,6 +243,8 @@ void Init_MonitorSetting( void )
     UserPrefDCOffDischarge = DCOffDisChargerMenuItems_On;
     UserPrefPowerSavingEn = PowerSavingMenuItems_On;
 
+	UserprefPowerKeyEnable = 1;
+
 #if USEFLASH
     MonitorSetting.Ident = FLASH_IDENTDATA;
     MonitorSetting.CheckSum = SEGMENTEND;

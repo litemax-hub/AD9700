@@ -37,6 +37,16 @@
 #if ENABLE_DPS
 #include "msDPS_Setting.h"
 #endif
+
+#define MENU_DEBUG    0
+#if ENABLE_DEBUG&&MENU_DEBUG
+    #define MENU_printData(str, value)   printData(str, value)
+    #define MENU_printMsg(str)           printMsg(str)
+#else
+    #define MENU_printData(str, value)
+    #define MENU_printMsg(str)
+#endif
+
 #define CurrentMenu                 tblMenus[MenuPageIndex]
 #define PrevMenu                    tblMenus[PrevMenuPageIndex]
 #define NextMenuPage                CurrentMenuItem.NextPage
@@ -80,6 +90,7 @@ Bool DrawTimingInfo( void );
 void DynamicLoadFont( const MenuFontType *menuFonts, BYTE addr );
 Bool Menu_GetCableDetect(BYTE u8Inputport);
 void Menu_RxCableStatePollingHandler(void);
+void DrawPowerEnableDisable( BYTE itemIndex );
 //=========================================================================
 void Menu_InitVariable( void )
 {
@@ -761,7 +772,7 @@ Bool Check_Disable_ItemRadioGroup_Status( WORD Flags )
 
 void DrawInformation( void )
 {
-	XDATA DWORD colck;
+	XDATA DWORD clock;
     WORD freq;
 	BYTE Y_PosStart = 1;
 	
@@ -775,7 +786,7 @@ void DrawInformation( void )
 #else
     Osd_Draw4Num( 15, Y_PosStart, SC0_READ_IMAGE_HEIGHT() );
 #endif
-	Osd_DrawStr_for_Baron( 14, Y_PosStart, xText() );
+	Osd_DrawStr( 14, Y_PosStart, xText() );
 
 	freq = MenuFunc_GetVfreq();
 
@@ -784,22 +795,22 @@ void DrawInformation( void )
     Osd_DrawPropStr( 22, Y_PosStart, HzText() );
     //=================================================
     Osd_DrawPropStr( 3, Y_PosStart+1, PixelClockText());
-    colck = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
-    //printData("colck=%d",colck);
-    DrawNum_R(10,Y_PosStart+1,3,colck/100);
-	Osd_DrawStr_for_Baron( 13, Y_PosStart+1, DotText());
-    DrawNum(14,Y_PosStart+1,2,colck%100);
+    clock = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
+    MENU_printData("clock=%d",clock);
+    DrawNum_R(10,Y_PosStart+1,3,clock/100);
+	Osd_DrawStr( 13, Y_PosStart+1, DotText());
+    DrawNum(14,Y_PosStart+1,2,clock%100);
     Osd_DrawPropStr( 16, Y_PosStart+1, MHzText());
 	//=================================================
 	Osd_DrawPropStr( 3, Y_PosStart+2, VersionText());
 	Osd_DrawPropStr( 10, Y_PosStart+2, AD9700PText());
-	Osd_DrawStr_for_Baron(17, Y_PosStart+2, ModelNameInfoText());
+	Osd_DrawStr(17, Y_PosStart+2, ModelNameInfoText());
 	//=================================================
 }
 
 void DrawInputInfo( void )
 {
-    XDATA DWORD colck;
+    XDATA DWORD clock;
     XDATA BYTE xPos;
     OsdFontColor = (CPC_White<<4|CPC_Black);
 
@@ -808,14 +819,14 @@ void DrawInputInfo( void )
     Osd_DrawPropStr( xPos-3, 3, AD9700PText() );
 
     xPos += *(AD9700PText()+1) + 1;
-    Osd_DrawStr_for_Baron( xPos-4, 3, ModelNameInfoText() );
+    Osd_DrawStr( xPos-4, 3, ModelNameInfoText() );
     //=================================================
     xPos=(OsdWindowWidth-24)/2;
     if(SC0_READ_IMAGE_HEIGHT()<1000)
         xPos+=1;
     DrawNum_R( xPos, 4, 4, SC0_READ_IMAGE_WIDTH() );
     xPos += 4;
-	Osd_DrawStr_for_Baron(xPos, 4, xText());
+	Osd_DrawStr(xPos, 4, xText());
     xPos += 1;
 
     Osd_Draw4Num( xPos, 4, SC0_READ_IMAGE_HEIGHT() );
@@ -831,12 +842,12 @@ void DrawInputInfo( void )
     Osd_DrawPropStr( xPos, 4, HzText() );
     //=================================================
     xPos += 2;
-    colck = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
-    DrawNum_R(xPos,4,3,colck/100);
+    clock = (DWORD)mSTar_GetInputHTotal() * SrcVTotal * SrcVFreq / 100000;
+    DrawNum_R(xPos,4,3,clock/100);
     xPos += 3;
-    Osd_DrawStr_for_Baron(xPos, 4, DotText());
+    Osd_DrawStr(xPos, 4, DotText());
     xPos += 1;
-    DrawNum(xPos,4,2,colck%100);
+    DrawNum(xPos,4,2,clock%100);
     xPos += 2;
     Osd_DrawPropStr( xPos, 4, MHzText() );
 }
@@ -850,7 +861,7 @@ void DrawNosignalInfo( void )
     xPos=(OsdWindowWidth-(*(AD9700PText()+1)+4+1))/2;
     Osd_DrawPropStr( xPos-3, 1, AD9700PText() );
     xPos += *(AD9700PText()+1) + 1;
-    Osd_DrawStr_for_Baron( xPos-4, 1, ModelNameInfoText() );
+    Osd_DrawStr( xPos-4, 1, ModelNameInfoText() );
 }
 
 #if ENABLE_3DLUT
@@ -1045,11 +1056,21 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
 			#endif
             case MIA_GotoNext:
             case MIA_GotoPrev:
-                //printMsg(">>>>>>>>>>>>>>>MIA_GotoNext");
+				MENU_printData(" menuAction == %d \n", menuAction);
                 PrevMenuPageIndex = MenuPageIndex;
                 PrevMenuItemIndex = MenuItemIndex;
 				#if LiteMAX_Baron_OSD_TEST
                 MenuPageIndex = ( menuAction == MIA_GotoNext || menuAction == MIA_GotoNextExec) ? ( NextMenuPage ) : ( PrevMenuPage );
+				
+				if( PrevMenuPageIndex == ColorSettingsMenu && MenuPageIndex == ColorTempMenu )
+				{
+					OsdFontColor = FOUR_COLOR(5);
+					for (tempValue = 1; tempValue <= 6; tempValue++)
+					{
+    					Osd_DrawContinuesChar( 2, tempValue, Space4C, 29 );
+					}
+					Delay1ms(100);
+				}
 				#else
 				MenuPageIndex = ( menuAction == MIA_GotoNext ) ? ( NextMenuPage ) : ( PrevMenuPage );
 				#endif
@@ -1185,6 +1206,10 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                         MenuItemIndex = 0;
                         processEvent = TRUE;
                     }
+					if( CurrentMenuItemFunc.ExecFunction == AdjustPowerKey )
+                    {
+                        DrawPowerEnableDisable(MAIN_POWER_ENABLE_ITEM);
+                    }
                     #if INPUT_TYPE!=INPUT_1A
                     if(( MenuPageIndex == SourceSelectMenu
 #if HotInputSelect
@@ -1230,7 +1255,11 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 MenuPageIndex = RootMenu;
                 MenuItemIndex = 0;
                 processEvent = TRUE;
+				#if LiteMAX_Baron_OSD_TEST
+				 if( PrevMenuPageIndex == FactoryMenu )
+				#else
                 if( FactoryModeFlag && PrevMenuPageIndex == FactoryMenu )
+				#endif
                 {
                     SaveFactorySetting();
                 }
@@ -1382,16 +1411,26 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
             case MIA_Power:
                 if( PowerOnFlag )
                 {
-                    MenuPageIndex = PowerOffMenu;
+                	if(UserprefPowerKeyEnable)
+                    {
+                    	MenuPageIndex = PowerOffMenu;
+						MenuItemIndex = 0;
+                		menuAction = MIA_RedrawMenu;
+						processEvent = TRUE;
+                	}
+					else
+					{
+						processEvent = FALSE;
+					}
                 }
                 else
                 {
                     MenuPageIndex = PowerOnMenu;
                     PowerOnSystem();
+					MenuItemIndex = 0;
+                	menuAction = MIA_RedrawMenu;
+					processEvent = TRUE;
                 }
-                MenuItemIndex = 0;
-                menuAction = MIA_RedrawMenu;
-                processEvent = TRUE;
                 break;
             default:
                 return FALSE;
@@ -1668,25 +1707,27 @@ void DrawOsdIcon( BYTE xPos, BYTE yPos, WORD charStart )
     Osd_DrawCharDirect(xPos+2, yPos+1, charStart + 10);
 }
 //=========================================================================
-#if 0//BrightnessLightSensorVR
-// draw Icon
-WORD DrawOsdBrightnessType(void)
+void DrawPowerEnableDisable( BYTE itemIndex )
 {
-    if(UserprefLITEMAX_LIGHTSENSOR == LITEMAX_LIGHTSENSOR_LS) // LS
-        return MainIcon4C_1_BrightnessSub+4*(6*2);
-    else if(UserprefLITEMAX_LIGHTSENSOR == LITEMAX_LIGHTSENSOR_VR) // VR
-        return MainIcon4C_1_BrightnessSub+3*(6*2);
-    else // OSD
-        return MainIcon4C_1_BrightnessSub+0*(6*2);
+	XDATA BYTE redrawIcon = 0;
+		
+    if(itemIndex == MAIN_POWER_ENABLE_ITEM)
+	{
+		if (MenuItemIndex == itemIndex)
+			OsdFontColor=FOUR_COLOR(17);
+		else
+			OsdFontColor=FOUR_COLOR(16);
+					
+		if (UserprefPowerKeyEnable)
+			redrawIcon = MAIN_POWER_ENABLE_ICON;
+		else
+			redrawIcon = MAIN_POWER_DISBLE_ICON;
+		
+		DrawOsdIcon( (MainMenuIcon_X_Start+(itemIndex*6)), MainMenuIcon_Y_Start, MainIcon4C_PowerKeyLock+(redrawIcon *(6*2)));
+		OsdFontColor = (CPC_White<<4|CPC_Black);
+		Osd_DrawPropStr( 20, MainMenusStr_Y_Start, PowerKeyEnableText() );
+	}
 }
-WORD DrawOsdBrightnessOffset(void)
-{
-    if(UserprefLITEMAX_LIGHTSENSOR == LITEMAX_LIGHTSENSOR_LS) // Offset
-        return MainIcon4C_1_BrightnessSub+5*(6*2);
-    else // Brightness
-        return MainIcon4C_1_BrightnessSub+1*(6*2);
-}
-#endif
 //=========================================================================
 // draw menu item display text
 void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
@@ -1700,22 +1741,13 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 #if	LiteMAX_Baron_OSD_TEST
 	if( menuItem->DrawItemMethod == DWI_Icon )
 	{
-		printf("\r\n DWI_Icon");
-		printData("MainIcon4C_0_MainMenuIcon = %x", MainIcon4C_0_MainMenuIcon);
-		printData("MainIcon4C_1_BrightnessSub = %x", MainIcon4C_1_BrightnessSub);
-		printData("MainIcon4C_2_AudioSub = %x", MainIcon4C_2_AudioSub);
-		printData("MainIcon4C_3_ColorSub = %x", MainIcon4C_3_ColorSub);
-		printData("MainIcon4C_4_ImageSub = %x", MainIcon4C_4_ImageSub);
-		printData("MainIcon4C_5_OtherSub = %x", MainIcon4C_5_OtherSub);
-		printData("MainIcon4C_PowerKeyLock = %x", MainIcon4C_PowerKeyLock);
-		printData("MainIcon4C_LoadDefaultSub = %x", MainIcon4C_LoadDefaultSub);
-		printData("MenuPageIndex = %d", MenuPageIndex);
-		printData("itemIndex = %d", itemIndex);
-		printData("MenuItemIndex = %d", MenuItemIndex);
+		MENU_printMsg("\r\n DWI_Icon");
+		MENU_printData("MenuPageIndex = %d", MenuPageIndex);
+		MENU_printData("itemIndex = %d", itemIndex);
+		MENU_printData("MenuItemIndex = %d", MenuItemIndex);
 		
 		if (MenuPageIndex == MainMenu)
 		{
-			DrawInformation();
 			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
 			if(itemIndex == MAIN_COLOR_ITEM)
 			{
@@ -1748,10 +1780,10 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				else
 					OsdFontColor=FOUR_COLOR(16);
 					
-				if (1)
-					redrawIcon = MAIN_POWER_DISBLE_ICON;
-				else
+				if (UserprefPowerKeyEnable)
 					redrawIcon = MAIN_POWER_ENABLE_ICON;
+				else
+					redrawIcon = MAIN_POWER_DISBLE_ICON;
 			}
 			else if(itemIndex == MAIN_EXIT_ITEM)
 			{
@@ -1761,7 +1793,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 					OsdFontColor=FOUR_COLOR(6);
 				redrawIcon = MAIN_EXIT_ICON;
 			}
-			printData("redrawIcon = %d", redrawIcon);
+			MENU_printData("redrawIcon = %d", redrawIcon);
 			if(itemIndex == MAIN_POWER_ENABLE_ITEM)
 				DrawOsdIcon( (MainMenuIcon_X_Start+(itemIndex*6)), MainMenuIcon_Y_Start, MainIcon4C_PowerKeyLock+(redrawIcon *(6*2)));
 			else
@@ -2359,7 +2391,7 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
 {
 	if( MenuPageIndex == MainMenu )
     {
-        if( menuPageIndex == LuminanceMenu )
+        if( menuPageIndex == BrightnessMenu )
         {
             return MAIN_BRIGHTNESS_ITEM;
         }
@@ -2375,11 +2407,11 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
             return MAIN_SIGNAL_ITEM;
         }
 #endif
-        else if( menuPageIndex == ColorMenu )
+        else if( menuPageIndex == ColorTempMenu )
         {
             return MAIN_COLOR_ITEM;
         }
-        else if( menuPageIndex == ToolMenu )
+        else if( menuPageIndex == DefaultMenu )
         {
             return MAIN_DEFAULT_ITEM;
         }
