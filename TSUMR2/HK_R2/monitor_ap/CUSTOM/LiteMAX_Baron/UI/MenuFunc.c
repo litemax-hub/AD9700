@@ -2523,6 +2523,8 @@ Bool ResetAllSetting( void )
     UserprefALha = 50;
     UserprefBata = 50;
     UserPrefPowerSavingEn = PowerSavingMenuItems_On;
+	
+	UserprefPowerKeyEnable = 1;
 
     if(CURRENT_INPUT_IS_VGA())//(( SrcInputType < Input_Digital ) )
     {
@@ -5554,6 +5556,17 @@ WORD MenuFunc_GetVfreq(void)
     }
 
     return u16Vfreq;
+}
+
+Bool AdjustPowerKey( void )
+{
+    if(UserprefPowerKeyEnable)
+        UserprefPowerKeyEnable = 0;
+    else
+        UserprefPowerKeyEnable = 1;    
+
+    Set_SaveMonitorSettingFlag();
+    return TRUE;
 }
 
 //======== FACTORY MENU FUNCTION ===============//

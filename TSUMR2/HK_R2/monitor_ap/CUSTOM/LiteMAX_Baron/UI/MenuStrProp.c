@@ -83,10 +83,10 @@ const BYTE *DefaultText( void )
 }
 const BYTE *PowerKeyEnableText( void )
 {
-	if(1)
-    	return strDisableM0[UserPrefLanguage];
+	if(UserprefPowerKeyEnable)
+    	return strEnableM0[UserPrefLanguage];
 	else
-		return strEnableM0[UserPrefLanguage];
+		return strDisableM0[UserPrefLanguage];
 }
 const BYTE *VersionText( void )
 {

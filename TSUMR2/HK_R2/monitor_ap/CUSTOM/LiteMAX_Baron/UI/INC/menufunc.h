@@ -351,6 +351,7 @@ extern Bool MenuFunc_DCOffDischarge_Set(void);
 extern Bool MenuFunc_PowerSavingEn_Set(void);
 extern Bool MenuFunc_DisplayLogoEn_Set(void);
 extern WORD MenuFunc_GetVfreq(void);
+extern Bool AdjustPowerKey( void );
 extern Bool AdjustFBrightness_0( MenuItemActionType action );
 extern WORD GetFBrightness_0Value( void );
 extern Bool AdjustFBrightness_25( MenuItemActionType action );
