@@ -934,7 +934,11 @@ extern BYTE SystemVccDropDownCnt;
 #define	DEF_FAC_BRIGHTNESS_75	80
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_100
+#if (LiteMAX_Baron_UI == 1)
+#define	DEF_FAC_BRIGHTNESS_100	99
+#else
 #define	DEF_FAC_BRIGHTNESS_100	100
+#endif
 #endif
 #endif
 
@@ -952,7 +956,11 @@ extern BYTE SystemVccDropDownCnt;
 
 extern volatile WORD xdata TimeOutCounter;
 
+#if (LiteMAX_Baron_UI == 1)
+#define MaxBrightnessValue	99
+#else
 #define MaxBrightnessValue 100 // 160//0x80 wmz 20051017
+#endif
 #define MinBrightnessValue  0 //0x80    wmz 20051017
 #define DefBrightness       90
 #define DefRedColor     0x80//0xB2//0xAB // 96(0x60)

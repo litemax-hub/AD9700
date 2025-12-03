@@ -1573,7 +1573,7 @@ WORD GetContrastValue( void )
 Bool AdjustBrightness( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefBrightness, 0, 100, 1 );
+    tempValue = DecIncValue( action, UserPrefBrightness, MinBrightnessValue, MaxBrightnessValue, 1 );
     if( tempValue == UserPrefBrightness )
     {
         return FALSE;
@@ -5649,7 +5649,8 @@ Bool FactoryReset(void)
 	Init_MonitorSetting();
 	SaveMonitorSetting();
 
-	SetColorTemp();
+	Set_FactoryModeFlag();
+//	SetColorTemp();
 
 	return TRUE;
 }

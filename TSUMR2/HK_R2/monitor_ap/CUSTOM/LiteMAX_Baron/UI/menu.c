@@ -1200,13 +1200,13 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                         processEvent = TRUE;
                     }
 					*/
-					if(CurrentMenuItemFunc.ExecFunction == FactoryReset)
+			if(CurrentMenuItemFunc.ExecFunction == FactoryReset)
                     {
                         menuAction = MIA_RedrawMenu;
                         MenuItemIndex = 0;
                         processEvent = TRUE;
                     }
-					if( CurrentMenuItemFunc.ExecFunction == AdjustPowerKey )
+			if( CurrentMenuItemFunc.ExecFunction == AdjustPowerKey )
                     {
                         DrawPowerEnableDisable(MAIN_POWER_ENABLE_ITEM);
                     }
@@ -1255,13 +1255,14 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 MenuPageIndex = RootMenu;
                 MenuItemIndex = 0;
                 processEvent = TRUE;
-				#if LiteMAX_Baron_OSD_TEST
-				 if( PrevMenuPageIndex == FactoryMenu )
-				#else
+	#if 1//LiteMAX_Baron_OSD_TEST
+		 if( PrevMenuPageIndex == FactoryMenu )
+	#else
                 if( FactoryModeFlag && PrevMenuPageIndex == FactoryMenu )
-				#endif
+	#endif
                 {
                     SaveFactorySetting();
+			Clr_FactoryModeFlag();
                 }
 #if HotInputSelect
                 Clr_PressExitFlag();
