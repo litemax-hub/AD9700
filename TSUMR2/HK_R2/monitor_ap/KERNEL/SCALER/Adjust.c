@@ -216,6 +216,19 @@ static BYTE xdata PreValue;
 
 void mStar_AdjustBrightness( BYTE brightness )
 {
+//LiteMAX_Brightness_Mapping
+    if(brightness==0)
+        brightness = FUserPrefBrightness_0;
+    else if(brightness<=25)
+        brightness = LINEAR_MAPPING_VALUE(brightness,0,25,FUserPrefBrightness_0,FUserPrefBrightness_25);//FUserPrefBrightness_25;
+    else if(brightness<=50)
+        brightness = LINEAR_MAPPING_VALUE(brightness,25,50,FUserPrefBrightness_25,FUserPrefBrightness_50);//FUserPrefBrightness_50;
+    else if(brightness<=75)
+        brightness = LINEAR_MAPPING_VALUE(brightness,50,75,FUserPrefBrightness_50,FUserPrefBrightness_75);//FUserPrefBrightness_75;
+    else
+        brightness = LINEAR_MAPPING_VALUE(brightness,75,MaxBrightnessValue,FUserPrefBrightness_75,FUserPrefBrightness_100);//FUserPrefBrightness_100;
+//LiteMAX_Brightness_Mapping
+
     brightness = ((( DWORD )brightness * ( RealMaxBrightnessValue - RealMinBrightnessValue ) ) / 100 ) + RealMinBrightnessValue;
 
     BacklightNow = BacklightPrev = brightness;

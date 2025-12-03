@@ -5631,7 +5631,7 @@ Bool AdjustFBrightness_100( MenuItemActionType action )
 {
     WORD xdata tempValue;
 
-    tempValue = DecIncValue( action, FUserPrefBrightness_100, FUserPrefBrightness_75, 100, 1 );
+    tempValue = DecIncValue( action, FUserPrefBrightness_100, FUserPrefBrightness_75, DEF_FAC_BRIGHTNESS_100, 1 );
 
     FUserPrefBrightness_100 = tempValue;
     mStar_FAdjustBrightness( FUserPrefBrightness_100 );
@@ -5650,7 +5650,7 @@ Bool FactoryReset(void)
 	SaveMonitorSetting();
 
 	Set_FactoryModeFlag();
-//	SetColorTemp();
+	ResetAllSetting();
 
 	return TRUE;
 }

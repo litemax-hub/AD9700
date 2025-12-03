@@ -961,8 +961,15 @@ extern volatile WORD xdata TimeOutCounter;
 #else
 #define MaxBrightnessValue 100 // 160//0x80 wmz 20051017
 #endif
+
 #define MinBrightnessValue  0 //0x80    wmz 20051017
-#define DefBrightness       90
+
+#if (LiteMAX_Baron_UI == 1)
+#define DefBrightness       75
+#else
+#define DefBrightness       100
+#endif
+
 #define DefRedColor     0x80//0xB2//0xAB // 96(0x60)
 #define DefGreenColor   0x80//0xB2//0xAB //
 #define DefBlueColor    0x80//0xB2//0xAB
