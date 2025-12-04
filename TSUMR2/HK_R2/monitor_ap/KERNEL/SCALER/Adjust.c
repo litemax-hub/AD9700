@@ -410,11 +410,41 @@ void mStar_AdjustBackgoundColor( BYTE pattern )
     {
         bColor = 0xFF;
     }
-    else if( pattern == 4 )
+    else if( pattern == 3 )
     {
         rColor = 0xFF;
         gColor = 0xFF;
         bColor = 0xFF;
+    }
+    else if( pattern == 4 )
+    {
+        rColor = 0;
+        gColor = 0;
+        bColor = 0;
+    }
+    else if( pattern == 5 )
+    {
+        rColor = 0x33;
+        gColor = 0x33;
+        bColor = 0x33;
+    }
+    else if( pattern == 6 )
+    {
+        rColor = 0x66;
+        gColor = 0x66;
+        bColor = 0x66;
+    }
+    else if( pattern == 7 )
+    {
+        rColor = 0x99;
+        gColor = 0x99;
+        bColor = 0x99;
+    }
+    else if( pattern == 8 )
+    {
+        rColor = 0xCC;
+        gColor = 0xCC;
+        bColor = 0xCC;
     }
     mStar_WaitForDataBlanking();
     drvOSD_FrameColorRGB(rColor, gColor, bColor);

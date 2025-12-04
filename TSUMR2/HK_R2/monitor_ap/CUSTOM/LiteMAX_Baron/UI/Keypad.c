@@ -14,6 +14,7 @@
 #if USEFLASH
 #include "UserPref.h"
 #endif
+#include "MenuFunc.h"
 
 #define KEYPAD_DEBUG    0
 #if ENABLE_DEBUG&&KEYPAD_DEBUG
@@ -230,7 +231,6 @@ void Key_ScanKeypad( void )
         #endif
 
         {
-#if 1
             if( keypadStatus == KEY_LOCK )
             {
                 if( KeypadButton == BTN_Power || KeypadButton == BTN_LockRepeat )
@@ -258,7 +258,6 @@ void Key_ScanKeypad( void )
                 SaveMonitorSetting();
                 #endif
             }
-#if 1 //ENABLE_TOUCH_KEY
             else if( keypadStatus == KEY_FACTORY ) // 100524 coding addition for factory key
             {
                 if( PowerOnFlag && MenuPageIndex <= RootMenu)
@@ -271,9 +270,14 @@ void Key_ScanKeypad( void )
                     ExecuteKeyEvent( MIA_RedrawMenu );
                 }
             }
-#endif
+		else if (keypadStatus == KEY_BURNIN)
+		{
+			Clr_BurninModeFlag();
+			AdjustBurnin();
+			ExecuteKeyEvent(MIA_Exit);
+		}
             else
-#endif
+
                 if( keypadStatus == KEY_PLUS )
                 {
                 #if HotExpansion

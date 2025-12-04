@@ -445,7 +445,7 @@ const BYTE *DigitalPort3Text( void )
 }
 #endif
 
-#if (ENABLE_VGA_INPUT)
+#if 1//(ENABLE_VGA_INPUT)
 const BYTE *VGAText( void )
 {
     return strVGAM103[UserPrefLanguage];

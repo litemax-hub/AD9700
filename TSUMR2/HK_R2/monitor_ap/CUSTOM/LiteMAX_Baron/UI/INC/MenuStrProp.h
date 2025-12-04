@@ -75,7 +75,7 @@ extern BYTE *AutoText( void );
 extern BYTE *AutoSelectText( void );
 extern BYTE *SourceSelectText( void );
 extern BYTE *SourceSelectStatusText(void);
-#if (ENABLE_VGA_INPUT)
+#if 1//(ENABLE_VGA_INPUT)
 extern BYTE *VGAText( void );
 #endif
 extern BYTE *DigitalPort0Text( void );
