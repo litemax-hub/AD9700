@@ -922,19 +922,23 @@ extern BYTE SystemVccDropDownCnt;
 #define DEF_ADC_OFFSET      0x00
 #if (LiteMAX_Baron_UI == 1)
 #ifndef DEF_FAC_BRIGHTNESS_0
-#define DEF_FAC_BRIGHTNESS_0	19
+#define DEF_FAC_BRIGHTNESS_0	20
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_25
-#define	DEF_FAC_BRIGHTNESS_25	78
+#define	DEF_FAC_BRIGHTNESS_25	40
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_50
-#define	DEF_FAC_BRIGHTNESS_50	137
+#define	DEF_FAC_BRIGHTNESS_50	60
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_75
-#define	DEF_FAC_BRIGHTNESS_75	196
+#define	DEF_FAC_BRIGHTNESS_75	80
 #endif
 #ifndef DEF_FAC_BRIGHTNESS_100
-#define	DEF_FAC_BRIGHTNESS_100	255
+#if (LiteMAX_Baron_UI == 1)
+#define	DEF_FAC_BRIGHTNESS_100	99
+#else
+#define	DEF_FAC_BRIGHTNESS_100	100
+#endif
 #endif
 #endif
 
@@ -952,9 +956,20 @@ extern BYTE SystemVccDropDownCnt;
 
 extern volatile WORD xdata TimeOutCounter;
 
+#if (LiteMAX_Baron_UI == 1)
+#define MaxBrightnessValue	99
+#else
 #define MaxBrightnessValue 100 // 160//0x80 wmz 20051017
+#endif
+
 #define MinBrightnessValue  0 //0x80    wmz 20051017
-#define DefBrightness       90
+
+#if (LiteMAX_Baron_UI == 1)
+#define DefBrightness       75
+#else
+#define DefBrightness       100
+#endif
+
 #define DefRedColor     0x80//0xB2//0xAB // 96(0x60)
 #define DefGreenColor   0x80//0xB2//0xAB //
 #define DefBlueColor    0x80//0xB2//0xAB
@@ -995,13 +1010,12 @@ extern volatile WORD xdata TimeOutCounter;
 #endif
 #endif
 
-// 090721
-#if 0//(LiteMAX_UI == 1)//make會有警告：由於資料類型範圍限制，比較結果永遠為假
-#define MaxColorValue           (0xff)
-#define MinColorValue           (0)
-#else
+#if (NEW_MTK_UI == 1)
 #define MaxColorValue           (0xff-28)//((UserPrefColorTemp == CTEMP_USER)?(0xFF):(DefColorUser+100))
 #define MinColorValue           (0+28)//((UserPrefColorTemp == CTEMP_USER)?(0x10):(DefColorUser-100))
+#else
+#define MaxColorValue           (0xff)
+#define MinColorValue           (0)
 #endif
 
 #define ClockAdjRange   100

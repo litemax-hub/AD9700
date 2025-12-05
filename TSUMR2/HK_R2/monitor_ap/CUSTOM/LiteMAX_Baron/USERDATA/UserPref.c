@@ -67,7 +67,7 @@ void Init_FactorySetting( void )
     UserPrefBlueColorSRGB = DefsRGB_BlueColor;
     FUserPrefBrightnessSRGB = DefBrightness;
     FUserPrefContrastSRGB = DefContrast;
-	#if LiteMAX_Baron_OSD_TEST
+	#if 1//LiteMAX_Baron_OSD_TEST
 	FUserPrefBrightness_0 = DEF_FAC_BRIGHTNESS_0;
 	FUserPrefBrightness_25 = DEF_FAC_BRIGHTNESS_25;
 	FUserPrefBrightness_50 = DEF_FAC_BRIGHTNESS_50;
@@ -182,7 +182,7 @@ void Init_MonitorSetting( void )
     UserPrefVolume = DEF_VOLUME;
     UserPrefOsdHStart = 50;
     UserPrefOsdVStart = 50;
-    UserPrefOsdTime = 10;
+    UserPrefOsdTime = DEF_OSD_TIME;
     UserPrefOsdTransparency = DEF_OSD_TRANSPARENCY;
     UserPrefDcrMode = 0;
 #if ENABLE_OSD_ROTATION
@@ -279,11 +279,11 @@ void CheckColorValueRange( void )
         UserPrefContrast = DefContrast;
     }
 #if 1
-    if( UserPrefRedColor > MaxColorValue )
+    if( UserPrefRedColor >= MaxColorValue )
         UserPrefRedColor = DefRedColor;
-    if( UserPrefGreenColor > MaxColorValue )
+    if( UserPrefGreenColor >= MaxColorValue )
         UserPrefGreenColor = DefGreenColor;
-    if( UserPrefBlueColor > MaxColorValue )
+    if( UserPrefBlueColor >= MaxColorValue )
         UserPrefBlueColor = DefBlueColor;
 #endif
 }

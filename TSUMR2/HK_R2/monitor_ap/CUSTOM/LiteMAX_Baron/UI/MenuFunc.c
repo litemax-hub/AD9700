@@ -1573,7 +1573,7 @@ WORD GetContrastValue( void )
 Bool AdjustBrightness( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefBrightness, 0, 100, 1 );
+    tempValue = DecIncValue( action, UserPrefBrightness, MinBrightnessValue, MaxBrightnessValue, 1 );
     if( tempValue == UserPrefBrightness )
     {
         return FALSE;
@@ -1814,7 +1814,7 @@ WORD GetOSDVPositionValue( void )
 Bool AdjustOSDTime( MenuItemActionType action )
 {
     WORD tempValue;
-    tempValue = DecIncValue( action, UserPrefOsdTime, 5, 100, 5 );
+    tempValue = DecIncValue( action, UserPrefOsdTime, OSD_TIME_MIN, OSD_TIME_MAX, 2 );
     if( tempValue == UserPrefOsdTime )
     {
         return FALSE;
@@ -3696,7 +3696,8 @@ Bool AdjustRedColorWarm1( MenuItemActionType action )
 #if UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    mStar_AdjustRedColor( UserPrefRedColorWarm1, UserPrefContrastWarm1 );
+//    mStar_AdjustRedColor( UserPrefRedColorWarm1, UserPrefContrastWarm1 );
+    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorWarm1, UserPrefGreenColorWarm1, UserPrefBlueColorWarm1);
 #endif
     return TRUE;
 }
@@ -3712,7 +3713,8 @@ Bool AdjustGreenColorWarm1( MenuItemActionType action )
 #if UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    mStar_AdjustGreenColor( UserPrefGreenColorWarm1, UserPrefContrastWarm1 );
+//    mStar_AdjustGreenColor( UserPrefGreenColorWarm1, UserPrefContrastWarm1 );
+    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorWarm1, UserPrefGreenColorWarm1, UserPrefBlueColorWarm1);
 #endif
     return TRUE;
 }
@@ -3728,7 +3730,8 @@ Bool AdjustBlueColorWarm1( MenuItemActionType action )
 #if UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    mStar_AdjustBlueColor( UserPrefBlueColorWarm1, UserPrefContrastWarm1 );
+//    mStar_AdjustBlueColor( UserPrefBlueColorWarm1, UserPrefContrastWarm1 );
+    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorWarm1, UserPrefGreenColorWarm1, UserPrefBlueColorWarm1);
 #endif
     return TRUE;
 }
@@ -5628,7 +5631,7 @@ Bool AdjustFBrightness_100( MenuItemActionType action )
 {
     WORD xdata tempValue;
 
-    tempValue = DecIncValue( action, FUserPrefBrightness_100, FUserPrefBrightness_75, 100, 1 );
+    tempValue = DecIncValue( action, FUserPrefBrightness_100, FUserPrefBrightness_75, DEF_FAC_BRIGHTNESS_100, 1 );
 
     FUserPrefBrightness_100 = tempValue;
     mStar_FAdjustBrightness( FUserPrefBrightness_100 );
@@ -5645,6 +5648,9 @@ Bool FactoryReset(void)
 	SaveFactorySetting();
 	Init_MonitorSetting();
 	SaveMonitorSetting();
+
+	Set_FactoryModeFlag();
+	ResetAllSetting();
 
 	return TRUE;
 }

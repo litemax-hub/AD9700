@@ -1264,6 +1264,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
 				#endif
                 {
                     SaveFactorySetting();
+			Clr_FactoryModeFlag();
                 }
 #if HotInputSelect
                 Clr_PressExitFlag();

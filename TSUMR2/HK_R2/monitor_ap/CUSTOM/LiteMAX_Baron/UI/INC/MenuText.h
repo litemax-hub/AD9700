@@ -84,7 +84,8 @@ BYTE code strF_Curve_75[] =  //
 BYTE code strF_Curve_100[] =  //
 {
     //123456789012345678901234567890
-    "Curve_100"
+//    "Curve_100"
+    "Curve_99"
 };
 BYTE code strF_Exit[] =
 {
