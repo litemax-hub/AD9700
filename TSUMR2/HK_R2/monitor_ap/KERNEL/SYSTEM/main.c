@@ -576,6 +576,15 @@ void Main_SlowTimerHandler(void)
                 Main_printMsg("Fake sleep time out\n");
             }
         }
+	#if (NEW_MTK_UI == 1)
+		if( PowerDownCounter )
+        {
+            if( --PowerDownCounter == 0 )
+            {
+                Set_ForcePowerSavingFlag();
+            }
+        }
+	#else
 		#if DISABLE_POWERSAVING
         //Do not enter PowerSaving
 		#else
@@ -587,6 +596,7 @@ void Main_SlowTimerHandler(void)
             }
         }
 		#endif
+	#endif
         Set_ChangePatternFlag();
 
         if (g_SwitchSec && g_CountSwitchPortTimeFlag && (!DoBurninModeFlag))
@@ -595,6 +605,11 @@ void Main_SlowTimerHandler(void)
             {
                 if( --g_SwitchSec == 0 )
                 {
+                #if (NEW_MTK_UI == 1)
+					g_CountSwitchPortTimeFlag=FALSE;
+                    g_SwitchSec=DEF_FORCE_DPMS;
+                    Set_ForcePowerSavingFlag();
+				#else
                 	#if DISABLE_POWERSAVING
         			//Do not enter PowerSaving
 					#else
@@ -602,6 +617,7 @@ void Main_SlowTimerHandler(void)
                     g_SwitchSec=DEF_FORCE_DPMS;
                     Set_ForcePowerSavingFlag();
 					#endif
+				#endif
                 }
             }
         }

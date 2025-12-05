@@ -1010,13 +1010,12 @@ extern volatile WORD xdata TimeOutCounter;
 #endif
 #endif
 
-// 090721
-#if 1//make會有警告：由於資料類型範圍限制，比較結果永遠為假
-#define MaxColorValue           (0xff)
-#define MinColorValue           (0)
-#else
+#if (NEW_MTK_UI == 1)
 #define MaxColorValue           (0xff-28)//((UserPrefColorTemp == CTEMP_USER)?(0xFF):(DefColorUser+100))
 #define MinColorValue           (0+28)//((UserPrefColorTemp == CTEMP_USER)?(0x10):(DefColorUser-100))
+#else
+#define MaxColorValue           (0xff)
+#define MinColorValue           (0)
 #endif
 
 #define ClockAdjRange   100
@@ -1997,7 +1996,9 @@ typedef enum
 #define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ContrastMenu && PrevMenuPageIndex <= PowerSavingMenu )
 #endif
 
+#if (NEW_MTK_UI == 1)
 #define IndependentColor_MenuPage ( MenuPageIndex >= IndependentHueRMenu && MenuPageIndex <= IndependentBrightnessYMenu )
+#endif
 
 #if HotExpansion
 #define HotMenuPage             ( MenuPageIndex >= HotExpansionMenu && MenuPageIndex <= HotInputSelectMenu)
