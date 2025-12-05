@@ -216,6 +216,7 @@ static BYTE xdata PreValue;
 
 void mStar_AdjustBrightness( BYTE brightness )
 {
+	#if (LiteMAX_UI == 1)||(LiteMAX_Baron_UI == 1)
 //LiteMAX_Brightness_Mapping
     if(brightness==0)
         brightness = FUserPrefBrightness_0;
@@ -228,6 +229,7 @@ void mStar_AdjustBrightness( BYTE brightness )
     else
         brightness = LINEAR_MAPPING_VALUE(brightness,75,MaxBrightnessValue,FUserPrefBrightness_75,FUserPrefBrightness_100);//FUserPrefBrightness_100;
 //LiteMAX_Brightness_Mapping
+    #endif
 
     brightness = ((( DWORD )brightness * ( RealMaxBrightnessValue - RealMinBrightnessValue ) ) / 100 ) + RealMinBrightnessValue;
 
