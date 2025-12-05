@@ -1982,7 +1982,7 @@ typedef enum
 #define Layer3_PrevMenuPage     ( PrevMenuPageIndex >= ContrastMenu && PrevMenuPageIndex <= PowerSavingMenu )
 #endif
 
-#if 0
+#if (NEW_MTK_UI == 1)
 #define IndependentColor_MenuPage ( MenuPageIndex >= IndependentHueRMenu && MenuPageIndex <= IndependentBrightnessYMenu )
 #endif
 
