@@ -160,7 +160,7 @@ void Osd_InitOSD( void )
     drvOSD_SetWndFixAlpha(OSD_CURSOR_WND,OSD_ALPHA_OUT,0x3F); //OSD
 
     OSD_SET_WND(OSD_MAIN_WND);
-    Osd_SetPosition(50, 50); // set osd position
+    Osd_SetPosition(UserPrefOsdHStart, UserPrefOsdVStart); // set osd position
     Osd_SetTransparency(UserPrefOsdTransparency);
     LoadCommonFont();
 

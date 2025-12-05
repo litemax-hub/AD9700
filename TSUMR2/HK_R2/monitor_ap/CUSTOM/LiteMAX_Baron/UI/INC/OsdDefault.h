@@ -31,6 +31,14 @@
 #define OSD_TIME_MAX	16
 #define OSD_TIME_MIN	2
 
+#if (LiteMAX_Baron_UI == 1)
+#define DEF_OSD_H_POSITION		69
+#define DEF_OSD_V_POSITION		1
+#else
+#define DEF_OSD_H_POSITION		50
+#define DEF_OSD_V_POSITION		50
+#endif
+
 #define DEF_OSD_TRANSPARENCY   	0
 #define MAX_OSD_TRANSPARENCY    5
 

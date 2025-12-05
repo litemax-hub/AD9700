@@ -2365,8 +2365,8 @@ Bool ResetAllSetting( void )
     */
     // if (!FactoryModeFlag)
     {
-        UserPrefOsdHStart = 50;
-        UserPrefOsdVStart = 50;
+        UserPrefOsdHStart = DEF_OSD_H_POSITION;
+        UserPrefOsdVStart = DEF_OSD_V_POSITION;
     }
     UserPrefVolume = DEF_VOLUME; //0603 request by zhong
 #if AudioFunc

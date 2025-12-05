@@ -180,8 +180,8 @@ void Init_MonitorSetting( void )
     UserPrefAudioSource = AudioSourceMenuItems_Digital;
 #endif
     UserPrefVolume = DEF_VOLUME;
-    UserPrefOsdHStart = 50;
-    UserPrefOsdVStart = 50;
+    UserPrefOsdHStart = DEF_OSD_H_POSITION;
+    UserPrefOsdVStart = DEF_OSD_V_POSITION;
     UserPrefOsdTime = DEF_OSD_TIME;
     UserPrefOsdTransparency = DEF_OSD_TRANSPARENCY;
     UserPrefDcrMode = 0;
@@ -279,11 +279,11 @@ void CheckColorValueRange( void )
         UserPrefContrast = DefContrast;
     }
 #if 1
-    if( UserPrefRedColor > MaxColorValue )
+    if( UserPrefRedColor >= MaxColorValue )
         UserPrefRedColor = DefRedColor;
-    if( UserPrefGreenColor > MaxColorValue )
+    if( UserPrefGreenColor >= MaxColorValue )
         UserPrefGreenColor = DefGreenColor;
-    if( UserPrefBlueColor > MaxColorValue )
+    if( UserPrefBlueColor >= MaxColorValue )
         UserPrefBlueColor = DefBlueColor;
 #endif
 }
