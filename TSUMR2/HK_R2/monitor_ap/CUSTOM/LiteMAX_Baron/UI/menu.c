@@ -150,7 +150,7 @@ void Menu_InitAction( void )
     }
     else if( SyncLossState() )
     {
-        if(0)//( CableNotConnectedFlag ) //&&!ProductModeFlag)
+        if( CableNotConnectedFlag ) //&&!ProductModeFlag)
         {
             if( DoBurninModeFlag )                // 2006/10/18 9:47PM by Emily test
             {
@@ -1264,7 +1264,7 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
 				#endif
                 {
                     SaveFactorySetting();
-			Clr_FactoryModeFlag();
+					Clr_FactoryModeFlag();
                 }
 #if HotInputSelect
                 Clr_PressExitFlag();

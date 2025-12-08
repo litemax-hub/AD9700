@@ -108,7 +108,8 @@
 #define BD_MT9700_A7V2_P2_S 0x010C   // T9 with 1A1H2DP
 #define BD_MST218B_B02A_S   0x010D   // G with 1A1H
 
-#define BD_MT9700_LITEMAX   0x0180   // T9 with 1A1D1H1DP
+#define BD_MT9700_LITEMAX  		0x0180   // T9 with 1A1D1H1DP
+#define BD_MT9700_LITEMAX_1DP 	0x0181   // T9 with 1DP
 
 //MT9701
 #define BD_MT9701_A1V1_P2_S 0x0200   // QFP216 with 1H1DP1C
@@ -339,6 +340,9 @@
 #elif (MainBoardType == BD_MT9700_LITEMAX)
 #define USEFLASH    1
 #include "BD_MT9700_LITEMAX.h"
+#elif (MainBoardType == BD_MT9700_LITEMAX_1DP)
+#define USEFLASH    1
+#include "BD_MT9700_LITEMAX_1DP.h"
 #else
 #error Unknow board type
 #endif

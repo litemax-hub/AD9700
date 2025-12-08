@@ -636,7 +636,8 @@ void mStar_ModeHandler( void )
     {
         if( DoBurninModeFlag )
         {
-            if (!ProductModeFlag)                   //110916 Rick add condition for A027
+            //if (!ProductModeFlag)                   //110916 Rick add condition for A027
+			Clr_BurninModeFlag();
             Clr_DoBurninModeFlag();
             //old_msWriteByte( BK0_32, 0x00 ); // disable background color function.
             drvOSD_FrameColorEnable(FALSE);
@@ -1373,6 +1374,11 @@ Bool IsCableNotConnected( void )
     return ( hwDSUBCable_Pin && hwDVICable_Pin );
     #endif
     #endif
+}
+#elif (LiteMAX_Baron_UI == 1)
+Bool IsCableNotConnected( void )
+{
+	return hwSDM_AuxN_DP1Pin_Pin;
 }
 #else
 #warning "no coding for  IsCableNotConnected"

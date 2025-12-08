@@ -340,6 +340,7 @@ BYTE* CustomEDID_InternalEDID_Get(BYTE u8InputPort)
             }
         }
     }
+	#if ENABLE_HDMI
     else if(INPUT_IS_HDMI(u8InputPort))
     {
         #if ENABLE_FREESYNC
@@ -382,6 +383,7 @@ BYTE* CustomEDID_InternalEDID_Get(BYTE u8InputPort)
 
         }
     }
+	#endif
     #elif (CHIP_ID == CHIP_MT9700)
     if(INPUT_IS_DISPLAYPORT(u8InputPort)||INPUT_IS_USBTYPEC(u8InputPort))
     {
@@ -413,6 +415,7 @@ BYTE* CustomEDID_InternalEDID_Get(BYTE u8InputPort)
         #endif
 
     }
+	#if ENABLE_HDMI
     else if(INPUT_IS_HDMI(u8InputPort))
     {
         #if ENABLE_FREESYNC
@@ -464,6 +467,7 @@ BYTE* CustomEDID_InternalEDID_Get(BYTE u8InputPort)
             }
         }
     }
+	#endif
     #endif
     else
     {

@@ -601,25 +601,28 @@ void Main_SlowTimerHandler(void)
 
         if (g_SwitchSec && g_CountSwitchPortTimeFlag && (!DoBurninModeFlag))
         {
-            if(UserPrefPowerSavingEn == PowerSavingMenuItems_On)
+        	#if (NEW_MTK_UI == 1)
+			if(UserPrefPowerSavingEn == PowerSavingMenuItems_On)
             {
                 if( --g_SwitchSec == 0 )
                 {
-                #if (NEW_MTK_UI == 1)
 					g_CountSwitchPortTimeFlag=FALSE;
                     g_SwitchSec=DEF_FORCE_DPMS;
                     Set_ForcePowerSavingFlag();
-				#else
-                	#if DISABLE_POWERSAVING
-        			//Do not enter PowerSaving
-					#else
-                    g_CountSwitchPortTimeFlag=FALSE;
-                    g_SwitchSec=DEF_FORCE_DPMS;
-                    Set_ForcePowerSavingFlag();
-					#endif
-				#endif
                 }
             }
+			#else
+            if( --g_SwitchSec == 0 )
+            {
+            	#if DISABLE_POWERSAVING
+        		//Do not enter PowerSaving
+				#else
+                g_CountSwitchPortTimeFlag=FALSE;
+                g_SwitchSec=DEF_FORCE_DPMS;
+                Set_ForcePowerSavingFlag();
+				#endif
+            }
+			#endif
         }
 
 #if ENABLE_TOUCH_KEY

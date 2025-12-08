@@ -394,6 +394,25 @@ const BYTE *DigitalPort0Text( void )
             return strUSB_CM103[UserPrefLanguage];
 
 }
+const BYTE *DigitalPort1Text( void )
+{
+        if (Input_DVI_C1==Input_Digital2||Input_DVI_C2==Input_Digital2||Input_DVI_C3==Input_Digital2)
+        {
+            return strDVIM103[UserPrefLanguage];
+        }
+        else if (Input_HDMI_C1==Input_Digital2||Input_HDMI_C2==Input_Digital2||Input_HDMI_C3==Input_Digital2||Input_HDMI_C4==Input_Digital2)
+        {
+            return strHDMIM103[UserPrefLanguage];
+        }
+        else if (Input_Displayport_C1==Input_Digital2||Input_Displayport_C2==Input_Digital2||Input_Displayport_C3==Input_Digital2||Input_Displayport_C4==Input_Digital2)
+        {
+            return strDisplayPortM103[UserPrefLanguage];
+        }
+        else if (Input_UsbTypeC_C3 == Input_Digital2||Input_UsbTypeC_C4 ==Input_Digital2)
+        {
+            return strUSB_CM103[UserPrefLanguage];
+        }
+}
 #endif
 #if (INPUT_TYPE>=INPUT_2C)
 const BYTE *DigitalPort1Text( void )

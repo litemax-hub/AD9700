@@ -529,6 +529,7 @@ MenuItemType code SignalMenuItems[] =
         mibSelectable // Flags
     },
 #endif
+	#if (ENABLE_VGA_INPUT)
     // 1 VGA
     {
         9,10,//8,10,//6, 5, // XPos, YPos;
@@ -550,6 +551,7 @@ MenuItemType code SignalMenuItems[] =
         NULL, //Font
         mibSelectable // Flags
     },
+    #endif
     #if 0
     // 2 DVI
     {
