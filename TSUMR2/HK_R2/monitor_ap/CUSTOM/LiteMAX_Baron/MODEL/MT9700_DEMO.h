@@ -273,6 +273,23 @@
 #define ENABLE_TYPEC_SAR_DET            0       // default: 0, 1: enable only related SAR pins are reserved
 #define DRAM_TYPE                       DRAM_NOUSE
 #define ENABLE_DVI_HDMI_SWITCH          0
+#elif (MainBoardType == BD_MT9700_LITEMAX_1DP)
+#define INPUT_TYPE                      (INPUT_1C)
+#define ENABLE_VGA_INPUT                0//(INPUT_TYPE&INPUT_1A)
+#define ENABLE_HDMI                     0 // 1       //((Input_HDMI_C1 != Input_Nothing)||(Input_HDMI_C2 != Input_Nothing)||(Input_HDMI_C3 != Input_Nothing))
+#define ENABLE_HDMI_1_4                 0
+#define ENABLE_HDMI_EDID_INTERNAL_DATA  0
+#define ENABLE_VGA_EDID_INTERNAL_DATA   0
+#define ENABLE_DVI                      0       //((Input_DVI_C1 != Input_Nothing)||(Input_DVI_C2 != Input_Nothing)||(Input_DVI_C3 != Input_Nothing))
+#define ENABLE_DP_INPUT                 1       //((Input_Displayport_C2 != Input_Nothing)||(Input_Displayport_C3 != Input_Nothing))
+#define ENABLE_DP_OUTPUT                0
+#define ENABLE_DP_AUDIO                 1
+#define AudioFunc                       1
+#define _NEW_SOG_DET_                   0 // 1
+#define _NEW_SOG_WAKEUP_DET_            (_NEW_SOG_DET_)
+#define ENABLE_TYPEC_SAR_DET            0       // default: 0, 1: enable only related SAR pins are reserved
+#define DRAM_TYPE                       DRAM_NOUSE
+#define ENABLE_DVI_HDMI_SWITCH          0
 #else
 #message "please define new board type"
 #endif
@@ -453,7 +470,7 @@
 // if enable, system will keep at normal speed without entering PM,
 // and SrcInputType stays at FIXED_PORT
 //////////////////////////////////////////////////////////////
-#define ENABLE_DP_CTS_TEST         (0 &&ENABLE_DP_INPUT)
+#define ENABLE_DP_CTS_TEST         (1 &&ENABLE_DP_INPUT)
 
 
 ///////////////////////////////////////////////////////////////
@@ -482,7 +499,7 @@
 
 #if ENABLE_DP_CTS_TEST
 #define DISABLE_AUTO_SWITCH         1 // for DP test
-#define FIXED_PORT                  Input_Displayport
+#define FIXED_PORT                  Input_Displayport2 //Input_Displayport
 #else
 #define DISABLE_AUTO_SWITCH         0
 #define FIXED_PORT                  Input_HDMI

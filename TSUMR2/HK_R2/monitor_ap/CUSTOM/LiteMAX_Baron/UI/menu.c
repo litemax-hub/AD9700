@@ -150,7 +150,7 @@ void Menu_InitAction( void )
     }
     else if( SyncLossState() )
     {
-        if(0)//( CableNotConnectedFlag ) //&&!ProductModeFlag)
+        if( CableNotConnectedFlag ) //&&!ProductModeFlag)
         {
             if( DoBurninModeFlag )                // 2006/10/18 9:47PM by Emily test
             {
@@ -485,7 +485,7 @@ printf("\r\n OsdTimeoutFlag");
             // for burnin mode
         {
             Clr_ChangePatternFlag();
-            PatternNo = ( PatternNo + 1 ) % 9;
+            PatternNo = ( PatternNo + 1 ) % 5;
             mStar_AdjustBackgoundColor( PatternNo );
         }
     }
@@ -1202,13 +1202,13 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                         processEvent = TRUE;
                     }
 					*/
-			if(CurrentMenuItemFunc.ExecFunction == FactoryReset)
+					if(CurrentMenuItemFunc.ExecFunction == FactoryReset)
                     {
                         menuAction = MIA_RedrawMenu;
                         MenuItemIndex = 0;
                         processEvent = TRUE;
                     }
-			if( CurrentMenuItemFunc.ExecFunction == AdjustPowerKey )
+					if( CurrentMenuItemFunc.ExecFunction == AdjustPowerKey )
                     {
                         DrawPowerEnableDisable(MAIN_POWER_ENABLE_ITEM);
                     }
@@ -1257,14 +1257,14 @@ Bool ExecuteKeyEvent( MenuItemActionType menuAction )
                 MenuPageIndex = RootMenu;
                 MenuItemIndex = 0;
                 processEvent = TRUE;
-	#if 1//LiteMAX_Baron_OSD_TEST
-		 if( PrevMenuPageIndex == FactoryMenu )
-	#else
+				#if LiteMAX_Baron_OSD_TEST
+				 if( PrevMenuPageIndex == FactoryMenu )
+				#else
                 if( FactoryModeFlag && PrevMenuPageIndex == FactoryMenu )
-	#endif
+				#endif
                 {
                     SaveFactorySetting();
-			Clr_FactoryModeFlag();
+					Clr_FactoryModeFlag();
                 }
 #if HotInputSelect
                 Clr_PressExitFlag();
