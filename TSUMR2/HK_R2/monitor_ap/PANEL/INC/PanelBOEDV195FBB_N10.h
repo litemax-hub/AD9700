@@ -90,6 +90,9 @@
 #define PanelVfreq          (600)
 #define PanelMaxVfreq   (650+20) // 75Hz
 #define PanelMinVfreq   (550-20) // 50Hz
+
+#define DOUBLE_LVDS_CLK_SWING	1//0
+#define LVDS_SWING_TARGET  350//250
 //=================================================================
 // TCON  setting for RSDS
 // TCON  setting for RSDS
@@ -152,29 +155,30 @@
 #define DefCool_RedColor            128 //108
 #define DefCool_GreenColor          120 //128
 #define DefCool_BlueColor           123 //128
+
+#define DefNormal_RedColor          128
+#define DefNormal_GreenColor        128
+#define DefNormal_BlueColor         128
 #if (StandardBoardPPS == P2506168)
-#define DefNormal_RedColor          128 //128
-#define DefNormal_GreenColor        118 //109
-#define DefNormal_BlueColor         104 //98
+#define DefWarm_RedColor          128
+#define DefWarm_GreenColor        117
+#define DefWarm_BlueColor         106
 #else
-#define DefNormal_RedColor          128 //118
-#define DefNormal_GreenColor        114 //128
-#define DefNormal_BlueColor         104 //128
+#define DefWarm_RedColor          128
+#define DefWarm_GreenColor        117
+#define DefWarm_BlueColor         106
 #endif
-#define DefWarm_RedColor            128
-#define DefWarm_GreenColor          128
-#define DefWarm_BlueColor           128
 #define DefsRGB_RedColor            DefWarm_RedColor
 #define DefsRGB_GreenColor          DefWarm_GreenColor
 #define DefsRGB_BlueColor           DefWarm_BlueColor
 //=================================================================
 // Backlight Curve
 #if (StandardBoardPPS == P2506168)
-#define DEF_FAC_BRIGHTNESS_0        10
-#define DEF_FAC_BRIGHTNESS_25       23
-#define DEF_FAC_BRIGHTNESS_50       32
-#define DEF_FAC_BRIGHTNESS_75       49 //39 // 49 = 333 nits
-#define DEF_FAC_BRIGHTNESS_99       99
+#define DEF_FAC_BRIGHTNESS_0        12
+#define DEF_FAC_BRIGHTNESS_25       21
+#define DEF_FAC_BRIGHTNESS_50       29
+#define DEF_FAC_BRIGHTNESS_75       41 // 41 = 333 nits
+#define DEF_FAC_BRIGHTNESS_99       55
 #else
 #define DEF_FAC_BRIGHTNESS_0        10
 #define DEF_FAC_BRIGHTNESS_25       25

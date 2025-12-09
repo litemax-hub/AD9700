@@ -231,7 +231,7 @@ void mStar_AdjustBrightness( BYTE brightness )
 //LiteMAX_Brightness_Mapping
     #endif
 
-    brightness = ((( DWORD )brightness * ( RealMaxBrightnessValue - RealMinBrightnessValue ) ) / 100 ) + RealMinBrightnessValue;
+    brightness = ((( DWORD )brightness * ( RealMaxBrightnessValue - RealMinBrightnessValue ) ) / MaxBrightnessValue ) + RealMinBrightnessValue;
 
     BacklightNow = BacklightPrev = brightness;
 
