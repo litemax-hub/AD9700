@@ -485,7 +485,7 @@ printf("\r\n OsdTimeoutFlag");
             // for burnin mode
         {
             Clr_ChangePatternFlag();
-            PatternNo = ( PatternNo + 1 ) % 5;
+            PatternNo = ( PatternNo + 1 ) % 9;
             mStar_AdjustBackgoundColor( PatternNo );
         }
     }
