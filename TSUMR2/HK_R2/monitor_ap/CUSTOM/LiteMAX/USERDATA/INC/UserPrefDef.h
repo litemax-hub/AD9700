@@ -331,6 +331,12 @@ typedef struct
     BYTE SSCModulation;
     BYTE SSCPercentage;
 #endif
+	BYTE FBrightness_0;
+    BYTE FBrightness_25;
+    BYTE FBrightness_50;
+    BYTE FBrightness_75;
+    BYTE FBrightness_100;
+
     DWORD CheckSum;
 } FactorySettingType;
 
