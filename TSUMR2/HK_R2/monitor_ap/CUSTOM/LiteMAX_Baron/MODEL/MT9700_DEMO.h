@@ -41,8 +41,6 @@
 
 #include "Litemax_CommDef.h"
 
-#define MS_VGA_SOG_EN                   1
-
 ////////////////////////////////////////////////////////////
 // PANEL SELECTION
 ////////////////////////////////////////////////////////////
@@ -217,7 +215,7 @@
 // if enable, system will keep at normal speed without entering PM,
 // and SrcInputType stays at FIXED_PORT
 //////////////////////////////////////////////////////////////
-#define ENABLE_DP_CTS_TEST         (1 &&ENABLE_DP_INPUT)
+#define ENABLE_DP_CTS_TEST         (0 &&ENABLE_DP_INPUT)
 
 
 ///////////////////////////////////////////////////////////////
@@ -244,7 +242,7 @@
 #define UART_PIU_GPIO_PORT          UART_GPIO34_35
 #define ENABLE_MSBHK                (0 && UART1) // need sync with MSBHK
 
-#if ENABLE_DP_CTS_TEST
+#if ENABLE_DP_CTS_TEST || (MainBoardType == BD_MT9700_LITEMAX_1DP)
 #define DISABLE_AUTO_SWITCH         1 // for DP test
 #define FIXED_PORT                  Input_Displayport2 //Input_Displayport
 #else

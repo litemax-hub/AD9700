@@ -238,6 +238,8 @@ BYTE xdata FakeSleepCounter = 0;
 BOOL g_16ModePre = FALSE;
 #endif
 
+BYTE  xdata g_BurninChangePatternSec = DEF_BurninChangePatternTime;
+
 extern void msDebugDummy(void);
 extern void msDPSSettingDummy(void);
 extern void msDPSHandlerDummy(void);

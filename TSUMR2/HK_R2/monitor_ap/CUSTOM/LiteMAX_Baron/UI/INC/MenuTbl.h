@@ -594,6 +594,7 @@ MenuItemType code SignalMenuItems[] =
         NULL, //Font
         mibSelectable // Flags
     },
+#if (INPUT_TYPE>=INPUT_2C)
     // 4 DP
     {
         19,10,//20,10,//14, 5, // XPos, YPos;
@@ -615,6 +616,7 @@ MenuItemType code SignalMenuItems[] =
         NULL, //Font
         mibSelectable // Flags
     },
+#endif
     // 5 Exit
     {
         24,10,//24, 5, // XPos, YPos;

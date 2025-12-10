@@ -545,9 +545,9 @@ void Main_SlowTimerHandler(void)
         }
 #endif
 
-		#if DISABLE_POWERSAVING
+#if DISABLE_POWERSAVING
         //Do not enter PowerSaving
-		#else
+#else
         if(FakeSleepFlag && FakeSleepCounter)
         {
             if(--FakeSleepCounter == 0)
@@ -565,7 +565,7 @@ void Main_SlowTimerHandler(void)
                 }
             }
         }
-		#endif
+#endif
 
         if((msAPI_FakeSleepTimeOutEn_Get() == TRUE) && (msAPI_FakeSleepTimeOutCnt_Get() > 0))
         {
@@ -576,28 +576,33 @@ void Main_SlowTimerHandler(void)
                 Main_printMsg("Fake sleep time out\n");
             }
         }
-	#if (NEW_MTK_UI == 1)
-		if( PowerDownCounter )
+#if (NEW_MTK_UI == 1)
+	if( PowerDownCounter )
         {
             if( --PowerDownCounter == 0 )
             {
                 Set_ForcePowerSavingFlag();
             }
         }
-	#else
-		#if DISABLE_POWERSAVING
+#else
+	#if DISABLE_POWERSAVING
         //Do not enter PowerSaving
-		#else
-        if( PowerDownCounter )
-        {
-            if( --PowerDownCounter == 0 )
-            {
-                Set_ForcePowerSavingFlag();
-            }
-        }
-		#endif
+	#else
+	        if( PowerDownCounter )
+	        {
+	            if( --PowerDownCounter == 0 )
+	            {
+	                Set_ForcePowerSavingFlag();
+	            }
+	        }
 	#endif
-        Set_ChangePatternFlag();
+#endif
+
+	    if(--g_BurninChangePatternSec==0)
+	    {
+	        g_BurninChangePatternSec = DEF_BurninChangePatternTime;
+	        Set_ChangePatternFlag();
+	    }
 
         if (g_SwitchSec && g_CountSwitchPortTimeFlag && (!DoBurninModeFlag))
         {

@@ -49,62 +49,6 @@ enum
 
 };
 
-#if (LiteMAX_Baron_UI == 1)
-
-#if ENABLE_VGA_INPUT
-#define First_Input_Port    Input_Analog1
-#else
-#define First_Input_Port    Input_Digital2
-#endif
-
-typedef enum
-{
-#if (INPUT_TYPE&INPUT_1A)
-    Input_Analog1,
-#endif
-#if (INPUT_TYPE>=INPUT_1C)
-	Input_Digital2,
-#endif
-    Input_Nums,
-#if !(INPUT_TYPE&INPUT_1A)
-    Input_Analog1,
-#endif
-#if (INPUT_TYPE>=INPUT_1C)
-	Input_Digital,
-#endif
-#if (INPUT_TYPE>=INPUT_2C)
-	Input_Digital2,
-#endif
-#if (INPUT_TYPE>=INPUT_3C)
-	Input_Digital3,
-#endif
-#if (INPUT_TYPE>=INPUT_4C)
-	Input_Digital4,
-#endif
-    Input_YPbPr,
-    Input_Analog2,
-    Input_Nothing,
-    Input_VGA           = Input_Analog1,
-    Input_DVI           = Input_DVI_C1,
-    Input_DVI2          = Input_DVI_C2,
-    Input_DVI3          = Input_DVI_C3,
-    Input_DVI4          = Input_DVI_C4,
-    Input_DualDVI       = Input_DualDVI_C1,
-    Input_DualDVI2      = Input_DualDVI_C2,
-    Input_HDMI          = Input_HDMI_C1,
-    Input_HDMI2         = Input_HDMI_C2,
-    Input_HDMI3         = Input_HDMI_C3,
-    Input_HDMI4         = Input_HDMI_C4,
-    Input_Displayport   = Input_Displayport_C1,
-    Input_Displayport2  = Input_Displayport_C2,
-    Input_Displayport3  = Input_Displayport_C3,
-    Input_Displayport4  = Input_Displayport_C4,
-    Input_UsbTypeC3     = Input_UsbTypeC_C3,
-    Input_UsbTypeC4     = Input_UsbTypeC_C4
-} InputPortType;
-
-#else //NEW_MTK_UI LiteMAX_UI
-
 #if ENABLE_VGA_INPUT
 #define First_Input_Port    Input_Analog1
 #else
@@ -154,8 +98,6 @@ typedef enum
     Input_UsbTypeC3     = Input_UsbTypeC_C3,
     Input_UsbTypeC4     = Input_UsbTypeC_C4
 } InputPortType;
-
-#endif
 
 typedef enum
 {

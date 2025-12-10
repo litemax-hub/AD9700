@@ -72,6 +72,9 @@ extern  BOOL XDATA bSecondTimer1;
 extern  BYTE XDATA u8SecondTIMER1;
 #endif
 
+#define DEF_BurninChangePatternTime 7 // unit: Second
+extern BYTE  xdata g_BurninChangePatternSec;
+
 #define CURRENT_IS_FBL() (g_SetupPathInfo.ucSCPathMode == SC_PATH_MODE_0)
 
 //#if ENABLE_DPS
