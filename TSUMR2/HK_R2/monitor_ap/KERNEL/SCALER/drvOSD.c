@@ -367,11 +367,11 @@ void drvOSD_FrameColorEnable(Bool bEnable)
 
     if(bEnable)
     {
-        u16HstatBk = msRead2Byte(SC00_18);
         msWrite2ByteMask(SC00_18, 0x00, 0xFFF);
     }
     else
     {
+    	u16HstatBk = msRead2Byte(SC00_18);
         msWrite2ByteMask(SC00_18, u16HstatBk, 0xFFF); //image H. start
     }
     msWriteByteMask(SC10_32, (bEnable ? BIT4 : 0), BIT4);
