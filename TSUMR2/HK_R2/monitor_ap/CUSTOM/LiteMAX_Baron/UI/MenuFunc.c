@@ -127,11 +127,19 @@ void ReadUserSetting( void );
 //void Save6500KSetting(void);
 BYTE* code ColorTempPtr[5][5] =
 {
+#if LiteMAX_Baron_UI
+    {&UserPrefBrightnessWarm1, &UserPrefContrastWarm1, &UserPrefRedColorWarm1, &UserPrefGreenColorWarm1, &UserPrefBlueColorWarm1},
+    {&UserPrefBrightnessUser, &UserPrefContrastUser, &UserPrefRedColorUser, &UserPrefGreenColorUser, &UserPrefBlueColorUser},
+    {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},
+    {&UserPrefBrightnessNormal, &UserPrefContrastNormal, &UserPrefRedColorNormal, &UserPrefGreenColorNormal, &UserPrefBlueColorNormal},
+    {&FUserPrefBrightnessSRGB, &FUserPrefContrastSRGB, &UserPrefRedColorSRGB, &UserPrefGreenColorSRGB, &UserPrefBlueColorSRGB},
+#else
     {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},
     {&UserPrefBrightnessNormal, &UserPrefContrastNormal, &UserPrefRedColorNormal, &UserPrefGreenColorNormal, &UserPrefBlueColorNormal},
     {&FUserPrefBrightnessSRGB, &FUserPrefContrastSRGB, &UserPrefRedColorSRGB, &UserPrefGreenColorSRGB, &UserPrefBlueColorSRGB},
     {&UserPrefBrightnessUser, &UserPrefContrastUser, &UserPrefRedColorUser, &UserPrefGreenColorUser, &UserPrefBlueColorUser},
     {&UserPrefBrightnessWarm1, &UserPrefContrastWarm1, &UserPrefRedColorWarm1, &UserPrefGreenColorWarm1, &UserPrefBlueColorWarm1},
+#endif
 };
 //////////////////////////////////////////////////////////////////////////
 // Matrix for convert to sRGB space
@@ -3036,12 +3044,12 @@ void ReadColorTempSetting( void )
             UserPrefGreenColorCool1 = 240;
             UserPrefBlueColorCool1 = 255;
             break;
-        case CTEMP_Normal: //6500K
+        case CTEMP_Normal:
             UserPrefRedColorNormal = 244;
             UserPrefGreenColorNormal = 255;
             UserPrefBlueColorNormal = 244;
             break;
-        case CTEMP_Warm1: //5700K
+        case CTEMP_Warm1: //6500K
             UserPrefRedColorWarm1 = 255;
             UserPrefGreenColorWarm1 = 232;
             UserPrefBlueColorWarm1 = 240;
@@ -3053,24 +3061,24 @@ void ReadColorTempSetting( void )
             break;
     #else
         case CTEMP_Cool1: //9300K
-            UserPrefRedColorCool1 = 116;
-            UserPrefGreenColorCool1 = 120;
-            UserPrefBlueColorCool1 = 128;
+            UserPrefRedColorCool1 = DefCool_RedColor;
+            UserPrefGreenColorCool1 = DefCool_GreenColor;
+            UserPrefBlueColorCool1 = DefCool_BlueColor;
             break;
-        case CTEMP_Normal: //6500K
-            UserPrefRedColorNormal = 122;
-            UserPrefGreenColorNormal = 128;
-            UserPrefBlueColorNormal = 122;
+        case CTEMP_Normal:
+            UserPrefRedColorNormal = DefNormal_RedColor;
+            UserPrefGreenColorNormal = DefNormal_GreenColor;
+            UserPrefBlueColorNormal = DefNormal_BlueColor;
             break;
-        case CTEMP_Warm1: //5700K
-            UserPrefRedColorWarm1 = 128;
-            UserPrefGreenColorWarm1 = 116;
-            UserPrefBlueColorWarm1 = 120;
+        case CTEMP_Warm1: //6500K
+            UserPrefRedColorWarm1 = DefWarm_RedColor;
+            UserPrefGreenColorWarm1 = DefWarm_GreenColor;
+            UserPrefBlueColorWarm1 = DefWarm_BlueColor;
             break;
         case CTEMP_SRGB:
-            UserPrefRedColorSRGB = 122;
-            UserPrefGreenColorSRGB = 128;
-            UserPrefBlueColorSRGB = 122;
+            UserPrefRedColorSRGB = DefsRGB_RedColor;
+            UserPrefGreenColorSRGB = DefsRGB_GreenColor;
+            UserPrefBlueColorSRGB = DefsRGB_BlueColor;
             break;
     #endif
     }
@@ -4012,6 +4020,7 @@ Bool AdjustBurnin( void )
     {
         Set_BurninModeFlag();
         Set_DoBurninModeFlag();      //110928 Rick modified for do burnin mode while burnin on - A027
+	PatternNo = 7;
     }
 #if USEFLASH
     //SaveMonitorSetting();
