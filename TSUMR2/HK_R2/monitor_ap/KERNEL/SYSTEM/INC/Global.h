@@ -936,6 +936,9 @@ extern BYTE SystemVccDropDownCnt;
 #ifndef DEF_FAC_BRIGHTNESS_75
 #define	DEF_FAC_BRIGHTNESS_75	80
 #endif
+#ifndef DEF_FAC_BRIGHTNESS_99
+#define	DEF_FAC_BRIGHTNESS_99	100
+#endif
 #ifndef DEF_FAC_BRIGHTNESS_100
 #if (LiteMAX_Baron_UI == 1)
 #define	DEF_FAC_BRIGHTNESS_100	99
