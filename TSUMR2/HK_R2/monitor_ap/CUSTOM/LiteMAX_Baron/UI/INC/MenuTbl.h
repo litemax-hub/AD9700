@@ -9283,7 +9283,7 @@ MenuPageType code tblMenus[] =
         sizeof( HotKeyBrightnessMenuItems ) / sizeof( MenuItemType ), // MenuItemCount;
         NULL, // ExecFunction;
         NULL, // Fonts
-        mpbStay | mpbCenter |mpbBrowse //|mpbRedraw //   Flags;
+        mpbStay | mpbRedraw //   Flags;
     },
 #if AudioFunc
     // 54 HotKeyVolMenu,

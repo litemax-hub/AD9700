@@ -236,6 +236,26 @@ typedef enum
   MAIN_POWER_MAX_ICON
 }MainMenuPowerIconType;
 
+typedef enum
+{
+  BrightnessSub_Osd_Item = 0,
+  BrightnessSub_Contrast_Item,
+  BrightnessSub_VR_Item,
+  BrightnessSub_Serisor_Item,
+  BrightnessSub_Offset_Item,
+  BrightnessSub_Exit_Item
+}BrightnessSubItemsType;
+
+typedef enum
+{
+  BrightnessSub_Osd_Icon = 0,
+  BrightnessSub_Brightness_Icon,
+  BrightnessSub_Contrast_Icon,
+  BrightnessSub_VR_Icon,
+  BrightnessSub_Serisor_Icon,
+  BrightnessSub_Offset_Icon
+}BrightnessSubIconType;
+
 //MAIN_COLOR_ITEM
 typedef enum
 {

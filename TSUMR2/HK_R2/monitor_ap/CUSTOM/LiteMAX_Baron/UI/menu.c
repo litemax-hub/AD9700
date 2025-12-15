@@ -1557,7 +1557,7 @@ void DrawOsdMenu( void )
             Osd_SetWindowSize( CurrentMenu.XSize, CurrentMenu.YSize );
             if( FactoryModeFlag )
             {
-                Osd_SetPosition( 0, 100 );
+                Osd_SetPosition( 69, 1 );
             }
             else if (CurrentMenu.Flags &mpbCenter)
             {
@@ -1807,8 +1807,8 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 		{
 			Osd_DrawPropStr( menuItem->XPos, menuItem->YPos, menuItem->DisplayText() );
 			OsdFontColor=FOUR_COLOR(6);
-			redrawIcon = MAIN_LUMINANCE_ICON;
-			DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
+			redrawIcon = BrightnessSub_Brightness_Icon;
+			DrawOsdIcon(SubMenuIcon_X_Start, SubMenuIcon_Y_Start, MainIcon4C_1_BrightnessSub+(redrawIcon *(6*2)));
 		}
 		#if ENABLE_SHARPNESS
 		else if( MenuPageIndex == SharpnessMenu )
@@ -1873,7 +1873,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				if (MenuItemIndex == itemIndex)
 					OsdFontColor = FOUR_COLOR(10);
 				else
-					OsdFontColor = FOUR_COLOR(15);
+					OsdFontColor = FOUR_COLOR(6);
 				redrawIcon = LoadDefaultSubYes_Icon;
 				DrawOsdIcon(SubMenuIcon_X_Start+ 11, SubMenuIcon_Y_Start+1, MainIcon4C_LoadDefaultSub+(redrawIcon *(6*2)));
 			}
@@ -1882,7 +1882,7 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 				if (MenuItemIndex == itemIndex)
 					OsdFontColor = FOUR_COLOR(10);
 				else
-					OsdFontColor = FOUR_COLOR(15);
+					OsdFontColor = FOUR_COLOR(6);
 				redrawIcon = LoadDefaultSubNo_Icon;
 				DrawOsdIcon(SubMenuIcon_X_Start+ 15, SubMenuIcon_Y_Start+1, MainIcon4C_LoadDefaultSub+(redrawIcon *(6*2)));
 			}
@@ -1890,8 +1890,8 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 		else if( MenuPageIndex == HotKeyBrightnessMenu )
 		{
 			OsdFontColor = FOUR_COLOR(6);
-			redrawIcon = MAIN_BRIGHTNESS_ITEM;
-			DrawOsdIcon(9, 1, MainIcon4C_0_MainMenuIcon+(redrawIcon *(6*2)));
+			redrawIcon = BrightnessSub_Brightness_Icon;
+			DrawOsdIcon(9, 1, MainIcon4C_1_BrightnessSub+(redrawIcon *(6*2)));
 		}
 	}
 	else

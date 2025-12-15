@@ -227,7 +227,14 @@ WORD DecIncValue( MenuItemActionType action, WORD value, WORD minValue, WORD max
         {
             return value;
         }
+        #if LiteMAX_Baron_OSD_TEST
+        if(value<=step)
+            maxValue = 0;
+        else
+            maxValue = value - step;
+        #else
         maxValue = value - step;
+        #endif
         if( maxValue < minValue )
         {
             maxValue = minValue;
@@ -1905,7 +1912,7 @@ Bool AdjustRedColor( MenuItemActionType action )
 {
     WORD tempValue;
     tempValue = DecIncValue( action, UserPrefRedColor, MinColorValue, MaxColorValue, (( UserPrefColorTemp == CTEMP_USER ) ? 2 : 1 ) );
-    if( tempValue == UserPrefRedColor )
+	if( tempValue == UserPrefRedColor )
     {
         return FALSE;
     }
@@ -1914,7 +1921,8 @@ Bool AdjustRedColor( MenuItemActionType action )
 #if 0//UsesRGB
     mStar_AdjustContrast( UserPrefContrast );
 #else
-    msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+    //msAPI_AdjustRGBColor(MAIN_WINDOW, UserPrefContrast, UserPrefRedColorUser, UserPrefGreenColorUser, UserPrefBlueColorUser);
+	mStar_AdjustRedColor( UserPrefRedColorUser, UserPrefContrast );
 #endif
     return TRUE;
 }
