@@ -49,7 +49,7 @@
 #ifdef TSUMR2_FPGA
 #define PanelType                   PanelCMIM236HGJ_L21_FPGA  // FPGA
 #else
-#define PanelType                   PanelCMIM236HGJ_L21//PanelCMO190//PanelM250HTN01//PanelAUOM185XW01//PanelCMIM236HGJ_L21//PanelCMIM236HGJ_L21
+#define PanelType                   PanelCMO190//PanelM250HTN01//PanelAUOM185XW01//PanelCMIM236HGJ_L21//PanelCMIM236HGJ_L21
 #endif
 */
 ////////////////////////////////////////////////////////////
@@ -303,6 +303,7 @@
 
 #define LiteMAX_OSD_TEST		1
 #define ENABLE_OSD_ROTATION		0
+#define DISABLE_POWERSAVING		0
 
 #endif
 

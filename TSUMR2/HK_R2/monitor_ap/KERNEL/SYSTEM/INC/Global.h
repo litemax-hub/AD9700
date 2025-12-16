@@ -923,7 +923,7 @@ extern BYTE SystemVccDropDownCnt;
 #define DEF_ADC_GREEN_GAIN  0x1000
 #define DEF_ADC_BLUE_GAIN   0x1000
 #define DEF_ADC_OFFSET      0x00
-#if (LiteMAX_Baron_UI == 1)
+#if (LiteMAX_UI == 1) || (LiteMAX_Baron_UI == 1)
 #ifndef DEF_FAC_BRIGHTNESS_0
 #define DEF_FAC_BRIGHTNESS_0	20
 #endif
@@ -1234,9 +1234,11 @@ extern volatile WORD xdata TimeOutCounter;
 #define UserPref2Dto3DGain          MonitorSetting.T3DGain
 #define UserPref2Dto3DOffset        MonitorSetting.T3DOffset
 
+#if (LiteMAX_UI == 1)||(LiteMAX_Baron_UI == 1)
+
 #if (LiteMAX_Baron_UI == 1)
 #define UserprefPowerKeyEnable      MonitorSetting.PowerKeyEnable
-
+#endif
 //======== FACTORY MENU FUNCTION ===============//
 #define FUserPrefBrightness_0       FactorySetting.FBrightness_0
 #define FUserPrefBrightness_25      FactorySetting.FBrightness_25

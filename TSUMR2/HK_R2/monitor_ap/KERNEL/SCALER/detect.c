@@ -386,7 +386,9 @@ void mStar_MonitorInputTiming( void )
                     mStar_SetupInputPort();
                 }
 #endif
-
+				#if DISABLE_AUTO_SWITCH
+				Set_ShowInputInfoFlag();
+				#endif
             }
 
 

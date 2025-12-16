@@ -267,6 +267,7 @@
 
 #define DISABLE_DP_FAKESLEEP    0
 #define DISABLE_DPMS            0
+#define DISABLE_POWERSAVING		0
 
 #endif
 
