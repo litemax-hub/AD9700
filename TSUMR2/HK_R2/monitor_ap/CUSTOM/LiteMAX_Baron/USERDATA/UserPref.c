@@ -299,13 +299,17 @@ Bool CheckMonitorSettingOutOfRange( void )
         UserPrefVolume  > 100 ||
 #endif
         UserPrefLanguage >= LANG_Nums ||
+#if 0
         UserPrefOsdHStart > 100 ||
         UserPrefOsdHStart % 5 != 0 ||
         UserPrefOsdVStart > 100 ||
         UserPrefOsdVStart % 5 != 0 ||
-        UserPrefOsdTime > 100 ||
-        UserPrefOsdTime < 5 ||
+#endif
+        UserPrefOsdTime > OSD_TIME_MAX ||
+        UserPrefOsdTime < OSD_TIME_MIN ||
+#if 0
         UserPrefOsdTime % 5 != 0 ||
+#endif
         UserPrefDcrMode > 2 ||
         UserPrefHue > 100 ||
 #if MWEFunction
