@@ -31,7 +31,7 @@
 #define SNNumber                          "990060101900"
 #define PanelType                       PanelBOEDV195FBB_N10
 #define BRIGHTNESS_INVERSE              0
-#define EDID_DP                             E_EDID_TBL_995991142502
+#define EDID_DP                             E_EDID_TBL_995991152502
 #else
 #define FWdevelopVCS                        1
 #define FWVersionCS                         10

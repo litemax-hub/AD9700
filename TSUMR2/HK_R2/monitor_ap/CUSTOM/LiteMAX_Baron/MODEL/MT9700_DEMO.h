@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////
 // LiteMAX PPS SELECTION
 ////////////////////////////////////////////////////////////
-#define StandardBoardPPS			P2506168
+#define StandardBoardPPS			P2506168//P0000000
 
 ////////////////////////////////////////////////////////////
 // PROJECT DEFINE
@@ -27,15 +27,17 @@
 #define FWdevelopVCS                        1
 #define FWVersionCS                         10
 #define FWVersion                           "1.0"
-#define SNNumber                          "990060101900"
+#define FwPartNo				"990060101900"
+#define ModelNameInfo           "LEI.B195.101"
 #define PanelType                       PanelBOEDV195FBB_N10
 #define BRIGHTNESS_INVERSE              0
-#define EDID_DP                             E_EDID_TBL_995991142502
+#define EDID_DP                             E_EDID_TBL_995991152502
 #else
 #define FWdevelopVCS                        1
 #define FWVersionCS                         10
 #define FWVersion                           "1.0"
-#define SNNumber                          "000000000000"
+#define ModelNameInfo           "000.0000.000"
+#define FwPartNo				"000000000000"
 #define PanelType                       PanelCMIM236HGJ_L21//PanelCMO190
 #endif
 
@@ -303,8 +305,6 @@
 #define LiteMAX_Baron_OSD_TEST	1
 #define ENABLE_OSD_ROTATION		0
 
-#define FwPartNo				"990060101900"
-#define ModelNameInfo           "LEI.B195.101"
 #define DISABLE_POWERSAVING		1
 
 #endif
