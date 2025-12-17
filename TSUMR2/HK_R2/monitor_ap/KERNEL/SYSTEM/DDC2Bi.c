@@ -45,11 +45,11 @@
 #include "DDCMCCSMSCHandler.h"
 #endif
 
-#define CTEMP_6500K CTEMP_Normal//CTEMP_Warm1
+#define CTEMP_6500K CTEMP_Warm1
 #define CTEMP_9300K CTEMP_Cool1
-#define UserPrefRedColor6500K UserPrefRedColorNormal//UserPrefRedColorWarm1
-#define UserPrefGreenColor6500K UserPrefGreenColorNormal//UserPrefGreenColorWarm1
-#define UserPrefBlueColor6500K UserPrefBlueColorNormal//UserPrefBlueColorWarm1
+#define UserPrefRedColor6500K UserPrefRedColorWarm1
+#define UserPrefGreenColor6500K UserPrefGreenColorWarm1
+#define UserPrefBlueColor6500K UserPrefBlueColorWarm1
 #define UserPrefRedColor9300K UserPrefRedColorCool1
 #define UserPrefGreenColor9300K UserPrefGreenColorCool1
 #define UserPrefBlueColor9300K UserPrefBlueColorCool1
@@ -121,7 +121,11 @@ BYTE code DVI_CAP_VCP[] =
     BYTE code DP_CAP_VCP[] =
 {
     "("
+#if (LiteMAX_Baron_UI == 1)
+    "vcp(04 05 08 10 14(05 0B) 16 18 1A C0 C8 DF"    
+#else
     "vcp(04 05 08 10 12 14(01 05 08 0B) 16 18 1A 60(01 03 0F 11)"
+#endif
 #if AudioFunc
     "62 "
 #endif
@@ -610,11 +614,16 @@ BYTE AlignControl( void )
         || CURRENT_INPUT_IS_DISPLAYPORT()
 #endif
             )
-            WordValue = sizeof( DVI_CAP_VCP );
-#if 0
-        else if(CURRENT_INPUT_IS_DISPLAYPORT())
+
+	{
+#if ENABLE_DP_INPUT
+        if(CURRENT_INPUT_IS_DISPLAYPORT())
             WordValue = sizeof( DP_CAP_VCP );
+	else
 #endif
+            WordValue = sizeof( DVI_CAP_VCP );
+	}
+	else
         #endif
             WordValue = sizeof( CAP_VCP );
         if( WordAddr >= WordValue )
@@ -633,15 +642,18 @@ BYTE AlignControl( void )
         {
             #if INPUT_TYPE!=INPUT_1A
             if( CURRENT_INPUT_IS_TMDS()
-        #if ENABLE_DP_INPUT
+#if ENABLE_DP_INPUT
         || CURRENT_INPUT_IS_DISPLAYPORT()
-        #endif
-        )
-                DDCBuffer[ValueL] = DVI_CAP_VCP[WordAddr + ValueL - 4];
-#if 0
-            else if(CURRENT_INPUT_IS_DISPLAYPORT())
-                DDCBuffer[ValueL] = DP_CAP_VCP[WordAddr + ValueL - 4];
 #endif
+        )
+	{
+#if ENABLE_DP_INPUT
+            if(CURRENT_INPUT_IS_DISPLAYPORT())
+                DDCBuffer[ValueL] = DP_CAP_VCP[WordAddr + ValueL - 4];
+	     else
+#endif
+                DDCBuffer[ValueL] = DVI_CAP_VCP[WordAddr + ValueL - 4];
+	}
             else
             #endif
                 DDCBuffer[ValueL] = CAP_VCP[WordAddr + ValueL - 4];
@@ -1150,14 +1162,24 @@ BYTE AlignControl( void )
 #endif
         else if( CPCode == Color_Reset && PageValue == 0 )
         {
+#if (LiteMAX_Baron_UI == 1)
+            UserPrefRedColorUser = DefWarm_RedColor;
+            UserPrefGreenColorUser = DefWarm_GreenColor;
+            UserPrefBlueColorUser = DefWarm_BlueColor;
+#else
             UserPrefRedColorUser = DefRedColor;
             UserPrefGreenColorUser = DefGreenColor;
             UserPrefBlueColorUser = DefBlueColor;
+#endif
             UserprefRedBlackLevel = 50;
             UserprefGreenBlackLevel = 50;
             UserprefBlueBlackLevel = 50;
             mStar_AdjustUserPrefBlacklevel( UserprefRedBlackLevel, UserprefGreenBlackLevel, UserprefBlueBlackLevel );
-            UserPrefColorTemp = CTEMP_USER; //CTEMP_9300K 20051115 wmz
+#if (LiteMAX_Baron_UI == 1)
+            UserPrefColorTemp = CTEMP_Warm1;
+#else
+            UserPrefColorTemp = CTEMP_USER;
+#endif
             if( WordValue != 0 )
                 SetColorTemp();
             ValueL = 1;

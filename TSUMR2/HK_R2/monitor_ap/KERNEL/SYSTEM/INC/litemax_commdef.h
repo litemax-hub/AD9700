@@ -15,6 +15,9 @@
 #ifndef BRIGHTNESS_INVERSE
 #define BRIGHTNESS_INVERSE                             1
 #endif
+#ifndef AC_POWERON
+#define AC_POWERON                          0 // 1 = Power always ON , 0 = Last Memory
+#endif
 
 ////////////////////////////////////////////////////////////
 // LITEMAX MAINBOARD TYPE DEFINE

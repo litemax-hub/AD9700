@@ -208,6 +208,11 @@ int main( void )
 #else
     ReadMonitorSetting();
 #endif
+
+#if AC_POWERON
+    Set_PowerOnFlag();
+#endif
+
 //UserPrefInputPriorityType = Input_Priority_Auto;
     CustomCb_CbFunnction_Init();
 
