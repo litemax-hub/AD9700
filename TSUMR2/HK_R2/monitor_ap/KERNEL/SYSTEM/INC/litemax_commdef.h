@@ -10,15 +10,29 @@
 // IF not DEFINE
 ////////////////////////////////////////////////////////////
 #ifndef EDID_DP
-#define EDID_DP                             0
+#define EDID_DP					0
 #endif
 #ifndef BRIGHTNESS_INVERSE
-#define BRIGHTNESS_INVERSE                             1
+#define BRIGHTNESS_INVERSE		1
 #endif
 #ifndef AC_POWERON
-#define AC_POWERON                          0 // 1 = Power always ON , 0 = Last Memory
+#define AC_POWERON				0// 1 = Power always ON , 0 = Last Memory
 #endif
-
+#ifndef OSD_movePIXEL
+#define OSD_movePIXEL			0// 1= OSD movement
+#endif
+#ifndef OSDH_start
+#define OSDH_start				0
+#endif
+#ifndef OSDH_end
+#define OSDH_end				PanelWidth
+#endif
+#ifndef OSDV_start
+#define OSDV_start				0
+#endif
+#ifndef OSDV_end
+#define OSDV_end				PanelHeight
+#endif
 ////////////////////////////////////////////////////////////
 // LITEMAX MAINBOARD TYPE DEFINE
 ////////////////////////////////////////////////////////////

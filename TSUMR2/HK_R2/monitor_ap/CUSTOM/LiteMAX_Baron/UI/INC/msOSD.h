@@ -54,6 +54,9 @@ extern void Osd_DrawFactoryNum( BYTE xPos, BYTE yPos, int value);//WORD value );
 extern void Osd_Draw4Num( BYTE xPos, BYTE yPos, int value);//WORD value );
 extern void Osd_DrawHex( BYTE xPos, BYTE yPos, WORD value );
 extern void Osd_SetPosition( BYTE xPos, BYTE yPos );
+#if OSD_movePIXEL
+extern void Osd_SetPosition_Pixel( WORD xPos, WORD yPos );
+#endif
 extern void Osd_SetWindowSize( BYTE width, BYTE height );
 extern void Osd_SetTextColor( BYTE foreColor, BYTE backColor );
 //extern void Osd_DrawChar(BYTE xPos, BYTE yPos, BYTE ch);

@@ -311,6 +311,30 @@ void Osd_SetPosition( BYTE xPos, BYTE yPos )
     MENU_LOAD_END();
 }
 
+#if OSD_movePIXEL
+void Osd_SetPosition_Pixel( WORD xPos, WORD yPos )
+{
+#if 0//ENABLE_SW_DOUBLE_BUFFER
+    msSWDBWriteToRegister();
+    msSWDBWaitForRdy();
+#endif
+    DB_W2B ( ( OSD_WIN1 << 5 ) + OSD2_04, xPos );
+    DB_W2B ( ( OSD_WIN1 << 5 ) + OSD2_08, xPos + ( WORD ) ((OsdWindowWidth) * 12) );
+
+    DB_W2B ( ( OSD_WIN1 << 5 ) + OSD2_06, yPos );
+    DB_W2B ( ( OSD_WIN1 << 5 ) + OSD2_0A, yPos + ( WORD ) ((OsdWindowHeight )* 18) );
+
+#if 0//ENABLE_SW_DOUBLE_BUFFER
+    #if CHIP_ID==CHIP_TSUMF // TSUMF no VDE end trig source, instead by OSD_VDE_End sw polling & trigger
+    msSWDBWriteToRegisterByOsdEnd();
+    #else
+    msSWDBWriteToRegister();
+    #endif
+    msSWDBWaitForRdy();
+#endif
+}
+#endif
+
 void Osd_SetTextMonoColor( BYTE foreColor, BYTE backColor )
 {
     OsdFontColor = ( foreColor & 0xF ) << 4 | ( backColor & 0xF );

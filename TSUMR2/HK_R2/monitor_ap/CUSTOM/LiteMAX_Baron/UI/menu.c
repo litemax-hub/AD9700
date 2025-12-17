@@ -68,6 +68,10 @@ BYTE xdata PrevMenuItemIndex = 0;
 BYTE xdata TurboKeyCounter = 0;
 BYTE xdata moveX = 50;
 BYTE xdata moveY = 50;
+#if OSD_movePIXEL
+WORD xdata u16movXpos;
+WORD xdata u16movYpos;
+#endif
 
 BYTE xdata ucClrItem;
 //========================================================================
@@ -506,6 +510,54 @@ printf("\r\n OsdTimeoutFlag");
         if( CurrentMenu.Flags & mpbMoving && !PowerSavingFlag )
             // && FreeRunModeFlag) // for led flash
         {
+#if OSD_movePIXEL
+            if( ReverseXFlag )
+            {
+                if(u16movXpos > (OSDH_start+1))
+                {
+                    u16movXpos -= 1;
+                }    
+                else
+                {
+                    u16movXpos = OSDH_start;
+                    Clr_ReverseXFlag();
+                }
+            }
+            else
+            {
+                u16movXpos++;
+            }
+            if( u16movXpos >= ( OSDH_end - ( WORD )OsdWindowWidth * 12 ) )
+            {
+                u16movXpos = ( OSDH_end - ( WORD )OsdWindowWidth * 12 );
+                Set_ReverseXFlag();
+            }
+            if( ReverseYFlag )
+            {
+                if(u16movYpos > (OSDV_start+2))
+                {
+                    u16movYpos -= 2;
+                }    
+                else
+                {
+                    u16movYpos = OSDV_start;
+                    Clr_ReverseYFlag();
+                }
+            }
+            else
+            {
+                u16movYpos++;
+            }
+            if( u16movYpos >= ( OSDV_end - ( WORD )OsdWindowHeight * 18 ) )
+            {
+                u16movYpos = ( OSDV_end - ( WORD )OsdWindowHeight * 18 );
+                Set_ReverseYFlag();
+            }
+
+            //printData("--->osd X:%d",moveX);
+            //printData("--->osd Y:%d",moveY);
+            Osd_SetPosition_Pixel( u16movXpos, u16movYpos );
+#else
             if( ReverseXFlag )
             {
                 if( moveX == 0 )
@@ -563,6 +615,7 @@ printf("\r\n OsdTimeoutFlag");
             //printData("--->osd X:%d",moveX);
             //printData("--->osd Y:%d",moveY);
             Osd_SetPosition( moveX, moveY );
+#endif
         }
     }
 
@@ -1626,6 +1679,10 @@ void DrawOsdMenu( void )
             }
             else if (MenuPageIndex == StandbyMenu || MenuPageIndex == CableNotConnectedMenu)
             {
+#if OSD_movePIXEL
+			u16movXpos = (OSDH_end - MAIN_MENU_H_SIZE * 6) / 2;
+			u16movYpos = (OSDV_end - MAIN_MENU_V_SIZE * 6) / 2;
+#endif
                 DrawNosignalInfo();
             }
 

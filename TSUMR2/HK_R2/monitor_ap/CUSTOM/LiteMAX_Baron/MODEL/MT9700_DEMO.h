@@ -30,9 +30,11 @@
 #define FwPartNo				"990060101900"
 #define ModelNameInfo           "LEI.B195.201"
 #define PanelType                       PanelBOEDV195FBB_N10
-#define BRIGHTNESS_INVERSE              0
+//Custom parameters
 #define EDID_DP                             E_EDID_TBL_995991152502
+#define BRIGHTNESS_INVERSE              0
 #define AC_POWERON			1// 1 = Power always ON , 0 = Last Memory
+#define OSD_movePIXEL		1// 1= OSD movement
 #else
 #define FWdevelopVCS                        1
 #define FWVersionCS                         10
