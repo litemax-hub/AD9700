@@ -258,7 +258,7 @@ void Key_ScanKeypad( void )
                 SaveMonitorSetting();
                 #endif
             }
-            else if( keypadStatus == KEY_FACTORY ) // 100524 coding addition for factory key
+            else if( (keypadStatus == KEY_FACTORY) && !SyncLossState() ) // 100524 coding addition for factory key
             {
                 if( PowerOnFlag && MenuPageIndex <= RootMenu)
                 {

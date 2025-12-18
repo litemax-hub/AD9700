@@ -206,7 +206,7 @@ void Key_ScanKeypad( void )
             return;
         }
         if( KeypadButton == BTN_Repeat && keypadStatus != KEY_LOCK
-#if ENABLE_TOUCH_KEY
+#if 1//ENABLE_TOUCH_KEY
                 && keypadStatus != KEY_FACTORY // 100524 coding addition for factory key
 #endif
         )        // 0105
@@ -249,8 +249,7 @@ void Key_ScanKeypad( void )
                 SaveMonitorSetting();
                 #endif
             }
-#if ENABLE_TOUCH_KEY
-            else if( keypadStatus == KEY_FACTORY ) // 100524 coding addition for factory key
+            else if( (keypadStatus == KEY_FACTORY) && !SyncLossState() ) // 100524 coding addition for factory key
             {
                 if( !PowerOnFlag )
                 {
@@ -263,7 +262,6 @@ void Key_ScanKeypad( void )
                     //            KeypadButton = BTN_Power;
                 }
             }
-#endif
             else
 #endif
                 if( keypadStatus == KEY_PLUS )

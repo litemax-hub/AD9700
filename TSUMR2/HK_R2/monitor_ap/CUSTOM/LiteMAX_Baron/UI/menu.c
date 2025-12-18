@@ -360,7 +360,7 @@ void Menu_OsdHandler( void )
         {
             if (!InputTimingStableFlag||SyncLossState())    // Annie 2011.10.10 modify for BurnIn mode needn't press OSD
             {
-                if (((menuAction!=MIA_Power) && (menuAction!=MIA_SourceSel)) && (MenuPageIndex!=HotInputSelectMenu))
+                if (((menuAction!=MIA_Power) && (menuAction!=MIA_SourceSel)) && (MenuPageIndex!=HotInputSelectMenu) && (MenuPageIndex != FactoryMenu))
                     menuAction=MIA_Nothing;
             }
             else if( menuAction != MIA_Power && OsdLockModeFlag ) //080103 prevent key event if Osd Locked
