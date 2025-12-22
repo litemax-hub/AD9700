@@ -32,8 +32,8 @@
 #define OSD_TIME_MIN	2
 
 #if (LiteMAX_Baron_UI == 1)
-#define DEF_OSD_H_POSITION		69
-#define DEF_OSD_V_POSITION		1
+#define DEF_OSD_H_POSITION		73
+#define DEF_OSD_V_POSITION		4
 #else
 #define DEF_OSD_H_POSITION		50
 #define DEF_OSD_V_POSITION		50

@@ -1610,7 +1610,7 @@ void DrawOsdMenu( void )
             Osd_SetWindowSize( CurrentMenu.XSize, CurrentMenu.YSize );
             if( FactoryModeFlag )
             {
-                Osd_SetPosition( 69, 1 );
+                Osd_SetPosition( 69, 6 );
             }
             else if (CurrentMenu.Flags &mpbCenter)
             {
