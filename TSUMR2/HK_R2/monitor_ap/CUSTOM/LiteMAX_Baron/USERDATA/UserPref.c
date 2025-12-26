@@ -279,11 +279,11 @@ void CheckColorValueRange( void )
         UserPrefContrast = DefContrast;
     }
 #if 1
-    if( UserPrefRedColor >= MaxColorValue )
+    if( UserPrefRedColor > MaxColorValue )
         UserPrefRedColor = DefRedColor;
-    if( UserPrefGreenColor >= MaxColorValue )
+    if( UserPrefGreenColor > MaxColorValue )
         UserPrefGreenColor = DefGreenColor;
-    if( UserPrefBlueColor >= MaxColorValue )
+    if( UserPrefBlueColor > MaxColorValue )
         UserPrefBlueColor = DefBlueColor;
 #endif
 }
