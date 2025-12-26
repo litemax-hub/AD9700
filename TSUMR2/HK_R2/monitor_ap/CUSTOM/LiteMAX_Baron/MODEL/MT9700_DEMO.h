@@ -35,6 +35,7 @@
 #define BRIGHTNESS_INVERSE              0
 #define AC_POWERON			1// 1 = Power always ON , 0 = Last Memory
 #define OSD_movePIXEL		1// 1= OSD movement
+//#define ENABLE_BOE_NEW_SZ_DDCCI_SPEC                1 // 0:Disable 1:Enable
 #else
 #define FWdevelopVCS                        1
 #define FWVersionCS                         10
@@ -107,7 +108,7 @@
 #define ENABLE_DLC                      0
 #define ENABLE_DPS                      (0 && ENABLE_DLC)
 #define ENABLE_DCR                      0
-#define ENABLE_SUPER_RESOLUTION         1
+#define ENABLE_SUPER_RESOLUTION         0// 1
 #define ENABLE_COLORMODE_DEMO           0
 #define ENABLE_SHARPNESS                0
 #define ENABLE_LOCALDIMMING             0

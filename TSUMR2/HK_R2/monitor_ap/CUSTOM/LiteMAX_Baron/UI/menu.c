@@ -2456,10 +2456,12 @@ BYTE GetMenuItemIndex( BYTE menuPageIndex )
             return MAIN_BRIGHTNESS_ITEM;
         }
 		#if ENABLE_SHARPNESS
+#if 0
         else if( menuPageIndex == SharpnessMenu )
         {
             return MAIN_SHARPNESS_ITEM;
         }
+#endif
 		#endif
 #if 0//ARISTOCRAT_OSD_DVIDP//David add at 20250116
         else if( menuPageIndex == SignalMenu )

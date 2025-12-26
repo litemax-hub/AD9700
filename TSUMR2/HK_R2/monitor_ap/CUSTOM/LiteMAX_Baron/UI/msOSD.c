@@ -314,6 +314,7 @@ void Osd_SetPosition( BYTE xPos, BYTE yPos )
 #if OSD_movePIXEL
 void Osd_SetPosition_Pixel( WORD xPos, WORD yPos )
 {
+	MENU_LOAD_START();
 #if 0//ENABLE_SW_DOUBLE_BUFFER
     msSWDBWriteToRegister();
     msSWDBWaitForRdy();
@@ -332,6 +333,7 @@ void Osd_SetPosition_Pixel( WORD xPos, WORD yPos )
     #endif
     msSWDBWaitForRdy();
 #endif
+	MENU_LOAD_END();
 }
 #endif
 

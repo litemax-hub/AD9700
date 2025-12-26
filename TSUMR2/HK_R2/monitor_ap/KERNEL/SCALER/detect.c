@@ -71,7 +71,7 @@
 #define SyncValidCount_HDMI         50
 #define SyncLossCount_HDMI          250
 #define SyncValidCount_DP           50
-#define SyncLossCount_DP            200
+#define SyncLossCount_DP            100//200
 ////////////////////////////////////////////////////////////////////////
 
 #define SyncValidCount_Digital  ((CURRENT_INPUT_IS_DISPLAYPORT())?(SyncValidCount_DP):((CURRENT_INPUT_IS_HDMI())?(SyncValidCount_HDMI):(SyncValidCount_DVI)))
