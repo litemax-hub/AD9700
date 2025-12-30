@@ -145,6 +145,9 @@ extern BYTE XDATA glSYS_TypeC_PostponeHPDFlag;
 #endif
 BYTE code msMainNullData[] = {0};
 BOOL xdata glbIPRxInitHPD_DONE_FLAG;
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+extern BYTE XDATA g_ucForceOnlyRunDDCCI;
+#endif
 
 void msMainDummy(void)
 {
@@ -268,6 +271,9 @@ int main( void )
 			#endif
     	}
 
+#if 0//ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+	if ( g_ucForceOnlyRunDDCCI == DISABLE )
+#endif
         Main_SlowTimerHandler();
 
 #if UART1
@@ -292,6 +298,12 @@ int main( void )
 		DDC2Bi_CommandHandler();
         if(bRunToolFlag)
             continue;
+#if 0//ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+	if ( g_ucForceOnlyRunDDCCI )
+	{
+		continue;
+	}
+#endif
 
 #if ENABLE_DP_INPUT
         mapi_DPRx_Handler();

@@ -164,3 +164,11 @@ extern void DDC2BI_DP(BYTE dprx_id);
 // maximum wait time (msec) for getting the transmit buffer
 #define MAX_TXWAIT_DELAY            20
 #define Response_Command_LENGTH     4
+
+////////////////////////////////////////////////////////////
+// BOE Factory Auto
+////////////////////////////////////////////////////////////
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+#define VCP_BOE_FACTORY_ALIGNMENT   0xFB
+extern void SetColorTempDDCCI(void);
+#endif

@@ -5659,6 +5659,142 @@ WORD GetFBrightness_100Value( void )
     return FUserPrefBrightness_100;
 }
 
+//#if FAC_BrightnessAutoCalculate || ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+static void calculateBrightnessLevels(BYTE brightness0, BYTE brightness100)
+{
+/*先拿掉make看看
+    float range = (float)(brightness100 - brightness0);
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_25 = (BYTE)round(brightness0 + range * 0.25f);
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_50 = (BYTE)round(brightness0 + range * 0.50f);
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75 = (BYTE)round(brightness0 + range * 0.75f);
+*/
+}
+#endif
+
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+Bool DDCCI_AdjustLID_Mode(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉make看看
+	if (DDC_Data == USER_PREF_FAC_LIDMODE)
+        return FALSE;
+
+	USER_PREF_FAC_LIDMODE = DDC_Data;
+	if (GetBacklightModeValue() == EN_BL_MODE_OSD) {
+		if (USER_PREF_FAC_LIDMODE == BL_LID_MODE_PWM) {
+				msAPIPWMFreq(BACKLIGHT_PWM,DIMMING_PWM_HZ);
+		}
+		else {
+				msAPIPWMFreq(BACKLIGHT_PWM,DIMMING_DC_HZ);
+		}
+        #if EnablePQSettingsByPort
+			msAPI_AdjustBrightness(USER_PREF_BRIGHTNESS(SrcInputPortM));
+        #else
+			msAPI_AdjustBrightness(USER_PREF_BRIGHTNESS);
+        #endif
+	}
+	else if (GetBacklightModeValue() == EN_BL_MODE_LS) {
+		if (USER_PREF_FAC_LIDMODE == BL_LID_MODE_PWM) {
+			msAPIPWMFreq(BACKLIGHT_PWM,DIMMING_PWM_HZ);
+		}
+		else {
+				msAPIPWMFreq(BACKLIGHT_PWM,DIMMING_DC_HZ);
+		}
+			msAPI_AdjustBrightness(LS_BacklightPrev);
+	}
+	else if (GetBacklightModeValue() == EN_BL_MODE_VR) {
+		if (USER_PREF_FAC_LIDMODE == BL_LID_MODE_PWM) {
+			msAPIPWMFreq(BACKLIGHT_PWM,DIMMING_PWM_HZ);
+		}
+		else {
+				msAPIPWMFreq(BACKLIGHT_PWM,DIMMING_DC_HZ);
+		}
+		
+		msAPI_AdjustBrightness(LS_BacklightPrev );
+	}
+	SetLidMode(DDC_Data);
+	
+	//SaveFactorySetting(); //FactoryBlockSave();
+
+	return TRUE;
+*/
+}
+
+void DDCCI_AdjDCCurve0(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉make看看
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0 = DDC_Data;
+    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0);
+*/
+}
+void DDCCI_AdjDCCurve25(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉make看看
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_25 = DDC_Data;
+    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_25);
+*/
+}
+void DDCCI_AdjDCCurve50(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉make看看
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_50 = DDC_Data;
+    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_50);
+*/
+}
+void DDCCI_AdjDCCurve75(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉make看看
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75 = DDC_Data;
+    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75);
+*/
+}
+void DDCCI_AdjDCCurve100(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉make看看
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100 = DDC_Data;
+   	msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100);
+*/
+}
+void DDCCI_AdjPWMCurve75(BYTE DDC_Data) //for LiteMax test
+{
+/*
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_PWM;
+    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75 = DDC_Data;
+    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75);
+*/
+	if (DDC_Data >= 	FUserPrefBrightness_100)
+		DDC_Data = FUserPrefBrightness_100;
+	else if (DDC_Data <= FUserPrefBrightness_50)
+		DDC_Data = FUserPrefBrightness_50;
+
+	FUserPrefBrightness_75 = DDC_Data;
+	mStar_FAdjustBrightness(FUserPrefBrightness_75);
+}
+void DDCCI_AdjPWMCurve0AutoCalculate(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉make看看
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_PWM;
+	USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0 = DDC_Data;
+	calculateBrightnessLevels(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0, USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100);
+    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0);
+*/
+}
+void DDCCI_AdjPWMCurve100AutoCalculate(BYTE DDC_Data) //for LiteMax test
+{
+/*先拿掉mark看看
+	USER_PREF_FAC_LIDMODE = BL_LID_MODE_PWM;
+	USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100 = DDC_Data;
+	calculateBrightnessLevels(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0, USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100);
+    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100);
+*/
+}
+#endif
+
 Bool FactoryReset(void)
 {
 	Init_FactorySetting();

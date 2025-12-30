@@ -35,6 +35,9 @@
 ////////////////////////////////////////////////////
 #include "drvDDC2Bi.h"
 //#include "halRwreg.h"
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+#include "FactoryAligment.h"
+#endif
 ///////////////////////////////////////////////////
 
 #if ENABLE_MTK_TEST
@@ -777,7 +780,53 @@ BYTE AlignControl( void )
 #endif
 
         //preliminary judge cmd finish, start detail process--------------------------------------------------
+printf("\r\nDDCBuffer[1] = %d\n",DDCBuffer[1]);
+printf("\r\nDDCBuffer[2] = %d\n",DDCBuffer[2]);
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+    if ( ( DDCBuffer[1] == BOE_VCPFeature && DDCBuffer[2] == VCP_BOE_FACTORY_ALIGNMENT )
+         || ( CommandCode == SETVCPFeature && CPCode == VCP_BOE_FACTORY_ALIGNMENT )
+         || ( CommandCode == GETVCPFeature && CPCode == VCP_BOE_FACTORY_ALIGNMENT )
+       )
+    {
+        drvFactoryAlignBOE ();
 
+        if ( CommandCode == GETVCPFeature )
+        {
+            if ( DFM_WRITECMD_REPLY_FLAG )
+            {
+                CLR_DFM_WRITECMD_REPLY_FLAG();
+            }
+            else
+            {
+                DDCBuffer[1] = 0x02;
+                DDCBuffer[2] = 0x00;
+                DDCBuffer[3] = CPCode;
+            }
+
+            return DDCBuffer[0] & ~DDC2Bi_CONTROL_STATUS_FLAG;
+        }
+        else if ( CommandCode == SETVCPFeature || CommandCode == BOE_VCPFeature )
+        {
+            if ( DFM_WRITECMD_REPLY_FLAG )
+            {
+                CLR_DFM_WRITECMD_REPLY_FLAG();
+            }
+            else
+            {
+                DDCBuffer[1] = 0x02;
+                DDCBuffer[2] = 0x00;
+                DDCBuffer[3] = CPCode;
+            }
+
+            return ( DDCBuffer[0] & ~DDC2Bi_CONTROL_STATUS_FLAG );
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+#endif
     if( CommandCode == GETVCPFeature || CommandCode == GETPagedVCP )
     {
         if( CommandCode == GETVCPFeature )

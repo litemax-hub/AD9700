@@ -33,6 +33,9 @@
 #ifndef OSDV_end
 #define OSDV_end				PanelHeight
 #endif
+#ifndef ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+#define ENABLE_BOE_NEW_SZ_DDCCI_SPEC		0
+#endif
 ////////////////////////////////////////////////////////////
 // LITEMAX MAINBOARD TYPE DEFINE
 ////////////////////////////////////////////////////////////
@@ -282,7 +285,7 @@
 #define ENABLE_DP_INPUT                 1       //((Input_Displayport_C2 != Input_Nothing)||(Input_Displayport_C3 != Input_Nothing))
 #define ENABLE_DP_OUTPUT                0
 #define ENABLE_DP_AUDIO                 1
-#define AudioFunc                       1
+#define AudioFunc                       0
 #define _NEW_SOG_DET_                   0 // 1
 #define _NEW_SOG_WAKEUP_DET_            (_NEW_SOG_DET_)
 #define ENABLE_TYPEC_SAR_DET            0       // default: 0, 1: enable only related SAR pins are reserved

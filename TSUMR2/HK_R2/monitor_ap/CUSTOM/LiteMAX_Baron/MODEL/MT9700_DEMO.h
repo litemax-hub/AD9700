@@ -35,7 +35,7 @@
 #define BRIGHTNESS_INVERSE              0
 #define AC_POWERON			1// 1 = Power always ON , 0 = Last Memory
 #define OSD_movePIXEL		1// 1= OSD movement
-//#define ENABLE_BOE_NEW_SZ_DDCCI_SPEC                1 // 0:Disable 1:Enable
+#define ENABLE_BOE_NEW_SZ_DDCCI_SPEC                1 // 0:Disable 1:Enable
 #else
 #define FWdevelopVCS                        1
 #define FWVersionCS                         10

@@ -54,6 +54,7 @@ _DEBUGDEC_ BYTE check_uart_tx_buffer_empty(void);
 _DEBUGDEC_ void MDrv_UART_PIU_DebugInit(void);
 #endif
 
+#if 0//因為FactoryAligment_BOE.h重複定義
 #define SIO_ID1     SIORxBuffer[0]
 #define SIO_TYPE1   SIORxBuffer[1]
 #define SIO_TYPE2   SIORxBuffer[2]
@@ -68,6 +69,7 @@ _DEBUGDEC_ void MDrv_UART_PIU_DebugInit(void);
 #define SIOData21   ((SIO_DATA2-0x41)+10)*16
 #define SIOData30   (SIO_DATA3-0x30)
 #define SIOData31   (SIO_DATA3-0x41)+10
+#endif
 
 #if ENABLE_DEBUG_TIMING_CHANGE_POINT
 extern bit bTimingChangeFirstPointFlag;

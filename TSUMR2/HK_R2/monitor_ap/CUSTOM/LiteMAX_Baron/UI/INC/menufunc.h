@@ -363,4 +363,14 @@ extern WORD GetFBrightness_75Value( void );
 extern Bool AdjustFBrightness_100( MenuItemActionType action );
 extern WORD GetFBrightness_100Value( void );
 extern Bool FactoryReset(void);
-
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+extern Bool DDCCI_AdjustLID_Mode(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjDCCurve0(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjDCCurve25(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjDCCurve50(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjDCCurve75(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjDCCurve100(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjPWMCurve75(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjPWMCurve0AutoCalculate(BYTE DDC_Data); //for LiteMax test
+extern void DDCCI_AdjPWMCurve100AutoCalculate(BYTE DDC_Data); //for LiteMax test
+#endif

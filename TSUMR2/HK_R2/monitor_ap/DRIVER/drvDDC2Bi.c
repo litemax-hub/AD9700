@@ -654,7 +654,13 @@ void drvDDC2Bi_MessageReady( void )
     txLength = ( DDCBuffer[0] & ( ~DDC2Bi_CONTROL_STATUS_FLAG ) ) + 2;
     
 #if D2B_FIFO_Mode
+
+#if 0//ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+  if (1)
+#else
  if((!INPUT_IS_DISPLAYPORT(rxInputPort)) && (!INPUT_IS_USBTYPEC(rxInputPort)) && txLength > 0)    //20121030
+#endif
+
   {
 #if !D2B_XShared_DDCBuffer
         WORD i=0;

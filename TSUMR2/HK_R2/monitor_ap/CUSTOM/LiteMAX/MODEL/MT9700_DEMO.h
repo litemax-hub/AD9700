@@ -103,7 +103,7 @@
 #define ENABLE_DLC                      0
 #define ENABLE_DPS                      (0 && ENABLE_DLC)
 #define ENABLE_DCR                      0
-#define ENABLE_SUPER_RESOLUTION         1
+#define ENABLE_SUPER_RESOLUTION         0// 1
 #define ENABLE_COLORMODE_DEMO           0
 #define ENABLE_SHARPNESS                1 // 0
 #define ENABLE_LOCALDIMMING             0

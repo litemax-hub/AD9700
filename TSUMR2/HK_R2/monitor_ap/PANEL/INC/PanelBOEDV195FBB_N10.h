@@ -162,11 +162,11 @@
 #if (StandardBoardPPS == P2506168)
 #define DefWarm_RedColor          128
 #define DefWarm_GreenColor        117
-#define DefWarm_BlueColor         106
+#define DefWarm_BlueColor         110
 #else
 #define DefWarm_RedColor          128
 #define DefWarm_GreenColor        117
-#define DefWarm_BlueColor         106
+#define DefWarm_BlueColor         110
 #endif
 #define DefsRGB_RedColor            DefWarm_RedColor
 #define DefsRGB_GreenColor          DefWarm_GreenColor
@@ -177,7 +177,7 @@
 #define DEF_FAC_BRIGHTNESS_0        12
 #define DEF_FAC_BRIGHTNESS_25       21
 #define DEF_FAC_BRIGHTNESS_50       29
-#define DEF_FAC_BRIGHTNESS_75       41 // 41 = 333 nits
+#define DEF_FAC_BRIGHTNESS_75       44 // 44 = 333 nits
 #define DEF_FAC_BRIGHTNESS_99       55
 #else
 #define DEF_FAC_BRIGHTNESS_0        10

@@ -246,6 +246,7 @@ MONITOR_FILES_UI  += \
         $(MONITOR_PATH_CUSTOM_UI)/ColorPalette.c           \
         $(MONITOR_PATH_CUSTOM_UI)/LoadCommonFont.c    \
         $(MONITOR_PATH_CUSTOM_UI)/Keypad.c                  \
+        $(MONITOR_PATH_CUSTOM_UI)/FactoryAligment.c     \
 
 MONITOR_FILES_CUSTOM_USERDATA += \
         $(MONITOR_PATH_CUSTOM_USERDATA)/UserPref.c                          \
