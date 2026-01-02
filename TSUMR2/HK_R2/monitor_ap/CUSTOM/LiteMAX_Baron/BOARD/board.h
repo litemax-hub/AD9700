@@ -238,7 +238,7 @@
 #define PANEL_HEIGHT                    g_sPnlInfo.sPnlTiming.u16Height
 #include "Panel.h"
 
-#define Enable_Expansion                1
+#define Enable_Expansion                0///1
 
 #define AOC_RSerialOSD                  1
 

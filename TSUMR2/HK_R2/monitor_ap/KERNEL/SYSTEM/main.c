@@ -271,7 +271,7 @@ int main( void )
 			#endif
     	}
 
-#if 0//ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
 	if ( g_ucForceOnlyRunDDCCI == DISABLE )
 #endif
         Main_SlowTimerHandler();
@@ -298,7 +298,7 @@ int main( void )
 		DDC2Bi_CommandHandler();
         if(bRunToolFlag)
             continue;
-#if 0//ENABLE_BOE_NEW_SZ_DDCCI_SPEC
+#if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
 	if ( g_ucForceOnlyRunDDCCI )
 	{
 		continue;

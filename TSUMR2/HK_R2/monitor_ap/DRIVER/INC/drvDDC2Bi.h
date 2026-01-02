@@ -50,7 +50,7 @@
 #define D2B_XShared_InputPors   (0&D2B_FIFO_Mode)
 #define D2B_HW_CheckSum         1
 #define D2B_FIFOSize_INDEX      D2B_FIFO_128Level
-#define D2B_SIMPLIFIED_MODE     1
+#define D2B_SIMPLIFIED_MODE     0///1
 #define DDC_BUFFER_LENGTH       128// ddc buffer length
 #endif
 #elif D2BModeSel==D2BMode_FIFO_Normal_XSharedDDCBuffer
