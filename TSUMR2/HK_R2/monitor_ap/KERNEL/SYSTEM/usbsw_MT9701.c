@@ -29,7 +29,7 @@ BYTE g_u8Usb2Alive;
 #endif
 
 #define USBSW_DEBUG    1
-#if ENABLE_DEBUG&&USBSW_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && USBSW_DEBUG
     #define USBSW_printData(str, value)   printData(str, value)
     #define USBSW_printMsg(str)           printMsg(str)
 #else

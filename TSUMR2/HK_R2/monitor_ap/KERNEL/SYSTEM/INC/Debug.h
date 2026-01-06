@@ -9,17 +9,6 @@
 
 #include "board.h"
 
-#if ENABLE_DEBUG
-#define DEBUG_PRINT_ENABLE                  1//ENABLE_DEBUG//For printf,putchar and putstr
-#define CABLE_DETECT_DEBUG_ENABLE    	    0
-#define ADC_KEY_PRESS_DEBUG_ENABLE	        0
-#define DDCCI_DEBUG_ENABLE              	0
-#define DEBUG_SCANKEY       				0
-#define DEBUG_OSD                           0
-// use to find timing change first point during sync stable to sync loss
-#define ENABLE_DEBUG_TIMING_CHANGE_POINT    0
-#else
-#define DEBUG_PRINT_ENABLE               	0 //For printf,putchar and putstr
 #define CABLE_DETECT_DEBUG_ENABLE          	0
 #define ADC_KEY_PRESS_DEBUG_ENABLE	        0
 #define DDCCI_DEBUG_ENABLE              	0
@@ -27,7 +16,6 @@
 #define DEBUG_OSD                           0
 // use to find timing change first point during sync stable to sync loss
 #define ENABLE_DEBUG_TIMING_CHANGE_POINT    0
-#endif
 
 _DEBUGDEC_ void putSIOChar( unsigned char sendData );
 _DEBUGDEC_ BOOL ProcessCommand( void );

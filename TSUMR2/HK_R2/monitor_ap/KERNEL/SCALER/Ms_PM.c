@@ -87,6 +87,7 @@ extern BYTE xdata DDCBuffer[DDC_BUFFER_LENGTH];
 extern BYTE xdata DDCBuffer[DDC_BUFFER_LENGTH];
 #endif
 #endif
+
 #endif
 
 #if ENABLE_HK_CODE_ON_PSRAM
@@ -97,7 +98,7 @@ extern void msDrvGetPSramEndInPM(void);
 //  Local Defines
 //-------------------------------------------------------------------------------------------------
 #define PM_DEBUG    1
-#if ENABLE_DEBUG&&PM_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && PM_DEBUG
     #define PM_printData(str, value)   printData(str, value)
     #define PM_printMsg(str)           printMsg(str)
 #else
@@ -116,7 +117,7 @@ static Bool bPM0WSts = 0;       // 0W wakeup status
 //-------------------------------------------------------------------------------------------------
 //  External Variables
 //-------------------------------------------------------------------------------------------------
-#if !ENABLE_DEBUG
+#if 0 //!ENABLE_DEBUG
 extern BYTE rxIndex;
 extern BYTE xdata DDCBuffer[];
 #endif
@@ -1985,7 +1986,7 @@ void msPM_SlowClkDetEvntSet(void)
 {
     u32FIQ_DET = u32IRQ_DET = u32FIQ_POL = u32IRQ_POL = 0;
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG //ENABLE_DEBUG
     u32FIQ_DET |= FIQ_HKR2_0_UART_DET;
 #endif
 
@@ -2957,7 +2958,7 @@ void msPM_WaitingEvent(void)
     #endif
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
     if ( msAPI_UART_DecodeCommand() )
     {
         continue; // stop main loop for debug
@@ -3313,7 +3314,7 @@ Bool msPM_0WStatus(void)
 #define PM_DEBUG    0
 #endif
 
-#if (!ENABLE_DEBUG) || (!MS_PM)
+#if 0 //(!ENABLE_DEBUG) || (!MS_PM)
 BYTE code msPMNullData[] = {0};
 void msPMDummy(void)
 {

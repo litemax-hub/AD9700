@@ -24,7 +24,7 @@ extern void SetHDRColorFormat(ST_COMBO_COLOR_FORMAT cf);
 extern void mdrv_HDR_DS_Start(void);
 extern void mdrv_HDR_DS_End(void);
 
-#if (ENABLE_DEBUG && HDRComm_debug)
+#if (ENABLE_MSTV_UART_DEBUG && HDRComm_debug)
     #define HDRComm_printData(str, value)   printData(str, value)
     #define HDRComm_printMsg(str)           printMsg(str)
 #else

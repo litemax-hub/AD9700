@@ -27,7 +27,7 @@ BOOL ubHaveBeenSleeped[DPRx_AUX_ID_MAX] = {0};
 //-------------------------------------------------------------------------------------------------
 #define DPRX_HAL_DEBUG_MESSAGE			0
 
-#if (DPRX_HAL_DEBUG_MESSAGE && ENABLE_DEBUG)
+#if (ENABLE_MSTV_UART_DEBUG && DPRX_HAL_DEBUG_MESSAGE)
 #define DPRX_HAL_DPUTSTR(str)			printMsg(str)
 #define DPRX_HAL_DPRINTF(str, x)		printData(str, x)
 #else

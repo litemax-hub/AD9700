@@ -34,7 +34,7 @@
 //  Local Defines
 //-------------------------------------------------------------------------------------------------
 #define HDMI_DEBUG_MESSAGE_DRV      1
-#if(HDMI_DEBUG_MESSAGE_DRV  && ENABLE_DEBUG)
+#if(ENABLE_MSTV_UART_DEBUG && ENABLE_HDMI_DEBUG_MESSAGE_DRV)
 #define HDMI_DRV_DPUTSTR(str)            printMsg(str)
 #define HDMI_DRV_DPRINTF(str, x)         printData(str, x)
 #else
@@ -152,7 +152,7 @@ extern XDATA sPM_Info  sPMInfo;
 
 #if(TMDS_HDCP2_FUNCTION_SUPPORT)
 #define HDCP22_DEBUG_MESSAGE_DRV    1
-#if(HDCP22_DEBUG_MESSAGE_DRV  && ENABLE_DEBUG)
+#if(ENABLE_MSTV_UART_DEBUG && HDCP22_DEBUG_MESSAGE_DRV)
 #define HDCP22_DRV_DPUTSTR(str)            printMsg(str)
 #define HDCP22_DRV_DPRINTF(str, x)         printData(str, x)
 #else

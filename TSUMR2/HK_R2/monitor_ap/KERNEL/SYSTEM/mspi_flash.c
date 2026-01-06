@@ -24,7 +24,7 @@
 #define MSPI_FLASH_DEBUG	0
 #endif
 
-#if (ENABLE_DEBUG && MSPI_FLASH_DEBUG)
+#if (ENABLE_MSTV_UART_DEBUG && MSPI_FLASH_DEBUG)
 #define MSPI_Flash_Print(str, value)					printData(str, value)
 #else
 #define MSPI_Flash_Print(str, value)

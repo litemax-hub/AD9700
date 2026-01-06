@@ -18,7 +18,7 @@ extern void printMsg( char *str );
 extern void printData( char *str, unsigned int value );
 
 #define SCSI_DEBUG    1
-#if ENABLE_DEBUG&&SCSI_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && SCSI_DEBUG
 #define SCSI_printData(str, value)   printData(str, value)
 #define SCSI_printMsg(str)           printMsg(str)
 #else
@@ -371,7 +371,7 @@ U8 FnVendor_XROM_Command(MSDFN_BOT_CBW_STRU *cbw, USB_VAR *gUSBStruct)
     *((U8 *)&u32ReqLen + 2) = cbw->cmd_bytes[7];
     *((U8 *)&u32ReqLen + 3) = cbw->cmd_bytes[6];
 #endif
-	//printData("@@@FnVendor_XROM_Command:0x%x, len:0x%x\n",cbw->cmd_bytes[1],u32ReqLen);
+	//SCSI_printData("@@@FnVendor_XROM_Command:0x%x, len:0x%x\n",cbw->cmd_bytes[1],u32ReqLen);
 
 #if 0
 	SCSI_printData("@@@cmd_bytes[0]:0x%x\n",cbw->cmd_bytes[0]);

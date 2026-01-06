@@ -16,7 +16,7 @@
 
 
 #define MBX_DEBUG    1
-#if ENABLE_DEBUG&&MBX_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MBX_DEBUG
 #define MBX_printData(str, value)   printData(str, value)
 #define MBX_printMsg(str)           printMsg(str)
 #else

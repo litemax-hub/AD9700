@@ -84,16 +84,16 @@
 #include "msAPI_MSBHK.h"
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
 #warning "Please remember to disable the debug function!"//Zhifeng.Wu Please don't canel it,just only a message,thanks.
 #endif
 
 #ifndef DEBUG_SELFTEST // 120620 coding addition for test EEPROM address/LVDS SSC
-#define DEBUG_SELFTEST  (0&&ENABLE_DEBUG)
+#define DEBUG_SELFTEST  (0 && ENABLE_MSTV_UART_DEBUG)
 #endif
 
 #ifndef OSD_TO_IP_DEBUG
-#define OSD_TO_IP_DEBUG (0&&ENABLE_DEBUG)
+#define OSD_TO_IP_DEBUG (0 && ENABLE_MSTV_UART_DEBUG)
 #endif
 #if ENABLE_LOCALDIMMING
 #include "msLD_Handler.h"
@@ -109,7 +109,7 @@ WORD u16Coff = 0;
 //BYTE xdata ReSyncCounter;
 extern Bool xdata bFlashWriteFactory;
 #define DEBUG_Massage    1
-#if ENABLE_DEBUG&&DEBUG_Massage
+#if ENABLE_MSTV_UART_DEBUG && DEBUG_Massage
     #define DB_printData(str, value)   printData(str, value)
     #define DB_printMsg(str)           printMsg(str)
     #define DB_PRINT(format, ...)      printf(format, ##__VA_ARGS__)
@@ -119,7 +119,7 @@ extern Bool xdata bFlashWriteFactory;
     #define DB_PRINT(format, ...)
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
 #if ENABLE_TOUCH_PANEL || ENABLE_TOUCH_PANEL_CTRL_OSD
 extern Bool TPL_ReadSurface(void);
 #endif
@@ -550,7 +550,7 @@ void SelfTest(void)
 }
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
 /*
 Please enter the position of data you want to check
 Ex:
@@ -837,7 +837,7 @@ static void TestCommand_OsdToIp(BYTE u8Path)
 }
 #endif  // OSD_TO_IP_DEBUG
 
-#endif  // ENABLE_DEBUG
+#endif  // ENABLE_MSTV_UART_DEBUG
 
 extern xdata BYTE MenuPageIndex;
 extern xdata BYTE MenuItemIndex;
@@ -2528,7 +2528,7 @@ BOOL ExecTestCommand( void )
         break;
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
         case 0x40:
             msLineBufLatchData(ucPara1, ucPara2, ucPara3);
         break;
@@ -2578,7 +2578,7 @@ BOOL ExecTestCommand( void )
         }
         break;
 
-#if ENABLE_DEBUG && COLORVERIFY_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && COLORVERIFY_DEBUG
         case 0x4A:
             msColor_Test_Funct(ucPara1,ucPara2);
         break;
@@ -3037,9 +3037,9 @@ BOOL ExecTestCommand( void )
         }
         break;
 #endif
-#endif // ENABLE_DEBUG
+#endif // ENABLE_MSTV_UART_DEBUG
 
-#if ENABLE_DEBUG && (ENABLE_TOUCH_PANEL||ENABLE_TOUCH_PANEL_CTRL_OSD)
+#if ENABLE_MSTV_UART_DEBUG && (ENABLE_TOUCH_PANEL||ENABLE_TOUCH_PANEL_CTRL_OSD)
         case 0x78:
         {
             if(TPL_ReadSurface() == FALSE)
@@ -3085,7 +3085,7 @@ BOOL ExecTestCommand( void )
             ExecuteKeyEvent( MIA_RedrawMenu );
         break;
 
-#if ENABLE_DEBUG && ENABLE_TOUCH_PANEL_DATA_FROM_USB
+#if ENABLE_MSTV_UART_DEBUG && ENABLE_TOUCH_PANEL_DATA_FROM_USB
         case 0x80:
         {
             USB_SPI_WriteRegister(SIORxBuffer[2], SIORxBuffer[3]);
@@ -3112,7 +3112,7 @@ BOOL ExecTestCommand( void )
         break;
 #endif
 
-#if ENABLE_DEBUG && ENABLE_TOUCH_KEY
+#if ENABLE_MSTV_UART_DEBUG && ENABLE_TOUCH_KEY
         case 0x90:
         {
             DB_printData("TouchKey:%x", IT7230_GetKeyStatus());
@@ -3120,7 +3120,7 @@ BOOL ExecTestCommand( void )
         }
 #endif
 
-#if ENABLE_DEBUG && ENABLE_VGA_INPUT
+#if ENABLE_MSTV_UART_DEBUG && ENABLE_VGA_INPUT
         case 0x91:
         {
             extern void drvADC_Test_Funct(BYTE tb1, BYTE tb2);
@@ -3927,7 +3927,7 @@ void DebugHandler( void )
 #endif
 }
 #endif
-#if !ENABLE_DEBUG
+#if !ENABLE_MSTV_UART_DEBUG
 BYTE code msDebugNullData[] = {0};
 void msDebugDummy(void)
 {

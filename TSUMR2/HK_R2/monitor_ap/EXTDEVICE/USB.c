@@ -5,7 +5,7 @@
 
 #define DEBUG_USB  0
 
-#if DEBUG_USB && ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && DEBUG_USB
 #define USB_DPUTSTR(str)    	printMsg(str)
 #define USB_DPRINTF(str, x) 	printData(str, x)
 #else

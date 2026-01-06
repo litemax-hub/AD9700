@@ -5,7 +5,7 @@
 #include "drv3DLUT_C.h"
 #include "COLOR_VERIFY.H"
 
-#if ENABLE_DEBUG && COLORVERIFY_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && COLORVERIFY_DEBUG
 #if CHIP_ID==CHIP_TSUMC || CHIP_ID==CHIP_TSUMD|| CHIP_ID==CHIP_TSUMJ
 code RegUnitType tb_FCC_TABLE[] =
 {
@@ -268,8 +268,8 @@ void ms2DHPeakingTest(BYTE bScalerWin ,BYTE ucSharpness, BYTE ucStep )
     //Over/Under shoort Setting  //main and sub use the same setting
     for( uci = 0; uci < 8; uci ++ )
     {
-         //old_msWriteByteMask(SCB_40+uci, 0x00,0xFF);        //overshoort¡GSCB_40~SCB_47
-         //old_msWriteByteMask(SCB_48+uci, 0xFF,0xFF);        //undershoort¡GSCB_48~SCB_4F
+         //old_msWriteByteMask(SCB_40+uci, 0x00,0xFF);        //overshoortï¿½GSCB_40~SCB_47
+         //old_msWriteByteMask(SCB_48+uci, 0xFF,0xFF);        //undershoortï¿½GSCB_48~SCB_4F
     }
     if(bScalerWin == MAIN_WINDOW)
     {
@@ -514,14 +514,14 @@ void msNoiseMasking(BYTE bScalerWin ,BYTE u8Strength, BYTE u8THRD )
 void msDeMosquito(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 {
 /*
-	1.¶}¤@±i¦³¦r¹õªº¹Ï¡A¥Î¨Ó®ø°£¦r®ÇÃäÂø°T
-	2.ÃöSPF bypass mode¡]SC2_70[3]=0)
-	3.³]©wreg_spf_rgb2y_en(SC2_70[7]=1)
-	4.¶}debug mode¡]SC4_10[7]=1)
-	5.¶}deMosquito¡]SC4_10[0]=1)
-	6.§âgain³]¤j¡]SC4_10[12:8]=0x1F¡^
-	7.³]©wTHRD1¡]SC4_11[7:0]­È·U¤p·U©úÅã¡^
-	8.³]©wTHRD2¡]SC4_12[7:0]­È·U¤j·U©úÅã¡^
+	1.ï¿½}ï¿½@ï¿½iï¿½ï¿½ï¿½rï¿½ï¿½ï¿½ï¿½ï¿½Ï¡Aï¿½Î¨Ó®ï¿½ï¿½ï¿½ï¿½rï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½T
+	2.ï¿½ï¿½SPF bypass modeï¿½]SC2_70[3]=0)
+	3.ï¿½]ï¿½wreg_spf_rgb2y_en(SC2_70[7]=1)
+	4.ï¿½}debug modeï¿½]SC4_10[7]=1)
+	5.ï¿½}deMosquitoï¿½]SC4_10[0]=1)
+	6.ï¿½ï¿½gainï¿½]ï¿½jï¿½]SC4_10[12:8]=0x1Fï¿½^
+	7.ï¿½]ï¿½wTHRD1ï¿½]SC4_11[7:0]ï¿½È·Uï¿½pï¿½Uï¿½ï¿½ï¿½ï¿½^
+	8.ï¿½]ï¿½wTHRD2ï¿½]SC4_12[7:0]ï¿½È·Uï¿½jï¿½Uï¿½ï¿½ï¿½ï¿½^
 */
 /*
     old_msWriteByteMask(SC2_E0,	0x00		,BIT3|BIT2|BIT1|BIT0);
@@ -529,7 +529,7 @@ void msDeMosquito(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 
     old_msWriteByteMask(SC4_20,	BIT1			,BIT1);  //Alpha LPF enable
 
-    old_msWriteByteMask(SC4_20,	u8Enable	,BIT7|BIT0);  //BIT0:enable ,BIT7¡Gdebug mode
+    old_msWriteByteMask(SC4_20,	u8Enable	,BIT7|BIT0);  //BIT0:enable ,BIT7ï¿½Gdebug mode
 
     old_msWriteByteMask(SC4_21,	(u8Strength<=0x1F? u8Strength:0x1F) 	,0x1F);  //BIT12~BIT8
     old_msWriteByteMask(SC4_22,	abs(0xFF-u8THRD) 		,0xFF);  //DMS threshold 1
@@ -544,18 +544,18 @@ void msDeMosquito(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 void msSpikeNR(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 {
 /*
-	¶}¤@±i¦³ÂøÂIªº¹Ï¡A¥Î¨Ó®ø°£¹Ï¤ù¤WªºÂøÂI¡G
-	1.ÃöSPF bypass mode¡]SC2_70[3]=0)
-	2.³]©wreg_spf_rgb2y_en(SC2_70[7]=0)
-	3.ÃöSPK_NR motion mode¡]SC4_50[3]=0¡^
-	4.¶}SPK_NR¶}Ãö¡]SC4_50[0]=1¡^
-	5.³]©wSPK_NR±j«×¡]SC4_50[11:8]=0x0f)
-	6.³]©wSPK_NR THRD1¡]SC4_51[12:8]¡A­È·U¤j®ÄªG·U±j¡^
-	7.³]©wSPK_NR THRD0¡]SC4_51[7:0]¡A­È·U¤j®ÄªG·U±j¡^
-	8.³]©wSPK_NR THRD2¡]SC4_52[7:0]¡A­È·U¤p®ÄªG·U±j¡^
-	9.³]©wSPK_NR PTH1 Step¡]SC4_53[6:4]¡A­È·U¤j®ÄªG·U±j¡^
-	10.³]©wSPK_NR PTH0 Step¡]SC4_53[2:0]¡A­È·U¤j®ÄªG·U±j¡^
-	11.³]©wSPK_NR PTH2 Step¡]SC4_53[10:8]¡A­È·U¤j®ÄªG·U±j¡^
+	ï¿½}ï¿½@ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½Ï¡Aï¿½Î¨Ó®ï¿½ï¿½ï¿½ï¿½Ï¤ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½G
+	1.ï¿½ï¿½SPF bypass modeï¿½]SC2_70[3]=0)
+	2.ï¿½]ï¿½wreg_spf_rgb2y_en(SC2_70[7]=0)
+	3.ï¿½ï¿½SPK_NR motion modeï¿½]SC4_50[3]=0ï¿½^
+	4.ï¿½}SPK_NRï¿½}ï¿½ï¿½ï¿½]SC4_50[0]=1ï¿½^
+	5.ï¿½]ï¿½wSPK_NRï¿½jï¿½×¡]SC4_50[11:8]=0x0f)
+	6.ï¿½]ï¿½wSPK_NR THRD1ï¿½]SC4_51[12:8]ï¿½Aï¿½È·Uï¿½jï¿½ÄªGï¿½Uï¿½jï¿½^
+	7.ï¿½]ï¿½wSPK_NR THRD0ï¿½]SC4_51[7:0]ï¿½Aï¿½È·Uï¿½jï¿½ÄªGï¿½Uï¿½jï¿½^
+	8.ï¿½]ï¿½wSPK_NR THRD2ï¿½]SC4_52[7:0]ï¿½Aï¿½È·Uï¿½pï¿½ÄªGï¿½Uï¿½jï¿½^
+	9.ï¿½]ï¿½wSPK_NR PTH1 Stepï¿½]SC4_53[6:4]ï¿½Aï¿½È·Uï¿½jï¿½ÄªGï¿½Uï¿½jï¿½^
+	10.ï¿½]ï¿½wSPK_NR PTH0 Stepï¿½]SC4_53[2:0]ï¿½Aï¿½È·Uï¿½jï¿½ÄªGï¿½Uï¿½jï¿½^
+	11.ï¿½]ï¿½wSPK_NR PTH2 Stepï¿½]SC4_53[10:8]ï¿½Aï¿½È·Uï¿½jï¿½ÄªGï¿½Uï¿½jï¿½^
 */
 /*
     old_msWriteByteMask(SC2_E0,	0x00		,BIT3|BIT2|BIT1|BIT0);
@@ -577,16 +577,16 @@ void msSpikeNR(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 void msDeBlocking(BYTE u8Enable, /*BYTE u8Strength ,*/BYTE u8THRD)
 {
 /*
-	µe­±¦]¬°À£ÁY·|¦³½uªºÂø°T¡A¥Î¨Ó®ø½uªºÂø°T
-	1.ÃöSPF bypass mode¡]SC2_70[3:0]=0)
-	2.³]©wreg_spf_rgb2y_en(SC2_70[7]=0)
+	ï¿½eï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½ï¿½Yï¿½|ï¿½ï¿½ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½Tï¿½Aï¿½Î¨Ó®ï¿½ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½T
+	1.ï¿½ï¿½SPF bypass modeï¿½]SC2_70[3:0]=0)
+	2.ï¿½]ï¿½wreg_spf_rgb2y_en(SC2_70[7]=0)
 
-	2.¶}de blocking ¶}Ãö¡GSC2_10[0]=1
-	3.¶}debug mode¡]SC2_40[7]=1)
-	4.Ãöiir mode¡]SC2_40[6]=0)
-	5.¶}enable (SC2_40[0]=1)
-	6.³]©wTHRD¡]SC2_40[15:8]=0x00)
-	7.³]©wSTEP¡]SC2_40[3:2]=0~3)
+	2.ï¿½}de blocking ï¿½}ï¿½ï¿½ï¿½GSC2_10[0]=1
+	3.ï¿½}debug modeï¿½]SC2_40[7]=1)
+	4.ï¿½ï¿½iir modeï¿½]SC2_40[6]=0)
+	5.ï¿½}enable (SC2_40[0]=1)
+	6.ï¿½]ï¿½wTHRDï¿½]SC2_40[15:8]=0x00)
+	7.ï¿½]ï¿½wSTEPï¿½]SC2_40[3:2]=0~3)
 */
 /*
     old_msWriteByteMask(SC2_E0,	0x00		,BIT3|BIT2|BIT1|BIT0);
@@ -604,16 +604,16 @@ void msDeBlocking(BYTE u8Enable, /*BYTE u8Strength ,*/BYTE u8THRD)
 void msSNR(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 {
 /*
-	«üªº¬OAPN¸ÌªºSNR¡G¤@¼Ë¥i¥H¹F¨ì®ø°£Âø°Tªº¥\¯à¡A¥´½kµe­±¡]¥´dot pattern¸Õ¡^
-	1.ÃöSPF bypass mode¡]SC2_70[3:0]=0)
-	2.³]©wreg_spf_rgb2y_en(SC2_70[7]=1)
+	ï¿½ï¿½ï¿½ï¿½ï¿½OAPNï¿½Ìªï¿½SNRï¿½Gï¿½@ï¿½Ë¥iï¿½Hï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Tï¿½ï¿½ï¿½\ï¿½ï¿½Aï¿½ï¿½ï¿½kï¿½eï¿½ï¿½ï¿½]ï¿½ï¿½dot patternï¿½Õ¡^
+	1.ï¿½ï¿½SPF bypass modeï¿½]SC2_70[3:0]=0)
+	2.ï¿½]ï¿½wreg_spf_rgb2y_en(SC2_70[7]=1)
 
-	3.¶}SNR¶}Ãö¡GSC2_30[0]=1
-	4.ÃöSNR motion mode¡GSC2_30[1]=0
-	5.³]©wSNR active THRD¡GSC2_30[15:8]=0xFF¡]§@¥Î¡H¡^
-	6.³]©wSNR ±j«×¡GSC2_31[3:0]
-	7.³]©wSNR Alpha Step¡GSC2_31[7:5]¡]§@¥Î¡H¡^
-	8.³]©wSNR LUT¡GSC2_34/35/36/37¬°³Ì¤j­È¡]0xFFFF¡^
+	3.ï¿½}SNRï¿½}ï¿½ï¿½ï¿½GSC2_30[0]=1
+	4.ï¿½ï¿½SNR motion modeï¿½GSC2_30[1]=0
+	5.ï¿½]ï¿½wSNR active THRDï¿½GSC2_30[15:8]=0xFFï¿½]ï¿½@ï¿½Î¡Hï¿½^
+	6.ï¿½]ï¿½wSNR ï¿½jï¿½×¡GSC2_31[3:0]
+	7.ï¿½]ï¿½wSNR Alpha Stepï¿½GSC2_31[7:5]ï¿½]ï¿½@ï¿½Î¡Hï¿½^
+	8.ï¿½]ï¿½wSNR LUTï¿½GSC2_34/35/36/37ï¿½ï¿½ï¿½Ì¤jï¿½È¡]0xFFFFï¿½^
 */
 
     //old_msWriteByteMask(SC2_E0,	0x00		,BIT3|BIT2|BIT1|BIT0);
@@ -633,16 +633,16 @@ void msSNR(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 void msPreNoiseMasking(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 {
 /*
-	©Mnoise masking¤@¼Ëªº§@¥Î¡A¦ý¸Ófunction¬O¦bscaling«e¡]§âµe­±¥´½k¡^
-	¨Ò¦p¶}64¦Ç¶¥¡A¶¥»P¶¥ªº¤À¬É³]©w§¹«á·|ÅÜ¼Ò½k
-	1.ÃöSPF bypass mode¡]SC2_70[3:0]=0)
-	2.³]©wreg_spf_rgb2y_en(SC2_70[7]=1)
+	ï¿½Mnoise maskingï¿½@ï¿½Ëªï¿½ï¿½@ï¿½Î¡Aï¿½ï¿½ï¿½ï¿½functionï¿½Oï¿½bscalingï¿½eï¿½]ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½ï¿½kï¿½^
+	ï¿½Ò¦pï¿½}64ï¿½Ç¶ï¿½ï¿½Aï¿½ï¿½ï¿½Pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É³]ï¿½wï¿½ï¿½ï¿½ï¿½|ï¿½Ü¼Ò½k
+	1.ï¿½ï¿½SPF bypass modeï¿½]SC2_70[3:0]=0)
+	2.ï¿½]ï¿½wreg_spf_rgb2y_en(SC2_70[7]=1)
 
-	3.Ãö³¬motion ¡GSC2_50[1]=0
-	4.¶}pre-Y noise masking¡GSC2_50[0]=1
-	5.³]©wY NM Gain¡GSC2_54[5:0]
-	6.³]©wY NM max THRD¡GSC2_55[3:0]
-	7.³]©wY NM min THRD¡GSC2_55[7:4]
+	3.ï¿½ï¿½ï¿½ï¿½motion ï¿½GSC2_50[1]=0
+	4.ï¿½}pre-Y noise maskingï¿½GSC2_50[0]=1
+	5.ï¿½]ï¿½wY NM Gainï¿½GSC2_54[5:0]
+	6.ï¿½]ï¿½wY NM max THRDï¿½GSC2_55[3:0]
+	7.ï¿½]ï¿½wY NM min THRDï¿½GSC2_55[7:4]
 
 */
     //old_msWriteByteMask(SC2_E0,	0x00		,BIT3|BIT2|BIT1|BIT0);
@@ -661,7 +661,7 @@ void msHcoring(BYTE u8Enable, BYTE u8Strength)
 	main
 	1.SCB_08[1:0]=11b		   Y Band1,2 enable
 	2.SCB_08[6:4]=111b		  Step=MAX
-	3.SCB_08[7]=1				   Highpass enable HPF ¶}Ãö¡]0¡Gcoring¡A1¡Gsharpness)
+	3.SCB_08[7]=1				   Highpass enable HPF ï¿½}ï¿½ï¿½ï¿½]0ï¿½Gcoringï¿½A1ï¿½Gsharpness)
 	sub
 	4.SCB_08[9:8]=11b			Y Band1,2 enable
 	5.SCB_08[14:12]=111b	  Step=MAX
@@ -693,16 +693,16 @@ void msHcoring(BYTE u8Enable, BYTE u8Strength)
 void msShinnyColor(BYTE u8Enable, BYTE u8Strength ,BYTE u8THRD)
 {
 /*
-	SC9_4A[11]¡Gmain¶}Ãö
-	SC9_4A[15:12]¡Gmain gain
-	SC9_4A[10]¡Gmain Rounding
+	SC9_4A[11]ï¿½Gmainï¿½}ï¿½ï¿½
+	SC9_4A[15:12]ï¿½Gmain gain
+	SC9_4A[10]ï¿½Gmain Rounding
 
-	SC9_4B[11]¡Gmain¶}Ãö
-	SC9_4B[15:12]¡Gmain gain
-	SC9_4B[10]¡Gmain Rounding
+	SC9_4B[11]ï¿½Gmainï¿½}ï¿½ï¿½
+	SC9_4B[15:12]ï¿½Gmain gain
+	SC9_4B[10]ï¿½Gmain Rounding
 
-	SC9_4C[14]¡G ¦b­pºâ¹Lµ{¤¤gain¥i¯à·|¹L¤j³o­Óregister¥i¥H¥Î¨Ó¥doverflow¥Îªº
-	SC9_4C[13]¡G HBC gain mode¡]¿ïgainªº¼Ò¦¡¡^
+	SC9_4C[14]ï¿½G ï¿½bï¿½pï¿½ï¿½Lï¿½{ï¿½ï¿½gainï¿½iï¿½ï¿½|ï¿½Lï¿½jï¿½oï¿½ï¿½registerï¿½iï¿½Hï¿½Î¨Ó¥doverflowï¿½Îªï¿½
+	SC9_4C[13]ï¿½G HBC gain modeï¿½]ï¿½ï¿½gainï¿½ï¿½ï¿½Ò¦ï¿½ï¿½^
 */
     //old_msWriteByteMask(SC9_98,	u8THRD		,0xFF);  //hbc gain1 threshold
     //old_msWriteByteMask(SC9_99,	BIT6		,BIT6);  //clamp function for HBC gain
@@ -724,23 +724,23 @@ void Peaking_PostSNR(BYTE u8Enable, BYTE u8THRD)
 {
 	/*   2d Peaking- Post SNR
 	// Post-SNR is non motion adaptive . The user can use port-snr to reduce noise in spatial (2D) domain.
-	1.Main win¡G
-	   SCB_58[0]¡GMain window Gaussian SNR enable
-	   SCB_58[1]¡GMain window Gaussian SNR adaptive factor enable
-	   SCB_58[2]¡GMain window Gaussian SNR Mean selection :
-						 0: 3x3  1: 5x5 ¡]³]1 LPF®ÄªG¤ñ¸û±j¡^
-	   SCB_58[5:4]¡GMain window Gaussian SNR LUT step
-	   SCB_58[12:8]¡GMain window Gaussian SNR threshold
-	2.Sub win¡G
-	   SCB_59[0]¡GMain window Gaussian SNR enable
-	   SCB_59[1]¡GMain window Gaussian SNR adaptive factor enable
-	   SCB_59[2]¡GMain window Gaussian SNR Mean selection :
+	1.Main winï¿½G
+	   SCB_58[0]ï¿½GMain window Gaussian SNR enable
+	   SCB_58[1]ï¿½GMain window Gaussian SNR adaptive factor enable
+	   SCB_58[2]ï¿½GMain window Gaussian SNR Mean selection :
+						 0: 3x3  1: 5x5 ï¿½]ï¿½]1 LPFï¿½ÄªGï¿½ï¿½ï¿½ï¿½jï¿½^
+	   SCB_58[5:4]ï¿½GMain window Gaussian SNR LUT step
+	   SCB_58[12:8]ï¿½GMain window Gaussian SNR threshold
+	2.Sub winï¿½G
+	   SCB_59[0]ï¿½GMain window Gaussian SNR enable
+	   SCB_59[1]ï¿½GMain window Gaussian SNR adaptive factor enable
+	   SCB_59[2]ï¿½GMain window Gaussian SNR Mean selection :
 						 0: 3x3  1: 5x5
-	   SCB_59[5:4]¡GMain window Gaussian SNR LUT step
-	   SCB_59[12:8]¡GMain window Gaussian SNR threshold
+	   SCB_59[5:4]ï¿½GMain window Gaussian SNR LUT step
+	   SCB_59[12:8]ï¿½GMain window Gaussian SNR threshold
 
-	3.LUT table¡G¡]¥Ñ¤p¨ì¤j¡^
-	   SCB_59~5F¡GGaussian SNR Table 0~7
+	3.LUT tableï¿½Gï¿½]ï¿½Ñ¤pï¿½ï¿½jï¿½^
+	   SCB_59~5Fï¿½GGaussian SNR Table 0~7
 	*/
 
 	//main window

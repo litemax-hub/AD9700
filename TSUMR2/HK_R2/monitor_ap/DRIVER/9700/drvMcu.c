@@ -19,7 +19,7 @@
 
 
 #define DRVMCU_DEBUG    1
-#if ENABLE_DEBUG&&DRVMCU_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && DRVMCU_DEBUG
 #define DRVMCU_printData(str, value)   printData(str, value)
 #define DRVMCU_printMsg(str)           printMsg(str)
 #else
@@ -116,7 +116,8 @@ REG_0212
 
 [7]: Enable GPIO 02, 01 as Uart-0 function
 */
-#if (ENABLE_DEBUG || UART1) //ENABLE_DEBUG:UART 0, UART1: UART 1
+// #if (ENABLE_DEBUG || UART1) //ENABLE_DEBUG:UART 0, UART1: UART 1
+#if (DRVMCU_DEBUG || UART1) //DRVMCU_DEBUG:UART 0, UART1: UART 1
 void mcuSetUartMux( UART_ENGINE ucUartEngine, UART_GPIO ucUartGPIO )
 {
     switch(ucUartGPIO)

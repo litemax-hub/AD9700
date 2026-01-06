@@ -17,7 +17,7 @@
 #define TBL_REG_DLY                     0xffffffff
 #define TBL_REG_TAG                     0xff
 
-#if ENABLE_DEBUG && AUDIO_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && AUDIO_DEBUG
 #define MSAUDIO_PRINT(format, ...)      printf(format, ##__VA_ARGS__)
 #else
 #define MSAUDIO_PRINT(format, ...)

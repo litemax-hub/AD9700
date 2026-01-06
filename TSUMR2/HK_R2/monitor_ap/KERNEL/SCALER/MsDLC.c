@@ -28,7 +28,7 @@ MST DLC subroutines.
 #define msDoubleBufferEnd()
 
 #define MsDLC_DEBUG    1
-#if ENABLE_DEBUG && MsDLC_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MsDLC_DEBUG
 #define DLC_PrintMsg(str) printMsg(str);
 #define DLC_PrintData(str, value) printData(str, value)
 #endif
@@ -407,10 +407,10 @@ void msDlcHandler(void)
 		return ;
 
 #if DEBUG_DLC_HISTOGRAM
-    printData("\r\n ===== (DLC) Histogram Start ======", NULL);
+    DLC_PrintData("\r\n ===== (DLC) Histogram Start ======", NULL);
     for ( i = 0; i < 32; i++ )
-        printData("\r\n  %x", uwArray[i]);
-    printData("\r\n ===== (DLC)Histogram End ======", NULL);
+        DLC_PrintData("\r\n  %x", uwArray[i]);
+    DLC_PrintData("\r\n ===== (DLC)Histogram End ======", NULL);
 #endif
 
     //if(!retry)
@@ -456,7 +456,7 @@ void msDlcHandler(void)
 		if(TempVar1 != 0 && TempVar2 != 0)
         	CurveIdx = TempVar1/TempVar2;
         CurveIdx = CurveIdx>>1;
-        //printData("CurveIdx = %d", CurveIdx);
+        //DLC_PrintData("CurveIdx = %d", CurveIdx);
 
         #if 0
         TempVar1 = 0;
@@ -467,11 +467,11 @@ void msDlcHandler(void)
             TempVar1 = uwArray[i]>TempVar1 ? uwArray[i]-TempVar1 : TempVar1-uwArray[i];
             TempVar2 += TempVar1;
         }
-        //printData("DiffSum = %d", TempVar2);
+        //DLC_PrintData("DiffSum = %d", TempVar2);
         TempVar2 = TempVar2>>10;
         TempVar2 = TempVar2>10 ? TempVar2-10 : 0;
         CurveWgt = TempVar2>32 ? 32 : TempVar2;
-        //printData("CurveWgt = %d", CurveWgt);
+        //DLC_PrintData("CurveWgt = %d", CurveWgt);
         #else
         CurveWgt = 32;
         #endif
@@ -496,10 +496,10 @@ void msDlcHandler(void)
         }
 
 #if DEBUG_DLC_CURVE
-    printMsg("\r\n ===== (DLC)  ======");
+    DLC_PrintMsg("\r\n ===== (DLC)  ======");
     for ( i = 0; i < 18; i++ )
-        printData("\r\n  %x", g_ucLumaCurve[i]);
-    printMsg("\r\n ===== (DLC) End ======");
+        DLC_PrintData("\r\n  %x", g_ucLumaCurve[i]);
+    DLC_PrintMsg("\r\n ===== (DLC) End ======");
 #endif
 
         if (DLC_Loop_Cnt==0)
@@ -560,7 +560,7 @@ void msDlcHandler(void)
         {
             mStar_WriteByteMask( BK3_B8, (BIT4 | BIT2 | BIT0), (BIT4 | BIT2 | BIT0) );
             g_bNeedRequest = 0;
-            //printMsg("request");
+            //DLC_PrintMsg("request");
         }
     }
     switch( DLCStatus )
@@ -629,7 +629,7 @@ void msDlcHandler(void)
 #endif
                 UserprefALha = 60;
                 reduceAry = uwArray[0];
-                //  printData("uwArray[0]  = 0x%x\r\n", reduceAry);
+                //  DLC_PrintData("uwArray[0]  = 0x%x\r\n", reduceAry);
 
 #endif // end of DCRNew
 
@@ -724,8 +724,8 @@ void msDlcHandler(void)
                         HistogramNow = HistogramPrev + OffsetlVal;
                     else if( HistogramNow < HistogramPrev )
                         HistogramNow = HistogramPrev - OffsetlVal;
-                    //printData("UserprefALha = %d\r\n", UserprefALha);
-                    //printData("HistogramNow = %d\r\n",HistogramNow);
+                    //DLC_PrintData("UserprefALha = %d\r\n", UserprefALha);
+                    //DLC_PrintData("HistogramNow = %d\r\n",HistogramNow);
                     if( UserprefHistogram1 > HistogramNow )
                         BacklightNow = BL_HIGH;
                     //  LIGHT
@@ -1182,7 +1182,7 @@ void msDlcHandler(void)
             //old_msWriteByte(BK3_BA, g_ucLumaCurve[ucTmp][uc2]);
             old_msWriteByte( BK0_00, REGBANK3 );
             mStar_WriteByteMask( BK3_B8, 0x00, (BIT3 | BIT2 | BIT1 | BIT0) );
-            //printMsg("reset");
+            //DLC_PrintMsg("reset");
             g_bNeedRequest = 1; // 2004/11/19
             old_msWriteByte( BK0_00, ucBank );
             DLCStatus = DLC_WAIT;
@@ -1330,7 +1330,7 @@ void msAPIBL_Handler(void)
         u16PWM = msExtendRealBL(BRIGHTNESS_REAL_MIN, BRIGHTNESS_REAL_MAX, u8BacklightNow ); //  u16PWM = msExtendRealBL(u16Backlight_Min, u16Backlight_Max, u8BacklightNow ); 
 
 	#if DEBUG_DCR
-	printData("\r\n u16PWM=%x",u16PWM);
+	DLC_PrintData("\r\n u16PWM=%x",u16PWM);
 	#endif
 	mStar_AdjustBrightness( u16PWM ); 
     }
@@ -1376,8 +1376,8 @@ void msDCR_Handler(void)
 #if DEBUG_DCR
 	if(u8BacklightPrev != u8BacklightNow)
 	{
-	        printData("\r\n u16WeightAvgNow'=%x",u16WeightAvg_Cur);
-	        printData("u8BacklightNow=%x",u8BacklightNow);
+	        DLC_PrintData("\r\n u16WeightAvgNow'=%x",u16WeightAvg_Cur);
+	        DLC_PrintData("u8BacklightNow=%x",u8BacklightNow);
 	}
 #endif
 

@@ -68,7 +68,7 @@
 
 #define  Combo_DEBUG  1
 
-#if (Combo_DEBUG&&ENABLE_DEBUG)
+#if (ENABLE_MSTV_UART_DEBUG && Combo_DEBUG)
 #define Combo_printData(str, value)   printData(str, value)
 #define Combo_printMsg(str)           printMsg(str)
 #else
@@ -1824,7 +1824,9 @@ Bool msAPI_combo_Hdcp2InsertKeyWithCutomizeKey(Bool bExternalKey, BYTE *pKeyTabl
 
     } while(FALSE);
 
-    return bRet;
+    return bRet;
+
+
 
 #else
     UNUSED(bExternalKey);
@@ -1832,7 +1834,9 @@ Bool msAPI_combo_Hdcp2InsertKeyWithCutomizeKey(Bool bExternalKey, BYTE *pKeyTabl
     UNUSED(bIsRxKey);
     UNUSED(bUseCustomizeKey);
     UNUSED(pCustomizeKey);
-    return FALSE;
+    return FALSE;
+
+
 #endif
 }
 

@@ -75,6 +75,16 @@ void mStar_AdjustBlackLevel( BYTE BlackLevel );
 #define RGB_GAIN_REAL_MID    256
 #define RGB_GAIN_REAL_MIN    0
 #endif
+
+#define ADJUST_DEBUG    1
+#if ENABLE_MSTV_UART_DEBUG && ADJUST_DEBUG
+#define ADJUST_printData(str, value)   printData(str, value)
+#define ADJUST_printMsg(str)           printMsg(str)
+#else
+#define ADJUST_printData(str, value)
+#define ADJUST_printMsg(str)
+#endif
+
 //-----------------------------------------------------------
 WORD GetRealVaueFunc(WORD wOsdValue, WORD wOsdMin, WORD wOsdMid, WORD wOsdMax, WORD wRealMin, WORD wRealMid, WORD wRealMax)
 {
@@ -120,7 +130,7 @@ void mStar_AdjustDcrBrightness( void )
     static BYTE xdata brightness;
     static BYTE xdata DcrCutoffFlag = 0;    //DCR new rule 081128
 
-#if ENABLE_DEBUG
+#if ADJUST_DEBUG
 static BYTE xdata PreValue;
 #endif
 
@@ -180,16 +190,14 @@ static BYTE xdata PreValue;
         brightness = ((( DWORD )( BacklightNow - MinBacklightNowValue ) * ( RealMaxBrightnessValue - RealMinDcrBrightnessValue ) ) / ( MaxBacklightNowValue - MinBacklightNowValue ) ) + RealMinDcrBrightnessValue;
     }
 
-    #if 0//DEBUG_PRINT_ENABLE
-    printData( "---BacklightNow =%d", BacklightNow );
-    printData( "---brightness =%d", brightness );
-    #endif
+    ADJUST_printData( "---BacklightNow =%d", BacklightNow );
+    ADJUST_printData( "---brightness =%d", brightness );
 
-    #if ENABLE_DEBUG
+    #if ADJUST_DEBUG
     if(abs(PreValue-BacklightNow) > 3)
     {
         PreValue = BacklightNow;
-    printData( "---BacklightNow =%d", BacklightNow );
+        ADJUST_printData( "---BacklightNow =%d", BacklightNow );
     }
     #endif
 
@@ -564,7 +572,7 @@ void msAPI_ColorMatrixEnable(BYTE u8WinIndex, BYTE bEnable, BYTE bCarryEn)
 
 WORD PWMBoundaryClamp(WORD PWMvalue)
 {
-    //printData("Before Clamp BRIGHTNESS PWM value: %x\n", PWMvalue);
+    //ADJUST_printData("Before Clamp BRIGHTNESS PWM value: %x\n", PWMvalue);
 
     WORD retPWMvalue;
     WORD maxVal, minVal;
@@ -588,13 +596,13 @@ WORD PWMBoundaryClamp(WORD PWMvalue)
     else
         retPWMvalue = PWMvalue;
 
-    //printData("After Clamp BRIGHTNESS PWM value: %x\n", retPWMvalue);
+    //ADJUST_printData("After Clamp BRIGHTNESS PWM value: %x\n", retPWMvalue);
     return retPWMvalue;
 }
 
 void msAPI_SetGlobalBrightnessPWM(WORD u16Brightness)
 {
-    //printData ( "[msAPI_SetGlobalBrightnessPWM]brightness ==> %x\n", u16Brightness );
+    //ADJUST_printData ( "[msAPI_SetGlobalBrightnessPWM]brightness ==> %x\n", u16Brightness );
     #if 0//LD_ENABLE
         //MApi_LD_Set_Globaldimming_Strength(TRUE, (BYTE)(u16Brightness) );
     #else

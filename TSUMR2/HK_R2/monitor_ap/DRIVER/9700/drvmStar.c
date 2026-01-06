@@ -26,7 +26,7 @@
 #define _DRVMSTAR_C_
 
 #define drvmStar_DEBUG    1
-#if ENABLE_DEBUG&&drvmStar_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && drvmStar_DEBUG
     #define drvmStar_printData(str, value)   printData(str, value)
     #define drvmStar_printMsg(str)           printMsg(str)
 #else
@@ -2110,13 +2110,13 @@ void ComboInputControl(ComboInputType ctrl)
 
 
     if(ucStatus == COMBO_INPUT_OFF)
-        printMsg("ucStatus == COMBO_INPUT_OFF");
+        drvmStar_printMsg("ucStatus == COMBO_INPUT_OFF");
     else if(ucStatus == COMBO_INPUT_POWERSAVING)
-        printMsg("ucStatus == COMBO_INPUT_POWERSAVING");
+        drvmStar_printMsg("ucStatus == COMBO_INPUT_POWERSAVING");
     else if(ucStatus == COMBO_INPUT_ANALOG)
-        printMsg("ucStatus == COMBO_INPUT_ANALOG");
+        drvmStar_printMsg("ucStatus == COMBO_INPUT_ANALOG");
     else //if(ucStatus == COMBO_INPUT_DIGITAL)
-        printMsg("ucStatus == COMBO_INPUT_DIGITAL");
+        drvmStar_printMsg("ucStatus == COMBO_INPUT_DIGITAL");
 
 }
 */
@@ -3189,8 +3189,8 @@ BYTE msDrvSetFrameDivider( BYTE vfreq_N )
 #endif
        )
     {
-        //printData( "input VFreq_N = %d", vfreq_N);
-        //printData( "output VFreq_M = %d", u8VFreq_M);
+        //drvmStar_printData( "input VFreq_N = %d", vfreq_N);
+        //drvmStar_printData( "output VFreq_M = %d", u8VFreq_M);
         u8Index_N_step = (SrcFlags&bInterlaceMode)?2:1;
         for(u32MinDiff=0xFFFFFFFF,u8Index_N=u8Index_N_step;u8Index_N<=32;u8Index_N+=u8Index_N_step)
         {

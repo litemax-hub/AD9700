@@ -91,7 +91,7 @@
 // INTERNAL
 #include "mStar.h"
 #define MSTAR_DEBUG    0
-#if ENABLE_DEBUG&&MSTAR_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MSTAR_DEBUG
 #define MST_printData(str, value)   printData(str, value)
 #define MST_printMsg(str)           printMsg(str)
 #else
@@ -564,9 +564,7 @@ Bool mStar_SetupMode( void )
 
     if( mStar_SetPanelTiming() == FALSE )        // set output dclk
     {
-        #if DEBUG_PRINT_ENABLE
-        printMsg( "Dot clock --> not support" );
-        #endif
+        MST_printMsg( "Dot clock --> not support" );
         SrcFlags |= bUnsupportMode;
         return TRUE;
     }
@@ -803,12 +801,12 @@ void mStar_SetAnalogInputPort( Bool ToSOGPort )
         g_bInputSOGFlag=0;
        if(bInputVGAisYUV) //20150121
         {
-            //printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_YUV_HV");
+            //MST_printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_YUV_HV");
             drvADC_SetADCSource(ADC_TABLE_SOURCE_YUV_HV);  // input is YUV
         }
         else
         {
-            //printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_RGB");
+            //MST_printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_RGB");
             drvADC_SetADCSource(ADC_TABLE_SOURCE_RGB);   // input is RGB
         }
         SC0_ADC_COAST_ENABLE(0x01);//old_msWriteByte(SC0_ED, 0x01);   // enable ADC coast
@@ -816,9 +814,7 @@ void mStar_SetAnalogInputPort( Bool ToSOGPort )
         SC0_ADC_COAST_END(0x01);//old_msWriteByte(SC0_EF, 0x01); //0x00);   // enable coast window end
         SC0_GLITCH_REMOVAL_ENABLE(0);//old_msWriteByte(SC0_F3, 0x00 ); //RD suggest 20081008
         ADC_PLL_LOCKING_EDGE(0);//old_msWriteByteMask(REG_ADC_DTOP_07_L,0,BIT5); // 0:Hsync leading edge; 1: Hsync trailing edge
-#if ENABLE_DEBUG
-        printMsg("InputPort_____VGA");
-#endif
+        MST_printMsg("InputPort_____VGA");
     }
     else
     {
@@ -827,12 +823,12 @@ void mStar_SetAnalogInputPort( Bool ToSOGPort )
 
         if(bInputVGAisYUV) //20150121
         {
-            //printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_YUV");
+            //MST_printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_YUV");
             drvADC_SetADCSource(ADC_TABLE_SOURCE_YUV);  // input is YUV
         }
         else
         {
-            //printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_SOG");
+            //MST_printMsg(">>SetAnaPort>> ADC_TABLE_SOURCE_SOG");
             drvADC_SetADCSource(ADC_TABLE_SOURCE_SOG);   // input is RGB
         }
         SC0_ADC_COAST_ENABLE(0x21);//old_msWriteByte(SC0_ED, 0x21);   // enable ADC coast
@@ -840,9 +836,7 @@ void mStar_SetAnalogInputPort( Bool ToSOGPort )
         SC0_ADC_COAST_END(0x0A);//old_msWriteByte(SC0_EF, 0x08 ); //0x05);   // enable coast window end //Jison 110317 follow CHIP_TSUMT
         SC0_GLITCH_REMOVAL_ENABLE(0);//old_msWriteByte( SC0_F3,  0x00 );
         ADC_PLL_LOCKING_EDGE(1);//old_msWriteByteMask(REG_ADC_DTOP_07_L,BIT5,BIT5); // 0:Hsync leading edge; 1: Hsync trailing edge
-#if ENABLE_DEBUG
-        printMsg("InputPort_____SOG");
-#endif
+        MST_printMsg("InputPort_____SOG");
     }
 #else
     ToSOGPort=ToSOGPort;
@@ -878,9 +872,7 @@ void mStar_SetupInputPort( void )
     static BYTE u8HDMIPreInputPort = Input_Nums;
     BOOL bIsHDMIPort_Chg = FALSE;
 #endif
-#if ENABLE_DEBUG
-    printData("SetupInputPort : %d", SrcInputType);
-#endif
+    MST_printData("SetupInputPort : %d", SrcInputType);
     g_CountSwitchPortTimeFlag=TRUE;
 
 #if CHIP_ID == CHIP_TSUMU
@@ -981,7 +973,7 @@ void mStar_SetupInputPort( void )
     #if ENABLE_HDMI_BCHErrorIRQ
     msAPI_combo_HDMIRx_EnableHDMIRx_PKT_ParsrIRQ(FALSE);
     #endif
-    //printData("=== PreInputPort = 0x%x",u8HDMIPreInputPort);
+    //MST_printData("=== PreInputPort = 0x%x",u8HDMIPreInputPort);
     if(u8HDMIPreInputPort == SrcInputType)
     {
         bIsHDMIPort_Chg = FALSE;
@@ -991,7 +983,7 @@ void mStar_SetupInputPort( void )
         bIsHDMIPort_Chg = TRUE;
     }
     u8HDMIPreInputPort = SrcInputType;
-    //printData("=== CurInputPort = 0x%x",u8HDMIPreInputPort);
+    //MST_printData("=== CurInputPort = 0x%x",u8HDMIPreInputPort);
 #endif
 
 #if ((CHIP_ID == CHIP_TSUMC) || (CHIP_ID == CHIP_TSUMD)||(CHIP_ID == CHIP_TSUM9)||(CHIP_ID == CHIP_TSUMF))
@@ -1119,7 +1111,7 @@ void mStar_SetupInputPort( void )
 
 #if ENABLE_DP_INPUT
     u8PreInputPort = SrcInputType;
-    //printData("********************************* u8PreInputPort: %d\n", u8PreInputPort);
+    //MST_printData("********************************* u8PreInputPort: %d\n", u8PreInputPort);
 #endif
 
 #if (DPC_USB_ERROR_COUNT_CONFIG_EN == 0x1)
@@ -1693,9 +1685,7 @@ void mStar_PowerUp( void )
 
     mStar_IPPowerControl();
 
-#if ENABLE_DEBUG
-    printMsg("PowerUp");
-#endif
+    MST_printMsg("PowerUp");
 
 }
 
@@ -1747,9 +1737,7 @@ void mStar_PowerDown( void )
     MPLL_CLOCK_ADC(FALSE);
 #endif
 
-#if ENABLE_DEBUG
-    printMsg("PowerDown");
-#endif
+    MST_printMsg("PowerDown");
 }
 //*******************************************************************
 // Function Name: mStar_InitADC
@@ -1879,9 +1867,7 @@ void SetFourtimesPWMFreq( void )
 
     SetPWMFreq( outVfreq );
 
-#if ENABLE_DEBUG
-    printData("  BrightFreqByVfreq:%d", outVfreq);
-#endif
+    MST_printData("  BrightFreqByVfreq:%d", outVfreq);
 }
 #endif
 
@@ -1966,12 +1952,10 @@ void SettingInputColorimetry(void)
     SetInputCombColorFormat(msAPI_combo_IPGetColorFormat(SrcInputType)); //msAPI_combo_IPGetColorFormat((EN_COMBO_IP_SELECT)(msGetHDRPortIPMuxByWin(u8WinIdx)));
     cf = GetInputCombColorFormat();
 
-#if ENABLE_DEBUG
     MST_printData("Pixel Format(RGB/422/444/420) = %d", cf.ucColorType);
     MST_printData("Color Range(Dft/Limit/Full) = %d", cf.ucColorRange);
     MST_printData("Yuv Colorimetry(601/709/Nodata/EC) = %d", cf.ucYuvColorimetry);
     MST_printData("Extend Colorimetry(601/709/s601/adobe601/adobeRGB/2020CL/2020NCL) = %d", cf.ucColorimetry);
-#endif
 
 #if ENABLE_FULL_RGB_COLOR_PATH
     msACECSCControl( );
@@ -1988,9 +1972,7 @@ void SettingInputColorimetry(void)
 
             case COMBO_YUV_COLORIMETRY_ITU709:
             {
-                    #if ENABLE_DEBUG
-                        MST_printData("1: Colorimetry %d use HDTV Matrix\n",cf.ucColorimetry);
-                    #endif
+                    MST_printData("1: Colorimetry %d use HDTV Matrix\n",cf.ucColorimetry);
                     if(cf.ucColorRange == COMBO_COLOR_RANGE_LIMIT ||(cf.ucColorType == COMBO_COLOR_FORMAT_RGB) )
                     {
                         #if ENABLE_HDR
@@ -2015,9 +1997,7 @@ void SettingInputColorimetry(void)
 
             case COMBO_YUV_COLORIMETRY_ITU601:
            {
-                    #if ENABLE_DEBUG
-                        MST_printData("0: Colorimetry %d use SDTV  Matrix\n",cf.ucColorimetry);
-                    #endif
+                    MST_printData("0: Colorimetry %d use SDTV  Matrix\n",cf.ucColorimetry);
                     if(cf.ucColorRange == COMBO_COLOR_RANGE_LIMIT)
                     {
                         #if ENABLE_HDR
@@ -2042,9 +2022,7 @@ void SettingInputColorimetry(void)
 
             case COMBO_YUV_COLORIMETRY_EC:
             {
-                    #if ENABLE_DEBUG
-                        MST_printData("1: ucYuvColorimetry %d use NoData  Matrix\n",cf.ucYuvColorimetry);
-                    #endif
+                    MST_printData("1: ucYuvColorimetry %d use NoData  Matrix\n",cf.ucYuvColorimetry);
                     if(cf.ucColorimetry == COMBO_COLORIMETRY_xvYCC601)
                     {
                         if(cf.ucColorRange == COMBO_COLOR_RANGE_LIMIT)

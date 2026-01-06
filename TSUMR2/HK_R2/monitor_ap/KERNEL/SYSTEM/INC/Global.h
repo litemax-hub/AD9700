@@ -651,7 +651,7 @@ extern BYTE  UserPrefSubBlueGain;
 extern BYTE xdata BrightnessTemp;
 extern BYTE xdata PrevHistoValue;
 
-#if (ENABLE_DEBUG && ENABLE_TIME_MEASUREMENT)
+#if (ENABLE_MSTV_UART_DEBUG && ENABLE_TIME_MEASUREMENT)
 extern WORD volatile idata g_u16TimeMeasurementCounter;
 extern bit bTimeMeasurementFlag;
 extern WORD idata g_u16Time1;

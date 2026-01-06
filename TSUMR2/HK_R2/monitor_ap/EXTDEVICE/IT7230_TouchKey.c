@@ -28,6 +28,14 @@ static BYTE xdata bTKLowContactFlag = TRUE;
 #if TOUCH_KEY_CTRL_LED
 static BYTE xdata wCAPS_GPIOOR_CHECK;
 #endif
+#define TOUCHKEY_DEBUG    0
+#if ENABLE_MSTV_UART_DEBUG && TOUCHKEY_DEBUG
+#define TOUCHKEY_printData(str, value)   printData(str, value)
+#define TOUCHKEY_printMsg(str)           printMsg(str)
+#else
+#define TOUCHKEY_printData(str, value)
+#define TOUCHKEY_printMsg(str)
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //----Return It7230 ITE7230InitState                                      ---//
@@ -400,9 +408,7 @@ BYTE IT7230_GetKeyStatus(void)
 
             if(wTKeyStatus)
             {
-                #if ENABLE_DEBUG
-                printData("wTKeyStatus:%x", wTKeyStatus);
-                #endif
+                TOUCHKEY_printData("wTKeyStatus:%x", wTKeyStatus);
                 if( wTKeyStatus == TPREG_POWER )
                 {
                     keypad &= ~KEY_POWER;

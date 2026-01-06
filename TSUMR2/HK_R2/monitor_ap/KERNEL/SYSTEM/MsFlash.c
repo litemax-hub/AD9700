@@ -33,14 +33,14 @@
 
 #define FLASH_DEBUG    0
 #define FLASH_ERROR    1
-#if FLASH_DEBUG && ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && FLASH_DEBUG
 #define FLASH_printData(str, value)   printData(str, value)
 #define FLASH_printMsg(str)           printMsg(str)
 #else
 #define FLASH_printData(str, value)
 #define FLASH_printMsg(str)
 #endif
-#if FLASH_ERROR && ENABLE_DEBUG
+#if FLASH_ERROR && ENABLE_MSTV_UART_DEBUG
 #define FLASH_printError(format, ...)     printf(format, ##__VA_ARGS__)
 #else
 #define FLASH_printError(format, ...)
@@ -1420,7 +1420,7 @@ void Flash_WriteTable( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count )
         FLASH_printError("current SPI mode = %d !!! change SPI mode !!!\r\n", mcuGetSpiMode());
         FlashCheckSpiMode();
     }
-    FlashDisableWP( dwAddr ); // 2005/5/11 ¤W¤È 10:19:39 by keng
+    FlashDisableWP( dwAddr ); // 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:39 by keng
 
     while( count > 0 )
     {
@@ -1463,7 +1463,7 @@ void Flash_WriteTable( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count )
 
 
     if( bDoWP )
-        FlashEnableWP();// 2005/5/11 ¤W¤È 10:19:43 by keng
+        FlashEnableWP();// 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:43 by keng
     if(!bFspEnable)
         FlashRestoreSpiMode();
 }
@@ -1488,7 +1488,7 @@ void Flash_WriteTbl( Bool bDoWP, WORD wAddr, BYTE *buffer, WORD count )
         FLASH_printError("current SPI mode = %d !!! change SPI mode !!!\r\n", mcuGetSpiMode());
         FlashCheckSpiMode();
     }
-    FlashDisableWP( wAddr ); // 2005/5/11 ¤W¤È 10:19:39 by keng
+    FlashDisableWP( wAddr ); // 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:39 by keng
 
     while( count > 0 )
     {
@@ -1530,7 +1530,7 @@ void Flash_WriteTbl( Bool bDoWP, WORD wAddr, BYTE *buffer, WORD count )
 
 
     if( bDoWP )
-        FlashEnableWP();// 2005/5/11 ¤W¤È 10:19:43 by keng
+        FlashEnableWP();// 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:43 by keng
     if(!bFspEnable)
         FlashRestoreSpiMode();
 }
@@ -1755,7 +1755,7 @@ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bo
    		WINISP_FlashSectorErase(TRUE, wAddr);
 
     if( bDoWP )
-        WINISP_FlashDisableWP( wAddr ); // 2005/5/11 ¤W¤È 10:19:39 by keng
+        WINISP_FlashDisableWP( wAddr ); // 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:39 by keng
 
     //MCU_CACHE_CTL = 0x00;
     while( count > 0 )
@@ -1798,7 +1798,7 @@ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bo
 
 
     if( bDoWP )
-        FlashEnableWP();// 2005/5/11 ¤W¤È 10:19:43 by keng
+        FlashEnableWP();// 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:43 by keng
     if(!bFspEnable)
         FlashRestoreSpiMode();
 }
@@ -1813,7 +1813,7 @@ void Flash_MoveTbl( Bool bDoWP, WORD wSrcAddr, WORD wDestAddr, WORD count )
         FLASH_printError("current SPI mode = %d !!! change SPI mode !!!\r\n", mcuGetSpiMode());
         FlashCheckSpiMode();
     }
-    FlashDisableWP( wDestAddr ); // 2005/5/11 ¤W¤È 10:19:39 by keng
+    FlashDisableWP( wDestAddr ); // 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:39 by keng
     while( count > 0 )
     {
         ucTemp = FlashReadByte( wSrcAddr );
@@ -1852,7 +1852,7 @@ void Flash_MoveTbl( Bool bDoWP, WORD wSrcAddr, WORD wDestAddr, WORD count )
         count -= 1;
     }
     if( bDoWP )
-        FlashEnableWP();// 2005/5/11 ¤W¤È 10:19:43 by keng
+        FlashEnableWP();// 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:43 by keng
     if(!bFspEnable)
         FlashRestoreSpiMode();
 }
@@ -3545,7 +3545,7 @@ void FlashdwAddrWriteTbl( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count )
 
 
     if( bDoWP )
-        FlashEnableWP();// 2005/5/11 ¤W¤È 10:19:43 by keng
+        FlashEnableWP();// 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:43 by keng
     if(!bFspEnable)
         FlashRestoreSpiMode();
 }
@@ -3599,7 +3599,7 @@ void FlashdwAddrMoveTbl( Bool bDoWP, DWORD dwSrcAddr, DWORD dwDestAddr, WORD cou
         count -= 1;
     }
     if( bDoWP )
-        FlashEnableWP();// 2005/5/11 ¤W¤È 10:19:43 by keng
+        FlashEnableWP();// 2005/5/11 ï¿½Wï¿½ï¿½ 10:19:43 by keng
     if(!bFspEnable)
         FlashRestoreSpiMode();
 }
@@ -3922,7 +3922,7 @@ U32 FlashImageChksum(BOOL bAPOnly)
 
 void FlashBinFileSizeCheck(void)
 {
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
     BININFO LastBinInfo = {
         .B_ID = 0,
         .B_FAddr = 0,

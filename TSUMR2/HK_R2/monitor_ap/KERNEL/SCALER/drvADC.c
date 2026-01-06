@@ -21,9 +21,9 @@
 #include "drvADC.h"
 #include "misc.h"
 #include "Power.h"
-#if ENABLE_DEBUG
+// #if ENABLE_DEBUG
 #include "GPIO_DEF.h"
-#endif
+// #endif
 
 #include "msEread.h"
 #include "AutoFunc.h"
@@ -34,9 +34,9 @@
 //  Local Defines
 //-------------------------------------------------------------------------------------------------
 
-//#define ADC_DEBUG
+#define ADC_DEBUG 0
 
-#ifdef ADC_DEBUG
+#ifdef ENABLE_MSTV_UART_DEBUG && ADC_DEBUG
     #define ADC_DPUTSTR(str)    printMsg(str)
     #define ADC_DPRINTF(str, x) printData(str, x)
 #else
@@ -557,7 +557,7 @@ void drvADC_SetBlueGainCode(WORD u16BCode)
 //  [Description]
 //                  Set ADC R/G/B offset code
 //  [Arguments]:
-//                  rcode/gcode/bcode: R/G/B offset value, ¡Ó0~4095(S12)
+//                  rcode/gcode/bcode: R/G/B offset value, ï¿½ï¿½0~4095(S12)
 //  [Return]:
 //
 //**************************************************************************
@@ -774,7 +774,7 @@ Bool drvADC_AutoPhaseAdjustment(BYTE u8VSyncTime)
         if (CheckSyncLoss())//||CheckPowerKeyStatus())
             return FALSE;
     }
-    //  printData("coast phase %d", bestPhase);
+    //  ADC_DPRINTF("coast phase %d", bestPhase);
     // 2nd Search
     if (worsePhase<7)
         worsePhase=(worsePhase+127)%0x80; // 128-7
@@ -821,7 +821,7 @@ Bool drvADC_AutoPhaseAdjustment(BYTE u8VSyncTime)
         if (CheckSyncLoss())//||CheckPowerKeyStatus())
             return FALSE;
     }
-    //  printData("coast phase %d", bestPhase);
+    //  ADC_DPRINTF("coast phase %d", bestPhase);
     // 2nd Search
     if (bestPhase<7)
         bestPhase=(bestPhase+121)%0x80; // 128-7
@@ -1043,7 +1043,7 @@ Bool drvADC_SetModewithPLLProtection(ADC_INPUTSOURCE_TYPE enADCInput, WORD u16Pi
             result = FALSE;
     }
 #if ENABLE_ADC_RESET
-    // ADC software reset for °ª·Å¥Õ«Ìissue
+    // ADC software reset for ï¿½ï¿½ï¿½Å¥Õ«ï¿½issue
     drvADC_Write2BytesMask(REG_ADC_ATOP_07_L, BIT6, BIT6); // [6]: Iclamp reset
     drvADC_Write2BytesMask(REG_ADC_ATOP_07_L, 0, BIT6);
     Delay1ms(2);
@@ -2710,7 +2710,7 @@ static void drvADC_EnableScalerPG(msADCScalerPG_HtotalSel ht_sel)
     msWriteByteMask(REG_102E30, 0x06, 0x3F); // reg_vsync_w
     msWrite2ByteMask(REG_102E32, 0x40, 0x1FFF); // reg_vtotal
     msWriteByteMask(REG_102E20, BIT0, BIT0); // Timing gen enable
-    //msWriteByteMask(REG_102E21, BIT7, BIT7); // REG_2E10[15]: Data¤Á¦¨ADC data
+    //msWriteByteMask(REG_102E21, BIT7, BIT7); // REG_2E10[15]: Dataï¿½ï¿½ï¿½ï¿½ADC data
 }
 
 #if 1
@@ -3345,8 +3345,8 @@ void drvADC_PowerCtrl(BYTE u8State)
     else //ADC_POWER_DOWN
     {
 #if _NEW_SOG_DET_
-        msWrite2Byte( REG_ADC_PMATOP_78_L, 0x9280 );  // [15:4]: reg_isog_rst_period = h¡¦928(200 msec), [3:0]: reg_sog_high_num = 0
-        msWrite2Byte(REG_ADC_PMATOP_79_L, 0x1000); // [15:12]: reg_isog_rst_width = ¡¥h1, [11:0]: reg_sog_cnt_limit = 0
+        msWrite2Byte( REG_ADC_PMATOP_78_L, 0x9280 );  // [15:4]: reg_isog_rst_period = hï¿½ï¿½928(200 msec), [3:0]: reg_sog_high_num = 0
+        msWrite2Byte(REG_ADC_PMATOP_79_L, 0x1000); // [15:12]: reg_isog_rst_width = ï¿½ï¿½h1, [11:0]: reg_sog_cnt_limit = 0
         msWriteByteMask(REG_ADC_PMATOP_7A_L, 0, BIT2|BIT1); // on-line SOG MUX power on
 #endif
         msWrite2Byte( REG_ADC_ATOP_04_L, 0xFFFF );  // set power-on default value to power down ADC
