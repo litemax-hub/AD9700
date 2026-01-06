@@ -689,15 +689,15 @@ void appFactoryHdcpWrite( WORD wIndex, WORD wBufSize, BYTE* buf, BYTE ucLen )
     }
 #else
     BYTE xdata i;
-    WORD xdata wAddr;
+    DWORD xdata dwAddr;
 
     for( i = 0; i < ucLen; i++ )
     {
         //SIO_TYPE2==HDCP BANK NO    SIORxBuffer[3+i]==HDCP DATA
-        wAddr = (WORD)wIndex*wBufSize  + i;
-        if( wAddr < HDCPKEY_SIZE )
+        dwAddr = (WORD)wIndex*wBufSize  + i;
+        if( dwAddr < HDCPKEY_SIZE )
         {
-            FlashHDCPWriteByte(( HDCPKEYSET_START + wAddr ), *(buf+i));
+            FlashHDCPWriteByte(( HDCPKEYSET_START + dwAddr ), *(buf+i));
             TCRCvalue = CRC16(FlashReadByte(HDCPKEYSET_START+wBufSize*wIndex+i), TCRCvalue);
         }
     }
@@ -765,7 +765,7 @@ WORD appFactorySetEdidWriteStart( drvFactoryModeType ucControl )
     return (( WORD )ucInputEDID << 8 | ucStatus );
 }
 
-void appFactoryWriteEDID( drvFactoryDeviceType ucDevice, WORD wAddr, BYTE* buf, BYTE ucLen )
+void appFactoryWriteEDID( drvFactoryDeviceType ucDevice, DWORD dwAddr, BYTE* buf, BYTE ucLen )
 {
     BYTE xdata ucType;
 #if defined(UseInternalDDCRam)//EDID&HDCP Key In Flash
@@ -781,27 +781,27 @@ void appFactoryWriteEDID( drvFactoryDeviceType ucDevice, WORD wAddr, BYTE* buf, 
         return;
     if( ucType == FLASH_KEY_HDCP )
     {
-        Flash_WriteTbl( TRUE, HDCPKEYSET_START + wAddr, buf, ucLen );
+        Flash_WriteTbl( TRUE, HDCPKEYSET_START + dwAddr, buf, ucLen );
     }
     else
     {
-        Flash_Write_Factory_KeySet( ucType, wAddr / ucLen, ucLen, buf, ucLen ); //it takes about 20ms for flash to write 32 Bytes.(PMC 7ms,SST 9ms,EON 18ms,MX2026 19ms,MX2025 12ms)
+        Flash_Write_Factory_KeySet( ucType, dwAddr / ucLen, ucLen, buf, ucLen ); //it takes about 20ms for flash to write 32 Bytes.(PMC 7ms,SST 9ms,EON 18ms,MX2026 19ms,MX2025 12ms)
     }
 #else//EDID In EEPROM,But HDCP Key In Flash
     if( ucDevice == HDCP1 )
     {
         ucType = FLASH_KEY_HDCP;
-        Flash_WriteTbl( TRUE, HDCPKEYSET_START + wAddr, buf, ucLen );
+        Flash_WriteTbl( TRUE, HDCPKEYSET_START + dwAddr, buf, ucLen );
     }
     else if( ucDevice == DP1 || ucDevice == DP2)    ////111005 Rick add write DP edid condition - A020
     {
         ucType = FLASH_KEY_DDCDP;
-        Flash_Write_Factory_KeySet( ucType, wAddr / ucLen, ucLen, buf, ucLen ); //it takes about 20ms for flash to write 32 Bytes.(PMC 7ms,SST 9ms,EON 18ms,MX2026 19ms,MX2025 12ms)
+        Flash_Write_Factory_KeySet( ucType, dwAddr / ucLen, ucLen, buf, ucLen ); //it takes about 20ms for flash to write 32 Bytes.(PMC 7ms,SST 9ms,EON 18ms,MX2026 19ms,MX2025 12ms)
     }
     else
     {
         LoadEDIDSelectPort = ucDevice;//Select Current IIC Port
-        i2c_WriteTBL( 0xA0, wAddr, buf, ucLen ); //it takes about 45ms for EEPROM to write 32 Bytes.
+        i2c_WriteTBL( 0xA0, dwAddr, buf, ucLen ); //it takes about 45ms for EEPROM to write 32 Bytes.
         LoadEDIDSelectPort = 0xFF;//Set IIC Port To UserData EEPRom
     }
     hw_SetAmberLed();
@@ -809,11 +809,11 @@ void appFactoryWriteEDID( drvFactoryDeviceType ucDevice, WORD wAddr, BYTE* buf, 
 #endif
 }
 
-void appFactoryGetEDID( drvFactoryDeviceType ucDevice, WORD wAddr, BYTE* buf, BYTE ucLen )
+void appFactoryGetEDID( drvFactoryDeviceType ucDevice, DWORD dwAddr, BYTE* buf, BYTE ucLen )
 {
 
 #if 1
-    WORD StartAddr;
+    DWORD StartAddr;
 #if defined(UseInternalDDCRam)//EDID&HDCP Key In Flash
     if( ucDevice == VGA1 )
         StartAddr = DDCAKEYSET_START;
@@ -825,23 +825,23 @@ void appFactoryGetEDID( drvFactoryDeviceType ucDevice, WORD wAddr, BYTE* buf, BY
         StartAddr = HDCPKEYSET_START;
     else
         return;
-    Flash_ReadTbl(( StartAddr + wAddr ), buf, ucLen );
+    Flash_ReadTbl(( StartAddr + dwAddr ), buf, ucLen );
 #else//EDID In EEPROM,But HDCP Key In Flash
     if( ucDevice == HDCP1 )
     {
         StartAddr = HDCPKEYSET_START;
-        Flash_ReadTbl(( StartAddr + wAddr ), buf, ucLen );
+        Flash_ReadTbl(( StartAddr + dwAddr ), buf, ucLen );
     }
     else if( ucDevice == DP1 || ucDevice == DP2)        //111005 Rick add write DP edid condition - A020
     {
         //StartAddr = DDCDPKEYSET_START;
-        //Flash_ReadTbl(( StartAddr + wAddr ), buf, ucLen );
-        Flash_Read_Factory_KeySet( FLASH_KEY_DDCDP, TRUE, (wAddr / ucLen), ucLen, buf, ucLen );
+        //Flash_ReadTbl(( StartAddr + dwAddr ), buf, ucLen );
+        Flash_Read_Factory_KeySet( FLASH_KEY_DDCDP, TRUE, (dwAddr / ucLen), ucLen, buf, ucLen );
     }
     else
     {
         LoadEDIDSelectPort = ucDevice;//Select Current IIC Port
-        i2c_ReadTBL( 0xA0, wAddr, buf, ucLen ); //Read Data From EEProm
+        i2c_ReadTBL( 0xA0, dwAddr, buf, ucLen ); //Read Data From EEProm
         LoadEDIDSelectPort = 0xFF;//Set IIC Port To UserData EEPRom
     }
 #endif
@@ -850,7 +850,7 @@ void appFactoryGetEDID( drvFactoryDeviceType ucDevice, WORD wAddr, BYTE* buf, BY
     BYTE xdata i;
     if(( ucDevice >= VGA1 && ucDevice <= DP2 ) || ( ucDevice >= EEPROM && ucDevice <= HDCP2 ) )
     {
-        ReadDevice( ucDevice, wAddr, ucLen ); //Read EDID or HDCP KEY
+        ReadDevice( ucDevice, dwAddr, ucLen ); //Read EDID or HDCP KEY
         for( i = 0; i < ucLen; i++ )
         {
             *(buf+1) = SIORxBuffer[i];

@@ -260,7 +260,7 @@ typedef enum
 #define FDATA_DYNAMIC_SECTOR_NUM    4
 #define FDATA_SECTOR_SIZE           0x1000
 
-#define FDATA_BUF_ADDR(Num)         (FDATA_DYNAMIC_ADDR+(Num<<12))//Flash Data Start
+#define FDATA_BUF_ADDR(Num)         (U32)(FDATA_DYNAMIC_ADDR+(Num<<12))//Flash Data Start
 
 #define FLASH_IDENTDATA             0x55
 #define FLASH_IDENTDATA_CLEAR       0x00
@@ -435,18 +435,18 @@ typedef enum
 }FLASH_SIZE;
 //==================================================
 _MSFLASHDEC_ BYTE xdata g_ucFlashID;
-_MSFLASHDEC_ WORD xdata g_wKEYSET_START;
+_MSFLASHDEC_ DWORD xdata g_wKEYSET_START;
 #if FLASH_READ_BYTE_BY_CODE_POINTER
 _MSFLASHDEC_ DWORD xdata g_dwSpiDuelImageOffset;
 _MSFLASHDEC_ BYTE xdata volatile *g_xfr_FlashCode;
 #endif
 #if 1//USEFLASH
-_MSFLASHDEC_ WORD xdata FLASH_MonitorSettingAddr;   //monitor Setting
-_MSFLASHDEC_ WORD xdata FLASH_MonitorSetting2Addr;  //monitor Setting
-_MSFLASHDEC_ WORD xdata FLASH_TimingModeAddr;   //Timing Mode
-_MSFLASHDEC_ WORD xdata FLASH_FactorySettingAddr;   //Factory Setting
-_MSFLASHDEC_ WORD xdata FLASH_FreeBufferAddr;   //Empty buffer
-_MSFLASHDEC_ WORD xdata FLASH_HDCP_EDIDAddr;
+_MSFLASHDEC_ MS_PHYADDR xdata FLASH_MonitorSettingAddr;   //monitor Setting
+_MSFLASHDEC_ MS_PHYADDR xdata FLASH_MonitorSetting2Addr;  //monitor Setting
+_MSFLASHDEC_ MS_PHYADDR xdata FLASH_TimingModeAddr;   //Timing Mode
+_MSFLASHDEC_ MS_PHYADDR xdata FLASH_FactorySettingAddr;   //Factory Setting
+_MSFLASHDEC_ MS_PHYADDR xdata FLASH_FreeBufferAddr;   //Empty buffer
+_MSFLASHDEC_ MS_PHYADDR xdata FLASH_HDCP_EDIDAddr;
 #endif
 //==================================================
 ///////////////////////////////////////////////////////////////////////////////
@@ -468,7 +468,7 @@ _MSFLASHDEC_ BYTE ReadFlashID( void );
 //  bDoWP   -   In  -   Doing FlashDisableWP at start and FlashEnableWP at end
 //  wAddr   -   In  -   Erase 4K BYTE sector address
 ///////////////////////////////////////////////////////////////////////////////
-_MSFLASHDEC_ void FlashSectorErase( Bool bDoWP, WORD wAddr );
+_MSFLASHDEC_ void FlashSectorErase( Bool bDoWP, MS_PHYADDR wAddr );
 _MSFLASHDEC_ void FlashAnySectorErase( Bool bDoWP, DWORD dwAddr );
 ///////////////////////////////////////////////////////////////////////////////
 // <DRV><Description>: Write one byte to flash
@@ -479,9 +479,9 @@ _MSFLASHDEC_ void FlashAnySectorErase( Bool bDoWP, DWORD dwAddr );
 //                      wAddr < FDATA_FACTORY_ADDR will be limit, so address < 0x3B000 will be limit
 //  value   -   In  -   The value write to flash
 ///////////////////////////////////////////////////////////////////////////////
-_MSFLASHDEC_ void FlashWriteByte( Bool bDoWP, WORD wAddr, BYTE value );
+_MSFLASHDEC_ void FlashWriteByte( Bool bDoWP, DWORD dwAddr, BYTE value );
 _MSFLASHDEC_ void FlashWriteAnyByte( Bool bDoWP, DWORD dwAddr, BYTE value );
-_MSFLASHDEC_ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bool bNErsSctr );
+_MSFLASHDEC_ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count, Bool bNErsSctr );
 _MSFLASHDEC_ void Flash_EraseSector( Bool bDoWP, DWORD dwAddr );
 _MSFLASHDEC_ void Flash_WriteTable( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count );
 _MSFLASHDEC_ void Flash_ReadTable( DWORD dwAddr, BYTE *buffer, WORD count );
@@ -494,11 +494,11 @@ _MSFLASHDEC_ void Flash_ReadTable( DWORD dwAddr, BYTE *buffer, WORD count );
 //-----------------------------------------------------------------------------
 //  wAddr   -   In  -   Only in the same bank ot MsFlash.c
 ///////////////////////////////////////////////////////////////////////////////
-_MSFLASHDEC_ void FlashHDCPWriteByte( WORD wAddr, BYTE value );
+_MSFLASHDEC_ void FlashHDCPWriteByte( DWORD wAddr, BYTE value );
 
-_MSFLASHDEC_ BYTE FlashReadByte( WORD wAddr );
-_MSFLASHDEC_ WORD FlashRead2Byte( WORD wAddr);
-_MSFLASHDEC_ DWORD FlashRead4Byte( WORD wAddr);
+_MSFLASHDEC_ BYTE FlashReadByte( DWORD dwAddr );
+_MSFLASHDEC_ WORD FlashRead2Byte( DWORD dwAddr);
+_MSFLASHDEC_ DWORD FlashRead4Byte( DWORD dwAddr);
 _MSFLASHDEC_ BYTE FSPFlashReadAnyByte( DWORD dwAddr );
 _MSFLASHDEC_ BYTE FlashReadAnyByte( DWORD dwAddr );
 //////////////////////////////////////////////////////////////////////////////
@@ -511,7 +511,7 @@ _MSFLASHDEC_ BYTE FlashReadAnyByte( DWORD dwAddr );
 //  buffer  -   In  -   Data pointer of the table
 //  count   -   In  -   Number of data
 //////////////////////////////////////////////////////////////////////////////
-_MSFLASHDEC_ void Flash_WriteTbl( Bool bDoWP, WORD dwAddr, BYTE *buffer, WORD count );
+_MSFLASHDEC_ void Flash_WriteTbl( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count );
 //////////////////////////////////////////////////////////////////////////////
 // <DRV><Description>: Read a table from flash
 // <Parameter>:     -   <Flow>  -   <Description>
@@ -520,7 +520,7 @@ _MSFLASHDEC_ void Flash_WriteTbl( Bool bDoWP, WORD dwAddr, BYTE *buffer, WORD co
 //  buffer  -   Out -   Data point of the table
 //  count   -   In  -   Number of BYTE data
 //////////////////////////////////////////////////////////////////////////////
-_MSFLASHDEC_ void Flash_ReadTbl( WORD dwAddr, BYTE *buffer, WORD count );
+_MSFLASHDEC_ void Flash_ReadTbl( DWORD dwAddr, BYTE *buffer, WORD count );
 
 //API start=================================================================================
 //////////////////////////////////////////////////////////////////////////////
@@ -640,7 +640,7 @@ _MSFLASHDEC_ void Flash_WriteModeSet( BYTE index, BYTE *buf );
 //////////////////////////////////////////////////////////////////////////////
 _MSFLASHDEC_ Bool Flash_ReadModeSet( BYTE index, BYTE *buf );
 
-_MSFLASHDEC_ void FlashDisableWP( WORD wAddr );
+_MSFLASHDEC_ void FlashDisableWP( MS_PHYADDR wAddr );
 _MSFLASHDEC_ void WINISP_FlashDisableWP( DWORD wAddr );
 _MSFLASHDEC_ void FlashEnableWP( void );
 _MSFLASHDEC_ void FlashFSPEnable( Bool bEnable );
@@ -666,12 +666,12 @@ _MSFLASHDEC_ void FlashdwAddrReadTbl( DWORD dwAddr, BYTE *buffer, WORD count );
 
 #if USEFLASH_REDUCE_STACK_WRITE_FDATA
 _MSFLASHDEC_ BYTE xdata FlashFData_ucKeyIndex;
-_MSFLASHDEC_ WORD xdata FlashFData_wKEYSET_START;
-_MSFLASHDEC_ WORD xdata FlashFData_wKEYSET_STATUS_ADDR;
+_MSFLASHDEC_ MS_PHYADDR xdata FlashFData_wKEYSET_START;
+_MSFLASHDEC_ DWORD xdata FlashFData_wKEYSET_STATUS_ADDR;
 _MSFLASHDEC_ Bool FlashFData_GetWriteKeyAddress(FLASH_KEY_TYPE ucType, Bool bWrite);
 _MSFLASHDEC_ Bool FlashFData_BackupToFreeBuffer(FLASH_KEY_TYPE ucKeyType);
 _MSFLASHDEC_ Bool FlashFData_BackupFromFreeBuffer(FLASH_KEY_TYPE ucKeyType);
-_MSFLASHDEC_ void FlashFData_WriteBufferType(WORD addr);
+_MSFLASHDEC_ void FlashFData_WriteBufferType(DWORD addr);
 _MSFLASHDEC_ void FlashFData_WriteKeyValidByte(void);
 #endif
 

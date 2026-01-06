@@ -711,7 +711,7 @@ void FlashWriteSR( BYTE value )
 // <Parameter>:  <Description>
 //  wAddr : Which sector address will be unportect
 ///////////////////////////////////////////////////////////////////////////////
-void FlashPMCUnprotectEnable( WORD wAddr )
+void FlashPMCUnprotectEnable( MS_PHYADDR wAddr )
 {
     if( g_ucFlashDeviceID == PM25_LD020 || g_ucFlashDeviceID == PM25_LQ020)
     {
@@ -965,14 +965,14 @@ void FlashDisableWP_WINBOND_W25X21CL(void)
 }
 
 // use sector unlock to disable write protection
-void FlashDisableWP_GigaDevice_GD25M21B_GD25M41B(WORD wAddr)
+void FlashDisableWP_GigaDevice_GD25M21B_GD25M41B(MS_PHYADDR dwAddr)
 {
     // 1st
     SPI_SI_BUFF(0)   = WREN;
     // 2nd
     SPI_SI_BUFF(1)   = GIGADEVICE_UNPROTECT;
     SPI_SI_BUFF(2)   = USER_DATA_BANK; //TOTAL_BANK_NUM - 1;
-    SPI_SI_BUFF(3)   = ( wAddr >> 8 ) & 0x0f0;
+    SPI_SI_BUFF(3)   = ( dwAddr >> 8 ) & 0x0f0;
     SPI_SI_BUFF(4)   = 0x00;
     // 3rd
     SPI_SI_BUFF(5)   = RDSR;
@@ -1041,7 +1041,7 @@ void FlashEnableWP( void )
 ///////////////////////////////////////////////////////////////////////////////
 // <DRV><Description>: Disable flash write protect
 ///////////////////////////////////////////////////////////////////////////////
-void FlashDisableWP( WORD wAddr )
+void FlashDisableWP( MS_PHYADDR dwAddr )
 {
     BYTE SSR;
 
@@ -1049,13 +1049,13 @@ void FlashDisableWP( WORD wAddr )
 
 #if 0
 
-    wAddr = wAddr;
+    dwAddr = dwAddr;
     FlashDisableWP_OTHERS(SSR);
 
 #else
     if( g_ucFlashID == FLASH_PMC )
     {
-        FlashDisableWP_PMC(wAddr);//FlashPMCUnprotectEnable( wAddr );
+        FlashDisableWP_PMC(dwAddr);//FlashPMCUnprotectEnable( dwAddr );
     }
     else if( g_ucFlashID == FLASH_EON )
     {
@@ -1075,7 +1075,7 @@ void FlashDisableWP( WORD wAddr )
     }
     else if( g_ucFlashID == FLASH_GIGADEVICE && (g_ucFlashDeviceID == GD25M21B || g_ucFlashDeviceID == GD25M41B) )
     {
-        FlashDisableWP_GigaDevice_GD25M21B_GD25M41B(wAddr);
+        FlashDisableWP_GigaDevice_GD25M21B_GD25M41B(dwAddr);
     }
     else
     {
@@ -1160,9 +1160,9 @@ void Flash_EraseSector( Bool bDoWP, DWORD dwAddr )
 // <Parameter>:  -  <Flow>  -  <Description>
 //-----------------------------------------------------------------------------
 //  bDoWP   -   In  -   Doing FlashDisableWP at start and FlashEnableWP at end
-//  wAddr   -   In  -   Erase 4K BYTE sector address
+//  dwAddr   -   In  -   Erase 4K BYTE sector address
 ///////////////////////////////////////////////////////////////////////////////
-void FlashSectorErase( Bool bDoWP, WORD wAddr )
+void FlashSectorErase( Bool bDoWP, MS_PHYADDR dwAddr )
 {
     BOOL bFspEnable = g_bFspEnable;
 
@@ -1172,7 +1172,7 @@ void FlashSectorErase( Bool bDoWP, WORD wAddr )
         FlashCheckSpiMode();
     }
 
-    FlashDisableWP( wAddr );
+    FlashDisableWP( dwAddr );
 
     // 1st
     SPI_SI_BUFF(0)   = WREN;
@@ -1192,9 +1192,9 @@ void FlashSectorErase( Bool bDoWP, WORD wAddr )
     else
         SPI_SI_BUFF(1) = SST_ERASE_SECTOR;
 
-    SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUFF(3) = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUFF(4) = wAddr & 0x0ff;
+    SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUFF(3) = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUFF(4) = dwAddr & 0x0ff;
     // 3rd
     SPI_SI_BUFF(5)   = RDSR;
 
@@ -1220,9 +1220,9 @@ void FlashSectorErase( Bool bDoWP, WORD wAddr )
     else
         SPI_SI_BUF[0] = SST_ERASE_SECTOR;
 
-    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUF[3] = wAddr & 0x0ff;
+    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUF[3] = dwAddr & 0x0ff;
 
     SPI_CTRL = 0xFB; //0xFC;
     */
@@ -1243,29 +1243,29 @@ void FlashAnySectorErase( Bool bDoWP, DWORD dwAddr )
 // <Parameter>: -  <Flow>   -   <Description>
 //-----------------------------------------------------------------------------
 //  bDoWP   -   In  -   Doing FlashDisableWP at start and FlashEnableWP at end
-//  wAddr   -   In  -   Flash Address to be write, high byte address will be USER_DATA_BANK
-//                      wAddr < FDATA_FACTORY_ADDR will be limit, so address < 0x3B000 will be limit
+//  dwAddr   -   In  -   Flash Address to be write, high byte address will be USER_DATA_BANK
+//                      dwAddr < FDATA_FACTORY_ADDR will be limit, so address < 0x3B000 will be limit
 //  value   -   In  -   The value write to flash
 ///////////////////////////////////////////////////////////////////////////////
-void FlashWriteByte( Bool bDoWP, WORD wAddr, BYTE value )
+void FlashWriteByte( Bool bDoWP, MS_PHYADDR dwAddr, BYTE value )
 {
     BOOL bFspEnable = g_bFspEnable;
 
     if(!bFspEnable)
     {
-        FLASH_printError("current SPI mode = %d !!! change SPI mode !!!\r\n", mcuGetSpiMode());
+        FLASH_printError("current SPI mode = %d !!! change   SPI mode !!!\r\n", mcuGetSpiMode());
         FlashCheckSpiMode();
     }
 
-    FlashDisableWP( wAddr );
+    FlashDisableWP( dwAddr );
 
     // 1st
     SPI_SI_BUFF(0)   = WREN;
     // 2nd
     SPI_SI_BUFF(1) = BYTE_WRITE;
-    SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUFF(3) = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUFF(4) = wAddr & 0x0ff;
+    SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUFF(3) = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUFF(4) = dwAddr & 0x0ff;
     SPI_SI_BUFF(5) = value;
     // 3rd
     SPI_SI_BUFF(6)   = RDSR;
@@ -1282,9 +1282,9 @@ void FlashWriteByte( Bool bDoWP, WORD wAddr, BYTE value )
     //CleanSPI_SI_BUF();
     //MCU_CACHE_CTL = 0x00;
     SPI_SI_BUF[0] = BYTE_WRITE;
-    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUF[3] = wAddr & 0x0ff;
+    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUF[3] = dwAddr & 0x0ff;
     SPI_SI_BUF[4] = value;
     SPI_CTRL = 0xFC;
     //MCU_CACHE_CTL = 0x20;
@@ -1309,10 +1309,10 @@ void FlashWriteAnyByte( Bool bDoWP, DWORD dwAddr, BYTE value )
 }
 
 #if 0//HDCPKEY_IN_Flash
-void FlashHDCPWriteByte( WORD wAddr, BYTE value )
+void FlashHDCPWriteByte( DWORD dwAddr, BYTE value )
 {
 
-    if( wAddr < FDATA_START_ADDR )
+    if( dwAddr < FDATA_START_ADDR )
         return;
 
     FlashDisableStausProtect_MXIC2026();//For MXIC 2026
@@ -1321,9 +1321,9 @@ void FlashHDCPWriteByte( WORD wAddr, BYTE value )
     SPI_SI_BUF[0]   = WREN;
     // 2nd
     SPI_SI_BUF[1] = BYTE_WRITE;
-    SPI_SI_BUF[2] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUF[3] = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUF[4] = wAddr & 0x0ff;
+    SPI_SI_BUF[2] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUF[3] = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUF[4] = dwAddr & 0x0ff;
     SPI_SI_BUF[5] = value;
     // 3rd
     SPI_SI_BUF[6]   = RDSR;
@@ -1338,9 +1338,9 @@ void FlashHDCPWriteByte( WORD wAddr, BYTE value )
     /*
     FlashWriteEnable();
     SPI_SI_BUF[0] = BYTE_WRITE;
-    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUF[3] = wAddr & 0x0ff;
+    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUF[3] = dwAddr & 0x0ff;
     SPI_SI_BUF[4] = value;
     SPI_CTRL = 0xFC;
     */
@@ -1356,12 +1356,12 @@ void FlashHDCPWriteByte( WORD wAddr, BYTE value )
 ///////////////////////////////////////////////////////////////////////////////
 #if FLASH_READ_BYTE_BY_CODE_POINTER
 
-BYTE FlashReadByte( WORD wAddr )
+BYTE FlashReadByte( DWORD dwAddr )
 {
-    return g_xfr_FlashCode[wAddr];
+    return g_xfr_FlashCode[dwAddr];
 }
 #else
-BYTE FlashReadByte( WORD wAddr )
+BYTE FlashReadByte( DWORD dwAddr )
 {
     BYTE u8SPI_mode;
     BOOL bFspEnable = g_bFspEnable;
@@ -1375,8 +1375,8 @@ BYTE FlashReadByte( WORD wAddr )
     //1st
     SPI_SI_BUFF(0)   = (u8SPI_mode == SPI_MODE_FR) ? H_READ:READ;
     SPI_SI_BUFF(1)   = USER_DATA_BANK; //TOTAL_BANK_NUM - 1;
-    SPI_SI_BUFF(2)   = (wAddr>>8)&0xff;
-    SPI_SI_BUFF(3)   = wAddr&0xff;
+    SPI_SI_BUFF(2)   = (dwAddr>>8)&0xff;
+    SPI_SI_BUFF(3)   = dwAddr&0xff;
     //2nd
     SPI_SI_BUFF(4)   = RDSR;
     if(u8SPI_mode == SPI_MODE_FR)
@@ -1395,14 +1395,14 @@ BYTE FlashReadByte( WORD wAddr )
 }
 #endif
 
-WORD FlashRead2Byte( WORD wAddr)
+WORD FlashRead2Byte( DWORD dwAddr)
 {
-    return ((( DWORD )FlashReadByte( wAddr+1 ) ) << 8 ) | FlashReadByte( wAddr );
+    return ((( DWORD )FlashReadByte( dwAddr+1 ) ) << 8 ) | FlashReadByte( dwAddr );
 }
 
-DWORD FlashRead4Byte( WORD wAddr)
+DWORD FlashRead4Byte( DWORD dwAddr)
 {
-    return ((( DWORD )FlashReadByte( wAddr+3 ) ) << 24 ) | ((( DWORD )FlashReadByte( wAddr+2 ) ) << 16 ) | ((( DWORD )FlashReadByte( wAddr+1 ) ) << 8 ) | FlashReadByte( wAddr );
+    return ((( DWORD )FlashReadByte( dwAddr+3 ) ) << 24 ) | ((( DWORD )FlashReadByte( dwAddr+2 ) ) << 16 ) | ((( DWORD )FlashReadByte( dwAddr+1 ) ) << 8 ) | FlashReadByte( dwAddr );
 }
 
 // dwAddr : Bank + 4B address
@@ -1473,12 +1473,12 @@ void Flash_WriteTable( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count )
 // <Parameter>:     -   <Flow>  -   <Description>
 // ---------------------------------------------------------------------------
 //  bDoWP   -   In  -   Doing FlashDisableWP at start and FlashEnableWP at end
-//  wAddr   -   In  -   Flash Address to be write, high byte address will be USER_DATA_BANK
-//                      wAddr < FDATA_FACTORY_ADDR will be limit, so address < 0x3B000 will be limit
+//  dwAddr   -   In  -   Flash Address to be write, high byte address will be USER_DATA_BANK
+//                      dwAddr < FDATA_FACTORY_ADDR will be limit, so address < 0x3B000 will be limit
 //  buffer  -   In  -   Data pointer of the table
 //  count   -   In  -   Number of data
 //////////////////////////////////////////////////////////////////////////////
-void Flash_WriteTbl( Bool bDoWP, WORD wAddr, BYTE *buffer, WORD count )
+void Flash_WriteTbl( Bool bDoWP, MS_PHYADDR dwAddr, BYTE *buffer, WORD count )
 {
     BYTE i = 0;
     BOOL bFspEnable = g_bFspEnable;
@@ -1488,7 +1488,7 @@ void Flash_WriteTbl( Bool bDoWP, WORD wAddr, BYTE *buffer, WORD count )
         FLASH_printError("current SPI mode = %d !!! change SPI mode !!!\r\n", mcuGetSpiMode());
         FlashCheckSpiMode();
     }
-    FlashDisableWP( wAddr ); // 2005/5/11 �W�� 10:19:39 by keng
+    FlashDisableWP( dwAddr ); // 2005/5/11 �W�� 10:19:39 by keng
 
     while( count > 0 )
     {
@@ -1498,9 +1498,9 @@ void Flash_WriteTbl( Bool bDoWP, WORD wAddr, BYTE *buffer, WORD count )
         SPI_SI_BUFF(0)   = WREN;
         // 2nd
         SPI_SI_BUFF(1) = BYTE_WRITE;
-        SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUFF(3) = ( wAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUFF(4) = wAddr & 0x0ff;
+        SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUFF(3) = ( dwAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUFF(4) = dwAddr & 0x0ff;
         SPI_SI_BUFF(5) = *( buffer + ( i++ ) );
         // 3rd
         SPI_SI_BUFF(6)   = RDSR;
@@ -1515,14 +1515,14 @@ void Flash_WriteTbl( Bool bDoWP, WORD wAddr, BYTE *buffer, WORD count )
         /*
         FlashWriteEnable();
         SPI_SI_BUF[0] = BYTE_WRITE;
-        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUF[3] = wAddr & 0x0ff;
+        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUF[3] = dwAddr & 0x0ff;
         SPI_SI_BUF[4] = *( buffer + ( i++ ) );
         SPI_CTRL = 0xFC;
         */
 
-        wAddr += 1;
+        dwAddr += 1;
         count -= 1;
 
     }
@@ -1537,15 +1537,15 @@ void Flash_WriteTbl( Bool bDoWP, WORD wAddr, BYTE *buffer, WORD count )
 
 #if 1
 //For _GD25M21B_GD25M41B
-void WINISP_FlashDisableWP_GigaDevice(DWORD wAddr)
+void WINISP_FlashDisableWP_GigaDevice(DWORD dwAddr)
 {
 
     // 1st
     SPI_SI_BUFF(0)   = WREN;
     // 2nd
     SPI_SI_BUFF(1)   = GIGADEVICE_UNPROTECT;
-    SPI_SI_BUFF(2)   = (wAddr >> 16 & 0xFF); //TOTAL_BANK_NUM - 1;
-    SPI_SI_BUFF(3)   = ( wAddr >> 8 ) & 0x0f0;
+    SPI_SI_BUFF(2)   = (dwAddr >> 16 & 0xFF); //TOTAL_BANK_NUM - 1;
+    SPI_SI_BUFF(3)   = ( dwAddr >> 8 ) & 0x0f0;
     SPI_SI_BUFF(4)   = 0x00;
     // 3rd
     SPI_SI_BUFF(5)   = RDSR;
@@ -1559,7 +1559,7 @@ void WINISP_FlashDisableWP_GigaDevice(DWORD wAddr)
     drvFlashWaitSPINotBusy();
 }
 
-void WINISP_FlashPMCUnprotectEnable( DWORD wAddr )
+void WINISP_FlashPMCUnprotectEnable( DWORD dwAddr )
 {
     if( g_ucFlashDeviceID == PM25_LD020 || g_ucFlashDeviceID == PM25_LQ020)
     {
@@ -1567,8 +1567,8 @@ void WINISP_FlashPMCUnprotectEnable( DWORD wAddr )
         SPI_SI_BUFF(0)   = WREN;
         // 2nd
         SPI_SI_BUFF(1)   = PMC_UNPROTECT;
-        SPI_SI_BUFF(2)   = (wAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1;
-        SPI_SI_BUFF(3)   = ( wAddr >> 8 ) & 0x0f0;
+        SPI_SI_BUFF(2)   = (dwAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1;
+        SPI_SI_BUFF(3)   = ( dwAddr >> 8 ) & 0x0f0;
         SPI_SI_BUFF(4)   = 0x00;
         // 3rd
         SPI_SI_BUFF(5)   = RDSR;
@@ -1582,9 +1582,9 @@ void WINISP_FlashPMCUnprotectEnable( DWORD wAddr )
         SPI_SI_BUF[0] = WREN;
         SPI_CTRL = 0xF8;
         SPI_SI_BUF[0] = PMC_UNPROTECT;
-        SPI_SI_BUF[1] = TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0f0;
-        SPI_SI_BUF[3] = 0x00; //wAddr&0x0ff;
+        SPI_SI_BUF[1] = TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0f0;
+        SPI_SI_BUF[3] = 0x00; //dwAddr&0x0ff;
         SPI_CTRL = 0xFB;
         */
     }
@@ -1595,9 +1595,9 @@ void WINISP_FlashPMCUnprotectEnable( DWORD wAddr )
 
         // 1st
         SPI_SI_BUFF(0) = PMC_UNPROTECT;
-        SPI_SI_BUFF(1) = (wAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUFF(2) = ( wAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUFF(3) = wAddr & 0x0ff;
+        SPI_SI_BUFF(1) = (dwAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUFF(2) = ( dwAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUFF(3) = dwAddr & 0x0ff;
         // 2nd
         SPI_SI_BUFF(4)   = RDSR;
 
@@ -1608,9 +1608,9 @@ void WINISP_FlashPMCUnprotectEnable( DWORD wAddr )
 
         /*
         SPI_SI_BUF[0] = PMC_UNPROTECT;
-        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUF[3] = wAddr & 0x0ff;
+        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUF[3] = dwAddr & 0x0ff;
         SPI_CTRL = 0xBB;
         */
     }
@@ -1621,24 +1621,24 @@ void WINISP_FlashPMCUnprotectEnable( DWORD wAddr )
 }
 #endif
 
-void WINISP_FlashDisableWP( DWORD wAddr )
+void WINISP_FlashDisableWP( DWORD dwAddr )
 {
 #if 0
 
-   wAddr = wAddr;
+   dwAddr = dwAddr;
    FlashDisableWP_OTHERS(0xFF);
 
 #else
     BYTE SSR;
 
-    //if( wAddr < FDATA_START_ADDR )
+    //if( dwAddr < FDATA_START_ADDR )
     //     return;
 
     SSR = FlashReadSR();
 
     if( g_ucFlashID == FLASH_PMC )
     {
-        WINISP_FlashPMCUnprotectEnable(wAddr);//FlashPMCUnprotectEnable( wAddr );
+        WINISP_FlashPMCUnprotectEnable(dwAddr);//FlashPMCUnprotectEnable( dwAddr );
     }
     else if( g_ucFlashID == FLASH_EON )
     {
@@ -1658,7 +1658,7 @@ void WINISP_FlashDisableWP( DWORD wAddr )
     }
     else if( g_ucFlashID == FLASH_GIGADEVICE && (g_ucFlashDeviceID == GD25M21B || g_ucFlashDeviceID == GD25M41B) )
     {
-        WINISP_FlashDisableWP_GigaDevice(wAddr);
+        WINISP_FlashDisableWP_GigaDevice(dwAddr);
     }
     else
     {
@@ -1668,7 +1668,7 @@ void WINISP_FlashDisableWP( DWORD wAddr )
 }
 
 
-void WINISP_FlashSectorErase( Bool bDoWP, DWORD wAddr )
+void WINISP_FlashSectorErase( Bool bDoWP, DWORD dwAddr )
 {
     BOOL bFspEnable = g_bFspEnable;
 
@@ -1678,7 +1678,7 @@ void WINISP_FlashSectorErase( Bool bDoWP, DWORD wAddr )
         FlashCheckSpiMode();
     }
     if( bDoWP )
-        WINISP_FlashDisableWP( wAddr );
+        WINISP_FlashDisableWP( dwAddr );
 
     // 1st
     SPI_SI_BUFF(0)   = WREN;
@@ -1698,9 +1698,9 @@ void WINISP_FlashSectorErase( Bool bDoWP, DWORD wAddr )
     else
         SPI_SI_BUFF(1) = SST_ERASE_SECTOR;
 
-    SPI_SI_BUFF(2) = (wAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUFF(3) = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUFF(4) = wAddr & 0x0ff;
+    SPI_SI_BUFF(2) = (dwAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUFF(3) = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUFF(4) = dwAddr & 0x0ff;
     // 3rd
     SPI_SI_BUFF(5)   = RDSR;
 
@@ -1726,9 +1726,9 @@ void WINISP_FlashSectorErase( Bool bDoWP, DWORD wAddr )
     else
         SPI_SI_BUF[0] = SST_ERASE_SECTOR;
 
-    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-    SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0ff;
-    SPI_SI_BUF[3] = wAddr & 0x0ff;
+    SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+    SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0ff;
+    SPI_SI_BUF[3] = dwAddr & 0x0ff;
 
     SPI_CTRL = 0xFB; //0xFC;
     */
@@ -1740,7 +1740,7 @@ void WINISP_FlashSectorErase( Bool bDoWP, DWORD wAddr )
 
 }
 
-void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bool bNErsSctr )
+void WINISP_FlashWriteTbl( Bool bDoWP, DWORD dwAddr, BYTE *buffer, WORD count, Bool bNErsSctr )
 {
     WORD i = 0;
     BOOL bFspEnable = g_bFspEnable;
@@ -1752,10 +1752,10 @@ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bo
     }
 
 	if(!bNErsSctr)
-   		WINISP_FlashSectorErase(TRUE, wAddr);
+   		WINISP_FlashSectorErase(TRUE, dwAddr);
 
     if( bDoWP )
-        WINISP_FlashDisableWP( wAddr ); // 2005/5/11 �W�� 10:19:39 by keng
+        WINISP_FlashDisableWP( dwAddr ); // 2005/5/11 �W�� 10:19:39 by keng
 
     //MCU_CACHE_CTL = 0x00;
     while( count > 0 )
@@ -1766,9 +1766,9 @@ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bo
         SPI_SI_BUFF(0)   = WREN;
         // 2nd
         SPI_SI_BUFF(1) = BYTE_WRITE;
-        SPI_SI_BUFF(2) = (wAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUFF(3) = ( wAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUFF(4) = wAddr & 0x0ff;
+        SPI_SI_BUFF(2) = (dwAddr>>16)&0x0ff; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUFF(3) = ( dwAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUFF(4) = dwAddr & 0x0ff;
         SPI_SI_BUFF(5) = *( buffer + ( i++ ) );
         // 3rd
         SPI_SI_BUFF(6)   = RDSR;
@@ -1783,14 +1783,14 @@ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bo
         /*
         FlashWriteEnable();
         SPI_SI_BUF[0] = BYTE_WRITE;
-        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUF[2] = ( wAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUF[3] = wAddr & 0x0ff;
+        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUF[2] = ( dwAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUF[3] = dwAddr & 0x0ff;
         SPI_SI_BUF[4] = *( buffer + ( i++ ) );
         SPI_CTRL = 0xFC;
         */
 
-        wAddr += 1;
+        dwAddr += 1;
         count -= 1;
 
     }
@@ -1803,7 +1803,7 @@ void WINISP_FlashWriteTbl( Bool bDoWP, DWORD wAddr, BYTE *buffer, WORD count, Bo
         FlashRestoreSpiMode();
 }
 
-void Flash_MoveTbl( Bool bDoWP, WORD wSrcAddr, WORD wDestAddr, WORD count )
+void Flash_MoveTbl( Bool bDoWP, MS_PHYADDR dwSrcAddr, MS_PHYADDR dwDestAddr, WORD count )
 {
     BYTE ucTemp;
     BOOL bFspEnable = g_bFspEnable;
@@ -1813,19 +1813,19 @@ void Flash_MoveTbl( Bool bDoWP, WORD wSrcAddr, WORD wDestAddr, WORD count )
         FLASH_printError("current SPI mode = %d !!! change SPI mode !!!\r\n", mcuGetSpiMode());
         FlashCheckSpiMode();
     }
-    FlashDisableWP( wDestAddr ); // 2005/5/11 �W�� 10:19:39 by keng
+    FlashDisableWP( dwDestAddr ); // 2005/5/11 �W�� 10:19:39 by keng
     while( count > 0 )
     {
-        ucTemp = FlashReadByte( wSrcAddr );
+        ucTemp = FlashReadByte( dwSrcAddr );
         //FlashDisableStausProtect_MXIC2026();
 
         // 1st
         SPI_SI_BUFF(0)   = WREN;
         // 2nd
         SPI_SI_BUFF(1) = BYTE_WRITE;
-        SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wAddr>>16)&0x0ff;
-        SPI_SI_BUFF(3) = ( wDestAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUFF(4) = wDestAddr & 0x0ff;
+        SPI_SI_BUFF(2) = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwAddr>>16)&0x0ff;
+        SPI_SI_BUFF(3) = ( dwDestAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUFF(4) = dwDestAddr & 0x0ff;
         SPI_SI_BUFF(5) = ucTemp;
         // 3rd
         SPI_SI_BUFF(6)   = RDSR;
@@ -1840,15 +1840,15 @@ void Flash_MoveTbl( Bool bDoWP, WORD wSrcAddr, WORD wDestAddr, WORD count )
         /*
         FlashWriteEnable();
         SPI_SI_BUF[0] = BYTE_WRITE;
-        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(wDestAddr>>16)&0x0ff; // bank 3
-        SPI_SI_BUF[2] = ( wDestAddr >> 8 ) & 0x0ff;
-        SPI_SI_BUF[3] = wDestAddr & 0x0ff;
+        SPI_SI_BUF[1] = USER_DATA_BANK; //TOTAL_BANK_NUM - 1; //(dwDestAddr>>16)&0x0ff; // bank 3
+        SPI_SI_BUF[2] = ( dwDestAddr >> 8 ) & 0x0ff;
+        SPI_SI_BUF[3] = dwDestAddr & 0x0ff;
         SPI_SI_BUF[4] = ucTemp;
         SPI_CTRL = 0xFC;
         */
 
-        wSrcAddr += 1;
-        wDestAddr += 1;
+        dwSrcAddr += 1;
+        dwDestAddr += 1;
         count -= 1;
     }
     if( bDoWP )
@@ -1864,14 +1864,14 @@ void Flash_MoveTbl( Bool bDoWP, WORD wSrcAddr, WORD wDestAddr, WORD count )
 //  buffer  -   Out -   Data point of the table
 //  count   -   In  -   Number of BYTE data
 //////////////////////////////////////////////////////////////////////////////
-void Flash_ReadTbl( WORD wAddr, BYTE *buffer, WORD count )
+void Flash_ReadTbl( DWORD dwAddr, BYTE *buffer, WORD count )
 {
     WORD i;
     for(i = 0; i < count; i++)
 #if FLASH_READ_BYTE_BY_CODE_POINTER
-        *( buffer + i ) = g_xfr_FlashCode[wAddr+i];
+        *( buffer + i ) = g_xfr_FlashCode[dwAddr+i];
 #else
-        *(buffer+i) = FlashReadByte(wAddr+i);
+        *(buffer+i) = FlashReadByte(dwAddr+i);
 #endif
 }
 void Flash_ReadTable( DWORD dwAddr, BYTE *buffer, WORD count )
@@ -1901,22 +1901,22 @@ WORD Flash_SearchBufferAddr( FLASH_BUFFTER_TYPE ucType )
     return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
-// <API><Description>: Compare the FlashReadByte(wAddr + i*wRange)==ucIdent
-//                                 FlashReadByte(wAddr + i*wRange + wRange - 1) == ucChecksum
+// <API><Description>: Compare the FlashReadByte(dwAddr + i*wRange)==ucIdent
+//                                 FlashReadByte(dwAddr + i*wRange + wRange - 1) == ucChecksum
 //                     return i if equal ,else return IDENT_NOT_FOUND
 // Search index from wStartIdx to wEndIdx to replace i. Can from 0 search to 255(include)
 // Also can from 255 to 0(include)
 // <Returns> : Specific buffer address when found; IDENT_NOT_FOUND when not found
 // <Parameter>:     -   <Flow>  -   <Description>
 // ---------------------------------------------------------------------------
-//  wAddr       -   In  -   Flash start Address
-//  wStartIdx   -   In  -   wAddr + wStartIdx*wRange
-//  wEndIdx     -   In  -   wAddr + wEndIdx*wRange
+//  dwAddr       -   In  -   Flash start Address
+//  wStartIdx   -   In  -   dwAddr + wStartIdx*wRange
+//  wEndIdx     -   In  -   dwAddr + wEndIdx*wRange
 //  wRange      -   In  -   Each search range
 //  ucIdent     -   In  -   Data of want to compare
 //  ucChecksum  -   In  -   Data of want to compare
 //////////////////////////////////////////////////////////////////////////////
-WORD Flash_SearchIdentChecksum( WORD wAddr, WORD wStartIdx, WORD wEndIdx, WORD wRange, BYTE ucIdent, BYTE ucChecksum )
+WORD Flash_SearchIdentChecksum( DWORD dwAddr, WORD wStartIdx, WORD wEndIdx, WORD wRange, BYTE ucIdent, BYTE ucChecksum )
 {
     WORD i;
 
@@ -1925,7 +1925,7 @@ WORD Flash_SearchIdentChecksum( WORD wAddr, WORD wStartIdx, WORD wEndIdx, WORD w
         i = wStartIdx;
         while( i >= wStartIdx && i <= wEndIdx )
         {
-            if( FlashReadByte( wAddr + i * wRange ) == ucIdent && FlashReadByte( wAddr + i * wRange + wRange - 1 ) == ucChecksum )
+            if( FlashReadByte( dwAddr + i * wRange ) == ucIdent && FlashReadByte( dwAddr + i * wRange + wRange - 1 ) == ucChecksum )
                 return i;
             i++;
         }
@@ -1935,7 +1935,7 @@ WORD Flash_SearchIdentChecksum( WORD wAddr, WORD wStartIdx, WORD wEndIdx, WORD w
         i = wStartIdx;
         while( i >= wEndIdx && i <= wStartIdx )
         {
-            if( FlashReadByte( wAddr + i * wRange ) == ucIdent && FlashReadByte( wAddr + i * wRange + wRange - 1 ) == ucChecksum )
+            if( FlashReadByte( dwAddr + i * wRange ) == ucIdent && FlashReadByte( dwAddr + i * wRange + wRange - 1 ) == ucChecksum )
                 return i;
             i--;
         }
@@ -2105,7 +2105,7 @@ void Flash_AllocateBufferAddr( void )
 
 }
 #if 0
-Bool HDCP_BKSVIsValid(WORD addr)
+Bool HDCP_BKSVIsValid(DWORD addr)
 {
     BYTE i, j, Count_1=0, Count_0=0, ReadValue;
     for(i = 0; i < 5; i++)
@@ -2127,7 +2127,7 @@ Bool HDCP_BKSVIsValid(WORD addr)
 
 }
 
-Bool EDID_HeaderIsValid(WORD addr)
+Bool EDID_HeaderIsValid(DWORD addr)
 {
     if((FlashReadByte(addr) == 0x00) &&
         (FlashReadByte(addr+1) == 0xFF) &&
@@ -2227,51 +2227,51 @@ void Flash_ClearModeSet( void )
 BYTE Flash_GetKeyIndex(FLASH_KEY_TYPE ucType, Bool bWrite)
 {
     BYTE ucIndex, ucStatus, ucSize=0;
-    WORD wAddr;
+    DWORD dwAddr;
 
     if(ucType == FLASH_KEY_FACTORY)
     {
         ucSize = FACTORY_SECTOR_SIZE/FACTORY_SIZE;
-        wAddr  = FACTORY_STATUS_ADDR;
+        dwAddr  = FACTORY_STATUS_ADDR;
     }
     else if(ucType == FLASH_KEY_PANEL)
     {
         ucSize = PANEL_SECTOR_SIZE/PANEL_SIZE;
-        wAddr  = PANEL_STATUS_ADDR;
+        dwAddr  = PANEL_STATUS_ADDR;
     }
 #if 1
     else if(ucType == FLASH_KEY_GAMMA)
     {
         ucSize = GAMMA_SECTOR_SIZE/GAMMA_SIZE;
-        wAddr  = GAMMA_STATUS_ADDR;
+        dwAddr  = GAMMA_STATUS_ADDR;
     }
 
     else if(ucType == FLASH_KEY_HDCP)
     {
         ucSize = HDCPKEY_SECTOR_SIZE/HDCPKEY_SIZE;
-        wAddr  = HDCPKEY_STATUS_ADDR;
+        dwAddr  = HDCPKEY_STATUS_ADDR;
     }
 
     else if(ucType == FLASH_KEY_DDCA)
     {
         ucSize = DDCAKEY_SECTOR_SIZE/DDCAKEY_SIZE;
-        wAddr  = DDCAKEY_STATUS_ADDR;
+        dwAddr  = DDCAKEY_STATUS_ADDR;
     }
     else if(ucType == FLASH_KEY_DDCD)
     {
         ucSize = DDCDKEY_SECTOR_SIZE/DDCDKEY_SIZE;
-        wAddr  = DDCDKEY_STATUS_ADDR;
+        dwAddr  = DDCDKEY_STATUS_ADDR;
     }
 #endif
     else if(ucType == FLASH_KEY_DDCDP)
     {
         ucSize = DDCDPKEY_SECTOR_SIZE/DDCDPKEY_SIZE;
-        wAddr  = DDCDPKEY_STATUS_ADDR;
+        dwAddr  = DDCDPKEY_STATUS_ADDR;
     }
 
     for(ucIndex=0;ucIndex<ucSize;ucIndex++)
     {
-        ucStatus = FlashReadByte(wAddr+ucIndex);
+        ucStatus = FlashReadByte(dwAddr+ucIndex);
         if(bWrite)
         {
             if( ucStatus == FLASH_KEY_EMPTY || ucStatus == FLASH_KEY_WRITE)
@@ -2301,7 +2301,7 @@ BYTE Flash_GetKeyIndex(FLASH_KEY_TYPE ucType, Bool bWrite)
 void Flash_BackupFactorySetToBuffer( void )
 {
     BYTE xdata ucKeyIndex;
-    WORD wAddr;
+    DWORD dwAddr;
 
     FLASH_printMsg( "  Flash_BackupFactorySetToBuffer " );
 
@@ -2381,9 +2381,9 @@ void Flash_BackupFactorySetToBuffer( void )
     FlashWriteByte( FALSE, FLASH_FreeBufferAddr, FBufType_FactorySetting );
     FlashEnableWP();
     FlashWriteByte( TRUE, FLASH_FactorySettingAddr, 0x00 );
-    wAddr = FLASH_FreeBufferAddr;
+    dwAddr = FLASH_FreeBufferAddr;
     FLASH_FreeBufferAddr = FLASH_FactorySettingAddr;
-    FLASH_FactorySettingAddr = wAddr;
+    FLASH_FactorySettingAddr = dwAddr;
 
 }
 
@@ -2405,10 +2405,10 @@ void Flash_Write_Factory_KeySet( FLASH_KEY_TYPE ucType, WORD wIndex, WORD wBufSi
 {
     BYTE xdata ucKeyIndex;
     WORD xdata wKEY_SIZE;
-    WORD xdata wKEYSET_START;
-    WORD xdata wKEYSET_BUF_START;
-    WORD xdata wKEYSET_STATUS_ADDR;
-    WORD xdata wKEYSET_BUF_STATUS_ADDR;
+    DWORD xdata dwKEYSET_START;
+    DWORD xdata dwKEYSET_BUF_START;
+    DWORD xdata dwKEYSET_STATUS_ADDR;
+    DWORD xdata dwKEYSET_BUF_STATUS_ADDR;
 
     FlashCheckSpiMode();
     ucKeyIndex = Flash_GetKeyIndex(ucType, TRUE);
@@ -2416,79 +2416,79 @@ void Flash_Write_Factory_KeySet( FLASH_KEY_TYPE ucType, WORD wIndex, WORD wBufSi
     if(ucType == FLASH_KEY_FACTORY)
     {
         wKEY_SIZE               = FACTORY_SIZE;
-        wKEYSET_START           = FACTORY_START + (WORD)ucKeyIndex*FACTORY_SIZE;
-        wKEYSET_BUF_START       = FACTORY_BUF_START;
-        wKEYSET_STATUS_ADDR     = FACTORY_STATUS_ADDR + ucKeyIndex;
-        wKEYSET_BUF_STATUS_ADDR = FACTORY_BUF_STATUS_ADDR;
+        dwKEYSET_START           = FACTORY_START + (WORD)ucKeyIndex*FACTORY_SIZE;
+        dwKEYSET_BUF_START       = FACTORY_BUF_START;
+        dwKEYSET_STATUS_ADDR     = FACTORY_STATUS_ADDR + ucKeyIndex;
+        dwKEYSET_BUF_STATUS_ADDR = FACTORY_BUF_STATUS_ADDR;
     }
     else if(ucType == FLASH_KEY_PANEL)
     {
         wKEY_SIZE               = PANEL_SIZE;
-        wKEYSET_START           = PANEL_START + (WORD)ucKeyIndex*PANEL_SIZE;
-        wKEYSET_BUF_START       = PANEL_BUF_START;
-        wKEYSET_STATUS_ADDR     = PANEL_STATUS_ADDR + ucKeyIndex;
-        wKEYSET_BUF_STATUS_ADDR = PANEL_BUF_STATUS_ADDR;
+        dwKEYSET_START           = PANEL_START + (WORD)ucKeyIndex*PANEL_SIZE;
+        dwKEYSET_BUF_START       = PANEL_BUF_START;
+        dwKEYSET_STATUS_ADDR     = PANEL_STATUS_ADDR + ucKeyIndex;
+        dwKEYSET_BUF_STATUS_ADDR = PANEL_BUF_STATUS_ADDR;
     }
 #if 1
     else if(ucType == FLASH_KEY_GAMMA)
     {
         wKEY_SIZE               = GAMMA_SIZE;
-        wKEYSET_START           = GAMMA_START + (WORD)ucKeyIndex*GAMMA_SIZE;
-        wKEYSET_BUF_START       = GAMMA_BUF_START;
-        wKEYSET_STATUS_ADDR     = GAMMA_STATUS_ADDR + ucKeyIndex;
-        wKEYSET_BUF_STATUS_ADDR = GAMMA_BUF_STATUS_ADDR;
+        dwKEYSET_START           = GAMMA_START + (WORD)ucKeyIndex*GAMMA_SIZE;
+        dwKEYSET_BUF_START       = GAMMA_BUF_START;
+        dwKEYSET_STATUS_ADDR     = GAMMA_STATUS_ADDR + ucKeyIndex;
+        dwKEYSET_BUF_STATUS_ADDR = GAMMA_BUF_STATUS_ADDR;
     }
     else if(ucType == FLASH_KEY_HDCP)
     {
         wKEY_SIZE               = HDCPKEY_SIZE;
-        wKEYSET_START           = HDCPKEYSET_START + (WORD)ucKeyIndex*HDCPKEY_SIZE;
-        wKEYSET_BUF_START       = HDCPKEYSET_BUF_START;
-        wKEYSET_STATUS_ADDR     = HDCPKEY_STATUS_ADDR + ucKeyIndex;
-        wKEYSET_BUF_STATUS_ADDR = HDCPKEY_BUF_STATUS_ADDR;
+        dwKEYSET_START           = HDCPKEYSET_START + (WORD)ucKeyIndex*HDCPKEY_SIZE;
+        dwKEYSET_BUF_START       = HDCPKEYSET_BUF_START;
+        dwKEYSET_STATUS_ADDR     = HDCPKEY_STATUS_ADDR + ucKeyIndex;
+        dwKEYSET_BUF_STATUS_ADDR = HDCPKEY_BUF_STATUS_ADDR;
     }
     else if(ucType == FLASH_KEY_DDCA)
     {
         wKEY_SIZE               = DDCAKEY_SIZE;
-        wKEYSET_START           = DDCAKEYSET_START + (WORD)ucKeyIndex*DDCAKEY_SIZE;
-        wKEYSET_BUF_START       = DDCAKEYSET_BUF_START;
-        wKEYSET_STATUS_ADDR     = DDCAKEY_STATUS_ADDR + ucKeyIndex;;
-        wKEYSET_BUF_STATUS_ADDR = DDCAKEY_BUF_STATUS_ADDR;
+        dwKEYSET_START           = DDCAKEYSET_START + (WORD)ucKeyIndex*DDCAKEY_SIZE;
+        dwKEYSET_BUF_START       = DDCAKEYSET_BUF_START;
+        dwKEYSET_STATUS_ADDR     = DDCAKEY_STATUS_ADDR + ucKeyIndex;;
+        dwKEYSET_BUF_STATUS_ADDR = DDCAKEY_BUF_STATUS_ADDR;
     }
     else if(ucType == FLASH_KEY_DDCD)
     {
         wKEY_SIZE               = DDCDKEY_SIZE;
-        wKEYSET_START           = DDCDKEYSET_START + (WORD)ucKeyIndex*DDCDKEY_SIZE;
-        wKEYSET_BUF_START       = DDCDKEYSET_BUF_START;
-        wKEYSET_STATUS_ADDR     = DDCDKEY_STATUS_ADDR + ucKeyIndex;;
-        wKEYSET_BUF_STATUS_ADDR = DDCDKEY_BUF_STATUS_ADDR;
+        dwKEYSET_START           = DDCDKEYSET_START + (WORD)ucKeyIndex*DDCDKEY_SIZE;
+        dwKEYSET_BUF_START       = DDCDKEYSET_BUF_START;
+        dwKEYSET_STATUS_ADDR     = DDCDKEY_STATUS_ADDR + ucKeyIndex;;
+        dwKEYSET_BUF_STATUS_ADDR = DDCDKEY_BUF_STATUS_ADDR;
     }
 #endif
     else if(ucType == FLASH_KEY_DDCDP)
     {
         wKEY_SIZE               = DDCDPKEY_SIZE;
-        wKEYSET_START           = DDCDPKEYSET_START + (WORD)ucKeyIndex*DDCDPKEY_SIZE;
-        wKEYSET_BUF_START       = DDCDPKEYSET_BUF_START;
-        wKEYSET_STATUS_ADDR     = DDCDPKEY_STATUS_ADDR + ucKeyIndex;;
-        wKEYSET_BUF_STATUS_ADDR = DDCDPKEY_BUF_STATUS_ADDR;
+        dwKEYSET_START           = DDCDPKEYSET_START + (WORD)ucKeyIndex*DDCDPKEY_SIZE;
+        dwKEYSET_BUF_START       = DDCDPKEYSET_BUF_START;
+        dwKEYSET_STATUS_ADDR     = DDCDPKEY_STATUS_ADDR + ucKeyIndex;;
+        dwKEYSET_BUF_STATUS_ADDR = DDCDPKEY_BUF_STATUS_ADDR;
     }
     else
         return;
 
     bFlashWriteFactory = TRUE;
 
-    if( FlashReadByte( wKEYSET_STATUS_ADDR ) == FLASH_KEY_EMPTY || FlashReadByte( wKEYSET_STATUS_ADDR ) == FLASH_KEY_WRITE )
+    if( FlashReadByte( dwKEYSET_STATUS_ADDR ) == FLASH_KEY_EMPTY || FlashReadByte( dwKEYSET_STATUS_ADDR ) == FLASH_KEY_WRITE )
     {
         if( wIndex == 0x00 )
         {
             // FLASH_printData("  _FWFK_StatusAddr [%x] ",wKEYSET_STATUS_ADDR);
-             FlashWriteByte(TRUE, wKEYSET_STATUS_ADDR, FLASH_KEY_WRITE);
+             FlashWriteByte(TRUE, dwKEYSET_STATUS_ADDR, FLASH_KEY_WRITE);
         }
-        Flash_WriteTbl( TRUE, wKEYSET_START + wIndex * wBufSize, buf, wLen );
+        Flash_WriteTbl( TRUE, dwKEYSET_START + wIndex * wBufSize, buf, wLen );
         if(( wIndex * wBufSize + wLen ) >= wKEY_SIZE ) // check write end
         {
-            FlashWriteByte( TRUE, wKEYSET_STATUS_ADDR, FLASH_KEY_VALID );
+            FlashWriteByte( TRUE, dwKEYSET_STATUS_ADDR, FLASH_KEY_VALID );
             if(ucKeyIndex>0)
-                FlashWriteByte(TRUE, wKEYSET_STATUS_ADDR-1, FLASH_KEY_INVALID);
+                FlashWriteByte(TRUE, dwKEYSET_STATUS_ADDR-1, FLASH_KEY_INVALID);
         }
     }
     else
@@ -2496,13 +2496,13 @@ void Flash_Write_Factory_KeySet( FLASH_KEY_TYPE ucType, WORD wIndex, WORD wBufSi
         if( wIndex == 0x00 )
         {
             FlashSectorErase(TRUE, FLASH_FreeBufferAddr);
-            FlashWriteByte(TRUE, wKEYSET_BUF_STATUS_ADDR, FLASH_KEY_WRITE);
+            FlashWriteByte(TRUE, dwKEYSET_BUF_STATUS_ADDR, FLASH_KEY_WRITE);
         }
 
-        Flash_WriteTbl( TRUE, wKEYSET_BUF_START + wIndex * wBufSize, buf, wLen );
+        Flash_WriteTbl( TRUE, dwKEYSET_BUF_START + wIndex * wBufSize, buf, wLen );
         if(( wIndex * wBufSize + wLen ) >= wKEY_SIZE ) // check write end
         {
-            FlashWriteByte( TRUE, wKEYSET_BUF_STATUS_ADDR, FLASH_KEY_VALID );
+            FlashWriteByte( TRUE, dwKEYSET_BUF_STATUS_ADDR, FLASH_KEY_VALID );
             //FLASH_printData("  _FWFK_buffer write End [%x] ",ucType);
             Flash_BackupFactorySetToBuffer();
             FlashSectorErase( TRUE, FLASH_FreeBufferAddr );
@@ -2533,8 +2533,8 @@ Bool Flash_Read_Factory_KeySet( FLASH_KEY_TYPE ucType, Bool bReadVaild, WORD wIn
 {
     BYTE xdata ucKeyIndex;
     WORD xdata wKEY_SIZE;
-    WORD xdata wKEYSET_START;
-    WORD xdata wKEYSET_STATUS_ADDR;
+    DWORD xdata wKEYSET_START;
+    DWORD xdata wKEYSET_STATUS_ADDR;
 
     if(bReadVaild)
         ucKeyIndex = Flash_GetKeyIndex(ucType, FALSE);
@@ -2627,7 +2627,7 @@ Bool Flash_ReadFactorySet( BYTE* pbuf, BYTE ucLen )
 //////////////////////////////////////////////////////////////////////////////
 void Flash_WriteMonitorSet( BYTE* buf, BYTE len )
 {
-    WORD wAddr;
+    DWORD dwAddr;
     WORD i;
 
     i = Flash_SearchIdentChecksum( MONITORSET_START, 0, MAX_MONITORSET_NUM - 1, MONITORSET_SIZE, FLASH_EMPTYDATA, FLASH_EMPTYDATA );
@@ -2636,26 +2636,26 @@ void Flash_WriteMonitorSet( BYTE* buf, BYTE len )
     {
         //MonitorSetting.Ident= FLASH_IDENTDATA;
         //MonitorSetting.CheckSum   = FLASH_CHECKSUM;
-        wAddr = MONITORSET_START + i * MONITORSET_SIZE;
-        Flash_WriteTbl( TRUE, wAddr, ( BYTE* )buf, len );
-        FLASH_printData( "_FWMS_ wAddr %x", wAddr );
+        dwAddr = MONITORSET_START + i * MONITORSET_SIZE;
+        Flash_WriteTbl( TRUE, dwAddr, ( BYTE* )buf, len );
+        FLASH_printData( "_FWMS_ dwAddr %lx", dwAddr );
         if( i > 0 )
         {
-            wAddr = MONITORSET_START + ( i - 1 ) * MONITORSET_SIZE;
-            FlashWriteByte( TRUE, wAddr, FLASH_IDENTDATA_CLEAR );
+            dwAddr = MONITORSET_START + ( i - 1 ) * MONITORSET_SIZE;
+            FlashWriteByte( TRUE, dwAddr, FLASH_IDENTDATA_CLEAR );
         }
     }
     else
     {
         FlashSectorErase( TRUE, FLASH_FreeBufferAddr );
         Flash_WriteTbl( TRUE, MONITORSET_BUF_START, ( BYTE* )buf, len );
-        FLASH_printData( "Exchange_FWMS_ wAddr %x", MONITORSET_BUF_START );
+        FLASH_printData( "Exchange_FWMS_ dwAddr %lx", MONITORSET_BUF_START );
         FlashWriteByte( TRUE, FLASH_FreeBufferAddr, FBufType_MonitorSetting );
         FlashWriteByte( TRUE, FLASH_MonitorSettingAddr, 0x00 );
 
-        wAddr = FLASH_FreeBufferAddr;
+        dwAddr = FLASH_FreeBufferAddr;
         FLASH_FreeBufferAddr = FLASH_MonitorSettingAddr;
-        FLASH_MonitorSettingAddr = wAddr;
+        FLASH_MonitorSettingAddr = dwAddr;
 
     }
     FlashRestoreSpiMode();
@@ -2700,27 +2700,27 @@ Bool Flash_ReadMonitorSet( BYTE* buf, BYTE len )
 //////////////////////////////////////////////////////////////////////////////
 void Flash_WriteMonitorSet2( BYTE* buf, BYTE len )
 {
-    WORD wAddr;
+    DWORD dwAddr;
     WORD i;
 
     i = Flash_SearchIdentChecksum( MONITORSET2_START, 0, MAX_MONITORSET2_NUM - 1, MONITORSET2_SIZE, FLASH_EMPTYDATA, FLASH_EMPTYDATA );
     FlashCheckSpiMode();
     if( i != IDENT_NOT_FOUND )
     {
-        wAddr = MONITORSET2_START + i * MONITORSET2_SIZE;
-        Flash_WriteTbl( TRUE, wAddr, ( BYTE* )buf, len );
-        //FLASH_printData("_FWMS2_ wAddr %x",wAddr);
+        dwAddr = MONITORSET2_START + i * MONITORSET2_SIZE;
+        Flash_WriteTbl( TRUE, dwAddr, ( BYTE* )buf, len );
+        //FLASH_printData("_FWMS2_ dwAddr %lx",dwAddr);
     }
     else
     {
         FlashSectorErase( TRUE, FLASH_FreeBufferAddr );
         Flash_WriteTbl( TRUE, MONITORSET2_BUF_START, ( BYTE* )buf, len );
-        //FLASH_printData("_FWMS2_ wAddr %x",MONITORSET2_BUF_START);
+        //FLASH_printData("_FWMS2_ dwAddr %lx",MONITORSET2_BUF_START);
         FlashWriteByte( TRUE, FLASH_FreeBufferAddr, FBufType_MonitorSetting2 );
         FlashWriteByte( TRUE, FLASH_MonitorSetting2Addr, 0x00 );
-        wAddr = FLASH_FreeBufferAddr;
+        dwAddr = FLASH_FreeBufferAddr;
         FLASH_FreeBufferAddr = FLASH_MonitorSetting2Addr;
-        FLASH_MonitorSetting2Addr = wAddr;
+        FLASH_MonitorSetting2Addr = dwAddr;
     }
     FlashRestoreSpiMode();
 }
@@ -2739,7 +2739,7 @@ Bool Flash_ReadMonitorSet2( BYTE* buf, BYTE len )
     if( i != IDENT_NOT_FOUND )
     {
         Flash_ReadTbl( MONITORSET2_START + i * MONITORSET2_SIZE, buf, len );
-        //FLASH_printData("_FRMS2_ wAddr %x",MONITORSET2_START + i*MONITORSET2_SIZE);
+        //FLASH_printData("_FRMS2_ dwAddr %lx",MONITORSET2_START + i*MONITORSET2_SIZE);
         return TRUE;
     }
     else
@@ -2803,7 +2803,7 @@ void Flash_ClearUserModeSpace( void )
 void Flash_WriteModeSet( BYTE index, BYTE *buf )
 {
     WORD i = 0, j = 0;
-    WORD wAddr;
+    DWORD dwAddr;
     xdata ModeSettingType modeSetting;
 
     //FLASH_printData("_FWMS_ Target index 0x%x",index);
@@ -2852,9 +2852,9 @@ void Flash_WriteModeSet( BYTE index, BYTE *buf )
         //  Exchange Buffer
         FlashWriteByte( TRUE, FLASH_FreeBufferAddr, FBufType_TimingMode );
         FlashWriteByte( TRUE, FLASH_TimingModeAddr, 0x00 );
-        wAddr = FLASH_FreeBufferAddr;
+        dwAddr = FLASH_FreeBufferAddr;
         FLASH_FreeBufferAddr = FLASH_TimingModeAddr;
-        FLASH_TimingModeAddr = wAddr;
+        FLASH_TimingModeAddr = dwAddr;
         //i=j;//Write empty one index
 
         FLASH_printData( "_FWMS_ Buffer exchange TimingAddr %x ", ( WORD )( FLASH_TimingModeAddr >> 8 ) );
@@ -2982,8 +2982,9 @@ Bool FlashFData_GetWriteKeyAddress(FLASH_KEY_TYPE ucType, Bool bWrite)
 Bool FlashFData_BackupToFreeBuffer(FLASH_KEY_TYPE ucKeyType)
 {
     BYTE ucKeyIndex;
-    WORD wStartAddr, wStatusAddr, wKeySize;
-    WORD wBufStatusAddr = ucKeyType;
+    WORD wKeySize;
+    DWORD dwStartAddr, dwStatusAddr;
+    DWORD dwBufStatusAddr = ucKeyType;
 
     ucKeyIndex = Flash_GetKeyIndex(ucKeyType, FALSE);
 
@@ -2991,16 +2992,16 @@ Bool FlashFData_BackupToFreeBuffer(FLASH_KEY_TYPE ucKeyType)
     {
         case FLASH_KEY_FACTORY:
         {
-            wStatusAddr = FACTORY_STATUS_ADDR + ucKeyIndex;
-            wStartAddr = FACTORY_START + (WORD)ucKeyIndex*FACTORY_SIZE;
+            dwStatusAddr = FACTORY_STATUS_ADDR + ucKeyIndex;
+            dwStartAddr = FACTORY_START + (WORD)ucKeyIndex*FACTORY_SIZE;
             wKeySize = FACTORY_SIZE;
             break;
         }
 #if INPUT_TYPE != INPUT_1A
         case FLASH_KEY_HDCP:
         {
-            wStatusAddr = HDCPKEY_STATUS_ADDR + ucKeyIndex;
-            wStartAddr = HDCPKEYSET_START + (WORD)ucKeyIndex*HDCPKEY_SIZE;
+            dwStatusAddr = HDCPKEY_STATUS_ADDR + ucKeyIndex;
+            dwStartAddr = HDCPKEYSET_START + (WORD)ucKeyIndex*HDCPKEY_SIZE;
             wKeySize = HDCPKEY_SIZE;
             break;
         }
@@ -3008,8 +3009,8 @@ Bool FlashFData_BackupToFreeBuffer(FLASH_KEY_TYPE ucKeyType)
 #if ENABLE_DP_INPUT
         case FLASH_KEY_DDCDP:
         {
-            wStatusAddr = DDCDPKEY_STATUS_ADDR + ucKeyIndex;
-            wStartAddr = DDCDPKEYSET_START + (WORD)ucKeyIndex*DDCDPKEY_SIZE;
+            dwStatusAddr = DDCDPKEY_STATUS_ADDR + ucKeyIndex;
+            dwStartAddr = DDCDPKEYSET_START + (WORD)ucKeyIndex*DDCDPKEY_SIZE;
             wKeySize = DDCDPKEY_SIZE;
             break;
         }
@@ -3021,16 +3022,16 @@ Bool FlashFData_BackupToFreeBuffer(FLASH_KEY_TYPE ucKeyType)
     }
 
     // prevent different sector data move to current sector
-    if((wStartAddr&0xF000) != (FlashFData_wKEYSET_START&0xF000))
+    if((dwStartAddr&0xF000) != (FlashFData_wKEYSET_START&0xF000))
         return FALSE;
 
-    wBufStatusAddr = FLASH_FreeBufferAddr+wBufStatusAddr*0x200;
+    dwBufStatusAddr = FLASH_FreeBufferAddr+dwBufStatusAddr*0x200;
 
-    if (FlashReadByte(wStatusAddr) == FLASH_KEY_VALID)
+    if (FlashReadByte(dwStatusAddr) == FLASH_KEY_VALID)
     {
         FlashCheckSpiMode();
-        Flash_MoveTbl(TRUE, wStartAddr, wBufStatusAddr+0x10, wKeySize);
-        FlashWriteByte(TRUE, wBufStatusAddr, FLASH_KEY_VALID);
+        Flash_MoveTbl(TRUE, dwStartAddr, dwBufStatusAddr+0x10, wKeySize);
+        FlashWriteByte(TRUE, dwBufStatusAddr, FLASH_KEY_VALID);
         FlashRestoreSpiMode();
         return TRUE;
     }
@@ -3041,25 +3042,26 @@ Bool FlashFData_BackupToFreeBuffer(FLASH_KEY_TYPE ucKeyType)
 
 Bool FlashFData_BackupFromFreeBuffer(FLASH_KEY_TYPE ucKeyType)
 {
-    WORD wStartAddr, wStatusAddr, wKeySize;
-    WORD wBufStatusAddr = ucKeyType;
+    WORD wKeySize;
+    DWORD dwStartAddr, dwStatusAddr, wKeySize;
+    DWORD dwBufStatusAddr = ucKeyType;
 
-    wBufStatusAddr = FLASH_FreeBufferAddr+wBufStatusAddr*0x200;
+    dwBufStatusAddr = FLASH_FreeBufferAddr+dwBufStatusAddr*0x200;
 
     switch (ucKeyType)
     {
         case FLASH_KEY_FACTORY:
         {
-            wStatusAddr = FACTORY_STATUS_ADDR;
-            wStartAddr = FACTORY_START;
+            dwStatusAddr = FACTORY_STATUS_ADDR;
+            dwStartAddr = FACTORY_START;
             wKeySize = FACTORY_SIZE;
             break;
         }
 #if INPUT_TYPE != INPUT_1A
         case FLASH_KEY_HDCP:
         {
-            wStatusAddr = HDCPKEY_STATUS_ADDR;
-            wStartAddr = HDCPKEYSET_START;
+            dwStatusAddr = HDCPKEY_STATUS_ADDR;
+            dwStartAddr = HDCPKEYSET_START;
             wKeySize = HDCPKEY_SIZE;
             break;
         }
@@ -3067,8 +3069,8 @@ Bool FlashFData_BackupFromFreeBuffer(FLASH_KEY_TYPE ucKeyType)
 #if ENABLE_DP_INPUT
         case FLASH_KEY_DDCDP:
         {
-            wStatusAddr = DDCDPKEY_STATUS_ADDR;
-            wStartAddr = DDCDPKEYSET_START;
+            dwStatusAddr = DDCDPKEY_STATUS_ADDR;
+            dwStartAddr = DDCDPKEYSET_START;
             wKeySize = DDCDPKEY_SIZE;
             break;
         }
@@ -3079,12 +3081,12 @@ Bool FlashFData_BackupFromFreeBuffer(FLASH_KEY_TYPE ucKeyType)
 
     }
 
-    if (FlashReadByte(wBufStatusAddr) == FLASH_KEY_VALID)
+    if (FlashReadByte(dwBufStatusAddr) == FLASH_KEY_VALID)
     {
         bFlashWriteFactory = TRUE;
         FlashCheckSpiMode();
-        Flash_MoveTbl(TRUE, wBufStatusAddr+0x10, wStartAddr, wKeySize);
-        FlashWriteByte(TRUE, wStatusAddr, FLASH_KEY_VALID);
+        Flash_MoveTbl(TRUE, dwBufStatusAddr+0x10, dwStartAddr, wKeySize);
+        FlashWriteByte(TRUE, dwStatusAddr, FLASH_KEY_VALID);
         FlashRestoreSpiMode();
         bFlashWriteFactory = FALSE;
         return TRUE;
@@ -3093,7 +3095,7 @@ Bool FlashFData_BackupFromFreeBuffer(FLASH_KEY_TYPE ucKeyType)
     return FALSE;
 }
 
-void FlashFData_WriteBufferType(WORD addr)
+void FlashFData_WriteBufferType(DWORD addr)
 {
     BYTE ucBufferType;
 
@@ -3282,7 +3284,7 @@ void FlashdwAddrDisableWP( DWORD dwAddr )
 
     if( g_ucFlashID == FLASH_PMC )
     {
-        FlashdwAddrDisableWP_PMC(dwAddr);//FlashPMCUnprotectEnable( wAddr );
+        FlashdwAddrDisableWP_PMC(dwAddr);//FlashPMCUnprotectEnable( dwAddr );
     }
     else if( g_ucFlashID == FLASH_EON )
     {
@@ -3671,12 +3673,12 @@ void FlashChipErase( Bool bDoWP )
 #define USBDownloadSteps        20
 #define Erase_Time              80
 #define Program_Time            20
-void FlashBurstWrite( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool bChipErase );
-void FlashBurstWrite( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool bChipErase )
+void FlashBurstWrite( Bool bDoWP, DWORD dwAddr, BYTE *buffer, DWORD count, Bool bChipErase );
+void FlashBurstWrite( Bool bDoWP, DWORD dwAddr, BYTE *buffer, DWORD count, Bool bChipErase )
 {
     unsigned int i = 0, k = 0, percentage = 0,  interval = 1;
     unsigned long total_size, sector_size;
-    DWORD dwStartAdr = wAddr, dwRatio;
+    DWORD dwStartAdr = dwAddr, dwRatio;
     static DWORD dwRatioLast;
     BOOL bFspEnable = g_bFspEnable;
 
@@ -3721,13 +3723,13 @@ void FlashBurstWrite( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool b
                 if (ProgessCB != NULL)
                     ProgessCB((percentage*interval*dwRatio)/100 + dwRatioLast);
             }
-            FlashAnySectorErase(TRUE, wAddr + (sector_size * i));
+            FlashAnySectorErase(TRUE, dwAddr + (sector_size * i));
         }
     }
 
     printf("\r\n[MSFLASH] Program ");
     if( bDoWP )
-        FlashDisableWP( wAddr );
+        FlashDisableWP( dwAddr );
 
     i = 0;
     k = total_size - (total_size*interval/Program_Time);
@@ -3751,9 +3753,9 @@ void FlashBurstWrite( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool b
             SPI_SI_BUFF(0) = WREN;
             // 2nd command
             SPI_SI_BUFF(1) = BYTE_WRITE;
-            SPI_SI_BUFF(2) = (wAddr >> 16) & 0x0ff;
-            SPI_SI_BUFF(3) = (wAddr >> 8) & 0x0ff;
-            SPI_SI_BUFF(4) = wAddr & 0x0ff;
+            SPI_SI_BUFF(2) = (dwAddr >> 16) & 0x0ff;
+            SPI_SI_BUFF(3) = (dwAddr >> 8) & 0x0ff;
+            SPI_SI_BUFF(4) = dwAddr & 0x0ff;
             SPI_SI_BUFF(5) = *( buffer + ( i++ ) );
             SPI_SI_BUFF(6) = *( buffer + ( i++ ) );
             SPI_SI_BUFF(7) = *( buffer + ( i++ ) );
@@ -3812,9 +3814,9 @@ void FlashBurstWrite( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool b
             SPI_SI_BUFF(0) = WREN;
             // 2nd command
             SPI_SI_BUFF(1) = BYTE_WRITE;
-            SPI_SI_BUFF(2) = (wAddr >> 16) & 0x0ff;
-            SPI_SI_BUFF(3) = (wAddr >> 8) & 0x0ff;
-            SPI_SI_BUFF(4) = wAddr & 0x0ff;
+            SPI_SI_BUFF(2) = (dwAddr >> 16) & 0x0ff;
+            SPI_SI_BUFF(3) = (dwAddr >> 8) & 0x0ff;
+            SPI_SI_BUFF(4) = dwAddr & 0x0ff;
             SPI_SI_BUFF(5) = *( buffer + ( i++ ) );
             SPI_SI_BUFF(6) = *( buffer + ( i++ ) );
             SPI_SI_BUFF(7) = *( buffer + ( i++ ) );
@@ -3831,11 +3833,11 @@ void FlashBurstWrite( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool b
 #endif
 
             count -= FLASH_BURST_UNIT;
-            wAddr += FLASH_BURST_UNIT;
+            dwAddr += FLASH_BURST_UNIT;
         }
         else    // < 256 bytes
         {
-            Flash_WriteTbl(FALSE, wAddr, (buffer+i), count);
+            Flash_WriteTbl(FALSE, dwAddr, (buffer+i), count);
             count = 0;
         }
     }
@@ -3875,8 +3877,8 @@ void FlashProgressFuncAttach( pProgessCB pShowOSD)
 }
 
 
-void FlashUpdateFW( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool bChipErase );
-void FlashUpdateFW( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool bChipErase )
+void FlashUpdateFW( Bool bDoWP, DWORD dwAddr, BYTE *buffer, DWORD count, Bool bChipErase );
+void FlashUpdateFW( Bool bDoWP, DWORD dwAddr, BYTE *buffer, DWORD count, Bool bChipErase )
 {
 #include "SysInit.h"
 
@@ -3890,7 +3892,7 @@ void FlashUpdateFW( Bool bDoWP, DWORD wAddr, BYTE *buffer, DWORD count, Bool bCh
     mcuSetSpiMode(SPI_MODE_NORMAL);     /* SPI normal mode and fast read can be used for FW update */
     mcuSetSpiSpeed(IDX_SPI_CLK_43MHZ);  /* SPI clk of normal mode need to be set under 50M for demo board flash (MX25L6433F)*/
     
-    FlashBurstWrite(bDoWP, wAddr, buffer, count, bChipErase);
+    FlashBurstWrite(bDoWP, dwAddr, buffer, count, bChipErase);
 }
 
 U32 FlashImageChksum(BOOL bAPOnly)
