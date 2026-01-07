@@ -9,7 +9,7 @@
 
 //===================================================================================================================================================================:
 #define  DPS_DEBUG  0
-#if (DPS_DEBUG&&ENABLE_DEBUG)
+#if (ENABLE_MSTV_UART_DEBUG && DPS_DEBUG)
 #define DPS_printData(str, value)   printData(str, value)
 #define DPS_printMsg(str)               printMsg(str)
 #else

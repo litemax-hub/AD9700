@@ -4,7 +4,7 @@
 #if CHIP_ID==CHIP_MT9700
 #define MSFB_DEBUG    1
 
-#if ENABLE_DEBUG && MSFB_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MSFB_DEBUG
 #define MSFB_printData(str, value)   printData(str, value)
 #define MSFB_printMsg(str)           printMsg(str)
 #else
@@ -129,7 +129,7 @@ void msAutoDQSPhase(void)
     WORD xdata u16PhaseResult = 0;
     BYTE xdata u8Write;
     BYTE xdata u8DqsPhase;
-#if ENABLE_DEBUG
+#if MSFB_DEBUG
     BYTE xdata strDqsPhase[17];
 #endif
 
@@ -142,9 +142,9 @@ void msAutoDQSPhase(void)
     u8DqsCnt = 0;
 
     u8DqsPhase = old_msReadByte(REG_113A);
-#if ENABLE_DEBUG
-    printMsg("[ AUTO DQS READ PHASE ]");
-    printData("Def. Read Phase: %x", u8DqsPhase);
+#if MSFB_DEBUG
+    MSFB_printMsg("[ AUTO DQS READ PHASE ]");
+    MSFB_printData("Def. Read Phase: %x", u8DqsPhase);
 #endif
 
     // for ( u8Step = 0; u8Step < 64; u8Step++ )
@@ -188,7 +188,7 @@ void msAutoDQSPhase(void)
                 u8DqsCnt = 0;
             }
 
-#if ENABLE_DEBUG
+#if MSFB_DEBUG
             for( u8Mode = 0 ; u8Mode < 16 ; u8Mode++ )
             {
                 if( u16PhaseResult & (1 << u8Mode) )
@@ -197,7 +197,7 @@ void msAutoDQSPhase(void)
                     strDqsPhase[u8Mode] = '-';
             }
             strDqsPhase[u8Mode] = 0;
-            printData("%s", (WORD)strDqsPhase);
+            MSFB_printData("%s", (WORD)strDqsPhase);
 #endif
 
             u16PhaseResult = 0;
@@ -207,8 +207,8 @@ void msAutoDQSPhase(void)
     //refine the MIU DQS phase code flow for HW issue
     old_msWriteByte(REG_113A, u8DqsPhase );
 
-#if ENABLE_DEBUG
-    printData( "Auto Read Phase: %x", old_msRead2Byte(REG_113A) );
+#if MSFB_DEBUG
+    MSFB_printData( "Auto Read Phase: %x", old_msRead2Byte(REG_113A) );
 #endif
 
 #else
@@ -241,12 +241,10 @@ void msInitMemory( void )
 
     if(bDDR3InitState == FALSE)
     {
-    #if ENABLE_DEBUG
         MSFB_printMsg("=====>   Memory Init Fail!!  <======\r\n");
         ForceDelay1ms(3000);
         ForceDelay1ms(3000);
         ForceDelay1ms(3000);
-    #endif
     }
 
     msWriteByte( REG_1012E0, 0x00 );
@@ -308,8 +306,8 @@ void msSetDDRSSCFactor( BYTE freqMod, BYTE range )
         wSpan = (((float)dwMPLL_MHZ*1000ul/freqMod) * 131072ul) / dwFactor;
         wStep = (((float)range*dwFactor+(DWORD)500*wSpan)/((DWORD)1000*wSpan));
 
-        //drvmStar_printData("DDRSSC SPAN[%x]",wSpan);
-        //drvmStar_printData("DDRSSC STEP[%x]",wStep);
+        //MSFB_printData("DDRSSC SPAN[%x]",wSpan);
+        //MSFB_printData("DDRSSC STEP[%x]",wStep);
 
         if (wStep > 0x3FF)
             wStep = 0x3FF;

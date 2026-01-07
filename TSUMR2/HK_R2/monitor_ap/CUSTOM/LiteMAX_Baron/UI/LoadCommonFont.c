@@ -30,6 +30,14 @@ void mStar_LoadCompressedFont(BYTE u8Addr, const WORD *pu16FontPtr, WORD u16Coun
 extern xdata BYTE MenuPageIndex;
 extern xdata BYTE MenuItemIndex;
 
+#define LOADCOMMONFONT_DEBUG    0
+#if ENABLE_MSTV_UART_DEBUG && LOADCOMMONFONT_DEBUG
+    #define LOADCOMMONFONT_printData(str, value)   printData(str, value)
+    #define LOADCOMMONFONT_printMsg(str)           printMsg(str)
+#else
+    #define LOADCOMMONFONT_printData(str, value)
+    #define LOADCOMMONFONT_printMsg(str)
+#endif
 
 void LoadCommonFontUncall(void);
 
@@ -149,9 +157,7 @@ void LoadFfont( void )
 
 void LoadCommonFont( void )
 {
-	#if ENABLE_DEBUG
-	printData( "LoadCommonFont \r\n", 0);
-	#endif
+	LOADCOMMONFONT_printData( "LoadCommonFont \r\n", 0);
 
 	Osd_Write4ColorFontStartAddr( _4ColorFontStart );
 	Osd_Write8ColorFontStartAddr( 0x0FFF );
@@ -329,7 +335,7 @@ void LoadCompressColorFont(const BYTE *pu8FontTbl, WORD *pu16MapPtr, BYTE u8Coun
         }
         u8LineCount=18;
 
-        //printData("font %d", i);
+        //LOADCOMMONFONT_printData("font %d", i);
         while (u8LineCount)
         {
             if (u16FontIndex&0x8000 || pu16MapPtr==NULL) // compress

@@ -10,7 +10,7 @@ extern Bool ElandWriteWordMask(WORD reg, WORD val, WORD mask);
 
 #define DEBUG_TOUCH_PANEL  0
 
-#if DEBUG_TOUCH_PANEL && ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && DEBUG_TOUCH_PANEL
 #define TPL_DPUTSTR(str)    	printMsg(str)
 #define TPL_DPRINTF(str, x) 	printData(str, x)
 #else
@@ -133,9 +133,7 @@ Bool SPI_Write32Bit(DWORD addr, DWORD val)
     // wait for bus ready
     if(SPI_WaitBusReady(WAIT_BUS_READY_COUNT) == FALSE)
     {
-        #if 0//DEBUG_TOUCH_PANEL
-            TPL_DPRINTF(" W_BusBusy", 0);
-        #endif
+        TPL_DPRINTF(" W_BusBusy", 0);
         return FALSE;
     }
 
@@ -172,9 +170,7 @@ Bool SPI_Read32Bit(DWORD addr, DWORD *val)
     // wait for bus ready
     if(SPI_WaitBusReady(WAIT_BUS_READY_COUNT) == FALSE)
     {
-        #if DEBUG_TOUCH_PANEL
-            TPL_DPRINTF(" R_BusBusy", 0);
-        #endif
+        TPL_DPRINTF(" R_BusBusy", 0);
         return FALSE;
     }
 
@@ -197,9 +193,7 @@ Bool SPI_Read32Bit(DWORD addr, DWORD *val)
     // wait for bus ready
     if(SPI_WaitBusReady(WAIT_BUS_READY_COUNT) == FALSE)
     {
-        #if 0//DEBUG_TOUCH_PANEL
-            TPL_DPRINTF(" R_BusBusy-1", 0);
-        #endif
+        TPL_DPRINTF(" R_BusBusy-1", 0);
         return FALSE;
     }
 
@@ -209,12 +203,10 @@ Bool SPI_Read32Bit(DWORD addr, DWORD *val)
     SPI_ReadRegister(ARC_SPICMD_RDDATA_BYTE1, &dw_temp.valB[2]);
     SPI_ReadRegister(ARC_SPICMD_RDDATA_BYTE0, &dw_temp.valB[3]);
 
-    #if 0//DEBUG_TOUCH_PANEL
-        TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE3:%x", dw_temp.valB[0]);
-        TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE2:%x", dw_temp.valB[1]);
-        TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE1:%x", dw_temp.valB[2]);
-        TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE0:%x", dw_temp.valB[3]);
-    #endif
+    TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE3:%x", dw_temp.valB[0]);
+    TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE2:%x", dw_temp.valB[1]);
+    TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE1:%x", dw_temp.valB[2]);
+    TPL_DPRINTF(" ARC_SPICMD_RDDATA_BYTE0:%x", dw_temp.valB[3]);
 
     *val = dw_temp.valDW;
 
@@ -269,9 +261,7 @@ Bool TPL_InitSetting(void)
             SPI_Read32Bit(SPI_SYS_STATUS, &dwvalue);
             if(dwvalue == SPI_SYS_CTRL_MODE)
             {
-                #if DEBUG_TOUCH_PANEL
-                    TPL_DPRINTF(" TPL_Init ok", 1);
-                #endif
+                TPL_DPRINTF(" TPL_Init ok", 1);
                 TPL_Set_InitPassFlag();
                 return TRUE;
             }
@@ -279,9 +269,7 @@ Bool TPL_InitSetting(void)
     }
     else
     {
-        #if DEBUG_TOUCH_PANEL
-            TPL_DPRINTF(" TPL_Init fail", 1);
-        #endif
+        TPL_DPRINTF(" TPL_Init fail", 1);
         return FALSE;
     }
 
@@ -308,9 +296,7 @@ Bool TPL_ReadSurface(void)
 
     if(SPI_Write32Bit(SPI_DATA_CTRL, SPI_DATA_START_READING) == FALSE)
     {
-    #if DEBUG_TOUCH_PANEL
         TPL_DPRINTF(" SPI_DATA_START_READING fail", 1);
-    #endif
         return FALSE;
     }
 
@@ -325,18 +311,14 @@ Bool TPL_ReadSurface(void)
 
     if(dw_temp != SPI_DATA_START_READING)
     {
-    #if DEBUG_TOUCH_PANEL
         TPL_DPRINTF(" DATA_START_READING false", 1);
-    #endif
         return FALSE;
     }
 
     // get data index
     if(SPI_Read32Bit(SPI_DATA_INDEX, &dw_temp) == FALSE)
     {
-    #if DEBUG_TOUCH_PANEL
         TPL_DPRINTF(" ReadIndexFail", 1);
-    #endif
         return FALSE;
     }
 
@@ -358,8 +340,8 @@ Bool TPL_ReadSurface(void)
     #if DEBUG_TOUCH_PANEL && 0
     if(FINGER_ON)
     {
-        printData("   TPL_Conatct0_X:%x", TPL_Conatct0_X);
-        printData("   TPL_Conatct0_Y:%x", TPL_Conatct0_Y);
+        TPL_DPRINTF("   TPL_Conatct0_X:%x", TPL_Conatct0_X);
+        TPL_DPRINTF("   TPL_Conatct0_Y:%x", TPL_Conatct0_Y);
     }
     #endif
 

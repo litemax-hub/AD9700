@@ -200,7 +200,6 @@
 // SYSTEM DEBUG
 //////////////////////////////////////////////////////////////
 #define ENABLE_COMPILE_INFO         1 // Enable compiling infomation in BIN file, checksum of code will change every time after compile (Better to sync with SB/PM on the same option)
-#define ENABLE_DEBUG                ENABLE_MSTV_UART_DEBUG
 #define EnableSerialPortTXInterrupt 1
 
 //Using drvUARTPIU.c as PIU_UART drvier

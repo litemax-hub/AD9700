@@ -13,7 +13,7 @@ extern void printMsg( char *str );
 extern void printData( char *str, unsigned int value );
 
 #define MSFUNCTION_DEBUG    0
-#if ENABLE_DEBUG&&MSFUNCTION_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MSFUNCTION_DEBUG
 #define MSFUNCTION_printData(str, value)   printData(str, value)
 #define MSFUNCTION_printMsg(str)           printMsg(str)
 #else
@@ -406,7 +406,7 @@ S32 USB_Parse_Received_Setup(USB_VAR *gUSBStruct)
 			}
 			break;
 		case    USB_REQ_CLEAR_FEATURE:
-//			printMsg("USB_REQ_CLEAR_FEATURE");
+//			MSFUNCTION_printMsg("USB_REQ_CLEAR_FEATURE");
 			if	(gUSBStruct->otgUSBState < USB_ADDRESS)
 				break;							/* STALL */
 			if	((gUSBStruct->otgEP0Setup.bmRequestType & USB_RECIP_MASK) == USB_RECIP_DEVICE)
@@ -627,10 +627,10 @@ S32 USB_Parse_Received_Setup(USB_VAR *gUSBStruct)
                 gUSBStruct->otgUSB_EP[0].transfer_buffer_length=MIN(gUSBStruct->otgEP0Setup.wLength,length);
                 gUSBStruct->otgUSB_EP[0].transfer_buffer=(unsigned long)scanP;
 
-				//printData("buf addr:%x",  gUSBStruct->otgUSB_EP[0].transfer_buffer);
+				//MSFUNCTION_printData("buf addr:%x",  gUSBStruct->otgUSB_EP[0].transfer_buffer);
 				//for(j=0;j<gUSBStruct->otgUSB_EP[0].transfer_buffer_length;j++)
 				//{
-				//	printData("D b_buf:%x", *((U8 *)(gUSBStruct->otgUSB_EP[0].transfer_buffer+j)));
+				//	MSFUNCTION_printData("D b_buf:%x", *((U8 *)(gUSBStruct->otgUSB_EP[0].transfer_buffer+j)));
 				//}
 				//printf("len:0x%x\n",gUSBStruct->otgUSB_EP[0].transfer_buffer_length);
                 retstatus = USB_PID_IN;

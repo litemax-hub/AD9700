@@ -21,7 +21,7 @@ extern void printData( char *str, WORD value );
 extern void upll_enable(void);
 
 #define USB_DEBUG    1
-#if ENABLE_DEBUG&&USB_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && USB_DEBUG
 #define USB_printData(str, value)   printData(str, value)
 #define USB_printMsg(str)           printMsg(str)
 #else
@@ -77,7 +77,7 @@ U32 MDrv_USB_Read(U8 *buf, U32 len, USB_VAR *gUSBStruct)
     }
     if (rdLen)
     {
-	//printData("rdLen:0x%x\n",rdLen);
+	//USB_printData("rdLen:0x%x\n",rdLen);
         otg_memcpy(buf, pCmdStruct->ucptrDataBuf + pCmdStruct->accReadBytes, rdLen);
         if (!pCmdStruct->currDwldBytes)
             pCmdStruct->accReadBytes = 0;

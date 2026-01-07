@@ -33,7 +33,7 @@
 #endif
 
 #define POWER_DEBUG    0
-#if ENABLE_DEBUG&&POWER_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && POWER_DEBUG
     #define POWER_printData(str, value)   printData(str, value)
     #define POWER_printMsg(str)           printMsg(str)
 #else
@@ -304,7 +304,7 @@ void Power_PanelCtrlStateStopFlag_Clr(ePANEL_STATE eState)
 
 void Power_PanelCtrlStateMachineChange(BOOL ISRTrigger)
 {
-#if !(ENABLE_DEBUG&&POWER_DEBUG)
+#if !(ENABLE_MSTV_UART_DEBUG && POWER_DEBUG)
     UNUSED(ISRTrigger);
 #endif
 

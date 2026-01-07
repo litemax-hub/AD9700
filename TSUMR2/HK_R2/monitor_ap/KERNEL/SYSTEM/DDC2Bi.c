@@ -47,6 +47,7 @@
 #if (CHIP_ID == CHIP_MT9700)
 #include "DDCMCCSMSCHandler.h"
 #endif
+#include "Mode.h"
 
 #define CTEMP_6500K CTEMP_Warm1
 #define CTEMP_9300K CTEMP_Cool1
@@ -1427,9 +1428,19 @@ printf("\r\nDDCBuffer[2] = %d\n",DDCBuffer[2]);
             }
             else if( RetValueL == 0x03)
             {
-                #if INPUT_TYPE!=INPUT_1A && Input_DVI_C1 != Input_Nothing
-				UserPrefInputType=Input_DVI_C1;
-				DDC_ChangeSource();
+                /* 
+                * Enum comparison moved to runtime 'if' to fix "undefined" warning.
+                * Compiler will optimize this out if (Input_DVI_C1 == Input_Nothing).
+                */
+                // #if INPUT_TYPE!=INPUT_1A && Input_DVI_C1 != Input_Nothing
+				// UserPrefInputType=Input_DVI_C1;
+				// DDC_ChangeSource();
+				// #endif
+                #if INPUT_TYPE!=INPUT_1A
+                if (Input_DVI_C1 != Input_Nothing) {
+                    UserPrefInputType=Input_DVI_C1;
+                    DDC_ChangeSource();
+                }
 				#endif
             }
             else if( RetValueL == 0x11)

@@ -19,7 +19,7 @@
 #include "mapi_DPRx.h"
 
 #define MODE_DEBUG    1
-#if ENABLE_DEBUG&&MODE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MODE_DEBUG
     #define MODE_printData(str, value)   printData(str, value)
     #define MODE_printMsg(str)           printMsg(str)
 #else

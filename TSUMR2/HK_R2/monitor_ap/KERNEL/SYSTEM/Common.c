@@ -13,7 +13,7 @@
 #include "drvUARTPIU.h"
 #endif
 
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
 
 #if ENABLE_MSTV_UART_DEBUG_PIU
 #define _UART_PUTC_(_X_)     piu_uart_putc(_X_);

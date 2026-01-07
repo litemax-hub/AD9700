@@ -244,7 +244,7 @@ extern void msDebugDummy(void);
 extern void msDPSSettingDummy(void);
 extern void msDPSHandlerDummy(void);
 extern void msGammaDummy(void);
-extern void msPMDummy(void);
+// extern void msPMDummy(void);
 extern void msDACDummy(void);
 extern void mStarDummy(void);
 extern void msapmStarDummy(void);
@@ -336,14 +336,14 @@ void DummyCall(void)
         putSIOChar((char)'\n');
         (WORD)i = GetStandardModeVTotal();
         UserDataSpaceDummy();
-    #if 1//ENABLE_DEBUG
+    #if 1//ENABLE_MSTV_UART_DEBUG
         mStarDummy();
         msapmStarDummy();
         msMainDummy();
         msAdjustDummy();
     #endif
 
-    #if !ENABLE_DEBUG
+    #if !ENABLE_MSTV_UART_DEBUG
         msDebugDummy();
     #endif
 
@@ -361,7 +361,7 @@ void DummyCall(void)
         msGammaDummy();
     #endif
 
-    #if (!ENABLE_DEBUG) || (!MS_PM)
+    #if 0 //(!ENABLE_DEBUG) || (!MS_PM)
         msPMDummy();
     #endif
 
@@ -373,7 +373,7 @@ void DummyCall(void)
         drvmsOVDDummy();
     #endif
 
-    #if !(ENABLE_DEBUG&&COLORVERIFY_DEBUG)
+    #if !(ENABLE_MSTV_UART_DEBUG&&COLORVERIFY_DEBUG)
         msColorVerifyDummy();
     #endif
 

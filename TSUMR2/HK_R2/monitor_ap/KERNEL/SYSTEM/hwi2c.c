@@ -51,7 +51,7 @@
 #endif
 
 #define HWI2C_DEBUG    1
-#if ENABLE_DEBUG&&HWI2C_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && HWI2C_DEBUG
     #define HWI2C_PRINT(str, value)     printData(str, value)
     #define HWI2C_printMsg(str)           printMsg(str)
 #else

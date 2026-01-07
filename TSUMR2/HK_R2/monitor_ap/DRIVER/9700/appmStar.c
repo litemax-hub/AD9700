@@ -69,7 +69,7 @@ WORD mStar_GetOutputHTotalTolFBL(void)
         if((u16HPeriodIn == 0) || (u16HeightIn <= 1)) // protect for /0
         {
             u16HttTol = 10; // keep original 10
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
             printMsg( "[Warning] incorrect input Hperiod or image height \n");
 #endif
         }
@@ -94,7 +94,7 @@ WORD mStar_GetOutputHTotalTolFBL(void)
     }
     
     u16HttTol = mStar_DrvOutputHttAlign(u16HttTol); 
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
     printData( "  u16HttTol=%d", u16HttTol);
 #endif
     
@@ -161,7 +161,7 @@ Bool appmStar_SetPanelTiming( void )
         sclk = (( DWORD )dclk * (bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT) + (( DWORD )hPeriod * 1000 / 2)) / (( DWORD )hPeriod * 1000 );
     }
 
-        #if 0//DEBUG_PRINT_ENABLE
+        #if 0//ENABLE_MSTV_UART_DEBUG
         printData( "  sclk=%d", sclk );
         #endif
 
@@ -194,7 +194,7 @@ Bool appmStar_SetPanelTiming( void )
         }
 
         dclk = ( factor + 500 ) / 1000;
-        #if DEBUG_PRINT_ENABLE
+        #if ENABLE_MSTV_UART_DEBUG
         printData( "  hPeriod=%d", hPeriod );
         printData( "  sclk=%d", sclk );
         printData( "  dclk=%d", dclk );
@@ -387,7 +387,7 @@ Bool appmStar_SetPanelTiming( void )
     {
         WaitOutputFpllStable();
         //TIME_MEASURE_END();
-        #if DEBUG_PRINT_ENABLE
+        #if ENABLE_MSTV_UART_DEBUG
         printData( "EXECUTE_FRAME_PLL_LOCK takes time: %d", FRAMEPLL_TIMEOUT-u16TimeOutCounter );
         #endif
     }
@@ -406,7 +406,7 @@ Bool appmStar_SetPanelTiming( void )
         MENU_LOAD_END();
 
         WaitOutputFpllStable();
-        #if DEBUG_PRINT_ENABLE
+        #if ENABLE_MSTV_UART_DEBUG
         if((u16OutVTotal > g_sPnlInfo.sPnlTiming.u16VttMax) || ((u16OutVTotal-1) > SC_MASK_V))
             printMsg("Output Vtt of FLM_FBL_FRAMEPLL over spec!!!");
 

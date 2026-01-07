@@ -7,7 +7,7 @@ xdata SetupPathInfo g_SetupPathInfo;
 BOOL (*g_fpFblOv)(void) = NULL;
 
 #define MSSCALER_DEBUG    1
-#if ENABLE_DEBUG && MSSCALER_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MSSCALER_DEBUG
 #define MSSCALER_printData(str, value)   printData(str, value)
 #define MSSCALER_printMsg(str)           printMsg(str)
 #define MSSCALER_PRINT(str,...)          printf(str,##__VA_ARGS__)
@@ -1405,10 +1405,9 @@ static void msSetupPathVideoCompress(void)
     #endif
 }
 
-//ENABLE_DEBUG
 static void msSetupPathDbgDump(void)
 {
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
     MSSCALER_printData("wImgSizeInH = %d", g_SetupPathInfo.wImgSizeInH);
     MSSCALER_printData("wImgSizeInV = %d", g_SetupPathInfo.wImgSizeInV);
     MSSCALER_printData("wImgSizeOutH = %d", g_SetupPathInfo.wImgSizeOutH);

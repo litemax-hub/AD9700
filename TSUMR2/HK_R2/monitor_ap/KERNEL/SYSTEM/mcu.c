@@ -76,7 +76,7 @@ void Init_MCU( void )
     Init_Timer();
     Init_SerialPort();
 
-#if 0//ENABLE_DEBUG
+#if 0//ENABLE_MSTV_UART_DEBUG
 #if ENABLE_MSTV_UART_DEBUG_PIU
     mcuSetUartMux(UART_ENGINE_DW_UART, DFT_MUX_Uart0);
 #else
@@ -413,7 +413,7 @@ void Init_SerialPort( void )
     TI = 0;                     // clear transfer flag
     RI = 0;
 
-  #if ENABLE_DEBUG
+  #if ENABLE_MSTV_UART_DEBUG
 
     ES = 1;                     // enable uart interrupt
     // default baudrate-xtal

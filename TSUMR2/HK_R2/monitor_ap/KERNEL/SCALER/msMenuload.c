@@ -8,7 +8,7 @@
 
 
 #define ML_DEBUG_MSG    0
-#if ENABLE_DEBUG && ML_DEBUG_MSG
+#if ENABLE_MSTV_UART_DEBUG && ML_DEBUG_MSG
 #define ML_printData(str, value)   printData(str, value)
 #define ML_printMsg(str)           printMsg(str)
 #else

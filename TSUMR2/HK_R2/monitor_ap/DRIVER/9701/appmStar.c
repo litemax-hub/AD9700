@@ -70,7 +70,7 @@ WORD mStar_GetOutputHTotalTolFBL(void)
         if((u16HPeriodIn == 0) || (u16HeightIn <= 1)) // protect for /0
         {
             u16HttTol = 10; // keep original 10
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
             printMsg( "[Warning] incorrect input Hperiod or image height \n");
 #endif
         }
@@ -95,7 +95,7 @@ WORD mStar_GetOutputHTotalTolFBL(void)
     }
     
     u16HttTol = mStar_DrvOutputHttAlign(u16HttTol); 
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
     printData( "  u16HttTol=%d", u16HttTol);
 #endif
     
@@ -164,7 +164,7 @@ Bool appmStar_SetPanelTiming( void )
         sclk = (( DWORD )dclk * (bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT) + (( DWORD )hPeriod * 1000 / 2)) / (( DWORD )hPeriod * 1000 );
     }
 
-        #if 0//DEBUG_PRINT_ENABLE
+        #if 0//ENABLE_MSTV_UART_DEBUG
         printData( "  sclk=%d", sclk );
         #endif
 
@@ -196,7 +196,7 @@ Bool appmStar_SetPanelTiming( void )
             factor = (float)(bIs16Line ? MST_HPeriod_UINT_16 : MST_HPeriod_UINT) / hPeriod * dstHTotal * (g_sPnlInfo.sPnlTiming.u16Height-1) / (height-1); // output dot clock in KHz
         }
         dclk = ( factor + 500 ) / 1000;
-        #if DEBUG_PRINT_ENABLE
+        #if ENABLE_MSTV_UART_DEBUG
         printData( "  dclk=%d", dclk );
         printData( "  PanelMaxDCLK=%d", g_sPnlInfo.sPnlTiming.u16DClkMax );
         printData( "  wDclkMax=%d", wDclkMax );
@@ -230,7 +230,7 @@ Bool appmStar_SetPanelTiming( void )
                             
                 if(((DecVScaleValue/2) > SC0_READ_AUTO_START_V()) || ((DecVScaleValue/2) > ((SrcVTotal - (SC0_READ_AUTO_START_V() + height)))))
                 {
-                    #if DEBUG_PRINT_ENABLE
+                    #if ENABLE_MSTV_UART_DEBUG
                     printMsg("bUnsupportMode 1\n");
                     #endif
                     SrcFlags|=bUnsupportMode;
@@ -254,7 +254,7 @@ Bool appmStar_SetPanelTiming( void )
             }
             else
             {
-                #if DEBUG_PRINT_ENABLE
+                #if ENABLE_MSTV_UART_DEBUG
                 printMsg("bUnsupportMode 2\n");
                 #endif
                 SrcFlags|=bUnsupportMode;
@@ -278,7 +278,7 @@ Bool appmStar_SetPanelTiming( void )
 
             if((dclk > wDclkMax) || (oVtotal > g_sPnlInfo.sPnlTiming.u16VttMax))
             {
-                #if DEBUG_PRINT_ENABLE
+                #if ENABLE_MSTV_UART_DEBUG
                 printMsg("bUnsupportMode 3\n");
                 #endif
                 SrcFlags|= bUnsupportMode;
@@ -292,7 +292,7 @@ Bool appmStar_SetPanelTiming( void )
                 dstHTotal = mStar_DrvOutputHttAlign(dstHTotal);
                 if((dstHTotal < (g_sPnlInfo.sPnlTiming.u16HttMin+u16HttOutTol)) || (dstHTotal > (g_sPnlInfo.sPnlTiming.u16HttMax-u16HttOutTol)))
                 {
-                    #if DEBUG_PRINT_ENABLE
+                    #if ENABLE_MSTV_UART_DEBUG
                     printMsg("bUnsupportMode 4\n");
                     #endif
                     SrcFlags|= bUnsupportMode;
@@ -363,12 +363,12 @@ Bool appmStar_SetPanelTiming( void )
 
         {
             #if !ENABLE_DOLBY_HDR
-            #if DEBUG_PRINT_ENABLE
+            #if ENABLE_MSTV_UART_DEBUG
             printMsg( "Clock out of panel spec!! Change to no lock!!\r\n");
             #endif
             #else
             #if !DOLBY_IDK_VERIFICATION
-            #if DEBUG_PRINT_ENABLE
+            #if ENABLE_MSTV_UART_DEBUG
             printMsg( "Clock out of panel spec!! Change to no lock!!\r\n");
             #endif
             #endif
@@ -450,7 +450,7 @@ Bool appmStar_SetPanelTiming( void )
             }
             //while(((msRead2Byte(REG_LPLL_54)&0x1F4) !=0x1F4 )&& (bTimeOutCounterFlag) && (!InputTimingChangeFlag));
         }
-        #if DEBUG_PRINT_ENABLE
+        #if ENABLE_MSTV_UART_DEBUG
         //printData( "EXECUTE_FRAME_PLL_LOCK takes time: %d", FRAMEPLL_TIMEOUT-u16TimeOutCounter );
         #endif
     }
@@ -470,14 +470,14 @@ Bool appmStar_SetPanelTiming( void )
         MENU_LOAD_END();
 
         WaitOutputFpllStable();
-        #if DEBUG_PRINT_ENABLE
+        #if ENABLE_MSTV_UART_DEBUG
         if((u16OutVTotal > g_sPnlInfo.sPnlTiming.u16VttMax) || ((u16OutVTotal-1) > SC_MASK_V))
             printMsg("Output Vtt of FLM_FBL_FRAMEPLL over spec!!!");
         
         printData( "FLM_FBL_FRAMEPLL takes time: %d", FRAMEPLL_TIMEOUT-u16TimeOutCounter );
         #endif
     }
-    #if DEBUG_PRINT_ENABLE
+    #if ENABLE_MSTV_UART_DEBUG
         printData( "g_SetupPathInfo.ucFrameLockMode: %d", g_SetupPathInfo.ucFrameLockMode );
     #endif
     return TRUE;

@@ -9,7 +9,7 @@
 
 #define ENABLE_MSBHK_CMD_DEBUG		1//0
 
-#if ENABLE_DEBUG && ENABLE_MSBHK_CMD_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && ENABLE_MSBHK_CMD_DEBUG
 #define MSBHK_PRINT_DATA(str, value)	printData(str, value)
 #define MSBHK_PRINT_MSG(str) 			printMsg(str)
 #else
