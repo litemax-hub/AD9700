@@ -234,7 +234,7 @@ int main( void )
     msPM_Init();
 #endif
 
-    //CheckFactoryKeyStatus();
+    CheckFactoryKeyStatus();
     Init_GlobalVariables();
     Menu_InitVariable();
     Init_Device();
