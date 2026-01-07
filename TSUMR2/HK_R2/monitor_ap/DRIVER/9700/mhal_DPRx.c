@@ -2560,6 +2560,10 @@ BOOL mhal_DPRx_CheckCDRLock(DPRx_ID dprx_id, DPRx_AUX_ID dprx_aux_id, DPRx_PHY_I
 	WORD usRegOffsetTransCTRLByID = DP_REG_OFFSET000(dprx_id);
 	WORD usRegOffsetPHY0ByID = DP_REG_OFFSET400(dprx_phy_id);
 
+    #if !DPRX_OFFLINE_TO_ONLINE_KEEP_LOCK
+	UNUSED(OnlinePort);
+	#endif
+
 	if((dprx_id == DPRx_ID_MAX) || (dprx_aux_id == DPRx_AUX_ID_MAX) || (dprx_phy_id == DPRx_PHY_ID_MAX))
 	{
 		return FALSE;

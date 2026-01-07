@@ -327,10 +327,12 @@ void mStar_Init( BOOL bACon )
     mStar_InitADC();
     mStar_SetupFreeRunMode();
 
+#if (CHIP_ID == CHIP_MT9701)
     if( g_sPnlInfo.ePnlTypeEdp == EN_PNL_EDP_ENABLE )
     {
         System_eDPTx_Training();
     }
+#endif
 
 #ifndef TSUMR2_FPGA
     #if ENABLE_HDCP

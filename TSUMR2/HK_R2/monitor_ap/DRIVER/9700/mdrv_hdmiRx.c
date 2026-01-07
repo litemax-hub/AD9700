@@ -1821,6 +1821,9 @@ void mdrv_tmds_HDCP2FetchMsg(BYTE enInputPort)
 //**************************************************************************
 void mdrv_combo_SetHDCP2CallBackFunction(BYTE ucPortSelect, COMBO_HDCP2_CALL_BACK_FUNC pHDCP2TxFunc)
 {
+    #if !(COMBO_HDCP2_FUNCTION_SUPPORT)
+    UNUSED(ucPortSelect);
+    #endif
     if(pHDCP2TxFunc != NULL)
     {
     #if (COMBO_HDCP2_FUNCTION_SUPPORT)

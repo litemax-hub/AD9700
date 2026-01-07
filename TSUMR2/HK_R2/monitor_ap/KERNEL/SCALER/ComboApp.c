@@ -88,8 +88,10 @@ BYTE code ucKeyEncodeString[COMBO_HDCP2_ENCODE_KEY_CHECK_SIZE] =
 {
     0x4D, 0x53, 0x54, 0x41, 0x52, 0x5F, 0x53, 0x45, 0x43, 0x55, 0x52, 0x45, 0x5F, 0x53, 0x54, 0x4F, 0x52, 0x45, 0x5F, 0x46, 0x49, 0x4C, 0x45, 0x5F, 0x4D, 0x41, 0x47, 0x49, 0x43, 0x5F, 0x49, 0x44
 };
-#endif
+#if(COMBO_HDCP2_INITPROC_NEW_MODE)
 static Bool bSendCmdFlag = FALSE;
+#endif
+#endif
 static MS_BOOL bSecuStoreDone = FALSE;
 BYTE *pHDCPTxData_CertRx;
 BYTE XDATA glLastInputPort = 0xFF;
@@ -2156,6 +2158,10 @@ BOOL msAPI_combo_IPSet_Swap(BYTE ucInputPort, EN_COMBO_IP_SWAP_TYPE enComboIPSwa
 {
     BOOL bSwapDone = FALSE;
 
+#if (!ENABLE_HDMI && !ENABLE_DVI)
+    UNUSED(enComboIPSwapType);
+    UNUSED(bSwapEnable);
+#endif    
     if(INPUT_IS_DISPLAYPORT(ucInputPort))
     {
         return FALSE;
