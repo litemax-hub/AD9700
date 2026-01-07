@@ -27,7 +27,7 @@
 #define FWVersion                           "1.0"
 #define FwPartNo				"990060101900"
 #define ModelNameInfo           "LEI.B195.201"
-#define PanelType                       PanelCMIM236HGJ_L21//PanelBOEDV195FBB_N10
+#define PanelType                       PanelBOEDV195FBB_N10
 //Custom parameters
 #define EDID_DP                             E_EDID_TBL_995991152502
 #define BRIGHTNESS_INVERSE              0
