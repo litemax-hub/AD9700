@@ -161,7 +161,7 @@
 #endif
 
 #ifndef ENABLE_TIME_MEASUREMENT
-#define ENABLE_TIME_MEASUREMENT             (1 && ENABLE_DEBUG)
+#define ENABLE_TIME_MEASUREMENT             (1 && ENABLE_MSTV_UART_DEBUG)
 #endif
 #ifndef ENABLE_MCUTOPTEST
 #define ENABLE_MCUTOPTEST                   0
