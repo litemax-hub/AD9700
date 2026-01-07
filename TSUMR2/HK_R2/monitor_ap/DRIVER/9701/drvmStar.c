@@ -26,7 +26,7 @@
 #define _DRVMSTAR_C_
 
 #define drvmStar_DEBUG    1
-#if ENABLE_DEBUG&&drvmStar_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && drvmStar_DEBUG
     #define drvmStar_printData(str, value)   printData(str, value)
     #define drvmStar_printMsg(str)           printMsg(str)
     #define drvmStar_PRINT(str,...)          printf(str,##__VA_ARGS__)

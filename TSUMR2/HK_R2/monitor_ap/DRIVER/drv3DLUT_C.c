@@ -8,7 +8,7 @@
 #include <string.h>
 
 #define  ENABLE_3DLUT_DEBUG  1
-#if ENABLE_DEBUG&&ENABLE_3DLUT_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && ENABLE_3DLUT_DEBUG
     #define DB_PRINT(format, ...)      printf(format, ##__VA_ARGS__)
 #else
     #define DB_PRINT(format, ...)

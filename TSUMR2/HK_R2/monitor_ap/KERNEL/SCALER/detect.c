@@ -47,7 +47,7 @@
 
 
 #define DETECT_DEBUG    0
-#if ENABLE_DEBUG&&DETECT_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && DETECT_DEBUG
     #define DETECT_printData(str, value)   printData(str, value)
     #define DETECT_printMsg(str)           printMsg(str)
     #define DETECT_PRINT(format, ...)      printf(format, ##__VA_ARGS__)
@@ -58,7 +58,7 @@
 #endif
 
 #define DEBUG_HDMI_MHL_CABLE_DETECT     0
-#if ENABLE_DEBUG && DEBUG_HDMI_MHL_CABLE_DETECT
+#if ENABLE_MSTV_UART_DEBUG && DEBUG_HDMI_MHL_CABLE_DETECT
     #define DEBUG_HDMI_MHL_CABLE(str, value)   printData(str, value)
 #else
     #define DEBUG_HDMI_MHL_CABLE(str, value)
@@ -309,7 +309,7 @@ void mStar_MonitorInputTiming( void )
 
 #if ENABLE_DEBUG_TIMING_CHANGE_POINT
         if(TimingChangeFirstPoint)
-           printData(" TimingChangeFirstPoint:%d", TimingChangeFirstPoint);
+           DETECT_printData(" TimingChangeFirstPoint:%d", TimingChangeFirstPoint);
 #endif
 
         bHDMIFreesyncChk = TRUE;
@@ -691,9 +691,7 @@ void mStar_ModeHandler( void )
 void mStar_PrepareForTimingChange( void )
 {
 
-    #if 0//DEBUG_PRINT_ENABLE
-    printData( "PrepareForTimingChange SrcInputType=%d", SrcInputType );
-    #endif
+    DETECT_printData( "PrepareForTimingChange SrcInputType=%d", SrcInputType );
 
 #if ENABLE_DAC
     audio_EnableAudioAfterSignalLock_Flag=0;
@@ -792,8 +790,8 @@ Bool mStar_SyncLossStateDetect( void )
     Bool result = FALSE;
 
     fStatus = mStar_GetInputStatus();
-    //printData("status %xH", fStatus);//old_msReadByte(INSTA));
-    //printData("stable counter %d", InputTimingStableCounter);
+    //DETECT_printData("status %xH", fStatus);//old_msReadByte(INSTA));
+    //DETECT_printData("stable counter %d", InputTimingStableCounter);
     if( fStatus & SyncLoss )
     {
 #if ENABLE_VGA_INPUT
@@ -993,9 +991,7 @@ Bool mStar_ValidTimingDetect( void )
 
             if(!IS_DP_FREESYNC())
             {
-                #if DEBUG_PRINT_ENABLE
-                // printData("HPeriod1 %d", tempPeriod);
-                #endif
+                // DETECT_printData("HPeriod1 %d", tempPeriod);
                 if( labs( (DWORD)tempPeriod - SrcHPeriod ) > HPeriod_Torlance )
                     // HPeriod changed
                 {
@@ -1040,9 +1036,7 @@ Bool mStar_ValidTimingDetect( void )
 
             if(!IS_HDMI_FREESYNC())
             {
-                #if DEBUG_PRINT_ENABLE
-                // printData("  VTotal1 %d", tempPeriod);
-                #endif
+                // DETECT_printData("  VTotal1 %d", tempPeriod);
                 if( abs( tempPeriod - SrcVTotal ) > VTotal_Torlance )
                 // vtotal changed
                 {
@@ -1282,7 +1276,7 @@ else if (status&SOGD_B)
                         inputValue=GetVSyncWidth();
                         if (inputValue>15||inputValue==0)
                         {
-                            //printMsg("SOG Det Err");
+                            //DETECT_printMsg("SOG Det Err");
                             fStatus |= SyncLoss;
                             //break;
                         }
@@ -1308,7 +1302,7 @@ else if (status&SOGD_B)
                         inputValue=GetVSyncWidth();
                         if (inputValue>15||inputValue=0)
                         {
-                      //printMsg("SOG Det Err");
+                      //DETECT_printMsg("SOG Det Err");
                             fStatus |= SyncLoss;
                             break;
                         }

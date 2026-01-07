@@ -27,7 +27,7 @@ BOOL ubHaveBeenSleeped[DPRx_AUX_ID_MAX] = {0};
 //-------------------------------------------------------------------------------------------------
 #define DPRX_HAL_DEBUG_MESSAGE			0
 
-#if (DPRX_HAL_DEBUG_MESSAGE && ENABLE_DEBUG)
+#if (ENABLE_MSTV_UART_DEBUG && DPRX_HAL_DEBUG_MESSAGE)
 #define DPRX_HAL_DPUTSTR(str)			printMsg(str)
 #define DPRX_HAL_DPRINTF(str, x)		printData(str, x)
 #else
@@ -2559,6 +2559,10 @@ BOOL mhal_DPRx_CheckCDRLock(DPRx_ID dprx_id, DPRx_AUX_ID dprx_aux_id, DPRx_PHY_I
 	WORD usRegOffsetDPCD0ByID = DP_REG_OFFSET000(dprx_id);
 	WORD usRegOffsetTransCTRLByID = DP_REG_OFFSET000(dprx_id);
 	WORD usRegOffsetPHY0ByID = DP_REG_OFFSET400(dprx_phy_id);
+
+    #if !DPRX_OFFLINE_TO_ONLINE_KEEP_LOCK
+	UNUSED(OnlinePort);
+	#endif
 
 	if((dprx_id == DPRx_ID_MAX) || (dprx_aux_id == DPRx_AUX_ID_MAX) || (dprx_phy_id == DPRx_PHY_ID_MAX))
 	{

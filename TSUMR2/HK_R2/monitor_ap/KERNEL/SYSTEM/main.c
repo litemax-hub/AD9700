@@ -78,7 +78,7 @@
 #endif
 
 #define Main_DEBUG    1
-#if ENABLE_DEBUG&&Main_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && Main_DEBUG
     #define Main_printData(str, value)   printData(str, value)
     #define Main_printMsg(str)           printMsg(str)
 #else

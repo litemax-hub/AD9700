@@ -4,7 +4,7 @@
 
 xdata SetupPathInfo g_SetupPathInfo;
 #define MSSCALER_DEBUG    1
-#if ENABLE_DEBUG && MSSCALER_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MSSCALER_DEBUG
 #define MSSCALER_printData(str, value)   printData(str, value)
 #define MSSCALER_printMsg(str)           printMsg(str)
 #else
@@ -1373,10 +1373,10 @@ static void msSetupPathMRWInit()
     old_msWriteByte(SC0_00,u8Bank);
 }
 #endif
-//ENABLE_DEBUG
+
 static void msSetupPathDbgDump(void)
 {
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
     MSSCALER_printData("wImgSizeInH = %d", g_SetupPathInfo.wImgSizeInH);
     MSSCALER_printData("wImgSizeInV = %d", g_SetupPathInfo.wImgSizeInV);
     MSSCALER_printData("wImgSizeOutH = %d", g_SetupPathInfo.wImgSizeOutH);

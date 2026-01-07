@@ -5,7 +5,7 @@
 
 #define _MSOVD_G_
 
-#if DEBUG_PRINT_ENABLE
+#if ENABLE_MSTV_UART_DEBUG
     #define OD_DPUTSTR(str)    printMsg(str)
     #define OD_DPRINTF(str, x) printData(str, x)
 #else

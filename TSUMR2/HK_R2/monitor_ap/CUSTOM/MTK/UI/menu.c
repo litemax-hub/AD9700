@@ -37,6 +37,15 @@
 #if ENABLE_DPS
 #include "msDPS_Setting.h"
 #endif
+#define MENU_DEBUG    0
+#if ENABLE_MSTV_UART_DEBUG && MENU_DEBUG
+    #define MENU_printData(str, value)   printData(str, value)
+    #define MENU_printMsg(str)           printMsg(str)
+#else
+    #define MENU_printData(str, value)
+    #define MENU_printMsg(str)
+#endif
+
 #define CurrentMenu                 tblMenus[MenuPageIndex]
 #define PrevMenu                    tblMenus[PrevMenuPageIndex]
 #define NextMenuPage                CurrentMenuItem.NextPage
@@ -415,9 +424,7 @@ printf("\r\n OsdTimeoutFlag");
 #else
             Power_TurnOffPanel();
 #endif
-            #if DEBUG_PRINT_ENABLE
-            //printMsg( "--LoadCommonFont--1" );
-            #endif
+            MENU_printMsg( "--LoadCommonFont--1" );
             LoadCommonFont();
             //          InitOsdAfterLogo();
         }
@@ -1320,9 +1327,6 @@ void DynamicLoadFont( const MenuFontType *menuFonts, BYTE addr )
 }
 
 
-#if ENABLE_DEBUG
-extern BYTE FlashReadSR( void );
-#endif
 void DrawOsdMenu( void )
 {
     Bool redrawFlags;
@@ -1354,9 +1358,7 @@ void DrawOsdMenu( void )
     {
         Clr_LoadOSDDataFlag();
         Osd_Hide();
-        #if DEBUG_PRINT_ENABLE
-        printMsg( "--LoadCommonFont--2" );
-        #endif
+        MENU_printMsg( "--LoadCommonFont--2" );
         LoadCommonFont();
         //       Osd_LoadColorPalette(); // load osd color
     }
@@ -1372,9 +1374,7 @@ void DrawOsdMenu( void )
 
         if( MenuPageIndex == MainMenu && FactoryModeFlag )
         {
-            #if DEBUG_PRINT_ENABLE
-            printData( "LoadFfont--DrawOSDMenu", 0 );
-            #endif
+            MENU_printData( "LoadFfont--DrawOSDMenu", 0 );
             LoadFfont();
             MenuPageIndex = FactoryMenu;
         }
@@ -1408,9 +1408,7 @@ void DrawOsdMenu( void )
 
         if( redrawFlags )
         {
-            #if DEBUG_PRINT_ENABLE
-            printData( "redrawFlags [%d]", MenuPageIndex );
-            #endif
+            MENU_printData( "redrawFlags [%d]", MenuPageIndex );
             Osd_Hide();
             //       LoadCommonFont(); // code test
             Delay1ms( 80 );
@@ -2606,14 +2604,12 @@ void Menu_RxCableStatePollingHandler(void)
                     BootTimeStamp_Clr();
                     BootTimeStamp_Set(AP_LOOP_TS, 0, TRUE);
                 }
-                #if 0//ENABLE_DEBUG
-                printf("***___Reset timing stable counter___***\n");
-                #endif
+                MENU_printMsg("***___Reset timing stable counter___***\n");
             }
 
             #if ENABLE_BOOT_TIME_PROFILING
             MDrv_UART_SetIsPrint(TRUE);
-            printf("cable status change, port: %d, %d -> %d\n", i,  u8PrevState[i], u8CurrentState[i]);
+            MENU_printData("cable status change, port: %d, %d -> %d\n", i,  u8PrevState[i], u8CurrentState[i]);
             MDrv_UART_SetIsPrint(FALSE);
             #endif
             u8PrevState[i] = u8CurrentState[i];

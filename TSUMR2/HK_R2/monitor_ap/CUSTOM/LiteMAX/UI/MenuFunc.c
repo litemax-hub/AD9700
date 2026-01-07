@@ -81,7 +81,7 @@
 #include "drvHDR.h"
 #endif
 #define MenuFunc_DEBUG    0
-#if ENABLE_DEBUG&&MenuFunc_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MenuFunc_DEBUG
     #define MenuFunc_printData(str, value)   printData(str, value)
     #define MenuFunc_printMsg(str)           printMsg(str)
 #else

@@ -11,7 +11,7 @@
 #include "PDUpdate.h"
 
 #define PDUPDATE_DEBUG    0
-#if ENABLE_DEBUG&&PDUPDATE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && PDUPDATE_DEBUG
     #define PDUPDATE_PRINT(str, value)      printData(str, value)
     #define PDUPDATE_printMsg(str)          printMsg(str)
 #else

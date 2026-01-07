@@ -1,7 +1,7 @@
 #include "drvBDMA.h"
 
 #define DRVBDMA_DEBUG    0
-#if ENABLE_DEBUG&&DRVBDMA_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && DRVBDMA_DEBUG
 #define DRVBDMA_printData(str, value)   printData(str, value)
 #define DRVBDMA_printMsg(str)           printMsg(str)
 #else

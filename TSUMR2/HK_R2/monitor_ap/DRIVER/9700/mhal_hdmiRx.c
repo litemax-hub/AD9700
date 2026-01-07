@@ -8163,6 +8163,8 @@ inline static void phy_param_init(BYTE enInputPortType,MS_BOOL b_h2p1_port)
 {
     stHDMI_phy_parm* ptr_phy_param = &s_hdmi_phy_parm;
     UNUSED(b_h2p1_port);
+    UNUSED(enInputPortType);
+
     memset((void*)ptr_phy_param,0,sizeof(stHDMI_phy_parm));
     ptr_phy_param->s_ov_table_a.u32_n        =OV_ELEMENTS_H2P0_PORT_N;
     ptr_phy_param->s_ov_table_a.ptr_ov_table = ov_table_h2p0_port;
@@ -8176,6 +8178,7 @@ inline static MS_BOOL _Hal_HDMI_Fix_Analog_Setting(BYTE enInputPortType,MS_BOOL 
     // MS_U16 u16_tmp_1,u16_tmp_2;
     MS_BOOL ret = TRUE;
 
+    UNUSED(enInputPortType);
     //HDMI_HAL_DPRINTF("[%s] ** port/b_ov_en:%d/%d/0x%x \n",
         //__FUNCTION__, enInputPortType,b_ov_en,u16_tmp);
 

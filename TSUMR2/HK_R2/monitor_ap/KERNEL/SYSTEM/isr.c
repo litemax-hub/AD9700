@@ -296,7 +296,7 @@ if(TimeOutCounter)
     }
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
     if( u8ReSyncCounter )
     {
         u8ReSyncCounter--;
@@ -780,7 +780,7 @@ static void ms1MsHandler(void)
     }
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
     if( u8ReSyncCounter )
     {
         u8ReSyncCounter--;
@@ -926,7 +926,7 @@ void Time2Interrupt( void )interrupt 5
 }
 #endif
 
-#if ENABLE_DEBUG
+#if ENABLE_MSTV_UART_DEBUG
 #if EnableSerialPortTXInterrupt
 
 void SerialPortInterrupt( void )interrupt 4

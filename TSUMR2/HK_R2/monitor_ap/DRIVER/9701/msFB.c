@@ -6,7 +6,7 @@
 #if (CHIP_ID==CHIP_MT9700) || (CHIP_ID==CHIP_MT9701)
 #define MSFB_DEBUG    1
 
-#if ENABLE_DEBUG && MSFB_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && MSFB_DEBUG
 #define MSFB_printData(str, value)   printData(str, value)
 #define MSFB_printMsg(str)           printMsg(str)
 #else
@@ -3360,12 +3360,10 @@ void msInitMemory( void )
 
     if(bDDR3InitState == FALSE)
     {
-    #if ENABLE_DEBUG
         MSFB_printMsg("=====>   Memory Init Fail!!  <======\r\n");
         ForceDelay1ms(3000);
         ForceDelay1ms(3000);
         ForceDelay1ms(3000);
-    #endif
     }
 
     msWrite2Byte(0x123086, 0x0000); // MIU UnMask
@@ -3427,8 +3425,8 @@ void msSetDDRSSCFactor( Bool bEnable, BYTE freqMod, BYTE range )
         wSpan = (((float)dwMPLL_MHZ*1000ul/freqMod)*131072ul)/dwFactor;
         wStep = (((float)range*dwFactor+(DWORD)500*wSpan)/((DWORD)1000*wSpan));
 
-        //drvmStar_printData("DDRSSC SPAN[%x]",wSpan);
-        //drvmStar_printData("DDRSSC STEP[%x]",wStep);
+        //MSFB_printData("DDRSSC SPAN[%x]",wSpan);
+        //MSFB_printData("DDRSSC STEP[%x]",wStep);
 
         if (wStep > 0x3FF)
             wStep = 0x3FF;
@@ -3998,12 +3996,10 @@ void msInitMemory( void )
 
     if(bDDR3InitState == FALSE)
     {
-#if ENABLE_DEBUG
         MSFB_printMsg("=====>   Memory Init Fail!!  <======\r\n");
         ForceDelay1ms(3000);
         ForceDelay1ms(3000);
         ForceDelay1ms(3000);
-#endif
     }
 
     msWrite2Byte(0x123086, 0x0000); // MIU UnMask

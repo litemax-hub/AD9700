@@ -3,8 +3,8 @@
 #include "Utl.h"
 //#if ENABLE_HDR
 //100Nits ToneMapping
-
-#if ENABLE_DEBUG
+#define HDRLut_DEBUG    0
+#if ENABLE_MSTV_UART_DEBUG && HDRLut_DEBUG
     #define HDRLut_printData(str, value)   printData(str, value)
     #define HDRLut_printMsg(str)           printMsg(str)
 #else

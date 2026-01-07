@@ -15,6 +15,15 @@
 #include "UserPref.h"
 #endif
 
+#define KEYPAD_DEBUG    0
+#if ENABLE_MSTV_UART_DEBUG&&KEYPAD_DEBUG
+    #define KEYPAD_printData(str, value)   printData(str, value)
+    #define KEYPAD_printMsg(str)           printMsg(str)
+#else
+    #define KEYPAD_printData(str, value)
+    #define KEYPAD_printMsg(str)
+#endif
+
 BYTE xdata KeyDebug=0;
 BYTE xdata LastKeypadButton=0;
 
@@ -35,9 +44,7 @@ BYTE Key_GetKeypadStatus( void )
     BYTE keypad = 0xFF;
     if ( KeyDebug )
     {
-#if 0//DEBUG_EN
-        printData("@@@@ Key:%x", KeyDebug);
-#endif
+        KEYPAD_printData("@@@@ Key:%x", KeyDebug);
         LastKeypadButton = KeyDebug;
         keypad &= (~KeyDebug);
         KeyDebug = 0;
@@ -68,7 +75,7 @@ BYTE Key_GetKeypadStatus( void )
 
 #if ADC_KEY_PRESS_DEBUG_ENABLE
     if( temp < 0xfa )
-        printData( "KEYPAD_ADC_A=0x%x", temp );
+        KEYPAD_printData( "KEYPAD_ADC_A=0x%x", temp );
 #endif
 
     retry_Key = 3;
@@ -95,10 +102,9 @@ BYTE Key_GetKeypadStatus( void )
 
 #if ADC_KEY_PRESS_DEBUG_ENABLE
     if( temp < 0xfa )
-        printData( "KEYPAD_ADC_B=0x%x", temp );
-#endif
-#if ADC_KEY_PRESS_DEBUG_ENABLE
-        printData( "PowerKey=0x%x", PowerKey );
+        KEYPAD_printData( "KEYPAD_ADC_B=0x%x", temp );
+
+    KEYPAD_printData( "PowerKey=0x%x", PowerKey );
 #endif
 
     if(PowerKey == 0 )
@@ -128,7 +134,7 @@ void Key_ScanKeypad( void )
     BYTE keypadStatus=0;
 #endif
 
-    #if ENABLE_DEBUG
+    #if KEYPAD_DEBUG
     static BYTE keypadStatus_Pre = 0;
     #endif
 
@@ -140,10 +146,10 @@ void Key_ScanKeypad( void )
 #else
         keypadStatus = ( Key_GetKeypadStatus() ^ KeypadMask ) &KeypadMask;
 
-        #if ENABLE_DEBUG
+        #if KEYPAD_DEBUG
         if(keypadStatus_Pre != keypadStatus)
         {
-            printf("keypadStatus: 0x%x\n", keypadStatus);
+            KEYPAD_printData("keypadStatus: 0x%x\n", keypadStatus);
             keypadStatus_Pre = keypadStatus;
         }
         #endif
@@ -167,7 +173,7 @@ void Key_ScanKeypad( void )
     {
         if(FakeSleepFlag)
         {
- 			printMsg("KEY, EXIT FAKE SLEEP\n");
+ 			KEYPAD_printMsg("KEY, EXIT FAKE SLEEP\n");
             Clr_FakeSleepFlag();
             FakeSleepCounter = 0;
             Set_ShowInputInfoFlag();

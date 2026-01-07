@@ -21,7 +21,7 @@
 #include "drvGPIO.h"
 
 #define GPIO_DEBUG 0
-#if ENABLE_DEBUG && GPIO_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && GPIO_DEBUG
     #define GPIO_printData(str, value)   printData(str, value)
     #define GPIO_printMsg(str)           printMsg(str)
 #else

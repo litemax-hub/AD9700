@@ -22,7 +22,7 @@
 #include "mdrv_hdmiRx.h"
 
 #define USERPREF_DEBUG    1
-#if DEBUG_PRINT_ENABLE && USERPREF_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && USERPREF_DEBUG
 #define USERP_printData(str, value)   printData(str, value)
 #define USERP_printMsg(str)           printMsg(str)
 #else

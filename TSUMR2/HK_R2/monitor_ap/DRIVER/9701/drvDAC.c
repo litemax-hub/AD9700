@@ -41,7 +41,7 @@
 #define TTS_BUF_SIZE_PHY                0
 #endif
 
-#if ENABLE_DEBUG && AUDIO_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && AUDIO_DEBUG
 #define MSAUDIO_PRINT(format, ...)      printf(format, ##__VA_ARGS__)
 #else
 #define MSAUDIO_PRINT(format, ...)
