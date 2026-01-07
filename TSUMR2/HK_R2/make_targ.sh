@@ -1,17 +1,6 @@
 #!/bin/bash
 
 CORE_NUM=${1:-12}
-make realclean
-
-time make -j"$CORE_NUM"
-time make
-if [ $? -eq 0 ]; then
-    echo "編譯成功！"
-fi
-
-date#!/bin/bash
-
-CORE_NUM=${1:-12}
 LOG_FILE="build_output.log"
 
 make realclean
