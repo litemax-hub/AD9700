@@ -25,16 +25,12 @@
 // PROJECT DEFINE
 ////////////////////////////////////////////////////////////
 #if (StandardBoardPPS == P2506168)
-#define FWdevelopVCS                        1
-#define FWVersionCS                         10
 #define FWVersion                           "1.0"
 #define SNNumber                          "990060101900"
 #define PanelType                       PanelBOEDV195FBB_N10
 #define BRIGHTNESS_INVERSE              0
 #define EDID_DP                             E_EDID_TBL_995991152502
 #else
-#define FWdevelopVCS                        1
-#define FWVersionCS                         10
 #define FWVersion                           "1.0"
 #define SNNumber                          "000000000000"
 #define PanelType                       PanelCMIM236HGJ_L21//PanelCMO190

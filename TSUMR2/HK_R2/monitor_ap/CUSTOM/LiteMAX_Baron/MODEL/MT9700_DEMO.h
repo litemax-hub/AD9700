@@ -24,12 +24,10 @@
 // PROJECT DEFINE
 ////////////////////////////////////////////////////////////
 #if (StandardBoardPPS == P2506168)
-#define FWdevelopVCS                        1
-#define FWVersionCS                         10
 #define FWVersion                           "1.0"
 #define FwPartNo				"990060101900"
 #define ModelNameInfo           "LEI.B195.201"
-#define PanelType                       PanelBOEDV195FBB_N10
+#define PanelType                       PanelCMIM236HGJ_L21//PanelBOEDV195FBB_N10
 //Custom parameters
 #define EDID_DP                             E_EDID_TBL_995991152502
 #define BRIGHTNESS_INVERSE              0
@@ -37,8 +35,6 @@
 #define OSD_movePIXEL		1// 1= OSD movement
 #define ENABLE_BOE_NEW_SZ_DDCCI_SPEC                1 // 0:Disable 1:Enable
 #else
-#define FWdevelopVCS                        1
-#define FWVersionCS                         10
 #define FWVersion                           "1.0"
 #define ModelNameInfo           "000.0000.000"
 #define FwPartNo				"000000000000"

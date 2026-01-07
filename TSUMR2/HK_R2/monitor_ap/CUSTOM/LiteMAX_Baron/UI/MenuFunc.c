@@ -3044,6 +3044,7 @@ void ReadColorTempSetting( void )
    if(loadStatus== LoadStatus_SUCCESS)
    	return;
    */
+#if NEW_MTK_UI
     switch(UserPrefColorTemp)
     {
     #if (COLOR_ACCURACY == COLOR_10_BIT)
@@ -3090,6 +3091,7 @@ void ReadColorTempSetting( void )
             break;
     #endif
     }
+#endif
     UserPrefRedColor =  *ColorTempPtr[UserPrefColorTemp][2];
     UserPrefGreenColor =  *ColorTempPtr[UserPrefColorTemp][3];
     UserPrefBlueColor =  *ColorTempPtr[UserPrefColorTemp][4];
