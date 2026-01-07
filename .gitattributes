@@ -1,0 +1,6 @@
+# 強制 .sh 檔案在 checkout 時永遠保持 LF (Unix 格式)
+*.sh text eol=lf
+
+# 選擇性：讓 .c/.h 保持自動轉換 (Windows 下是 CRLF, Linux 下是 LF)
+*.c text
+*.h text
