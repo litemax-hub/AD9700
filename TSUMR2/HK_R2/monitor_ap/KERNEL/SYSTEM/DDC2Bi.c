@@ -546,9 +546,9 @@ Bool DDCCICommandExecutable(void)
 //===================================================
 BYTE AlignControl( void )
 {
-    BYTE CommandCode, CPCode, ValueH, ValueL, RetValueH, RetValueL=0, PageValue;
+    BYTE CommandCode, CPCode, ValueH, ValueL, RetValueH=0, RetValueL=0, PageValue;
     BYTE TPValue;
-    WORD WordValue;
+    WORD WordValue = 0;
     WORD WordAddr;
 
     CommandCode = DDCBuffer[1];

@@ -146,3 +146,6 @@ TSUMR2/HK_R2/boot/R2_MT9700_LiteMAX/BOOT.bin
 # **/AP.sym
 # **/AP.dis
 
+# Make log
+build_output.log
+

@@ -25,7 +25,8 @@ extern xdata BYTE MenuItemIndex;
 //=============================================================================================================================================================================================================================:
 Bool appFactorySetBurninFlag ( drvFactoryModeType ucControl )
 {
-/*¥ý®³±¼make¬Ý¬Ý
+    UNUSED(ucControl);
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
     if ( ucControl )
     {
         msAPI_AdjustBrightness(100);
@@ -50,7 +51,8 @@ Bool appFactorySetBurninFlag ( drvFactoryModeType ucControl )
 #if 1
 Bool appFactorySetProductModeFlag ( drvFactoryModeType ucControl )
 {
-/*¥ý®³±¼make¬Ý¬Ý
+    UNUSED(ucControl);
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
     if ( ucControl )
     {
         Set_ProductModeFlag();
@@ -268,7 +270,8 @@ Bool EEPROM_FACTORY(void)
 //=============================================================================================================================================================================================================================:
 void appFactoryAdjRedGain ( WORD wData )
 {
-/*¥ý®³±¼make¬Ý¬Ý
+    UNUSED(wData);
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
     if(CURRENT_COLOR_TEMPERATURE == PCT_6500K)
     {
     	USER_PREF_RED_COLOR_6500K = wData;
@@ -290,7 +293,8 @@ void appFactoryAdjRedGain ( WORD wData )
 //=============================================================================================================================================================================================================================:
 void appFactoryAdjGreenGain ( WORD wData )
 {
-/*¥ý®³±¼make¬Ý¬Ý
+    UNUSED(wData);
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
     if(CURRENT_COLOR_TEMPERATURE == PCT_6500K)
     {
     	USER_PREF_GREEN_COLOR_6500K = wData;
@@ -312,7 +316,8 @@ void appFactoryAdjGreenGain ( WORD wData )
 //=============================================================================================================================================================================================================================:
 void appFactoryAdjBlueGain ( WORD wData )
 {
-/*¥ý®³±¼make¬Ý¬Ý
+    UNUSED(wData);
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
     if(CURRENT_COLOR_TEMPERATURE == PCT_6500K)
     {
     	USER_PREF_BLUE_COLOR_6500K = wData;
@@ -334,9 +339,9 @@ void appFactoryAdjBlueGain ( WORD wData )
 //=============================================================================================================================================================================================================================:
 BYTE appFactoryGetRedGain ( void )
 {
-    BYTE XDATA ucColor;
+    BYTE XDATA ucColor = 0;
 	
-/*¥ý®³±¼make¬Ý¬Ý
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
 	if(CURRENT_COLOR_TEMPERATURE == PCT_6500K)
     {
 		ucColor = USER_PREF_RED_COLOR_6500K;
@@ -355,9 +360,9 @@ BYTE appFactoryGetRedGain ( void )
 //=============================================================================================================================================================================================================================:
 BYTE appFactoryGetGreenGain ( void )
 {
-    BYTE XDATA ucColor;
+    BYTE XDATA ucColor = 0;
 	
-/*¥ý®³±¼make¬Ý¬Ý
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
 	if(CURRENT_COLOR_TEMPERATURE == PCT_6500K)
     {
 		ucColor = USER_PREF_GREEN_COLOR_6500K;
@@ -376,9 +381,9 @@ BYTE appFactoryGetGreenGain ( void )
 //=============================================================================================================================================================================================================================:
 BYTE appFactoryGetBlueGain ( void )
 {
-    BYTE XDATA ucColor;
+    BYTE XDATA ucColor = 0;
 
-/*¥ý®³±¼make¬Ý¬Ý
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½makeï¿½Ý¬ï¿½
 	if(CURRENT_COLOR_TEMPERATURE == PCT_6500K)
     {
 		ucColor = USER_PREF_BLUE_COLOR_6500K;
