@@ -157,6 +157,7 @@ U8 HID_Set_Report_RxData(U8 *pBuff, USB_VAR *gUSBStruct)
 U8 HID_Vendor_Set_RxData(U8 *pBuff, USB_VAR *gUSBStruct)
 {
 	DBG_PRINTDATA("HID Vendor EP0 write %X data\n", gUSBStruct->otgEP0Setup.wLength);
+	UNUSED(gUSBStruct);
 
 	if ((mHID.bState & HID_EP0_RX_READY))
 		return -EBUSY;

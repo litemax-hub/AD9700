@@ -36,7 +36,7 @@
 
 #define ADC_DEBUG 0
 
-#ifdef ENABLE_MSTV_UART_DEBUG && ADC_DEBUG
+#if ENABLE_MSTV_UART_DEBUG && ADC_DEBUG
     #define ADC_DPUTSTR(str)    printMsg(str)
     #define ADC_DPRINTF(str, x) printData(str, x)
 #else
@@ -883,8 +883,8 @@ Bool drvADC_AutoAdcColor(BYTE u8VSyncTime)
     drvADC_SetRGBGainCode(0x1084, 0x1084, 0x1084);
 
     msWriteByte(SC00_78, 0x01); // enable auto Gain SC0_78[0]
-    //u8AdcPgaGain=drvADC_CheckPGAGain(u8VSyncTime);
-    u8AdcPgaGain = 0x0C;
+    u8AdcPgaGain=drvADC_CheckPGAGain(u8VSyncTime);
+    // u8AdcPgaGain = 0x0C;
 
     if(UserPrefInputColorFormat==INPUTCOLOR_YUV)
     {

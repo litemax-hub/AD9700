@@ -17,6 +17,7 @@
 #include "AutoFunc.h"
 #include "drvADC.h"
 #include "mStar.h"
+#include "menufunc.h"
 
 /////////////////////////////////////
 //#include "drvmStar.h"

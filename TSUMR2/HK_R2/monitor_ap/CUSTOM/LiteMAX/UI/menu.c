@@ -1689,11 +1689,11 @@ void DrawOsdMenuItemText( BYTE itemIndex, const MenuItemType *menuItem )
 #if	LiteMAX_OSD_TEST
 	if( menuItem->DrawItemMethod == DWI_Icon )
 	{
-		printf("\r\n DWI_Icon");
-		printData("MainIcon4C_0_MainMenuIcon = %x", MainIcon4C_0_MainMenuIcon);
-		printData("MenuPageIndex = %d", MenuPageIndex);
-		printData("itemIndex = %d", itemIndex);
-		printData("MenuItemIndex = %d", MenuItemIndex);
+		MENU_printMsg("\r\n DWI_Icon");
+		MENU_printData("MainIcon4C_0_MainMenuIcon = %x", MainIcon4C_0_MainMenuIcon);
+		MENU_printData("MenuPageIndex = %d", MenuPageIndex);
+		MENU_printData("itemIndex = %d", itemIndex);
+		MENU_printData("MenuItemIndex = %d", MenuItemIndex);
 
 		if (MenuPageIndex == MainMenu)
 		{

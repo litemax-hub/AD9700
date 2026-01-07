@@ -34,7 +34,7 @@
 //  Local Defines
 //-------------------------------------------------------------------------------------------------
 #define HDMI_DEBUG_MESSAGE_DRV      1
-#if(ENABLE_MSTV_UART_DEBUG && ENABLE_HDMI_DEBUG_MESSAGE_DRV)
+#if(ENABLE_MSTV_UART_DEBUG && HDMI_DEBUG_MESSAGE_DRV)
 #define HDMI_DRV_DPUTSTR(str)            printMsg(str)
 #define HDMI_DRV_DPRINTF(str, x)         printData(str, x)
 #else
@@ -510,11 +510,11 @@ Bool mdrv_hdmiRx_Initial(BYTE ucMode)
 
             }
 
-#if ENABLE_HDMI_EDID
+// #if ENABLE_HDMI_EDID
 #if ENABLE_HDMI_EDID_INTERNAL_DATA
             mdrv_HDMIRx_LoadEDID(enInputPortSelect, tCOMBO_EDID_TALBE_PORT[enInputPortSelect]);
 #endif
-#endif
+// #endif
         }
     }
 
