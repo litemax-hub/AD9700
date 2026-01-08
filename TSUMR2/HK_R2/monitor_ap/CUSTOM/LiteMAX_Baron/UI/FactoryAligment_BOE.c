@@ -1476,10 +1476,17 @@ printf("\r\nBOE_ENTER_FACTORY\n");
 				{
                 	DDCCI_AdjustLID_Mode(ucData1); //LID_DC=0, LID_PWM=1
 				}
+#if LiteMAX_Baron_UI == 1
+				else if ( ucData0 == BOE_ADJ_Brightness_PWM0 )
+				{
+                	DDCCI_AdjPWMCurve0(ucData1);
+				}
+
 				else if ( ucData0 == BOE_ADJ_Brightness_PWM75 )
 				{
                 	DDCCI_AdjPWMCurve75(ucData1);
 				}
+#endif
 				else if ( ucData0 == BOE_ADJ_Brightness_PWM0_Auto ) //adjust PWM Brightness Curve 0 for LiteMax test
 				{
 					DDCCI_AdjPWMCurve0AutoCalculate(ucData1);

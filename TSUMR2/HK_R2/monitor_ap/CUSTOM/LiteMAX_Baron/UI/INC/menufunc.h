@@ -370,7 +370,10 @@ extern void DDCCI_AdjDCCurve25(BYTE DDC_Data); //for LiteMax test
 extern void DDCCI_AdjDCCurve50(BYTE DDC_Data); //for LiteMax test
 extern void DDCCI_AdjDCCurve75(BYTE DDC_Data); //for LiteMax test
 extern void DDCCI_AdjDCCurve100(BYTE DDC_Data); //for LiteMax test
+#if LiteMAX_Baron_UI == 1
+extern void DDCCI_AdjPWMCurve0(BYTE DDC_Data); //for LiteMax test
 extern void DDCCI_AdjPWMCurve75(BYTE DDC_Data); //for LiteMax test
+#endif
 extern void DDCCI_AdjPWMCurve0AutoCalculate(BYTE DDC_Data); //for LiteMax test
 extern void DDCCI_AdjPWMCurve100AutoCalculate(BYTE DDC_Data); //for LiteMax test
 #endif

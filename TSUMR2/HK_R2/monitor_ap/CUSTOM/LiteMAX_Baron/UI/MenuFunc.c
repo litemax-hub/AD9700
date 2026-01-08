@@ -127,7 +127,7 @@ void ReadUserSetting( void );
 //void Save6500KSetting(void);
 BYTE* code ColorTempPtr[5][5] =
 {
-#if LiteMAX_Baron_UI
+#if LiteMAX_Baron_UI == 1
     {&UserPrefBrightnessWarm1, &UserPrefContrastWarm1, &UserPrefRedColorWarm1, &UserPrefGreenColorWarm1, &UserPrefBlueColorWarm1},
     {&UserPrefBrightnessUser, &UserPrefContrastUser, &UserPrefRedColorUser, &UserPrefGreenColorUser, &UserPrefBlueColorUser},
     {&UserPrefBrightnessCool1, &UserPrefContrastCool1, &UserPrefRedColorCool1, &UserPrefGreenColorCool1, &UserPrefBlueColorCool1},
@@ -5663,7 +5663,7 @@ WORD GetFBrightness_100Value( void )
 
 //#if FAC_BrightnessAutoCalculate || ENABLE_BOE_NEW_SZ_DDCCI_SPEC
 #if ENABLE_BOE_NEW_SZ_DDCCI_SPEC
-/*������make�ݬ�
+/*
 static void calculateBrightnessLevels(BYTE brightness0, BYTE brightness100)
 {
     UNUSED(brightness0);
@@ -5680,7 +5680,7 @@ static void calculateBrightnessLevels(BYTE brightness0, BYTE brightness100)
 Bool DDCCI_AdjustLID_Mode(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������make�ݬ�
+/*
 	if (DDC_Data == USER_PREF_FAC_LIDMODE)
         return FALSE;
 
@@ -5728,7 +5728,7 @@ Bool DDCCI_AdjustLID_Mode(BYTE DDC_Data) //for LiteMax test
 void DDCCI_AdjDCCurve0(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������make�ݬ�
+/*
 	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
     USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0 = DDC_Data;
     msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0);
@@ -5737,7 +5737,7 @@ void DDCCI_AdjDCCurve0(BYTE DDC_Data) //for LiteMax test
 void DDCCI_AdjDCCurve25(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������make�ݬ�
+/*
 	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
     USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_25 = DDC_Data;
     msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_25);
@@ -5746,7 +5746,7 @@ void DDCCI_AdjDCCurve25(BYTE DDC_Data) //for LiteMax test
 void DDCCI_AdjDCCurve50(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������make�ݬ�
+/*
 	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
     USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_50 = DDC_Data;
     msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_50);
@@ -5755,7 +5755,7 @@ void DDCCI_AdjDCCurve50(BYTE DDC_Data) //for LiteMax test
 void DDCCI_AdjDCCurve75(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������make�ݬ�
+/*
 	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
     USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75 = DDC_Data;
     msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75);
@@ -5764,20 +5764,26 @@ void DDCCI_AdjDCCurve75(BYTE DDC_Data) //for LiteMax test
 void DDCCI_AdjDCCurve100(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������make�ݬ�
+/*
 	USER_PREF_FAC_LIDMODE = BL_LID_MODE_DC;
     USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100 = DDC_Data;
    	msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100);
 */
 }
+#if LiteMAX_Baron_UI ==1
+void DDCCI_AdjPWMCurve0(BYTE DDC_Data) //for LiteMax test
+{
+	if (DDC_Data >= 	FUserPrefBrightness_25)
+		DDC_Data = FUserPrefBrightness_25;
+	else if (DDC_Data <= 0)
+		DDC_Data = 0;
+
+	FUserPrefBrightness_0 = DDC_Data;
+	mStar_FAdjustBrightness(FUserPrefBrightness_0);
+}
+
 void DDCCI_AdjPWMCurve75(BYTE DDC_Data) //for LiteMax test
 {
-    UNUSED(DDC_Data);
-/*
-	USER_PREF_FAC_LIDMODE = BL_LID_MODE_PWM;
-    USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75 = DDC_Data;
-    msAPI_FAdjustBrightness(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_75);
-*/
 	if (DDC_Data >= 	FUserPrefBrightness_100)
 		DDC_Data = FUserPrefBrightness_100;
 	else if (DDC_Data <= FUserPrefBrightness_50)
@@ -5786,10 +5792,11 @@ void DDCCI_AdjPWMCurve75(BYTE DDC_Data) //for LiteMax test
 	FUserPrefBrightness_75 = DDC_Data;
 	mStar_FAdjustBrightness(FUserPrefBrightness_75);
 }
+#endif
 void DDCCI_AdjPWMCurve0AutoCalculate(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������make�ݬ�
+/*
 	USER_PREF_FAC_LIDMODE = BL_LID_MODE_PWM;
 	USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0 = DDC_Data;
 	calculateBrightnessLevels(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0, USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100);
@@ -5799,7 +5806,7 @@ void DDCCI_AdjPWMCurve0AutoCalculate(BYTE DDC_Data) //for LiteMax test
 void DDCCI_AdjPWMCurve100AutoCalculate(BYTE DDC_Data) //for LiteMax test
 {
     UNUSED(DDC_Data);
-/*������mark�ݬ�
+/*
 	USER_PREF_FAC_LIDMODE = BL_LID_MODE_PWM;
 	USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100 = DDC_Data;
 	calculateBrightnessLevels(USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_0, USER_PREF_FAC_BRIGHTNESS_CURVE[USER_PREF_FAC_LIDMODE].u16OSD_100);
