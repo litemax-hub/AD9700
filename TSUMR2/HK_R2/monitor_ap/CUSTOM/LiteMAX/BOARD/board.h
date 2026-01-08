@@ -335,7 +335,7 @@
 #define USEFLASH    1
 #include "BD_MT9701_A5V1_P2_S.h"
 #elif (MainBoardType == BD_MT9700_LITEMAX)
-#define USEFLASH    1
+#define USEFLASH    0
 #include "BD_MT9700_LITEMAX.h"
 #else
 #error Unknow board type

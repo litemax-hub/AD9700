@@ -142,7 +142,7 @@ BYTE code strAmp[] =  //
 BYTE code strAutoColor[] =
 {
     //123456789012345678901234567890
-    "Auto\x001Color"
+    "Auto Color"
 };
 #if USEFLASH
 BYTE code strEraseNVRam[] =
@@ -164,7 +164,7 @@ BYTE code strOn[] =
 BYTE code strEraseEEPROM[] =
 {
     //123456789012345678901234567890
-    "Erase\x001EEPROM"
+    "Erase EEPROM"
 };
 #endif
 
