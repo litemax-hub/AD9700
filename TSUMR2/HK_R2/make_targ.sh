@@ -14,6 +14,8 @@ MAKE_EXIT_CODE=${PIPESTATUS[0]}
 
 # 檢查 make 是否成功
 if [ $MAKE_EXIT_CODE -eq 0 ]; then
+    # re make it
+    time make
     echo "----------------------------------------"
     echo "編譯成功！(Exit Code: 0)"
 
